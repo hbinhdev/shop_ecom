@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main_content}, ~{::title})}">
+
+<head>
+    <title th:fragment="title">Quản lý hóa đơn - Bagi Store</title>
+</head>
+
+<body>
+    <div th:fragment="main_content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="page-title">Quản lý hóa đơn</h2>
+            <div class="page-subtitle">Tổng số hóa đơn: <span class="fw-bold"
+                    th:text="${hoaDonPage.totalElements}"></span></div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="bi bi-funnel-fill me-2"></i>Bộ Lọc Tìm Kiếm
+            </div>
+            <div class="card-body p-4">
+                <form th:action="@{/admin/hoa-don}" method="get" id="filterForm">
+                    <div class="row g-4">
+                        <div class="col-md-3">
+                            <label class="form-label">Mã đơn hàng</label>
+                            <input type="text" name="maHoaDon" th:value="${maHoaDon}" class="form-control shadow-none"
+                                placeholder="Nhập mã đơn hàng..." onchange="this.form.submit()">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Khách hàng</label>
+                            <input type="text" name="tenKhachHang" th:value="${tenKhachHang}"
+                                class="form-control shadow-none" placeholder="Tên khách hàng..."
+                                onchange="this.form.submit()">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Trạng thái đơn hàng</label>
+                            <select name="trangThai" class="form-select shadow-none" onchange="this.form.submit()">
+                                <option value="">Tất cả trạng thái</option>
+                                <option value="1" th:selected="${trangThai == 1}">Chờ giao hàng</option>
+                                <option value="2" th:selected="${trangThai == 2}">Đang giao</option>
+                                <option value="3" th:selected="${trangThai == 3}">Hoàn thành</option>
+                                <option value="4" th:selected="${trangThai == 4}">Đã hủy</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Loại đơn hàng</label>
+                            <select name="loaiHoaDon" class="form-select shadow-none" onchange="this.form.submit()">
+                                <option value="">Tất cả loại</option>
+                                <option value="1" th:selected="${loaiHoaDon == 1}">Tại cửa hàng</option>
+                                <option value="2" th:selected="${loaiHoaDon == 2}">Giao hàng</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Ngày tạo</label>
+                            <input type="date" name="ngayTao" th:value="${ngayTao}" class="form-control shadow-none"
+                                onchange="this.form.submit()">
+                        </div>
+                        <div class="col-md-9 d-flex align-items-end justify-content-end">
+                            <button type="button" onclick="window.location.href='/admin/hoa-don'"
+                                class="btn-reset shadow-sm">
+                                <i class="bi bi-arrow-repeat"></i> Đặt lại bộ lọc
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Table Section -->
+        <div class="card overflow-hidden">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Mã đơn hàng</th>
+                                <th>Tên nhân viên</th>
+                                <th>Tên khách hàng</th>
+                                <th>Ngày tạo</th>
+                                <th>Tổng tiền</th>
+                                <th>Loại hóa đơn</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="hd, iter : ${hoaDonPage.content}">
+                                <td th:text="${iter.count + (hoaDonPage.number * hoaDonPage.size)}"></td>
+                                <td class="fw-bold text-dark" th:text="${hd.maHoaDon}"></td>
+                                <td th:text="${hd.nhanVien != null ? hd.nhanVien.tenDayDu : 'N/A'}"></td>
+                                <td th:text="${hd.khachHang != null ? hd.khachHang.tenDayDu : 'Khách lẻ'}"></td>
+                                <td th:text="${#temporals.format(hd.ngayTao, 'HH:mm dd/MM/yyyy')}"></td>
+                                <td class="text-price"
+                                    th:text="${#numbers.formatDecimal(hd.tongTienSauKhiGiam, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                </td>
+                                <td>
+                                    <span th:if="${hd.loaiHoaDon == 1}" class="type-pill">Tại cửa hàng</span>
+                                    <span th:if="${hd.loaiHoaDon == 2}" class="type-pill">Giao hàng</span>
+                                </td>
+                                <td>
+                                    <span th:if="${hd.trangThaiHoaDon == 1}" class="badge-status status-pending">Chờ
+                                        giao hàng</span>
+                                    <span th:if="${hd.trangThaiHoaDon == 2}" class="badge-status status-shipping">Đang
+                                        giao</span>
+                                    <span th:if="${hd.trangThaiHoaDon == 3}" class="badge-status status-completed">Hoàn
+                                        thành</span>
+                                    <span th:if="${hd.trangThaiHoaDon == 4}" class="badge-status status-cancelled">Đã
+                                        hủy</span>
+                                </td>
+                                <td>
+                                    <div class="action-circle">
+                                        <i class="bi bi-eye"></i>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr th:if="${hoaDonPage.isEmpty()}">
+                                <td colspan="9" class="text-center py-5 text-secondary">Không tìm thấy dữ liệu nào
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- Pagination -->
+            <div class="card-footer bg-white border-0 py-3" th:if="${hoaDonPage.totalPages > 1}">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center mb-0">
+                        <li class="page-item" th:classappend="${hoaDonPage.first} ? 'disabled'">
+                            <a class="page-link shadow-none"
+                                th:href="@{/admin/hoa-don(page=${hoaDonPage.number - 1}, maHoaDon=${maHoaDon}, tenKhachHang=${tenKhachHang}, trangThai=${trangThai}, loaiHoaDon=${loaiHoaDon}, ngayTao=${ngayTao})}">Trước</a>
+                        </li>
+                        <li class="page-item" th:each="i : ${#numbers.sequence(0, hoaDonPage.totalPages - 1)}"
+                            th:classappend="${hoaDonPage.number == i} ? 'active'">
+                            <a class="page-link shadow-none"
+                                th:href="@{/admin/hoa-don(page=${i}, maHoaDon=${maHoaDon}, tenKhachHang=${tenKhachHang}, trangThai=${trangThai}, loaiHoaDon=${loaiHoaDon}, ngayTao=${ngayTao})}"
+                                th:text="${i + 1}"></a>
+                        </li>
+                        <li class="page-item" th:classappend="${hoaDonPage.last} ? 'disabled'">
+                            <a class="page-link shadow-none"
+                                th:href="@{/admin/hoa-don(page=${hoaDonPage.number + 1}, maHoaDon=${maHoaDon}, tenKhachHang=${tenKhachHang}, trangThai=${trangThai}, loaiHoaDon=${loaiHoaDon}, ngayTao=${ngayTao})}">Sau</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
