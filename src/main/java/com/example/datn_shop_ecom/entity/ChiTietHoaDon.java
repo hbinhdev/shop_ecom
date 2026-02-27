@@ -21,8 +21,9 @@ public class ChiTietHoaDon {
     @JoinColumn(name = "id_hoa_don")
     private HoaDon hoaDon;
 
-    @Column(name = "id_san_pham_chi_tiet")
-    private Long idSanPhamChiTiet;
+    @ManyToOne
+    @JoinColumn(name = "id_san_pham_chi_tiet")
+    private SanPhamChiTiet sanPhamChiTiet;
 
     private BigDecimal gia;
 
@@ -34,10 +35,10 @@ public class ChiTietHoaDon {
     @Column(name = "so_luong")
     private Integer soLuong;
 
-    @Column(name = "mo_ta", columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "mo_ta", columnDefinition = "TEXT")
     private String moTa;
 
-    private Integer trangThai;
+    private String trangThai;
 
     @Column(name = "nguoi_tao", length = 50)
     private String nguoiTao;

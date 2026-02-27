@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main_content}, ~{::title})}">
+
+<head>
+    <title th:fragment="title">Chi tiết đơn hàng - Bagi Store</title>
+</head>
+
+<body>
+    <div th:fragment="main_content">
+        <style>
+            .detail-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 30px;
+            }
+
+            .order-title-info h2 {
+                font-weight: 800;
+                font-size: 2rem;
+                color: #0f172a;
+                margin-bottom: 5px;
+            }
+
+            .order-sub-info {
+                color: #64748b;
+                font-size: 0.95rem;
+            }
+
+            .btn-back {
+                background-color: #C97A2C;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 6px;
+                font-weight: 600;
+                text-decoration: none;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .status-progress-container {
+                background: white;
+                border-radius: 12px;
+                padding: 40px;
+                margin-bottom: 30px;
+                border: 1px solid #e2e8f0;
+            }
+
+            .status-stepper {
+                display: flex;
+                justify-content: space-between;
+                position: relative;
+            }
+
+            .status-stepper::before {
+                content: '';
+                position: absolute;
+                top: 20px;
+                left: 0;
+                right: 0;
+                height: 4px;
+                background: #e2e8f0;
+                z-index: 1;
+            }
+
+            .status-step {
+                position: relative;
+                z-index: 2;
+                text-align: center;
+                flex: 1;
+            }
+
+            .step-circle {
+                width: 44px;
+                height: 44px;
+                background: #e2e8f0;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 15px;
+                color: white;
+                font-weight: bold;
+                transition: all 0.3s;
+            }
+
+            .status-step.completed .step-circle {
+                background: #10b981;
+            }
+
+            .status-step.active .step-circle {
+                background: #1e3a8a;
+                box-shadow: 0 0 0 5px rgba(30, 58, 138, 0.1);
+            }
+
+            .step-label {
+                font-weight: 600;
+                font-size: 0.85rem;
+                color: #64748b;
+            }
+
+            .status-step.completed .step-label,
+            .status-step.active .step-label {
+                color: #0f172a;
+            }
+
+            .step-time {
+                font-size: 0.75rem;
+                color: #94a3b8;
+                margin-top: 4px;
+            }
+
+            .info-card-container {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 24px;
+                margin-bottom: 30px;
+            }
+
+            .info-item {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 12px;
+                font-size: 0.95rem;
+            }
+
+            .info-label {
+                color: #64748b;
+            }
+
+            .info-value {
+                font-weight: 600;
+                color: #0f172a;
+                text-align: right;
+            }
+
+            .section-title {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-weight: 700;
+                font-size: 1.1rem;
+                color: #0f172a;
+                margin-bottom: 20px;
+            }
+
+            .summary-card {
+                padding: 25px;
+            }
+
+            .summary-item {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 15px;
+                font-size: 0.95rem;
+            }
+
+            .summary-total {
+                border-top: 1px dashed #e2e8f0;
+                padding-top: 20px;
+                margin-top: 20px;
+                font-size: 1.25rem;
+                font-weight: 800;
+                color: #0f172a;
+            }
+
+            .summary-total .text-price {
+                font-size: 1.5rem;
+                color: #C97A2C !important;
+            }
+
+            .btn-print {
+                width: 100%;
+                background-color: #C97A2C;
+                color: white;
+                border: none;
+                padding: 15px;
+                border-radius: 8px;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                margin-top: 20px;
+            }
+
+            .payment-history-item {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                padding: 15px 0;
+                border-bottom: 1px solid #f1f5f9;
+            }
+
+            .payment-type {
+                font-weight: 600;
+                color: #0f172a;
+                font-size: 0.95rem;
+            }
+
+            .payment-time {
+                font-size: 0.75rem;
+                color: #94a3b8;
+            }
+
+            .payment-amount {
+                font-weight: 700;
+                color: #0f172a;
+            }
+
+            .quantity-ctrl {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                background: #f8fafc;
+                padding: 5px 10px;
+                border-radius: 6px;
+                width: fit-content;
+                margin: 0 auto;
+            }
+
+            .quantity-btn {
+                border: none;
+                background: none;
+                color: #64748b;
+                font-weight: bold;
+            }
+
+            @media print {
+
+                .sidebar,
+                .header,
+                .btn-back,
+                .btn-print,
+                .status-progress-container,
+                .quantity-btn,
+                .payment-history-list {
+                    display: none !important;
+                }
+
+                .main-wrapper {
+                    margin-left: 0 !important;
+                    width: 100% !important;
+                }
+
+                .content-body {
+                    padding: 0 !important;
+                }
+
+                .card {
+                    border: none !important;
+                    box-shadow: none !important;
+                }
+
+                body {
+                    background-color: white !important;
+                }
+
+                .section-title i {
+                    display: none;
+                }
+
+                .summary-card {
+                    border: 1px solid #e2e8f0 !important;
+                }
+
+                .info-card-container {
+                    display: flex !important;
+                    gap: 20px !important;
+                }
+
+                .info-card-container .card {
+                    flex: 1;
+                    border: 1px solid #e2e8f0 !important;
+                }
+
+                .table th,
+                .table td {
+                    border: 1px solid #dee2e6 !important;
+                    padding: 8px !important;
+                }
+
+                .table thead th {
+                    background-color: #f8f9fa !important;
+                    -webkit-print-color-adjust: exact;
+                    print-color-adjust: exact;
+                }
+            }
+        </style>
+
+        <div class="print-header d-none d-print-block text-center mb-4">
+            <h1 class="fw-bold">BAGI STORE</h1>
+            <p class="mb-1">Hệ thống cửa hàng thời trang cao cấp</p>
+            <p class="mb-1">Địa chỉ: Đường Trịnh Văn Bô, Nam Từ Liêm, Hà Nội</p>
+            <p class="mb-4">Hotline: 0987.654.321</p>
+            <h3 class="fw-bold text-uppercase">HÓA ĐƠN BÁN HÀNG</h3>
+        </div>
+
+
+        <div class="detail-header">
+            <div class="order-title-info">
+                <h2>Chi tiết đơn hàng</h2>
+                <div class="order-sub-info">
+                    Mã đơn hàng: <span class="fw-bold" th:text="${hd.maHoaDon}"></span> |
+                    Ngày tạo: <span th:text="${#temporals.format(hd.ngayTao, 'HH:mm dd/MM/yyyy')}"></span>
+                </div>
+            </div>
+            <a th:href="@{/admin/hoa-don}" class="btn-back">
+                <i class="bi bi-arrow-left"></i> Quay lại danh sách
+            </a>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Status Progress -->
+                <div class="status-progress-container shadow-none">
+                    <div class="section-title mb-4">Trạng thái đơn hàng</div>
+                    <div class="status-stepper">
+                        <!-- Example steps, would need real logic based on listLichSu -->
+                        <div class="status-step completed">
+                            <div class="step-circle"><i class="bi bi-check-lg"></i></div>
+                            <div class="step-label">Chờ xác nhận</div>
+                        </div>
+                        <div class="status-step"
+                            th:classappend="${#lists.contains({'2', '3', '4', 'DA_XAC_NHAN', 'DANG_GIAO', 'HOAN_THANH'}, hd.trangThaiHoaDon)} ? 'completed'">
+                            <div class="step-circle"><i class="bi bi-box-seam"></i></div>
+                            <div class="step-label">Xác nhận</div>
+                        </div>
+                        <div class="status-step"
+                            th:classappend="${#lists.contains({'3', '4', 'DANG_GIAO', 'HOAN_THANH'}, hd.trangThaiHoaDon)} ? 'completed'">
+                            <div class="step-circle"><i class="bi bi-truck"></i></div>
+                            <div class="step-label">Đang giao</div>
+                        </div>
+                        <div class="status-step"
+                            th:classappend="${#lists.contains({'4', 'HOAN_THANH'}, hd.trangThaiHoaDon)} ? 'completed'">
+                            <div class="step-circle"><i class="bi bi-check-circle-fill"></i></div>
+                            <div class="step-label">Hoàn thành</div>
+                            <div class="step-time"
+                                th:if="${hd.trangThaiHoaDon == '4' or hd.trangThaiHoaDon == 'HOAN_THANH'}"
+                                th:text="${#temporals.format(hd.ngaySuaCuoi, 'HH:mm dd/MM/yyyy')}"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info Cards -->
+                <div class="info-card-container">
+                    <div class="card shadow-none">
+                        <div class="card-body p-4">
+                            <div class="section-title"><i class="bi bi-person-fill"></i> Thông tin khách hàng</div>
+                            <div class="info-item">
+                                <span class="info-label">Tên khách hàng:</span>
+                                <span class="info-value"
+                                    th:text="${hd.khachHang != null ? hd.khachHang.tenDayDu : 'Khách lẻ'}"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Số điện thoại:</span>
+                                <span class="info-value"
+                                    th:text="${hd.khachHang != null ? hd.khachHang.soDienThoai : hd.soDienThoaiNguoiNhan}"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Email:</span>
+                                <span class="info-value"
+                                    th:text="${hd.khachHang != null ? hd.khachHang.email : 'N/A'}"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card shadow-none">
+                        <div class="card-body p-4">
+                            <div class="section-title"><i class="bi bi-truck"></i> Thông tin giao hàng</div>
+                            <div class="info-item">
+                                <span class="info-label">Địa chỉ:</span>
+                                <span class="info-value"
+                                    th:text="${hd.chiTietNguoiNhan + ', ' + hd.xaPhuong + ', ' + hd.quanHuyen + ', ' + hd.tinhThanhPho}"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Loại đơn:</span>
+                                <span class="info-value"
+                                    th:text="${(hd.loaiHoaDon == '1' or hd.loaiHoaDon == 'TAI_CUA_HANG') ? 'Tại cửa hàng' : 'Giao hàng'}"></span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Ghi chú:</span>
+                                <span class="info-value" th:text="${hd.moTa ?: 'Không có ghi chú'}"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product List -->
+                <div class="card shadow-none mb-4">
+                    <div class="card-header bg-white">
+                        <div class="section-title m-0"><i class="bi bi-box2-fill"></i> Danh sách sản phẩm <small
+                                class="text-secondary ms-2"
+                                th:text="'(' + ${listChiTiet.size()} + ' sản phẩm)'"></small></div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table mb-0">
+                                <thead>
+                                    <tr class="text-center">
+                                        <th>STT</th>
+                                        <th>Mã sản phẩm</th>
+                                        <th>Tên sản phẩm</th>
+                                        <th>Kích cỡ</th>
+                                        <th>Màu sắc</th>
+                                        <th>Số lượng</th>
+                                        <th>Đơn giá</th>
+                                        <th>Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
+                                    <tr th:each="ct, iter : ${listChiTiet}">
+                                        <td th:text="${iter.count}">1</td>
+                                        <td th:text="${ct.sanPhamChiTiet.maSanPhamChiTiet}"></td>
+                                        <td class="text-start" th:text="${ct.sanPhamChiTiet.sanPham.tenSanPham}"></td>
+                                        <td th:text="${ct.sanPhamChiTiet.kichThuoc.tenKichThuoc}"></td>
+                                        <td th:text="${ct.sanPhamChiTiet.mauSac.tenMauSac}"></td>
+                                        <td>
+                                            <div class="quantity-ctrl">
+                                                <button class="quantity-btn">-</button>
+                                                <span class="fw-bold" th:text="${ct.soLuong}">1</span>
+                                                <button class="quantity-btn">+</button>
+                                            </div>
+                                        </td>
+                                        <td th:text="${#numbers.formatDecimal(ct.gia, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                        </td>
+                                        <td class="fw-bold"
+                                            th:text="${#numbers.formatDecimal(ct.gia.multiply(new java.math.BigDecimal(ct.soLuong)), 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Summary -->
+                <div class="card shadow-none mb-4 summary-card">
+                    <div class="section-title"><i class="bi bi-wallet2"></i> Tổng kết thanh toán</div>
+                    <div class="summary-item">
+                        <span class="info-label">Tổng tiền hàng:</span>
+                        <span class="info-value"
+                            th:text="${#numbers.formatDecimal(hd.tongTien, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="info-label">Giảm giá:</span>
+                        <span class="info-value text-danger"
+                            th:text="'- ' + ${#numbers.formatDecimal(hd.tienPhieuGiamGia ?: 0, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="info-label">Phí vận chuyển:</span>
+                        <span class="info-value"
+                            th:text="${#numbers.formatDecimal(hd.tienVanChuyen ?: 0, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+                    </div>
+                    <div class="summary-total">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>TỔNG TIỀN:</span>
+                            <span class="text-price"
+                                th:text="${#numbers.formatDecimal(hd.tongTienSauKhiGiam, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+                        </div>
+                        <div class="text-end mt-2">
+                            <span class="badge-status status-completed"
+                                th:if="${hd.trangThaiHoaDon == '4' or hd.trangThaiHoaDon == 'HOAN_THANH'}">HOÀN
+                                THÀNH</span>
+                            <span class="badge-status status-pending"
+                                th:if="${hd.trangThaiHoaDon == '1' or hd.trangThaiHoaDon == 'CHO_XAC_NHAN'}">CHỜ XÁC
+                                NHẬN</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment History -->
+                <div class="card shadow-none mb-4 summary-card">
+                    <div class="section-title"><i class="bi bi-clock-history"></i> Lịch sử thanh toán</div>
+                    <div class="payment-history-list">
+                        <div class="payment-history-item" th:each="tt : ${listThanhToan}">
+                            <div>
+                                <div class="payment-type" th:text="${tt.phuongThucThanhToan}">Tiền mặt</div>
+                                <div class="payment-time"
+                                    th:text="${#temporals.format(tt.ngayTao, 'HH:mm dd/MM/yyyy')}">16:41 23/12/2025
+                                </div>
+                            </div>
+                            <div class="payment-amount"
+                                th:text="${#numbers.formatDecimal(tt.soTienGiaoDich, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                900.000 đ</div>
+                        </div>
+                        <div th:if="${listThanhToan.isEmpty()}" class="text-center py-3 text-secondary">Chưa có lịch sử
+                            thanh toán</div>
+                    </div>
+                </div>
+
+                <button class="btn-print" onclick="window.print()"><i class="bi bi-printer"></i> In hóa đơn</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

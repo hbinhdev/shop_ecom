@@ -22,6 +22,15 @@ public class HoaDonServiceImpl implements HoaDonService {
     @Autowired
     private HoaDonRepository hoaDonRepository;
 
+    @Autowired
+    private com.example.datn_shop_ecom.repository.ChiTietHoaDonRepository chiTietHoaDonRepository;
+
+    @Autowired
+    private com.example.datn_shop_ecom.repository.LichSuHoaDonRepository lichSuHoaDonRepository;
+
+    @Autowired
+    private com.example.datn_shop_ecom.repository.LichSuThanhToanRepository lichSuThanhToanRepository;
+
     @Override
     public Page<HoaDon> searchInvoices(String maHoaDon, String tenKhachHang, Integer trangThai, Integer loaiHoaDon, LocalDate ngayTao, Pageable pageable) {
         return hoaDonRepository.findAll((Specification<HoaDon>) (root, query, criteriaBuilder) -> {
@@ -36,11 +45,11 @@ public class HoaDonServiceImpl implements HoaDonService {
             }
 
             if (trangThai != null) {
-                predicates.add(criteriaBuilder.equal(root.get("trangThaiHoaDon"), trangThai));
+                predicates.add(criteriaBuilder.equal(root.get("trangThaiHoaDon"), trangThai.toString()));
             }
 
             if (loaiHoaDon != null) {
-                predicates.add(criteriaBuilder.equal(root.get("loaiHoaDon"), loaiHoaDon));
+                predicates.add(criteriaBuilder.equal(root.get("loaiHoaDon"), loaiHoaDon.toString()));
             }
 
             if (ngayTao != null) {
@@ -51,5 +60,25 @@ public class HoaDonServiceImpl implements HoaDonService {
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         }, pageable);
+    }
+
+    @Override
+    public HoaDon findById(Long id) {
+        return hoaDonRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<com.example.datn_shop_ecom.entity.ChiTietHoaDon> findDetailByHoaDonId(Long hoaDonId) {
+        return chiTietHoaDonRepository.findByHoaDonId(hoaDonId);
+    }
+
+    @Override
+    public List<com.example.datn_shop_ecom.entity.LichSuHoaDon> findHistoryByHoaDonId(Long hoaDonId) {
+        return lichSuHoaDonRepository.findByHoaDonIdOrderByNgayTaoDesc(hoaDonId);
+    }
+
+    @Override
+    public List<com.example.datn_shop_ecom.entity.LichSuThanhToan> findPaymentHistoryByHoaDonId(Long hoaDonId) {
+        return lichSuThanhToanRepository.findByHoaDonIdOrderByNgayTaoDesc(hoaDonId);
     }
 }

@@ -24,16 +24,16 @@ public class NhanVien {
     @Column(name = "ma_nhan_vien", nullable = false, length = 50)
     private String maNhanVien;
 
-    @Column(name = "ten_day_du", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "ten_day_du")
     private String tenDayDu;
 
     @Column(name = "ngay_sinh")
     private LocalDate ngaySinh;
 
-    @Column(name = "gioi_tinh", columnDefinition = "NVARCHAR(10)")
+    @Column(name = "gioi_tinh")
     private String gioiTinh;
 
-    @Column(name = "dia_chi", columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "dia_chi", columnDefinition = "TEXT")
     private String diaChi;
 
     @Column(name = "so_dien_thoai", length = 15)
@@ -45,16 +45,16 @@ public class NhanVien {
     @Column(length = 255)
     private String matKhau;
 
-    @Column(name = "xa_phuong", columnDefinition = "NVARCHAR(100)")
+    @Column(name = "xa_phuong")
     private String xaPhuong;
 
-    @Column(name = "quan_huyen", columnDefinition = "NVARCHAR(100)")
+    @Column(name = "quan_huyen")
     private String quanHuyen;
 
-    @Column(name = "tinh_thanh_pho", columnDefinition = "NVARCHAR(100)")
+    @Column(name = "tinh_thanh_pho")
     private String tinhThanhPho;
 
-    private Integer trangThai;
+    private String trangThai;
 
     @Column(name = "nguoi_tao", length = 50)
     private String nguoiTao;

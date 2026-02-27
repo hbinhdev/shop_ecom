@@ -19,7 +19,6 @@ public class VaiTro {
     @Column(nullable = false, length = 50)
     private String ma;
 
-    @Column(columnDefinition = "NVARCHAR(100)")
     private String ten;
 
     @Column(name = "nguoi_tao", length = 50)

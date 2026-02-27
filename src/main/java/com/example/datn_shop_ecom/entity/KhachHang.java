@@ -20,13 +20,13 @@ public class KhachHang {
     @Column(name = "ma_khach_hang", nullable = false, length = 50)
     private String maKhachHang;
 
-    @Column(name = "ten_day_du", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "ten_day_du")
     private String tenDayDu;
 
     @Column(name = "ngay_sinh")
     private LocalDate ngaySinh;
 
-    @Column(name = "gioi_tinh", columnDefinition = "NVARCHAR(10)")
+    @Column(name = "gioi_tinh")
     private String gioiTinh;
 
     @Column(length = 100)

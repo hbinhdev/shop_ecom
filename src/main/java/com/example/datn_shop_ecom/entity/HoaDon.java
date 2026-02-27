@@ -29,13 +29,13 @@ public class HoaDon {
     private String maHoaDon;
 
     @Column(name = "loai_hoa_don")
-    private Integer loaiHoaDon; // 1: Tại cửa hàng, 2: Giao hàng
+    private String loaiHoaDon;
 
     @Column(name = "hinh_thuc_hoa_don")
-    private Integer hinhThucHoaDon;
+    private String hinhThucHoaDon;
 
     @Column(name = "phuong_thuc_thanh_toan")
-    private Integer phuongThucThanhToan;
+    private String phuongThucThanhToan;
 
     @Column(name = "tong_tien")
     private BigDecimal tongTien;
@@ -53,27 +53,27 @@ public class HoaDon {
     private LocalDateTime ngayDatHang;
 
     @Column(name = "trang_thai_hoa_don")
-    private Integer trangThaiHoaDon; // 1: Chờ giao hàng, 2: Đang giao, 3: Hoàn thành, 4: Đã hủy
+    private String trangThaiHoaDon;
 
-    @Column(name = "ten_nguoi_nhan", columnDefinition = "NVARCHAR(255)")
+    @Column(name = "ten_nguoi_nhan")
     private String tenNguoiNhan;
 
     @Column(name = "so_dien_thoai_nguoi_nhan", length = 15)
     private String soDienThoaiNguoiNhan;
 
-    @Column(name = "chi_tiet_nguoi_nhan", columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "chi_tiet_nguoi_nhan", columnDefinition = "TEXT")
     private String chiTietNguoiNhan;
 
-    @Column(name = "xa_phuong", columnDefinition = "NVARCHAR(100)")
+    @Column(name = "xa_phuong")
     private String xaPhuong;
 
-    @Column(name = "quan_huyen", columnDefinition = "NVARCHAR(100)")
+    @Column(name = "quan_huyen")
     private String quanHuyen;
 
-    @Column(name = "tinh_thanh_pho", columnDefinition = "NVARCHAR(100)")
+    @Column(name = "tinh_thanh_pho")
     private String tinhThanhPho;
 
-    @Column(name = "mo_ta", columnDefinition = "NVARCHAR(MAX)")
+    @Column(name = "mo_ta", columnDefinition = "TEXT")
     private String moTa;
 
     @Column(name = "nguoi_tao", length = 50)
