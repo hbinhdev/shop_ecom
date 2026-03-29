@@ -1,0 +1,10 @@
+package com.example.datn_shop_ecom.service;
+
+import com.example.datn_shop_ecom.entity.KhachHang;
+
+public interface KhachHangService {
+    java.util.List<KhachHang> filterKhachHang(String search, String gioiTinh, Boolean xoaMem);
+    java.util.List<KhachHang> getAllKhachHangs();
+    KhachHang saveKhachHang(KhachHang khachHang);
+    String generateMaKhachHang();
+}

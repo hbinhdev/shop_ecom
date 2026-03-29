@@ -52,4 +52,7 @@ public class KhachHang {
 
     @Column(name = "xoa_mem")
     private Boolean xoaMem = false;
+
+    @OneToMany(mappedBy = "khachHang", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<DiaChi> danhSachDiaChi = new java.util.ArrayList<>();
 }
