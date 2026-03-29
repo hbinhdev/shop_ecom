@@ -12,11 +12,27 @@
                 <li><a href="#"><i class="bi bi-graph-up"></i> Thống kê</a></li>
                 <li><a href="#"><i class="bi bi-cart"></i> Bán hàng</a></li>
                 <li class="active"><a th:href="@{/admin/hoa-don}"><i class="bi bi-receipt"></i> Quản lý hóa đơn</a></li>
-                <li><a href="#"><i class="bi bi-box-seam"></i> Quản lý sản phẩm <i
-                            class="bi bi-chevron-down ms-auto"></i></a></li>
+                <li class="has-submenu">
+                    <a href="javascript:void(0)" class="dropdown-toggle" data-bs-toggle="collapse"
+                        data-bs-target="#submenuProduct" aria-expanded="false">
+                        <i class="bi bi-box-seam"></i> Quản lý sản phẩm <i class="bi bi-chevron-down ms-auto"></i>
+                    </a>
+                    <ul class="submenu collapse" id="submenuProduct">
+                        <li><a href="#" class="ps-5">Danh sách sản phẩm</a></li>
+                        <li><a href="#" class="ps-5">Thuộc tính</a></li>
+                    </ul>
+                </li>
                 <li><a href="#"><i class="bi bi-tags"></i> Quản lý giảm giá</a></li>
-                <li><a href="#"><i class="bi bi-people"></i> Quản lý tài khoản <i
-                            class="bi bi-chevron-down ms-auto"></i></a></li>
+                <li class="has-submenu">
+                    <a href="javascript:void(0)" class="dropdown-toggle" data-bs-toggle="collapse"
+                        data-bs-target="#submenuAccount" aria-expanded="true">
+                        <i class="bi bi-people"></i> Quản lý tài khoản</i>
+                    </a>
+                    <ul class="submenu collapse show" id="submenuAccount">
+                        <li><a th:href="@{/admin/khach-hang}" class="ps-5">Khách hàng</a></li>
+                        <li><a href="#" class="ps-5">Nhân viên</a></li>
+                    </ul>
+                </li>
             </ul>
         </nav>
     </aside>

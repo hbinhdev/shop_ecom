@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
+
+<head>
+    <title>Quản lý khách hàng - SevenStrike</title>
+</head>
+
+<body>
+    <main>
+        <div class="container-fluid p-0">
+            <!-- Breadcrumb / Header Title -->
+            <div class="mb-4">
+                <h4 class="fw-bold section-title">Quản lý tài khoản / <span class="fw-bold section-title">Quản lý khách
+                        hàng</span></h4>
+            </div>
+
+            <!-- Filter Section -->
+            <form th:action="@{/admin/khach-hang}" method="GET" id="filterForm">
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <div class="row g-3 align-items-center mb-4">
+                            <div class="col-md-5">
+                                <div class="search-box position-relative">
+                                    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                    <input type="text" name="search" th:value="${search}" class="form-control rounded-pill ps-5 py-2 border-1"
+                                        placeholder="Tìm theo tên, SĐT, email...">
+                                </div>
+                            </div>
+                            <div class="col-md-7 d-flex justify-content-end gap-2">
+                                <a th:href="@{/admin/khach-hang}"
+                                    class="btn btn-dark rounded-pill px-4 py-2 d-flex align-items-center gap-2 btn-reset-filter">
+                                    <i class="bi bi-arrow-counterclockwise"></i> Đặt lại bộ lọc
+                                </a>
+                                <button type="button" class="btn btn-outline-dark rounded-pill px-4 py-2 d-flex align-items-center gap-2">
+                                    <i class="bi bi-file-earmark-excel"></i> Xuất Excel
+                                </button>
+                                <a th:href="@{/admin/khach-hang/create}"
+                                    class="btn btn-add-customer rounded-pill px-4 py-2 d-flex align-items-center gap-2 text-white border-0">
+                                    <i class="bi bi-plus-lg"></i> Thêm khách hàng
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-4 d-flex align-items-center gap-3">
+                                <label class="form-label mb-0 text-nowrap fw-medium">Giới tính:</label>
+                                <select name="gioiTinh" class="form-select rounded-pill border-1 bg-light-subtle" onchange="this.form.submit()">
+                                    <option value="" th:selected="${gioiTinh == null or gioiTinh == ''}">Tất cả</option>
+                                    <option value="Nam" th:selected="${gioiTinh == 'Nam'}">Nam</option>
+                                    <option value="Nữ" th:selected="${gioiTinh == 'Nữ'}">Nữ</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-center gap-3">
+                                <label class="form-label mb-0 text-nowrap fw-medium">Trạng thái:</label>
+                                <select name="trangThai" class="form-select rounded-pill border-1 bg-light-subtle" onchange="this.form.submit()">
+                                    <option value="" th:selected="${trangThai == null}">Tất cả</option>
+                                    <option value="1" th:selected="${trangThai == 1}">Hoạt động</option>
+                                    <option value="0" th:selected="${trangThai == 0}">Ngừng hoạt động</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Table Section -->
+            <div class="custom-table overflow-hidden">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Mã khách hàng</th>
+                            <th>Họ tên</th>
+                            <th>SĐT</th>
+                            <th>Email</th>
+                            <th>Địa chỉ</th>
+                            <th>Trạng thái</th>
+                            <th class="text-center">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="kh, stat : ${khachHangs}">
+                            <td class="ps-4 fw-medium text-muted" th:text="${stat.index + 1}">1</td>
+                            <td class="fw-bold text-dark" th:text="${kh.maKhachHang}">KH00001</td>
+                            <td class="fw-semibold" th:text="${kh.tenDayDu}">Nguyễn Văn A</td>
+                            <td th:text="${kh.soDienThoai}">0911111111</td>
+                            <td class="text-muted" th:text="${kh.email}">kha.a@gmail.com</td>
+                            <td class="text-muted text-truncate" style="max-width: 250px;">
+                                <th:block th:each="dc : ${kh.danhSachDiaChi}">
+                                    <span th:if="${dc.diaChiMacDinh}" 
+                                          th:text="${(dc.chiTiet != null ? dc.chiTiet + ', ' : '') + dc.xaPhuong + ', ' + dc.quanHuyen + ', ' + dc.tinhThanhPho}">
+                                    </span>
+                                </th:block>
+                                <span th:if="${#lists.size(kh.danhSachDiaChi) > 0 and #lists.toList(kh.danhSachDiaChi).?[diaChiMacDinh == true].size() == 0}"
+                                      th:text="${(kh.danhSachDiaChi[0].chiTiet != null ? kh.danhSachDiaChi[0].chiTiet + ', ' : '') + kh.danhSachDiaChi[0].xaPhuong + ', ' + kh.danhSachDiaChi[0].quanHuyen + ', ' + kh.danhSachDiaChi[0].tinhThanhPho}">
+                                </span>
+                                <span th:if="${#lists.isEmpty(kh.danhSachDiaChi)}">-</span>
+                            </td>
+                            <td>
+                                <span th:if="${!kh.xoaMem}" class="badge rounded-pill bg-active-custom px-3 py-2">Hoạt động</span>
+                                <span th:if="${kh.xoaMem}" class="badge rounded-pill bg-inactive-custom px-3 py-2 text-dark">Ngừng hoạt động</span>
+                            </td>
+                            <td class="text-center pe-4">
+                                <div class="d-flex justify-content-center align-items-center gap-2">
+                                    <div class="form-check form-switch p-0 m-0">
+                                        <input class="form-check-input ms-0 custom-switch" type="checkbox" th:checked="${!kh.xoaMem}">
+                                    </div>
+                                    <button class="btn btn-icon btn-light rounded-circle"><i class="bi bi-geo-alt"></i></button>
+                                    <button class="btn btn-icon btn-light rounded-circle"><i class="bi bi-eye"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </div>
+        </div>
+    </main>
+</body>
+
+</html>
