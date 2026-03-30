@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
+
+<head>
+    <title>Cập nhật khách hàng - SevenStrike</title>
+</head>
+
+<body>
+    <main>
+        <div class="container-fluid p-0">
+            <!-- Breadcrumb -->
+            <div class="mb-4">
+                <h4 class="fw-bold section-title">Quản lý tài khoản / <span class="fw-bold">Quản lý khách hàng</span>
+                </h4>
+            </div>
+
+            <form th:action="@{/admin/khach-hang/save}" th:object="${khachHang}" method="POST" id="customerForm">
+                <!-- Hidden fields for update -->
+                <input type="hidden" th:field="*{id}">
+                <input type="hidden" th:field="*{maKhachHang}">
+                <input type="hidden" th:field="*{ngayTao}">
+                <input type="hidden" th:field="*{xoaMem}">
+                <input type="hidden" th:field="*{matKhau}">
+
+                <div class="card shadow-sm border-0 rounded-4 p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="fw-bold section-title mb-0">CẬP NHẬT KHÁCH HÀNG</h4>
+                        <div class="d-flex gap-2">
+                            <a th:href="@{/admin/khach-hang}"
+                                class="btn btn-outline-dark rounded-pill px-4 py-2 d-flex align-items-center gap-2">
+                                <i class="bi bi-arrow-left"></i> Quay lại
+                            </a>
+                            <button type="submit"
+                                class="btn btn-add-customer rounded-pill px-4 py-2 d-flex align-items-center gap-2 text-white border-0">
+                                <i class="bi bi-save"></i> Lưu thay đổi
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Mã khách hàng</label>
+                            <input type="text" class="form-control rounded-pill border-1 bg-light py-2 px-3"
+                                th:field="*{maKhachHang}" disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Tên khách hàng <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control rounded-pill border-1 bg-light-subtle py-2 px-3"
+                                th:field="*{tenDayDu}" placeholder="Nhập tên khách hàng" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control rounded-pill border-1 bg-light-subtle py-2 px-3"
+                                th:field="*{email}" placeholder="example@gmail.com" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Số điện thoại</label>
+                            <input type="text" class="form-control rounded-pill border-1 bg-light-subtle py-2 px-3"
+                                th:field="*{soDienThoai}" placeholder="0xxx...">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Giới tính</label>
+                            <select class="form-select rounded-pill border-1 bg-light-subtle py-2 px-3"
+                                th:field="*{gioiTinh}">
+                                <option value="">-- Chọn --</option>
+                                <option value="Nam" th:selected="*{gioiTinh == 'Nam'}">Nam</option>
+                                <option value="Nữ" th:selected="*{gioiTinh == 'Nữ'}">Nữ</option>
+                                <option value="Khác" th:selected="*{gioiTinh == 'Khác'}">Khác</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium">Ngày sinh</label>
+                            <input type="date" class="form-control rounded-pill border-1 bg-light-subtle py-2 px-3"
+                                th:name="ngaySinh"
+                                th:value="*{ngaySinh != null ? #temporals.format(ngaySinh, 'yyyy-MM-dd') : ''}">
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+
+</html>

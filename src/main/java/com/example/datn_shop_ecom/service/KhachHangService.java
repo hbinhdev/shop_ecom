@@ -6,6 +6,7 @@ public interface KhachHangService {
     java.util.List<KhachHang> filterKhachHang(String search, String gioiTinh, Boolean xoaMem);
     java.util.List<KhachHang> getAllKhachHangs();
     KhachHang saveKhachHang(KhachHang khachHang);
+    KhachHang findById(Long id);
     void toggleStatus(Long id);
     String generateMaKhachHang();
 }

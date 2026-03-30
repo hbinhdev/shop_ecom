@@ -118,8 +118,9 @@
                                     </div>
                                     <button class="btn btn-icon btn-light rounded-circle"><i
                                             class="bi bi-geo-alt"></i></button>
-                                    <button class="btn btn-icon btn-light rounded-circle"><i
-                                            class="bi bi-eye"></i></button>
+                                    <a th:href="@{/admin/khach-hang/edit/{id}(id=${kh.id})}" class="btn btn-icon btn-light rounded-circle">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
                                 </div>
                             </td>
                         </tr>
