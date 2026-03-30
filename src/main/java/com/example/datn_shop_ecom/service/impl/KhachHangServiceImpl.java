@@ -30,31 +30,51 @@ public class KhachHangServiceImpl implements KhachHangService {
     @Override
     @Transactional
     public KhachHang saveKhachHang(KhachHang khachHang) {
-        if (khachHang.getMaKhachHang() == null || khachHang.getMaKhachHang().isEmpty()) {
-            khachHang.setMaKhachHang(generateMaKhachHang());
+        if (khachHang.getId() != null) {
+            // Update mode: Merge with existing data
+            KhachHang existing = khachHangRepository.findById(khachHang.getId())
+                    .orElseThrow(() -> new RuntimeException("Khách hàng không tồn tại"));
+            
+            existing.setTenDayDu(khachHang.getTenDayDu());
+            existing.setEmail(khachHang.getEmail());
+            existing.setSoDienThoai(khachHang.getSoDienThoai());
+            
+            // Safety check: chỉ cập nhật nếu form có gửi dữ liệu về giới tính/ngày sinh
+            if (khachHang.getGioiTinh() != null && !khachHang.getGioiTinh().trim().isEmpty()) {
+                existing.setGioiTinh(khachHang.getGioiTinh());
+            }
+            if (khachHang.getNgaySinh() != null) {
+                existing.setNgaySinh(khachHang.getNgaySinh());
+            }
+            
+            existing.setNgaySuaCuoi(LocalDateTime.now());
+            existing.setNguoiSuaCuoi("Admin"); // Có thể lấy từ SecurityContext sau
+            
+            return khachHangRepository.save(existing);
+        } else {
+            // Create mode
+            if (khachHang.getMaKhachHang() == null || khachHang.getMaKhachHang().isEmpty()) {
+                khachHang.setMaKhachHang(generateMaKhachHang());
+            }
+            if (khachHang.getNgayTao() == null) {
+                khachHang.setNgayTao(LocalDateTime.now());
+            }
+            khachHang.setXoaMem(false); // Mặc định hoạt động
+            
+            return khachHangRepository.save(khachHang);
         }
-        if (khachHang.getNgayTao() == null) {
-            khachHang.setNgayTao(LocalDateTime.now());
-        }
-        
-        // Link addresses to customer
-        if (khachHang.getDanhSachDiaChi() != null) {
-            khachHang.getDanhSachDiaChi().forEach(dc -> {
-                dc.setKhachHang(khachHang);
-                dc.setNgayTao(LocalDateTime.now());
-                if (dc.getDiaChiMacDinh() == null) {
-                    dc.setDiaChiMacDinh(false);
-                }
-            });
-        }
-        
-        return khachHangRepository.save(khachHang);
     }
 
     @Override
     public String generateMaKhachHang() {
         long count = khachHangRepository.count();
         return String.format("KH%05d", count + 1);
+    }
+
+    @Override
+    public KhachHang findById(Long id) {
+        return khachHangRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Khách hàng không tồn tại"));
     }
 
     @Override

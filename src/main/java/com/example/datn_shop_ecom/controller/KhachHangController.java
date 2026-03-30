@@ -52,15 +52,23 @@ public class KhachHangController {
         return "admin/khach-hang/create";
     }
 
+    @GetMapping("/edit/{id}")
+    public String editForm(@PathVariable Long id, Model model) {
+        KhachHang khachHang = khachHangService.findById(id);
+        model.addAttribute("khachHang", khachHang);
+        return "admin/khach-hang/edit";
+    }
+
     @PostMapping("/save")
     public String save(@ModelAttribute("khachHang") KhachHang khachHang, RedirectAttributes redirectAttributes) {
         try {
             khachHangService.saveKhachHang(khachHang);
-            redirectAttributes.addFlashAttribute("success", "Thêm khách hàng thành công!");
+            String message = (khachHang.getId() == null) ? "Thêm khách hàng thành công!" : "Cập nhật khách hàng thành công!";
+            redirectAttributes.addFlashAttribute("success", message);
             return "redirect:/admin/khach-hang";
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi: " + e.getMessage());
-            return "redirect:/admin/khach-hang/create";
+            return (khachHang.getId() == null) ? "redirect:/admin/khach-hang/create" : "redirect:/admin/khach-hang/edit/" + khachHang.getId();
         }
     }
 
