@@ -21,8 +21,10 @@
                         <div class="row g-3 align-items-center mb-4">
                             <div class="col-md-5">
                                 <div class="search-box position-relative">
-                                    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
-                                    <input type="text" name="search" th:value="${search}" class="form-control rounded-pill ps-5 py-2 border-1"
+                                    <i
+                                        class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                    <input type="text" name="search" th:value="${search}"
+                                        class="form-control rounded-pill ps-5 py-2 border-1"
                                         placeholder="Tìm theo tên, SĐT, email...">
                                 </div>
                             </div>
@@ -31,7 +33,8 @@
                                     class="btn btn-dark rounded-pill px-4 py-2 d-flex align-items-center gap-2 btn-reset-filter">
                                     <i class="bi bi-arrow-counterclockwise"></i> Đặt lại bộ lọc
                                 </a>
-                                <button type="button" class="btn btn-outline-dark rounded-pill px-4 py-2 d-flex align-items-center gap-2">
+                                <button type="button"
+                                    class="btn btn-outline-dark rounded-pill px-4 py-2 d-flex align-items-center gap-2">
                                     <i class="bi bi-file-earmark-excel"></i> Xuất Excel
                                 </button>
                                 <a th:href="@{/admin/khach-hang/create}"
@@ -44,7 +47,8 @@
                         <div class="row g-3 align-items-center">
                             <div class="col-md-4 d-flex align-items-center gap-3">
                                 <label class="form-label mb-0 text-nowrap fw-medium">Giới tính:</label>
-                                <select name="gioiTinh" class="form-select rounded-pill border-1 bg-light-subtle" onchange="this.form.submit()">
+                                <select name="gioiTinh" class="form-select rounded-pill border-1 bg-light-subtle"
+                                    onchange="this.form.submit()">
                                     <option value="" th:selected="${gioiTinh == null or gioiTinh == ''}">Tất cả</option>
                                     <option value="Nam" th:selected="${gioiTinh == 'Nam'}">Nam</option>
                                     <option value="Nữ" th:selected="${gioiTinh == 'Nữ'}">Nữ</option>
@@ -52,7 +56,8 @@
                             </div>
                             <div class="col-md-4 d-flex align-items-center gap-3">
                                 <label class="form-label mb-0 text-nowrap fw-medium">Trạng thái:</label>
-                                <select name="trangThai" class="form-select rounded-pill border-1 bg-light-subtle" onchange="this.form.submit()">
+                                <select name="trangThai" class="form-select rounded-pill border-1 bg-light-subtle"
+                                    onchange="this.form.submit()">
                                     <option value="" th:selected="${trangThai == null}">Tất cả</option>
                                     <option value="1" th:selected="${trangThai == 1}">Hoạt động</option>
                                     <option value="0" th:selected="${trangThai == 0}">Ngừng hoạt động</option>
@@ -87,26 +92,34 @@
                             <td class="text-muted" th:text="${kh.email}">kha.a@gmail.com</td>
                             <td class="text-muted text-truncate" style="max-width: 250px;">
                                 <th:block th:each="dc : ${kh.danhSachDiaChi}">
-                                    <span th:if="${dc.diaChiMacDinh}" 
-                                          th:text="${(dc.chiTiet != null ? dc.chiTiet + ', ' : '') + dc.xaPhuong + ', ' + dc.quanHuyen + ', ' + dc.tinhThanhPho}">
+                                    <span th:if="${dc.diaChiMacDinh}"
+                                        th:text="${(dc.chiTiet != null ? dc.chiTiet + ', ' : '') + dc.xaPhuong + ', ' + dc.quanHuyen + ', ' + dc.tinhThanhPho}">
                                     </span>
                                 </th:block>
-                                <span th:if="${#lists.size(kh.danhSachDiaChi) > 0 and #lists.toList(kh.danhSachDiaChi).?[diaChiMacDinh == true].size() == 0}"
-                                      th:text="${(kh.danhSachDiaChi[0].chiTiet != null ? kh.danhSachDiaChi[0].chiTiet + ', ' : '') + kh.danhSachDiaChi[0].xaPhuong + ', ' + kh.danhSachDiaChi[0].quanHuyen + ', ' + kh.danhSachDiaChi[0].tinhThanhPho}">
+                                <span
+                                    th:if="${#lists.size(kh.danhSachDiaChi) > 0 and #lists.toList(kh.danhSachDiaChi).?[diaChiMacDinh == true].size() == 0}"
+                                    th:text="${(kh.danhSachDiaChi[0].chiTiet != null ? kh.danhSachDiaChi[0].chiTiet + ', ' : '') + kh.danhSachDiaChi[0].xaPhuong + ', ' + kh.danhSachDiaChi[0].quanHuyen + ', ' + kh.danhSachDiaChi[0].tinhThanhPho}">
                                 </span>
                                 <span th:if="${#lists.isEmpty(kh.danhSachDiaChi)}">-</span>
                             </td>
                             <td>
-                                <span th:if="${!kh.xoaMem}" class="badge rounded-pill bg-active-custom px-3 py-2">Hoạt động</span>
-                                <span th:if="${kh.xoaMem}" class="badge rounded-pill bg-inactive-custom px-3 py-2 text-dark">Ngừng hoạt động</span>
+                                <span th:if="${!kh.xoaMem}" class="badge rounded-pill bg-active-custom px-3 py-2">Hoạt
+                                    động</span>
+                                <span th:if="${kh.xoaMem}"
+                                    class="badge rounded-pill bg-inactive-custom px-3 py-2 text-dark">Ngừng hoạt
+                                    động</span>
                             </td>
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center align-items-center gap-2">
                                     <div class="form-check form-switch p-0 m-0">
-                                        <input class="form-check-input ms-0 custom-switch" type="checkbox" th:checked="${!kh.xoaMem}">
+                                        <input class="form-check-input ms-0 custom-switch status-toggle" type="checkbox"
+                                            th:checked="${!kh.xoaMem}" th:data-id="${kh.id}"
+                                            onchange="confirmToggle(this)">
                                     </div>
-                                    <button class="btn btn-icon btn-light rounded-circle"><i class="bi bi-geo-alt"></i></button>
-                                    <button class="btn btn-icon btn-light rounded-circle"><i class="bi bi-eye"></i></button>
+                                    <button class="btn btn-icon btn-light rounded-circle"><i
+                                            class="bi bi-geo-alt"></i></button>
+                                    <button class="btn btn-icon btn-light rounded-circle"><i
+                                            class="bi bi-eye"></i></button>
                                 </div>
                             </td>
                         </tr>
@@ -114,8 +127,29 @@
                 </table>
             </div>
         </div>
-        </div>
-        </div>
+        <!-- SweetAlert2 Toggle Script  -->
+        <script th:inline="javascript">
+            async function confirmToggle(checkbox) {
+                const id = checkbox.getAttribute('data-id'), isChecked = checkbox.checked;
+                const msg = isChecked ? "Bạn có muốn kích hoạt lại khách hàng?" : "Bạn có muốn ngừng hoạt động khách hàng?";
+
+                const result = await Swal.fire({
+                    title: 'Xác nhận?', text: msg, icon: 'question',
+                    showCancelButton: true, confirmButtonText: 'Đồng ý', cancelButtonText: 'Hủy',
+                    confirmButtonColor: '#2d3436', cancelButtonColor: '#636e72',
+                });
+
+                if (result.isConfirmed) {
+                    try {
+                        const res = await fetch(`/admin/khach-hang/toggle-status/${id}`, { method: 'POST' });
+                        if (res.ok) location.reload(); else throw new Error();
+                    } catch (e) {
+                        Swal.fire('Lỗi!', 'Không thể kết nối máy chủ.', 'error');
+                        checkbox.checked = !isChecked;
+                    }
+                } else checkbox.checked = !isChecked;
+            }
+        </script>
     </main>
 </body>
 

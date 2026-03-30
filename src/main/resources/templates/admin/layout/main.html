@@ -316,13 +316,7 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
-        /* Animations */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        main {
+        .content-inner {
             animation: fadeIn 0.4s ease-out forwards;
         }
     </style>
@@ -335,10 +329,12 @@
         <div th:replace="~{admin/fragments/header :: header}"></div>
 
         <main class="content-body">
-            <div th:replace="${content}"></div>
+            <div class="content-inner" th:replace="${content}"></div>
         </main>
     </div>
 
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -56,4 +56,13 @@ public class KhachHangServiceImpl implements KhachHangService {
         long count = khachHangRepository.count();
         return String.format("KH%05d", count + 1);
     }
+
+    @Override
+    @Transactional
+    public void toggleStatus(Long id) {
+        KhachHang khachHang = khachHangRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Khách hàng không tồn tại"));
+        
+        khachHangRepository.updateStatus(id, !khachHang.getXoaMem());
+    }
 }
