@@ -50,6 +50,16 @@ public class KhachHangServiceImpl implements KhachHangService {
             existing.setNgaySuaCuoi(LocalDateTime.now());
             existing.setNguoiSuaCuoi("Admin"); // Có thể lấy từ SecurityContext sau
             
+            // Xử lý danh sách địa chỉ (clear and add for orphan removal to work properly)
+            existing.getDanhSachDiaChi().clear();
+            if (khachHang.getDanhSachDiaChi() != null) {
+                for (com.example.datn_shop_ecom.entity.DiaChi dc : khachHang.getDanhSachDiaChi()) {
+                    dc.setKhachHang(existing);
+                    dc.setNgayTao(LocalDateTime.now());
+                    if (dc.getDiaChiMacDinh() == null) dc.setDiaChiMacDinh(false);
+                    existing.getDanhSachDiaChi().add(dc);
+                }
+            }
             return khachHangRepository.save(existing);
         } else {
             // Create mode
@@ -61,6 +71,13 @@ public class KhachHangServiceImpl implements KhachHangService {
             }
             khachHang.setXoaMem(false); // Mặc định hoạt động
             
+            if (khachHang.getDanhSachDiaChi() != null) {
+                khachHang.getDanhSachDiaChi().forEach(dc -> {
+                    dc.setKhachHang(khachHang);
+                    dc.setNgayTao(LocalDateTime.now());
+                    if (dc.getDiaChiMacDinh() == null) dc.setDiaChiMacDinh(false);
+                });
+            }
             return khachHangRepository.save(khachHang);
         }
     }
