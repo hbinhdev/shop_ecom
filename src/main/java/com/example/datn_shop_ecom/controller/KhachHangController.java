@@ -7,8 +7,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.ResponseEntity;
+import java.util.Map;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -57,6 +61,17 @@ public class KhachHangController {
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi: " + e.getMessage());
             return "redirect:/admin/khach-hang/create";
+        }
+    }
+
+    @PostMapping("/toggle-status/{id}")
+    @ResponseBody
+    public ResponseEntity<?> toggleStatus(@PathVariable Long id) {
+        try {
+            khachHangService.toggleStatus(id);
+            return ResponseEntity.ok(Map.of("success", true, "message", "Cập nhật trạng thái thành công!"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
         }
     }
 }
