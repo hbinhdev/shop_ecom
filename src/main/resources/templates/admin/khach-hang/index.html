@@ -25,7 +25,7 @@
                                         class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
                                     <input type="text" name="search" th:value="${search}"
                                         class="form-control rounded-pill ps-5 py-2 border-1"
-                                        placeholder="Tìm theo tên, SĐT, email...">
+                                        placeholder="Tìm theo Mã, Tên, SĐT, Email...">
                                 </div>
                             </div>
                             <div class="col-md-7 d-flex justify-content-end gap-2">
@@ -33,10 +33,10 @@
                                     class="btn btn-dark rounded-pill px-4 py-2 d-flex align-items-center gap-2 btn-reset-filter">
                                     <i class="bi bi-arrow-counterclockwise"></i> Đặt lại bộ lọc
                                 </a>
-                                <button type="button"
+                                <a th:href="@{/admin/khach-hang/export(search=${search}, gioiTinh=${gioiTinh}, trangThai=${trangThai})}"
                                     class="btn btn-outline-dark rounded-pill px-4 py-2 d-flex align-items-center gap-2">
                                     <i class="bi bi-file-earmark-excel"></i> Xuất Excel
-                                </button>
+                                </a>
                                 <a th:href="@{/admin/khach-hang/create}"
                                     class="btn btn-add-customer rounded-pill px-4 py-2 d-flex align-items-center gap-2 text-white border-0">
                                     <i class="bi bi-plus-lg"></i> Thêm khách hàng

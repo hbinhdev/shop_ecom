@@ -11,7 +11,8 @@ import java.util.Optional;
 @Repository
 public interface KhachHangRepository extends JpaRepository<KhachHang, Long> {
     @Query("SELECT k FROM KhachHang k LEFT JOIN FETCH k.danhSachDiaChi " +
-           "WHERE (:search IS NULL OR k.tenDayDu LIKE %:search% " +
+           "WHERE (:search IS NULL OR k.maKhachHang LIKE %:search% " +
+           "OR k.tenDayDu LIKE %:search% " +
            "OR k.email LIKE %:search% OR k.soDienThoai LIKE %:search%) " +
            "AND (:gioiTinh IS NULL OR k.gioiTinh = :gioiTinh) " +
            "AND (:xoaMem IS NULL OR k.xoaMem = :xoaMem)")

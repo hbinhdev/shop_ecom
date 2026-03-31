@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.http.ResponseEntity;
 import java.util.Map;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.core.io.InputStreamResource;
+import java.io.ByteArrayInputStream;
 
 @Controller
 @RequestMapping("/admin/khach-hang")
@@ -81,5 +85,27 @@ public class KhachHangController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
         }
+    }
+
+    @GetMapping("/export")
+    public ResponseEntity<InputStreamResource> exportExcel(
+            @org.springframework.web.bind.annotation.RequestParam(required = false) String search,
+            @org.springframework.web.bind.annotation.RequestParam(required = false) String gioiTinh,
+            @org.springframework.web.bind.annotation.RequestParam(required = false) Integer trangThai) {
+
+        Boolean xoaMem = null;
+        if (trangThai != null) {
+            if (trangThai == 1) xoaMem = false;
+            else if (trangThai == 0) xoaMem = true;
+        }
+
+        ByteArrayInputStream in = khachHangService.exportToExcel(search, gioiTinh, xoaMem);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=khach_hang.xlsx");
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(new InputStreamResource(in));
     }
 }
