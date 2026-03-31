@@ -20,13 +20,13 @@ public class KhachHang {
     @Column(name = "ma_khach_hang", nullable = false, length = 50)
     private String maKhachHang;
 
-    @Column(name = "ten_day_du")
+    @Column(name = "ten_day_du", columnDefinition = "NVARCHAR(255)")
     private String tenDayDu;
 
     @Column(name = "ngay_sinh")
     private LocalDate ngaySinh;
 
-    @Column(name = "gioi_tinh")
+    @Column(name = "gioi_tinh", columnDefinition = "NVARCHAR(50)")
     private String gioiTinh;
 
     @Column(length = 100)
@@ -41,18 +41,20 @@ public class KhachHang {
     @Column(name = "ngay_tao")
     private LocalDateTime ngayTao;
 
-    @Column(name = "nguoi_tao", length = 50)
+    @Column(name = "nguoi_tao", columnDefinition = "NVARCHAR(50)")
     private String nguoiTao;
 
-    @Column(name = "nguoi_sua_cuoi", length = 50)
+    @Column(name = "nguoi_sua_cuoi", columnDefinition = "NVARCHAR(50)")
     private String nguoiSuaCuoi;
 
     @Column(name = "ngay_sua_cuoi")
     private LocalDateTime ngaySuaCuoi;
 
+    @Builder.Default
     @Column(name = "xoa_mem")
     private Boolean xoaMem = false;
 
+    @Builder.Default
     @OneToMany(mappedBy = "khachHang", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<DiaChi> danhSachDiaChi = new java.util.ArrayList<>();
 }

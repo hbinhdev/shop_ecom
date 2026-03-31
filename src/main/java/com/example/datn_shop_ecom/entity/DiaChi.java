@@ -39,12 +39,14 @@ public class DiaChi {
     @Column(name = "tinh_thanh_pho", columnDefinition = "NVARCHAR(100)")
     private String tinhThanhPho;
 
+    @Builder.Default
     @Column(name = "dia_chi_mac_dinh")
     private Boolean diaChiMacDinh = false;
 
     @Column(name = "ngay_tao")
     private LocalDateTime ngayTao;
 
+    @Builder.Default
     @Column(name = "xoa_mem")
     private Boolean xoaMem = false;
 }

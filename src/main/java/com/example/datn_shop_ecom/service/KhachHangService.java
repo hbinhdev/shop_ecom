@@ -9,4 +9,5 @@ public interface KhachHangService {
     KhachHang findById(Long id);
     void toggleStatus(Long id);
     String generateMaKhachHang();
+    java.io.ByteArrayInputStream exportToExcel(String search, String gioiTinh, Boolean xoaMem);
 }

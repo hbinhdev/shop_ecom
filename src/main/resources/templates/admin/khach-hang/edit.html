@@ -77,9 +77,248 @@
                         </div>
                     </div>
 
+                    <hr class="my-4 text-muted border-1">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">Địa chỉ (có thể thêm nhiều) <span class="text-danger">*</span></h5>
+                        <button type="button" class="btn btn-outline-dark rounded-pill px-3 py-1 btn-sm"
+                            onclick="addAddress()">
+                            <i class="bi bi-plus-lg"></i> Thêm địa chỉ
+                        </button>
+                    </div>
+
+                    <div id="addressContainer">
+                        <div th:each="dc, stat : *{danhSachDiaChi}"
+                            class="address-item card bg-light-subtle border-1 rounded-4 p-3 mb-3 border-light position-relative">
+                            <div class="row g-3">
+                                <div class="col-12 d-flex justify-content-between align-items-center mb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" th:name="'defaultAddress'"
+                                            th:id="'defaultAddress' + ${stat.index}" th:checked="${dc.diaChiMacDinh}"
+                                            onchange="updateDefaultStatus(this)">
+                                        <label class="form-check-label ms-1" th:for="'defaultAddress' + ${stat.index}">
+                                            Đặt làm mặc định
+                                        </label>
+                                        <input type="hidden" th:field="*{danhSachDiaChi[__${stat.index}__].diaChiMacDinh}"
+                                            class="default-status-hidden">
+                                    </div>
+                                    <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3"
+                                        onclick="removeAddress(this)">
+                                        <i class="bi bi-trash"></i> Xóa
+                                    </button>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-medium text-muted">Tên người nhận *</label>
+                                    <input type="text" class="form-control form-control-sm rounded-4 border-1 bg-white py-2"
+                                        th:field="*{danhSachDiaChi[__${stat.index}__].tenNguoiNhan}"
+                                        placeholder="Họ và tên người nhận" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-medium text-muted">Số nhà / Đường</label>
+                                    <input type="text" class="form-control form-control-sm rounded-4 border-1 bg-white py-2"
+                                        th:field="*{danhSachDiaChi[__${stat.index}__].chiTiet}"
+                                        placeholder="Ví dụ: 12A Nguyễn Trãi">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-medium text-muted">Tỉnh/Thành</label>
+                                    <select class="form-select form-select-sm rounded-4 border-1 bg-white py-2 city-select"
+                                        th:field="*{danhSachDiaChi[__${stat.index}__].tinhThanhPho}">
+                                        <option value="">-- Chọn tỉnh/thành --</option>
+                                        <option th:if="${dc.tinhThanhPho != null}" th:value="${dc.tinhThanhPho}"
+                                            th:text="${dc.tinhThanhPho}" selected></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-medium text-muted">Quận/Huyện</label>
+                                    <select class="form-select form-select-sm rounded-4 border-1 bg-white py-2 district-select"
+                                        th:field="*{danhSachDiaChi[__${stat.index}__].quanHuyen}">
+                                        <option value="">-- Chọn quận/huyện --</option>
+                                        <option th:if="${dc.quanHuyen != null}" th:value="${dc.quanHuyen}"
+                                            th:text="${dc.quanHuyen}" selected></option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-medium text-muted">Phường/Xã</label>
+                                    <select class="form-select form-select-sm rounded-4 border-1 bg-white py-2 ward-select"
+                                        th:field="*{danhSachDiaChi[__${stat.index}__].xaPhuong}">
+                                        <option value="">-- Chọn phường/xã --</option>
+                                        <option th:if="${dc.xaPhuong != null}" th:value="${dc.xaPhuong}"
+                                            th:text="${dc.xaPhuong}" selected></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
+
+        <script th:inline="javascript">
+            let addressIndex = /*[[${khachHang.danhSachDiaChi.size()}]]*/ 0;
+
+            function addAddress() {
+                const container = document.getElementById('addressContainer');
+                const html = `
+                    <div class="address-item card bg-light-subtle border-1 rounded-4 p-3 mb-3 border-light position-relative">
+                        <div class="row g-3">
+                            <div class="col-12 d-flex justify-content-between align-items-center mb-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="defaultAddress" id="defaultAddress${addressIndex}" onchange="updateDefaultStatus(this)">
+                                    <label class="form-check-label ms-1" for="defaultAddress${addressIndex}">
+                                        Đặt làm mặc định
+                                    </label>
+                                    <input type="hidden" name="danhSachDiaChi[${addressIndex}].diaChiMacDinh" value="false" class="default-status-hidden">
+                                </div>
+                                <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="removeAddress(this)">
+                                    <i class="bi bi-trash"></i> Xóa
+                                </button>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-medium text-muted">Tên người nhận *</label>
+                                <input type="text" class="form-control form-control-sm rounded-4 border-1 bg-white py-2" name="danhSachDiaChi[${addressIndex}].tenNguoiNhan" placeholder="Họ và tên người nhận" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-medium text-muted">Số nhà / Đường</label>
+                                <input type="text" class="form-control form-control-sm rounded-4 border-1 bg-white py-2" name="danhSachDiaChi[${addressIndex}].chiTiet" placeholder="Ví dụ: 12A Nguyễn Trãi">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-medium text-muted">Tỉnh/Thành</label>
+                                <select class="form-select form-select-sm rounded-4 border-1 bg-white py-2 city-select" name="danhSachDiaChi[${addressIndex}].tinhThanhPho">
+                                    <option value="">-- Chọn tỉnh/thành --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-medium text-muted">Quận/Huyện</label>
+                                <select class="form-select form-select-sm rounded-4 border-1 bg-white py-2 district-select" name="danhSachDiaChi[${addressIndex}].quanHuyen">
+                                    <option value="">-- Chọn quận/huyện --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-medium text-muted">Phường/Xã</label>
+                                <select class="form-select form-select-sm rounded-4 border-1 bg-white py-2 ward-select" name="danhSachDiaChi[${addressIndex}].xaPhuong">
+                                    <option value="">-- Chọn phường/xã --</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+                fetchProvinces(); 
+                addressIndex++;
+            }
+
+            function removeAddress(btn) {
+                const item = btn.closest('.address-item');
+                if (document.querySelectorAll('.address-item').length > 1) {
+                    item.remove();
+                } else {
+                    alert('Khách hàng cần ít nhất một địa chỉ.');
+                }
+            }
+
+            function updateDefaultStatus(radio) {
+                document.querySelectorAll('.default-status-hidden').forEach(input => {
+                    input.value = "false";
+                });
+                const hiddenInput = radio.closest('.form-check').querySelector('.default-status-hidden');
+                hiddenInput.value = "true";
+            }
+
+            // === API TỈNH THÀNH ===
+            const PROVINCE_API = "https://provinces.open-api.vn/api/";
+
+            const fetchProvinces = async () => {
+                try {
+                    const response = await fetch(PROVINCE_API + "p/");
+                    const data = await response.json();
+                    document.querySelectorAll('.city-select').forEach(select => {
+                        const currentValue = select.value;
+                        let html = `<option value="">-- Chọn tỉnh/thành --</option>`;
+                        data.forEach(item => {
+                            const selected = (item.name === currentValue) ? 'selected' : '';
+                            html += `<option value="${item.name}" data-code="${item.code}" ${selected}>${item.name}</option>`;
+                        });
+                        select.innerHTML = html;
+                    });
+                } catch (error) {
+                    console.error("Lỗi khi tải tỉnh thành:", error);
+                }
+            };
+
+            const renderOptions = (selectElement, data, label, currentValue) => {
+                let html = `<option value="">-- ${label} --</option>`;
+                data.forEach(item => {
+                    const selected = (item.name === currentValue) ? 'selected' : '';
+                    html += `<option value="${item.name}" data-code="${item.code}" ${selected}>${item.name}</option>`;
+                });
+                selectElement.innerHTML = html;
+            };
+
+            document.addEventListener('change', async (e) => {
+                if (e.target.classList.contains('city-select')) {
+                    const citySelect = e.target;
+                    const row = citySelect.closest('.row');
+                    const districtSelect = row.querySelector('.district-select');
+                    const wardSelect = row.querySelector('.ward-select');
+                    const selectedOption = citySelect.options[citySelect.selectedIndex];
+                    const code = selectedOption.dataset.code;
+
+                    if (code) {
+                        try {
+                            const response = await fetch(`${PROVINCE_API}p/${code}?depth=2`);
+                            const data = await response.json();
+                            renderOptions(districtSelect, data.districts, "Chọn quận/huyện");
+                            wardSelect.innerHTML = '<option value="">-- Chọn phường/xã --</option>';
+                        } catch (error) {
+                            console.error("Lỗi khi tải quận huyện:", error);
+                        }
+                    }
+                }
+
+                if (e.target.classList.contains('district-select')) {
+                    const districtSelect = e.target;
+                    const row = districtSelect.closest('.row');
+                    const wardSelect = row.querySelector('.ward-select');
+                    const selectedOption = districtSelect.options[districtSelect.selectedIndex];
+                    const code = selectedOption.dataset.code;
+
+                    if (code) {
+                        try {
+                            const response = await fetch(`${PROVINCE_API}d/${code}?depth=2`);
+                            const data = await response.json();
+                            renderOptions(wardSelect, data.wards, "Chọn phường/xã");
+                        } catch (error) {
+                            console.error("Lỗi khi tải phường xã:", error);
+                        }
+                    }
+                }
+            });
+
+            document.addEventListener('DOMContentLoaded', async () => {
+                await fetchProvinces();
+                
+                const addressItems = document.querySelectorAll('.address-item');
+                for(let item of addressItems) {
+                    const citySelect = item.querySelector('.city-select');
+                    const districtSelect = item.querySelector('.district-select');
+                    const wardSelect = item.querySelector('.ward-select');
+                    
+                    const cityCode = citySelect.options[citySelect.selectedIndex]?.dataset.code;
+                    if(cityCode) {
+                        const distRes = await fetch(`${PROVINCE_API}p/${cityCode}?depth=2`);
+                        const distData = await distRes.json();
+                        renderOptions(districtSelect, distData.districts, "Chọn quận/huyện", districtSelect.value);
+                        
+                        const distCode = districtSelect.options[districtSelect.selectedIndex]?.dataset.code;
+                        if(distCode) {
+                            const wardRes = await fetch(`${PROVINCE_API}d/${distCode}?depth=2`);
+                            const wardData = await wardRes.json();
+                            renderOptions(wardSelect, wardData.wards, "Chọn phường/xã", wardSelect.value);
+                        }
+                    }
+                }
+            });
+        </script>
     </main>
 </body>
 
