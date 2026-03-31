@@ -27,8 +27,10 @@ public class KhachHangServiceImpl implements KhachHangService {
 
     @Override
     public java.util.List<KhachHang> filterKhachHang(String search, String gioiTinh, Boolean xoaMem) {
-        if (search != null && search.trim().isEmpty()) search = null;
-        if (gioiTinh != null && gioiTinh.trim().isEmpty()) gioiTinh = null;
+        if (search != null && search.trim().isEmpty())
+            search = null;
+        if (gioiTinh != null && gioiTinh.trim().isEmpty())
+            gioiTinh = null;
         return khachHangRepository.findByFilters(search, gioiTinh, xoaMem);
     }
 
@@ -41,46 +43,41 @@ public class KhachHangServiceImpl implements KhachHangService {
     @Transactional
     public KhachHang saveKhachHang(KhachHang khachHang) {
         if (khachHang.getId() != null) {
-            // Update mode: Merge with existing data
             KhachHang existing = khachHangRepository.findById(khachHang.getId())
                     .orElseThrow(() -> new RuntimeException("Khách hàng không tồn tại"));
-            
+
             existing.setTenDayDu(khachHang.getTenDayDu());
             existing.setEmail(khachHang.getEmail());
             existing.setSoDienThoai(khachHang.getSoDienThoai());
-            
-            // Safety check: chỉ cập nhật nếu form có gửi dữ liệu về giới tính/ngày sinh
+
             if (khachHang.getGioiTinh() != null && !khachHang.getGioiTinh().trim().isEmpty()) {
                 existing.setGioiTinh(khachHang.getGioiTinh());
             }
             if (khachHang.getNgaySinh() != null) {
                 existing.setNgaySinh(khachHang.getNgaySinh());
             }
-            
+
             existing.setNgaySuaCuoi(LocalDateTime.now());
-            existing.setNguoiSuaCuoi("Admin"); // Có thể lấy từ SecurityContext sau
-            
-            // Xử lý danh sách địa chỉ (clear and add for orphan removal to work properly)
+
             existing.getDanhSachDiaChi().clear();
             if (khachHang.getDanhSachDiaChi() != null) {
                 for (com.example.datn_shop_ecom.entity.DiaChi dc : khachHang.getDanhSachDiaChi()) {
                     dc.setKhachHang(existing);
                     dc.setNgayTao(LocalDateTime.now());
-                    if (dc.getDiaChiMacDinh() == null) dc.setDiaChiMacDinh(false);
+                    if (dc.getDiaChiMacDinh() == null)
+                        dc.setDiaChiMacDinh(false);
                     existing.getDanhSachDiaChi().add(dc);
                 }
             }
             return khachHangRepository.save(existing);
         } else {
-            // Create mode
             if (khachHang.getMaKhachHang() == null || khachHang.getMaKhachHang().isEmpty()) {
                 khachHang.setMaKhachHang(generateMaKhachHang());
             }
             if (khachHang.getNgayTao() == null) {
                 khachHang.setNgayTao(LocalDateTime.now());
             }
-            khachHang.setXoaMem(false); // Mặc định hoạt động
-
+            khachHang.setXoaMem(false);
             // === Tự động sinh mật khẩu (VD: 8 ký tự) ===
             String password = generateRandomPassword(8);
             khachHang.setMatKhau(password);
@@ -89,29 +86,27 @@ public class KhachHangServiceImpl implements KhachHangService {
                 khachHang.getDanhSachDiaChi().forEach(dc -> {
                     dc.setKhachHang(khachHang);
                     dc.setNgayTao(LocalDateTime.now());
-                    if (dc.getDiaChiMacDinh() == null) dc.setDiaChiMacDinh(false);
+                    if (dc.getDiaChiMacDinh() == null)
+                        dc.setDiaChiMacDinh(false);
                 });
             }
 
             KhachHang saved = khachHangRepository.save(khachHang);
 
-            // === Gửi Email (Bất đồng bộ sẽ tốt hơn nhưng làm đồng bộ để bạn dễ test) ===
             try {
                 String subject = "Tài khoản đăng nhập SevenStrike";
                 String body = String.format(
-                    "Chào mừng %s!\n\n" +
-                    "Tài khoản của bạn đã được tạo thành công.\n" +
-                    "Thông tin đăng nhập:\n" +
-                    "- Email: %s\n" +
-                    "- Mật khẩu: %s\n\n" +
-                    "Vui lòng đăng nhập và đổi mật khẩu để bảo mật tài khoản.\n" +
-                    "Trân trọng!",
-                    saved.getTenDayDu(), saved.getEmail(), password
-                );
+                        "Chào mừng %s!\n\n" +
+                                "Tài khoản của bạn đã được tạo thành công.\n" +
+                                "Thông tin đăng nhập:\n" +
+                                "- Email: %s\n" +
+                                "- Mật khẩu: %s\n\n" +
+                                "Vui lòng đăng nhập và đổi mật khẩu để bảo mật tài khoản.\n" +
+                                "Trân trọng!",
+                        saved.getTenDayDu(), saved.getEmail(), password);
                 emailService.sendEmail(saved.getEmail(), subject, body);
             } catch (Exception e) {
                 System.err.println("Lỗi gửi mail: " + e.getMessage());
-                // Không throw exception để tránh rollback giao dịch nếu chỉ lỗi gửi mail
             }
 
             return saved;
@@ -143,7 +138,7 @@ public class KhachHangServiceImpl implements KhachHangService {
     public void toggleStatus(Long id) {
         KhachHang khachHang = khachHangRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Khách hàng không tồn tại"));
-        
+
         khachHangRepository.updateStatus(id, !khachHang.getXoaMem());
     }
 
@@ -154,7 +149,6 @@ public class KhachHangServiceImpl implements KhachHangService {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet("Danh sách khách hàng");
 
-            // Header Style
             CellStyle headerStyle = workbook.createCellStyle();
             Font font = workbook.createFont();
             font.setBold(true);
@@ -162,8 +156,7 @@ public class KhachHangServiceImpl implements KhachHangService {
             headerStyle.setAlignment(HorizontalAlignment.CENTER);
             headerStyle.setBorderBottom(BorderStyle.THIN);
 
-            // Create Header
-            String[] columns = {"STT", "Mã KH", "Họ Tên", "Giới Tính", "SĐT", "Email", "Địa Chỉ", "Trạng Thái"};
+            String[] columns = { "STT", "Mã KH", "Họ Tên", "Giới Tính", "SĐT", "Email", "Địa Chỉ", "Trạng Thái" };
             Row headerRow = sheet.createRow(0);
             for (int i = 0; i < columns.length; i++) {
                 Cell cell = headerRow.createCell(i);
@@ -171,7 +164,6 @@ public class KhachHangServiceImpl implements KhachHangService {
                 cell.setCellStyle(headerStyle);
             }
 
-            // Data Rows
             int rowIndex = 1;
             for (int i = 0; i < list.size(); i++) {
                 KhachHang kh = list.get(i);
@@ -184,7 +176,6 @@ public class KhachHangServiceImpl implements KhachHangService {
                 row.createCell(4).setCellValue(kh.getSoDienThoai());
                 row.createCell(5).setCellValue(kh.getEmail());
 
-                // Địa chỉ mặc định
                 String diaChiStr = "-";
                 if (kh.getDanhSachDiaChi() != null && !kh.getDanhSachDiaChi().isEmpty()) {
                     DiaChi macDinh = kh.getDanhSachDiaChi().stream()
@@ -194,10 +185,10 @@ public class KhachHangServiceImpl implements KhachHangService {
                             + macDinh.getXaPhuong() + ", " + macDinh.getQuanHuyen() + ", " + macDinh.getTinhThanhPho();
                 }
                 row.createCell(6).setCellValue(diaChiStr);
-                row.createCell(7).setCellValue(kh.getXoaMem() != null && kh.getXoaMem() ? "Ngừng hoạt động" : "Hoạt động");
+                row.createCell(7)
+                        .setCellValue(kh.getXoaMem() != null && kh.getXoaMem() ? "Ngừng hoạt động" : "Hoạt động");
             }
 
-            // Auto-size columns
             for (int i = 0; i < columns.length; i++) {
                 sheet.autoSizeColumn(i);
             }

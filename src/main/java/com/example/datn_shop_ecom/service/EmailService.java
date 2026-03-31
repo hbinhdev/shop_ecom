@@ -16,7 +16,7 @@ public class EmailService {
         message.setTo(to);
         message.setSubject(subject);
         message.setText(body);
-        message.setFrom("SevenStrike <your-email@gmail.com>"); // Thay bằng email thật
+        message.setFrom("PEAKSNEAKER <[EMAIL_ADDRESS]>");
 
         mailSender.send(message);
     }
