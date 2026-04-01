@@ -3,16 +3,13 @@ package com.example.datn_shop_ecom.service.impl;
 import com.example.datn_shop_ecom.entity.KhachHang;
 import com.example.datn_shop_ecom.repository.KhachHangRepository;
 import com.example.datn_shop_ecom.service.KhachHangService;
+import com.example.datn_shop_ecom.util.ExcelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import com.example.datn_shop_ecom.entity.DiaChi;
 
@@ -32,6 +29,13 @@ public class KhachHangServiceImpl implements KhachHangService {
         if (gioiTinh != null && gioiTinh.trim().isEmpty())
             gioiTinh = null;
         return khachHangRepository.findByFilters(search, gioiTinh, xoaMem);
+    }
+
+    @Override
+    public org.springframework.data.domain.Page<KhachHang> filterKhachHangPage(String search, String gioiTinh, Boolean xoaMem, org.springframework.data.domain.Pageable pageable) {
+        if (search != null && search.trim().isEmpty()) search = null;
+        if (gioiTinh != null && gioiTinh.trim().isEmpty()) gioiTinh = null;
+        return khachHangRepository.findByFiltersPage(search, gioiTinh, xoaMem, pageable);
     }
 
     @Override
@@ -145,58 +149,26 @@ public class KhachHangServiceImpl implements KhachHangService {
     @Override
     public ByteArrayInputStream exportToExcel(String search, String gioiTinh, Boolean xoaMem) {
         List<KhachHang> list = filterKhachHang(search, gioiTinh, xoaMem);
+        String[] columns = { "STT", "Mã KH", "Họ Tên", "Giới Tính", "SĐT", "Email", "Địa Chỉ", "Trạng Thái" };
 
-        try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            Sheet sheet = workbook.createSheet("Danh sách khách hàng");
+        return ExcelUtil.exportToExcel("Danh sách khách hàng", columns, list, (row, kh) -> {
+            row.createCell(0).setCellValue(list.indexOf(kh) + 1);
+            row.createCell(1).setCellValue(kh.getMaKhachHang());
+            row.createCell(2).setCellValue(kh.getTenDayDu());
+            row.createCell(3).setCellValue(kh.getGioiTinh() != null ? kh.getGioiTinh() : "-");
+            row.createCell(4).setCellValue(kh.getSoDienThoai());
+            row.createCell(5).setCellValue(kh.getEmail());
 
-            CellStyle headerStyle = workbook.createCellStyle();
-            Font font = workbook.createFont();
-            font.setBold(true);
-            headerStyle.setFont(font);
-            headerStyle.setAlignment(HorizontalAlignment.CENTER);
-            headerStyle.setBorderBottom(BorderStyle.THIN);
-
-            String[] columns = { "STT", "Mã KH", "Họ Tên", "Giới Tính", "SĐT", "Email", "Địa Chỉ", "Trạng Thái" };
-            Row headerRow = sheet.createRow(0);
-            for (int i = 0; i < columns.length; i++) {
-                Cell cell = headerRow.createCell(i);
-                cell.setCellValue(columns[i]);
-                cell.setCellStyle(headerStyle);
+            String diaChiStr = "-";
+            if (kh.getDanhSachDiaChi() != null && !kh.getDanhSachDiaChi().isEmpty()) {
+                DiaChi macDinh = kh.getDanhSachDiaChi().stream()
+                        .filter(d -> d.getDiaChiMacDinh() != null && d.getDiaChiMacDinh())
+                        .findFirst().orElse(kh.getDanhSachDiaChi().get(0));
+                diaChiStr = (macDinh.getChiTiet() != null ? macDinh.getChiTiet() + ", " : "")
+                        + macDinh.getXaPhuong() + ", " + macDinh.getQuanHuyen() + ", " + macDinh.getTinhThanhPho();
             }
-
-            int rowIndex = 1;
-            for (int i = 0; i < list.size(); i++) {
-                KhachHang kh = list.get(i);
-                Row row = sheet.createRow(rowIndex++);
-
-                row.createCell(0).setCellValue(i + 1);
-                row.createCell(1).setCellValue(kh.getMaKhachHang());
-                row.createCell(2).setCellValue(kh.getTenDayDu());
-                row.createCell(3).setCellValue(kh.getGioiTinh() != null ? kh.getGioiTinh() : "-");
-                row.createCell(4).setCellValue(kh.getSoDienThoai());
-                row.createCell(5).setCellValue(kh.getEmail());
-
-                String diaChiStr = "-";
-                if (kh.getDanhSachDiaChi() != null && !kh.getDanhSachDiaChi().isEmpty()) {
-                    DiaChi macDinh = kh.getDanhSachDiaChi().stream()
-                            .filter(d -> d.getDiaChiMacDinh() != null && d.getDiaChiMacDinh())
-                            .findFirst().orElse(kh.getDanhSachDiaChi().get(0));
-                    diaChiStr = (macDinh.getChiTiet() != null ? macDinh.getChiTiet() + ", " : "")
-                            + macDinh.getXaPhuong() + ", " + macDinh.getQuanHuyen() + ", " + macDinh.getTinhThanhPho();
-                }
-                row.createCell(6).setCellValue(diaChiStr);
-                row.createCell(7)
-                        .setCellValue(kh.getXoaMem() != null && kh.getXoaMem() ? "Ngừng hoạt động" : "Hoạt động");
-            }
-
-            for (int i = 0; i < columns.length; i++) {
-                sheet.autoSizeColumn(i);
-            }
-
-            workbook.write(out);
-            return new ByteArrayInputStream(out.toByteArray());
-        } catch (IOException e) {
-            throw new RuntimeException("Lỗi khi xuất file Excel: " + e.getMessage());
-        }
+            row.createCell(6).setCellValue(diaChiStr);
+            row.createCell(7).setCellValue(kh.getXoaMem() != null && kh.getXoaMem() ? "Ngừng hoạt động" : "Hoạt động");
+        });
     }
 }

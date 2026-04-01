@@ -30,20 +30,24 @@ public class KhachHangController {
     public String index(Model model, 
                         @org.springframework.web.bind.annotation.RequestParam(required = false) String search,
                         @org.springframework.web.bind.annotation.RequestParam(required = false) String gioiTinh,
-                        @org.springframework.web.bind.annotation.RequestParam(required = false) Integer trangThai) {
+                        @org.springframework.web.bind.annotation.RequestParam(required = false) Integer trangThai,
+                        @org.springframework.web.bind.annotation.RequestParam(defaultValue = "0") int page) {
         
         Boolean xoaMem = null;
         if (trangThai != null) {
-            xoaMem = (trangThai == 0); // Giả sử 1: Hoạt động (xoaMem=false), 0: Ngừng (xoaMem=true)
-            // Sửa lại theo SQL: xoaMem=0 là hoạt động.
-            if (trangThai == 1) xoaMem = false; // Hoạt động
-            else if (trangThai == 0) xoaMem = true; // Ngừng hoạt động
+            if (trangThai == 1) xoaMem = false;
+            else if (trangThai == 0) xoaMem = true;
         }
 
-        model.addAttribute("khachHangs", khachHangService.filterKhachHang(search, gioiTinh, xoaMem));
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, 5);
+        org.springframework.data.domain.Page<KhachHang> khachHangPage = khachHangService.filterKhachHangPage(search, gioiTinh, xoaMem, pageable);
+
+        model.addAttribute("khachHangs", khachHangPage.getContent());
+        model.addAttribute("khachHangPage", khachHangPage);
         model.addAttribute("search", search);
         model.addAttribute("gioiTinh", gioiTinh);
         model.addAttribute("trangThai", trangThai);
+        model.addAttribute("currentPage", page);
         
         return "admin/khach-hang/index";
     }

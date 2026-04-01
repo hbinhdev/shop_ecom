@@ -19,6 +19,7 @@ public class VaiTro {
     @Column(nullable = false, length = 50)
     private String ma;
 
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String ten;
 
     @Column(name = "nguoi_tao", length = 50)
@@ -33,6 +34,7 @@ public class VaiTro {
     @Column(name = "ngay_sua_cuoi")
     private LocalDateTime ngaySuaCuoi;
 
+    @Builder.Default
     @Column(name = "xoa_mem")
     private Boolean xoaMem = false;
 }

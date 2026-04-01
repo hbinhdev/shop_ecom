@@ -24,16 +24,16 @@ public class NhanVien {
     @Column(name = "ma_nhan_vien", nullable = false, length = 50)
     private String maNhanVien;
 
-    @Column(name = "ten_day_du")
+    @Column(name = "ten_day_du", columnDefinition = "NVARCHAR(255)")
     private String tenDayDu;
 
     @Column(name = "ngay_sinh")
     private LocalDate ngaySinh;
 
-    @Column(name = "gioi_tinh")
+    @Column(name = "gioi_tinh", columnDefinition = "NVARCHAR(20)")
     private String gioiTinh;
 
-    @Column(name = "dia_chi", columnDefinition = "TEXT")
+    @Column(name = "dia_chi", columnDefinition = "NVARCHAR(MAX)")
     private String diaChi;
 
     @Column(name = "so_dien_thoai", length = 15)
@@ -45,16 +45,24 @@ public class NhanVien {
     @Column(length = 255)
     private String matKhau;
 
-    @Column(name = "xa_phuong")
+    @Column(name = "xa_phuong", columnDefinition = "NVARCHAR(255)")
     private String xaPhuong;
 
-    @Column(name = "quan_huyen")
+    @Column(name = "quan_huyen", columnDefinition = "NVARCHAR(255)")
     private String quanHuyen;
 
-    @Column(name = "tinh_thanh_pho")
+    @Column(name = "tinh_thanh_pho", columnDefinition = "NVARCHAR(255)")
     private String tinhThanhPho;
 
+    @Column(name = "trang_thai", columnDefinition = "NVARCHAR(50)")
     private String trangThai;
+    
+    @Builder.Default
+    @Column(name = "xoa_mem")
+    private Boolean xoaMem = false;
+
+    @Column(name = "anh", length = 255)
+    private String anh;
 
     @Column(name = "nguoi_tao", length = 50)
     private String nguoiTao;

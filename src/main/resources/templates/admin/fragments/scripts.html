@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- Common Scripts for Admin -->
+<div th:fragment="common_scripts">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- HTML5-QRCODE for CCCD Scanning -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+    <script th:inline="javascript">
+        // === Common Status Toggle ===
+        async function confirmToggle(checkbox, url, successMsg, errorMsg) {
+            const id = checkbox.getAttribute('data-id'), isChecked = checkbox.checked;
+            const result = await Swal.fire({
+                title: 'Xác nhận?', text: isChecked ? "Bạn có muốn kích hoạt lại?" : "Bạn có muốn ngừng hoạt động?",
+                icon: 'question', showCancelButton: true, confirmButtonText: 'Đồng ý', cancelButtonText: 'Hủy',
+                confirmButtonColor: '#2d3436', cancelButtonColor: '#636e72',
+            });
+            if (result.isConfirmed) {
+                try {
+                    const res = await fetch(`${url}/${id}`, { method: 'POST' });
+                    if (res.ok) {
+                        Swal.fire('Thành công!', successMsg || 'Cập nhật thành công.', 'success').then(() => location.reload());
+                    } else throw new Error();
+                } catch (e) {
+                    Swal.fire('Lỗi!', errorMsg || 'Không thể kết nối máy chủ.', 'error');
+                    checkbox.checked = !isChecked;
+                }
+            } else checkbox.checked = !isChecked;
+        }
+
+        // === API TỈNH THÀNH (Reusable) ===
+        const PROVINCE_API = "https://provinces.open-api.vn/api/";
+        async function fetchProvinces(citySelectSelector) {
+            try {
+                const response = await fetch(PROVINCE_API + "p/");
+                const data = await response.json();
+                const citySelect = document.querySelector(citySelectSelector);
+                let html = `<option value="">-- Chọn tỉnh/thành --</option>`;
+                data.forEach(item => {
+                    html += `<option value="${item.name}" data-code="${item.code}">${item.name}</option>`;
+                });
+                citySelect.innerHTML = html;
+            } catch (error) { console.error("Lỗi khi tải tỉnh thành:", error); }
+        }
+
+        async function loadDistricts(cityCode, districtSelectSelector) {
+            try {
+                const response = await fetch(`${PROVINCE_API}p/${cityCode}?depth=2`);
+                const data = await response.json();
+                const districtSelect = document.querySelector(districtSelectSelector);
+                let html = `<option value="">-- Chọn quận/huyện --</option>`;
+                data.districts.forEach(item => {
+                    html += `<option value="${item.name}" data-code="${item.code}">${item.name}</option>`;
+                });
+                districtSelect.innerHTML = html;
+            } catch (error) { console.error("Lỗi khi tải quận huyện:", error); }
+        }
+
+        async function loadWards(districtCode, wardSelectSelector) {
+            try {
+                const response = await fetch(`${PROVINCE_API}d/${districtCode}?depth=2`);
+                const data = await response.json();
+                const wardSelect = document.querySelector(wardSelectSelector);
+                let html = `<option value="">-- Chọn phường/xã --</option>`;
+                data.wards.forEach(item => {
+                    html += `<option value="${item.name}" data-code="${item.code}">${item.name}</option>`;
+                });
+                wardSelect.innerHTML = html;
+            } catch (error) { console.error("Lỗi khi tải phường xã:", error); }
+        }
+
+        async function initAddressSelects(citySel, distSel, wardSel, initialValues = {}) {
+            const cityEl = document.querySelector(citySel);
+            const distEl = document.querySelector(distSel);
+            const wardEl = document.querySelector(wardSel);
+
+            cityEl.addEventListener('change', async (e) => {
+                const code = e.target.options[e.target.selectedIndex]?.dataset?.code;
+                distEl.innerHTML = '<option value="">-- Chọn quận/huyện --</option>';
+                wardEl.innerHTML = '<option value="">-- Chọn phường/xã --</option>';
+                if (code) await loadDistricts(code, distSel);
+            });
+
+            distEl.addEventListener('change', async (e) => {
+                const code = e.target.options[e.target.selectedIndex]?.dataset?.code;
+                wardEl.innerHTML = '<option value="">-- Chọn phường/xã --</option>';
+                if (code) await loadWards(code, wardSel);
+            });
+
+            await fetchProvinces(citySel);
+
+            if (initialValues.city) {
+                const opt = Array.from(cityEl.options).find(o => o.value === initialValues.city);
+                if (opt) {
+                    cityEl.value = opt.value;
+                    await loadDistricts(opt.dataset.code, distSel);
+                    if (initialValues.district) {
+                        const optDist = Array.from(distEl.options).find(o => o.value === initialValues.district);
+                        if (optDist) {
+                            distEl.value = optDist.value;
+                            await loadWards(optDist.dataset.code, wardSel);
+                            if (initialValues.ward) {
+                                const optWard = Array.from(wardEl.options).find(o => o.value === initialValues.ward);
+                                if (optWard) wardEl.value = optWard.value;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // === CCCD QR Parser ===
+        function parseCCCD(qrString) {
+            // Format: CCCD_ID|Old_ID|FullName|DOB|Gender|Address|DateOfIssue
+            const parts = qrString.split('|');
+            if (parts.length < 6) return null;
+            return {
+                ma: parts[0],
+                hoTen: parts[2],
+                ngaySinh: parts[3], // Format: DDMMYYYY
+                gioiTinh: parts[4],
+                diaChi: parts[5]
+            };
+        }
+
+        function formatDOB(dobStr) {
+            if (!dobStr || dobStr.length !== 8) return "";
+            return `${dobStr.substring(4, 8)}-${dobStr.substring(2, 4)}-${dobStr.substring(0, 2)}`;
+        }
+
+        // === Image QR Scan ===
+        async function scanQRFromFile(file, onResult, onError) {
+            const html5QrCode = new Html5Qrcode("reader-file", { verbose: false });
+            try {
+                const qrText = await html5QrCode.scanFile(file, true);
+                onResult(qrText);
+            } catch (err) {
+                onError(err);
+            }
+        }
+
+        async function autoSelectAddress(addressStr, citySel, distSel, wardSel) {
+            if (!addressStr) return;
+            const parts = addressStr.split(',').map(p => p.trim());
+            if (parts.length < 3) return;
+
+            const provinceName = parts[parts.length - 1].toLowerCase();
+            const districtName = parts[parts.length - 2].toLowerCase();
+            const wardName = parts[parts.length - 3].toLowerCase();
+
+            const cityEl = document.querySelector(citySel);
+            
+            // Wait for cities to load if empty
+            let retryCity = 0;
+            const cityInterval = setInterval(() => {
+                if (cityEl.options.length > 1 || retryCity > 10) {
+                    clearInterval(cityInterval);
+                    processAutoSelect();
+                }
+                retryCity++;
+            }, 200);
+
+            function processAutoSelect() {
+                // Helper to find option by text
+                const findOption = (el, searchText) => {
+                    return Array.from(el.options).find(opt => {
+                        const text = opt.text.toLowerCase();
+                        return text.includes(searchText) || searchText.includes(text);
+                    });
+                };
+
+                // 1. Select Province
+                let foundCity = findOption(cityEl, provinceName);
+                if (foundCity) {
+                    cityEl.value = foundCity.value;
+                    cityEl.dispatchEvent(new Event('change'));
+
+                    // 2. Wait and Select District
+                    let retryDist = 0;
+                    const distInterval = setInterval(() => {
+                        const distEl = document.querySelector(distSel);
+                        if (distEl.options.length > 1 || retryDist > 10) {
+                            clearInterval(distInterval);
+                            let foundDist = findOption(distEl, districtName);
+                            if (foundDist) {
+                                distEl.value = foundDist.value;
+                                distEl.dispatchEvent(new Event('change'));
+
+                                // 3. Wait and Select Ward
+                                let retryWard = 0;
+                                const wardInterval = setInterval(() => {
+                                    const wardEl = document.querySelector(wardSel);
+                                    if (wardEl.options.length > 1 || retryWard > 10) {
+                                        clearInterval(wardInterval);
+                                        let foundWard = findOption(wardEl, wardName);
+                                        if (foundWard) wardEl.value = foundWard.value;
+                                    }
+                                    retryWard++;
+                                }, 200);
+                            }
+                        }
+                        retryDist++;
+                    }, 200);
+                }
+            }
+        }
+    </script>
+</div>
+</html>
