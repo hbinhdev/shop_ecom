@@ -16,6 +16,10 @@ public class LichSuHoaDon {
     @JoinColumn(name = "id_hoa_don")
     private HoaDon hoaDon;
 
+    @ManyToOne
+    @JoinColumn(name = "id_trang_thai_moi")
+    private TrangThaiHoaDon trangThaiMoi;
+
     private String loaiHoaDon;
     @Column(columnDefinition = "TEXT")
     private String moTa;

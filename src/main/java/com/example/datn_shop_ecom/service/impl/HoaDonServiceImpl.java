@@ -32,7 +32,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     private com.example.datn_shop_ecom.repository.LichSuThanhToanRepository lichSuThanhToanRepository;
 
     @Override
-    public Page<HoaDon> searchInvoices(String maHoaDon, String tenKhachHang, Integer trangThai, Integer loaiHoaDon, LocalDate ngayTao, Pageable pageable) {
+    public List<HoaDon> findAllMatchingInvoices(String maHoaDon, String tenKhachHang, Integer trangThai, Integer loaiHoaDon, LocalDate ngayBatDau, LocalDate ngayKetThuc) {
         return hoaDonRepository.findAll((Specification<HoaDon>) (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -49,13 +49,57 @@ public class HoaDonServiceImpl implements HoaDonService {
             }
 
             if (loaiHoaDon != null) {
-                predicates.add(criteriaBuilder.equal(root.get("loaiHoaDon"), loaiHoaDon.toString()));
+                String loaiStr = loaiHoaDon == 1 ? "TAI_CUA_HANG" : (loaiHoaDon == 2 ? "GIAO_HANG" : loaiHoaDon.toString());
+                predicates.add(criteriaBuilder.or(
+                        criteriaBuilder.equal(root.get("loaiHoaDon"), loaiStr),
+                        criteriaBuilder.equal(root.get("loaiHoaDon"), loaiHoaDon.toString())
+                ));
             }
 
-            if (ngayTao != null) {
-                LocalDateTime startOfDay = ngayTao.atStartOfDay();
-                LocalDateTime endOfDay = ngayTao.atTime(LocalTime.MAX);
-                predicates.add(criteriaBuilder.between(root.get("ngayTao"), startOfDay, endOfDay));
+            if (ngayBatDau != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("ngayTao"), ngayBatDau.atStartOfDay()));
+            }
+
+            if (ngayKetThuc != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("ngayTao"), ngayKetThuc.atTime(LocalTime.MAX)));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        });
+    }
+
+    @Override
+    public Page<HoaDon> searchInvoices(String maHoaDon, String tenKhachHang, Integer trangThai, Integer loaiHoaDon, LocalDate ngayBatDau, LocalDate ngayKetThuc, Pageable pageable) {
+        return hoaDonRepository.findAll((Specification<HoaDon>) (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (maHoaDon != null && !maHoaDon.isEmpty()) {
+                predicates.add(criteriaBuilder.like(root.get("maHoaDon"), "%" + maHoaDon + "%"));
+            }
+
+            if (tenKhachHang != null && !tenKhachHang.isEmpty()) {
+                predicates.add(criteriaBuilder.like(root.get("khachHang").get("tenDayDu"), "%" + tenKhachHang + "%"));
+            }
+
+            if (trangThai != null) {
+
+                predicates.add(criteriaBuilder.equal(root.get("trangThaiHoaDon"), trangThai.toString()));
+            }
+
+            if (loaiHoaDon != null) {
+                String loaiStr = loaiHoaDon == 1 ? "TAI_CUA_HANG" : (loaiHoaDon == 2 ? "GIAO_HANG" : loaiHoaDon.toString());
+                predicates.add(criteriaBuilder.or(
+                    criteriaBuilder.equal(root.get("loaiHoaDon"), loaiStr),
+                    criteriaBuilder.equal(root.get("loaiHoaDon"), loaiHoaDon.toString())
+                ));
+            }
+
+            if (ngayBatDau != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("ngayTao"), ngayBatDau.atStartOfDay()));
+            }
+
+            if (ngayKetThuc != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("ngayTao"), ngayKetThuc.atTime(LocalTime.MAX)));
             }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

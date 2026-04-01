@@ -40,8 +40,8 @@ public class HoaDon {
     @Column(name = "tong_tien")
     private BigDecimal tongTien;
 
-    @Column(name = "tong_tien_sau_khi_giam")
-    private BigDecimal tongTienSauKhiGiam;
+    @Column(name = "tong_tien_after_giam")
+    private BigDecimal tongTienAfterGiam;
 
     @Column(name = "tien_van_chuyen")
     private BigDecimal tienVanChuyen;
@@ -54,6 +54,13 @@ public class HoaDon {
 
     @Column(name = "trang_thai_hoa_don")
     private String trangThaiHoaDon;
+
+    @ManyToOne
+    @JoinColumn(name = "id_trang_thai_moi")
+    private TrangThaiHoaDon trangThaiMoi;
+
+    @Column(name = "id_phieu_giam_gia")
+    private Long idPhieuGiamGia;
 
     @Column(name = "ten_nguoi_nhan")
     private String tenNguoiNhan;
