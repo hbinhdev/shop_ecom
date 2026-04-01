@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
+
+<head>
+    <title>Quản lý Phiếu giảm giá - SevenStrike</title>
+</head>
+
+<body>
+    <main>
+        <div class="container-fluid p-0">
+            <div class="mb-4">
+                <h4 class="fw-bold section-title">Bán hàng / <span class="fw-bold">Phiếu giảm giá</span></h4>
+            </div>
+
+            <!-- Filter Section -->
+            <form th:action="@{/admin/phieu-giam-gia}" method="GET" id="filterForm">
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <div class="row g-3 align-items-center mb-4">
+                            <div class="col-md-4">
+                                <div class="search-box position-relative">
+                                    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                    <input type="text" name="search" th:value="${search}"
+                                        class="form-control rounded-pill ps-5 py-2 border-1"
+                                        placeholder="Tìm theo Mã, Tên..." onchange="this.form.submit()">
+                                </div>
+                            </div>
+                            <div class="col-md-8 d-flex justify-content-end gap-2">
+                                <a th:href="@{/admin/phieu-giam-gia}" class="btn btn-dark rounded-pill px-4 py-2">
+                                    <i class="bi bi-arrow-counterclockwise"></i> Đặt lại
+                                </a>
+                                <a th:href="@{/admin/phieu-giam-gia/export(search=${search}, startDate=${startDate}, endDate=${endDate}, trangThai=${trangThai})}" 
+                                   class="btn btn-outline-dark rounded-pill px-4 py-2">
+                                    <i class="bi bi-file-earmark-excel"></i> Xuất Excel
+                                </a>
+                                <a th:href="@{/admin/phieu-giam-gia/create}" class="btn btn-add-customer rounded-pill px-4 py-2 text-white border-0" style="background-color: #2d3436;">
+                                    <i class="bi bi-plus-lg"></i> Thêm phiếu
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-3">
+                                <label class="small fw-bold">Từ ngày:</label>
+                                <input type="date" name="startDate" th:value="${startDate}" class="form-control rounded-pill border-1" onchange="this.form.submit()">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="small fw-bold">Đến ngày:</label>
+                                <input type="date" name="endDate" th:value="${endDate}" class="form-control rounded-pill border-1" onchange="this.form.submit()">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="small fw-bold">Trạng thái:</label>
+                                <select name="trangThai" class="form-select rounded-pill border-1" onchange="this.form.submit()">
+                                    <option value="" th:selected="${trangThai == null}">Tất cả</option>
+                                    <option value="1" th:selected="${trangThai == 1}">Hoạt động</option>
+                                    <option value="0" th:selected="${trangThai == 0}">Ngừng hoạt động</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Table -->
+            <div class="custom-table overflow-hidden shadow-sm rounded-4 bg-white">
+                <table class="table align-middle">
+                    <thead class="bg-light text-muted small text-uppercase fw-bold">
+                        <tr>
+                            <th class="ps-4 py-3">STT</th>
+                            <th class="py-3">Mã phiếu</th>
+                            <th class="py-3">Tên phiếu</th>
+                            <th class="py-3">Loại</th>
+                            <th class="py-3 text-center">Số lượng</th>
+                            <th class="py-3">Bắt đầu</th>
+                            <th class="py-3">Kết thúc</th>
+                            <th class="py-3">Trạng thái</th>
+                            <th class="text-center py-3 pe-4">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="pgg, stat : ${listPGG}" class="border-bottom">
+                            <td class="ps-4 fw-medium text-muted" th:text="${stat.index + 1 + (pggPage.number * pggPage.size)}">1</td>
+                            <td class="small fw-semibold text-dark" th:text="${pgg.maPhieu}">PGG00001</td>
+                            <td>
+                                <div class="fw-semibold text-dark mb-0 lh-sm" th:text="${pgg.tenPhieu}">Tên phiếu</div>
+                            </td>
+                            <td>
+                                <span th:if="${pgg.loai == 1}" class="badge rounded-pill bg-info-subtle text-info px-3 py-2 fw-medium border border-info-subtle">Cá nhân</span>
+                                <span th:if="${pgg.loai != 1}" class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Công khai</span>
+                            </td>
+                            <td class="text-center fw-medium" th:text="${pgg.soLuong}">100</td>
+                            <td class="small text-muted" th:text="${#temporals.format(pgg.ngayBatDau, 'dd/MM/yyyy')}">01/01/2024</td>
+                            <td class="small text-muted" th:text="${#temporals.format(pgg.ngayKetThuc, 'dd/MM/yyyy')}">31/12/2024</td>
+                            <td>
+                                <span th:if="${pgg.trangThai == 1}" class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Đang hoạt động</span>
+                                <span th:if="${pgg.trangThai != 1}" class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng hoạt động</span>
+                            </td>
+                            <td class="text-center pe-4">
+                                <div class="d-flex justify-content-center align-items-center gap-2">
+                                    <div class="form-check form-switch p-0 m-0">
+                                        <input class="form-check-input ms-0 custom-switch pgg-status-toggle" type="checkbox"
+                                               th:checked="${pgg.trangThai == 1}" th:data-id="${pgg.id}"
+                                               onchange="confirmTogglePGG(this)" style="cursor: pointer;">
+                                    </div>
+                                    <a th:href="@{/admin/phieu-giam-gia/edit/{id}(id=${pgg.id})}" 
+                                       class="btn-icon rounded-circle shadow-xs">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(listPGG)}">
+                            <td colspan="9" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                                Không tìm thấy phiếu giảm giá phù hợp.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- Pagination Footer -->
+                <div th:replace="~{admin/fragments/pagination :: pagination(${pggPage}, '/admin/phieu-giam-gia', 'search=${search}, startDate=${startDate}, endDate=${endDate}, trangThai=${trangThai}')}"></div>
+            </div>
+        </div>
+
+        <div th:replace="~{admin/fragments/scripts :: common_scripts}"></div>
+        <script th:inline="javascript">
+            async function confirmTogglePGG(checkbox) {
+                await confirmToggle(checkbox, '/admin/phieu-giam-gia/toggle-status', 'Đã cập nhật trạng thái phiếu giảm giá!', 'Lỗi cập nhật.');
+            }
+        </script>
+    </main>
+</body>
+
+</html>

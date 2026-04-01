@@ -222,51 +222,49 @@
 
         .custom-table table {
             border-collapse: separate;
-            border-spacing: 0 10px;
+            border-spacing: 0;
+            width: 100%;
         }
 
         .custom-table thead th {
-            background-color: transparent !important;
+            background-color: #f8f9fa !important;
             color: var(--text-muted);
             font-weight: 600;
             font-size: 0.85rem;
             padding: 15px 20px;
-            border: none;
+            border-bottom: 1px solid #edf2f7;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .custom-table tbody tr {
             background: white;
-            transition: all 0.2s ease;
+            transition: all 0.1s ease;
             cursor: pointer;
         }
 
         .custom-table tbody tr:hover {
-            background-color: #fafbfc;
-            transform: scale(1.002);
+            background-color: #f1f3f5;
         }
 
-        .custom-table tbody td {
-            padding: 15px 20px;
-            border-top: 1px solid var(--border-color);
-            border-bottom: 1px solid var(--border-color);
-            font-size: 0.9rem;
-            color: #4b5563;
-        }
-
-        .custom-table tbody td:first-child {
-            border-left: 1px solid var(--border-color);
+        .custom-table tbody tr:hover td:first-child {
             border-top-left-radius: 12px;
             border-bottom-left-radius: 12px;
         }
 
-        .custom-table tbody td:last-child {
-            border-right: 1px solid var(--border-color);
+        .custom-table tbody tr:hover td:last-child {
             border-top-right-radius: 12px;
             border-bottom-right-radius: 12px;
         }
 
+        .custom-table tbody td {
+            padding: 16px 20px;
+            font-size: 0.9rem;
+            color: #4b5563;
+            border-bottom: 1px solid #f1f2f6;
+        }
+
+        /* Essential UI Classes */
         .bg-active-custom {
             background-color: #fff0f3 !important;
             color: #ff3c5f !important;
@@ -284,8 +282,8 @@
         }
 
         .custom-switch {
-            width: 3.5em;
-            height: 1.8em;
+            width: 3.2em;
+            height: 1.6em;
             cursor: pointer;
         }
 
@@ -295,18 +293,36 @@
         }
 
         .btn-icon {
-            width: 36px;
-            height: 36px;
+            width: 34px;
+            height: 34px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
             border: 1px solid #f1f2f6;
+            color: var(--text-dark);
+            background-color: white;
+            border-radius: 50%;
         }
 
-        .btn-icon:hover {
-            background-color: #f5f6fa;
-            border-color: #dfe6e9;
+        .btn-icon:hover, .action-circle:hover {
+            background-color: #e9ecef;
+            color: var(--text-dark) !important;
+            border-color: #dee2e6;
+        }
+
+        .action-circle {
+            width: 32px;
+            height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: #f8f9fa;
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: all 0.2s;
+            border: 1px solid #dee2e6;
         }
 
         /* Glassmorphism Card (if needed) */

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
+
+<head>
+    <title>Thêm mới Phiếu giảm giá - SevenStrike</title>
+</head>
+
+<body>
+    <main>
+        <div class="container-fluid p-0">
+            <div class="mb-4 d-flex justify-content-between align-items-center">
+                <h4 class="fw-bold section-title mb-0">Thêm mới Phiếu giảm giá</h4>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a th:href="@{/admin/phieu-giam-gia}" class="text-decoration-none">Danh sách</a></li>
+                        <li class="breadcrumb-item active">Thêm mới</li>
+                    </ol>
+                </nav>
+            </div>
+
+            <form th:action="@{/admin/phieu-giam-gia/save}" th:object="${pgg}" method="POST" id="pggForm">
+                <div class="card shadow-sm border-0 rounded-4 p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+                        <h4 class="fw-bold section-title mb-0">THÔNG TIN PHIẾU GIẢM GIÁ</h4>
+                        <div class="d-flex gap-2">
+                            <a th:href="@{/admin/phieu-giam-gia}" class="btn btn-outline-dark rounded-pill px-4">
+                                <i class="bi bi-x-lg mr-1"></i> Hủy
+                            </a>
+                            <button type="submit" class="btn btn-dark rounded-pill px-4 shadow-sm" style="background: linear-gradient(90deg, #2d3436 0%, #000000 100%);">
+                                <i class="bi bi-check-lg mr-1"></i> Tạo mới
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row g-4">
+                        <!-- Form fields remain the same -->
+                        <div class="col-12">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Mã phiếu giảm giá <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control rounded-pill py-2 px-3 bg-light border-0" 
+                                   placeholder="Mã sẽ được hệ thống tự động tạo..." readonly>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Tên giảm giá</label>
+                            <input type="text" class="form-control rounded-pill py-2 px-3 border-1 bg-light-subtle"
+                                th:field="*{tenPhieu}" placeholder="Nhập tên phiếu giảm giá..." required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted d-block">Hình thức giảm</label>
+                            <div class="d-flex gap-4 py-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" th:field="*{hinhThucGiam}" value="VNĐ" id="radioVnd" required>
+                                    <label class="form-check-label" for="radioVnd">VNĐ</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" th:field="*{hinhThucGiam}" value="%" id="radioPercent">
+                                    <label class="form-check-label" for="radioPercent">%</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Giá trị giảm</label>
+                            <input type="number" class="form-control rounded-pill py-2 px-3 border-1 bg-light-subtle"
+                                th:field="*{giaTriGiam}" min="0" placeholder="0" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Số lượng sử dụng</label>
+                            <input type="number" class="form-control rounded-pill py-2 px-3 border-1 bg-light-subtle"
+                                th:field="*{soLuong}" min="1" placeholder="0" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Hóa đơn tối thiểu</label>
+                            <input type="number" class="form-control rounded-pill py-2 px-3 border-1 bg-light-subtle"
+                                th:field="*{giaTriToiThieu}" min="0" placeholder="0">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Ngày bắt đầu</label>
+                            <input type="date" class="form-control rounded-pill py-2 px-3 border-1 bg-light-subtle"
+                                th:field="*{ngayBatDau}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Ngày kết thúc</label>
+                            <input type="date" class="form-control rounded-pill py-2 px-3 border-1 bg-light-subtle"
+                                th:field="*{ngayKetThuc}" required>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-bold small text-uppercase text-muted d-block">Loại phiếu</label>
+                            <div class="d-flex gap-4 py-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" th:field="*{loai}" value="0" id="radioPublic" required>
+                                    <label class="form-check-label" for="radioPublic">Công khai</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" th:field="*{loai}" value="1" id="radioPrivate">
+                                    <label class="form-check-label" for="radioPrivate">Cá nhân</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Mô tả phiếu giảm giá</label>
+                            <textarea class="form-control rounded-4 py-3 px-3 border-1 bg-light-subtle"
+                                th:field="*{moTa}" rows="4" placeholder="Nhập ghi chú hoặc điều kiện áp dụng phiếu..."></textarea>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+
+</html>

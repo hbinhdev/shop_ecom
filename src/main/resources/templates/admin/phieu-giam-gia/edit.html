@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
+
+<head>
+    <title>Cập nhật Phiếu giảm giá - SevenStrike</title>
+</head>
+
+<body>
+    <main>
+        <div class="container-fluid p-0">
+            <div class="mb-4">
+                <h4 class="fw-bold section-title">Bán hàng / <span class="fw-bold">Cập nhật Phiếu giảm giá</span></h4>
+            </div>
+
+            <form th:action="@{/admin/phieu-giam-gia/save}" th:object="${pgg}" method="POST" id="pggForm">
+                <!-- Cac truong an de giu du lieu cu -->
+                <input type="hidden" th:field="*{id}">
+                <input type="hidden" th:field="*{ngayTao}">
+                <input type="hidden" th:field="*{nguoiTao}">
+
+                <div class="card shadow-sm border-0 rounded-4 p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
+                        <h4 class="fw-bold section-title mb-0">THÔNG TIN PHIẾU GIẢM GIÁ</h4>
+                        <div class="d-flex gap-2">
+                            <a th:href="@{/admin/phieu-giam-gia}" class="btn btn-outline-dark rounded-pill px-4">
+                                <i class="bi bi-x-lg mr-1"></i> Hủy
+                            </a>
+                            <button type="submit" class="btn btn-dark rounded-pill px-4 shadow-sm" style="background: linear-gradient(90deg, #2d3436 0%, #000000 100%);">
+                                <i class="bi bi-save mr-1"></i> Lưu thay đổi
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row g-4">
+                        <!-- Ma Phieu -->
+                        <div class="col-12">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Mã phiếu giảm giá <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control rounded-pill py-2 px-3 bg-light border-0" 
+                                   th:field="*{maPhieu}" readonly>
+                        </div>
+
+                        <!-- Ten Phieu -->
+                        <div class="col-12">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Tên giảm giá</label>
+                            <input type="text" class="form-control rounded-pill py-2 px-3 border-1 bg-light-subtle"
+                                th:field="*{tenPhieu}" placeholder="Nhập tên phiếu giảm giá..." required>
+                        </div>
+
+                        <!-- Hinh thuc & Gia tri -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted d-block">Hình thức giảm</label>
+                            <div class="d-flex gap-4 py-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" th:field="*{hinhThucGiam}" value="VNĐ" id="radioVnd" required>
+                                    <label class="form-check-label" for="radioVnd">VNĐ</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" th:field="*{hinhThucGiam}" value="%" id="radioPercent">
+                                    <label class="form-check-label" for="radioPercent">%</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Giá trị giảm</label>
+                            <input type="number" class="form-control rounded-pill py-2 px-3 border-1 bg-light-subtle"
+                                th:field="*{giaTriGiam}" min="0" required>
+                        </div>
+
+                        <!-- So luong & Hoa don toi thieu -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Số lượng sử dụng</label>
+                            <input type="number" class="form-control rounded-pill py-2 px-3 border-1 bg-light-subtle"
+                                th:field="*{soLuong}" min="0" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Hóa đơn tối thiểu</label>
+                            <input type="number" class="form-control rounded-pill py-2 px-3 border-1 bg-light-subtle"
+                                th:field="*{giaTriToiThieu}" min="0">
+                        </div>
+
+                        <!-- Ngay bat dau & Ngay ket thuc -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Ngày bắt đầu</label>
+                            <input type="date" class="form-control rounded-pill py-2 px-3 border-1 bg-light-subtle"
+                                th:name="ngayBatDau"
+                                th:value="${pgg.ngayBatDau != null ? #temporals.format(pgg.ngayBatDau, 'yyyy-MM-dd') : ''}"
+                                required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Ngày kết thúc</label>
+                            <input type="date" class="form-control rounded-pill py-2 px-3 border-1 bg-light-subtle"
+                                th:name="ngayKetThuc"
+                                th:value="${pgg.ngayKetThuc != null ? #temporals.format(pgg.ngayKetThuc, 'yyyy-MM-dd') : ''}"
+                                required>
+                        </div>
+
+                        <!-- Loai phieu & Trang thai -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted d-block">Loại phiếu</label>
+                            <div class="d-flex gap-4 py-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="loai" value="0" id="radioPublic" 
+                                           th:checked="${pgg.loai == 0}" required>
+                                    <label class="form-check-label" for="radioPublic">Công khai</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="loai" value="1" id="radioPrivate"
+                                           th:checked="${pgg.loai == 1}">
+                                    <label class="form-check-label" for="radioPrivate">Cá nhân</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Trạng thái</label>
+                            <select class="form-select rounded-pill py-2 px-3 border-1 bg-light-subtle" th:field="*{trangThai}">
+                                <option value="1">Đang hoạt động</option>
+                                <option value="0">Ngừng hoạt động</option>
+                            </select>
+                        </div>
+
+                        <!-- Mo ta -->
+                        <div class="col-12">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Mô tả phiếu giảm giá</label>
+                            <textarea class="form-control rounded-4 py-3 px-3 border-1 bg-light-subtle"
+                                th:field="*{moTa}" rows="4" placeholder="Nhập ghi chú hoặc điều kiện áp dụng phiếu..."></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-top">
+                        <p class="text-muted small mb-0">Ngày tạo: <span th:text="${#temporals.format(pgg.ngayTao, 'dd/MM/yyyy HH:mm')}"></span> Bởi: <span th:text="${pgg.nguoiTao}"></span></p>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div th:replace="~{admin/fragments/scripts :: common_scripts}"></div>
+        <script th:inline="javascript">
+            async function confirmSoftDelete() {
+                const id = /*[[${pgg.id}]]*/ null;
+                const result = await Swal.fire({
+                    title: 'Xóa phiếu?', text: 'Dữ liệu sẽ được ẩn khỏi hệ thống.',
+                    icon: 'warning', showCancelButton: true, confirmButtonText: 'Đồng ý', cancelButtonText: 'Hủy'
+                });
+                if (result.isConfirmed) {
+                    try {
+                        const res = await fetch(`/admin/phieu-giam-gia/soft-delete/${id}`, { method: 'POST' });
+                        if (res.ok) {
+                            Swal.fire('Thành công!', 'Đã xóa phiếu giảm giá.', 'success').then(() => location.href = '/admin/phieu-giam-gia');
+                        } else throw new Error();
+                    } catch (e) {
+                         Swal.fire('Lỗi!', 'Không thể thực hiện.', 'error');
+                    }
+                }
+            }
+        </script>
+    </main>
+</body>
+
+</html>

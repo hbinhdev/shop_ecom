@@ -69,28 +69,30 @@
             </form>
 
             <!-- Table Section -->
-            <div class="custom-table overflow-hidden">
+            <div class="custom-table overflow-hidden shadow-sm rounded-4 bg-white">
                 <table class="table align-middle">
-                    <thead>
+                    <thead class="bg-light text-muted small text-uppercase fw-bold">
                         <tr>
-                            <th>STT</th>
-                            <th>Mã khách hàng</th>
-                            <th>Họ tên</th>
-                            <th>SĐT</th>
-                            <th>Email</th>
-                            <th>Địa chỉ</th>
-                            <th>Trạng thái</th>
-                            <th class="text-center">Thao tác</th>
+                            <th class="ps-4 py-3">STT</th>
+                            <th class="py-3">Mã khách hàng</th>
+                            <th class="py-3">Họ tên</th>
+                            <th class="py-3">SĐT</th>
+                            <th class="py-3">Email</th>
+                            <th class="py-3">Địa chỉ</th>
+                            <th class="py-3">Trạng thái</th>
+                            <th class="text-center py-3 pe-4">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="kh, stat : ${khachHangs}">
-                            <td class="ps-4 fw-medium text-muted" th:text="${stat.index + 1}">1</td>
-                            <td class="fw-bold text-dark" th:text="${kh.maKhachHang}">KH00001</td>
-                            <td class="fw-semibold" th:text="${kh.tenDayDu}">Nguyễn Văn A</td>
-                            <td th:text="${kh.soDienThoai}">0911111111</td>
-                            <td class="text-muted" th:text="${kh.email}">kha.a@gmail.com</td>
-                            <td class="text-muted text-truncate" style="max-width: 250px;">
+                        <tr th:each="kh, stat : ${khachHangs}" class="border-bottom">
+                            <td class="ps-4 fw-medium text-muted" th:text="${stat.index + 1 + (khachHangPage.number * khachHangPage.size)}">1</td>
+                            <td class="small fw-semibold text-dark" th:text="${kh.maKhachHang}">KH00001</td>
+                            <td>
+                                <div class="fw-semibold text-dark mb-0 lh-sm" th:text="${kh.tenDayDu}">Nguyễn Văn A</div>
+                            </td>
+                            <td class="small text-muted" th:text="${kh.soDienThoai}">0911111111</td>
+                            <td class="small text-muted" th:text="${kh.email}">kha.a@gmail.com</td>
+                            <td class="small text-muted text-truncate" style="max-width: 250px;">
                                 <th:block th:each="dc : ${kh.danhSachDiaChi}">
                                     <span th:if="${dc.diaChiMacDinh}"
                                         th:text="${(dc.chiTiet != null ? dc.chiTiet + ', ' : '') + dc.xaPhuong + ', ' + dc.quanHuyen + ', ' + dc.tinhThanhPho}">
@@ -103,52 +105,40 @@
                                 <span th:if="${#lists.isEmpty(kh.danhSachDiaChi)}">-</span>
                             </td>
                             <td>
-                                <span th:if="${!kh.xoaMem}" class="badge rounded-pill bg-active-custom px-3 py-2">Hoạt
-                                    động</span>
-                                <span th:if="${kh.xoaMem}"
-                                    class="badge rounded-pill bg-inactive-custom px-3 py-2 text-dark">Ngừng hoạt
-                                    động</span>
+                                <span th:if="${!kh.xoaMem}" class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Hoạt động</span>
+                                <span th:if="${kh.xoaMem}" class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng hoạt động</span>
                             </td>
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center align-items-center gap-2">
                                     <div class="form-check form-switch p-0 m-0">
                                         <input class="form-check-input ms-0 custom-switch status-toggle" type="checkbox"
                                             th:checked="${!kh.xoaMem}" th:data-id="${kh.id}"
-                                            onchange="confirmToggle(this)">
+                                            onchange="confirmToggleStatus(this)" style="cursor: pointer;">
                                     </div>
-                                    <button class="btn btn-icon btn-light rounded-circle"><i
-                                            class="bi bi-geo-alt"></i></button>
-                                    <a th:href="@{/admin/khach-hang/edit/{id}(id=${kh.id})}" class="btn btn-icon btn-light rounded-circle">
+                                    <a th:href="@{/admin/khach-hang/edit/{id}(id=${kh.id})}" 
+                                       class="btn-icon rounded-circle shadow-xs">
                                         <i class="bi bi-eye"></i>
                                     </a>
                                 </div>
                             </td>
                         </tr>
+                        <tr th:if="${#lists.isEmpty(khachHangs)}">
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                                Không tìm thấy khách hàng phù hợp.
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
+                <!-- Pagination Footer -->
+                <div th:replace="~{admin/fragments/pagination :: pagination(${khachHangPage}, '/admin/khach-hang', 'search=${search}, gioiTinh=${gioiTinh}, trangThai=${trangThai}')}"></div>
             </div>
         </div>
-        <!-- SweetAlert2 Toggle Script  -->
+        <!-- Status Toggle and Common Scripts -->
+        <div th:replace="~{admin/fragments/scripts :: common_scripts}"></div>
         <script th:inline="javascript">
-            async function confirmToggle(checkbox) {
-                const id = checkbox.getAttribute('data-id'), isChecked = checkbox.checked;
-                const msg = isChecked ? "Bạn có muốn kích hoạt lại khách hàng?" : "Bạn có muốn ngừng hoạt động khách hàng?";
-
-                const result = await Swal.fire({
-                    title: 'Xác nhận?', text: msg, icon: 'question',
-                    showCancelButton: true, confirmButtonText: 'Đồng ý', cancelButtonText: 'Hủy',
-                    confirmButtonColor: '#2d3436', cancelButtonColor: '#636e72',
-                });
-
-                if (result.isConfirmed) {
-                    try {
-                        const res = await fetch(`/admin/khach-hang/toggle-status/${id}`, { method: 'POST' });
-                        if (res.ok) location.reload(); else throw new Error();
-                    } catch (e) {
-                        Swal.fire('Lỗi!', 'Không thể kết nối máy chủ.', 'error');
-                        checkbox.checked = !isChecked;
-                    }
-                } else checkbox.checked = !isChecked;
+            async function confirmToggleStatus(checkbox) {
+                await confirmToggle(checkbox, '/admin/khach-hang/toggle-status', 'Đã cập nhật trạng thái khách hàng!', 'Lỗi khi cập nhật trạng thái.');
             }
         </script>
     </main>

@@ -10,6 +10,17 @@ import java.util.Optional;
 
 @Repository
 public interface KhachHangRepository extends JpaRepository<KhachHang, Long> {
+    @Query("SELECT k FROM KhachHang k " + // Removed LEFT JOIN FETCH for pagination compatibility
+           "WHERE (:search IS NULL OR k.maKhachHang LIKE %:search% " +
+           "OR k.tenDayDu LIKE %:search% " +
+           "OR k.email LIKE %:search% OR k.soDienThoai LIKE %:search%) " +
+           "AND (:gioiTinh IS NULL OR k.gioiTinh = :gioiTinh) " +
+           "AND (:xoaMem IS NULL OR k.xoaMem = :xoaMem)")
+    org.springframework.data.domain.Page<KhachHang> findByFiltersPage(@Param("search") String search, 
+                                                                    @Param("gioiTinh") String gioiTinh, 
+                                                                    @Param("xoaMem") Boolean xoaMem,
+                                                                    org.springframework.data.domain.Pageable pageable);
+
     @Query("SELECT k FROM KhachHang k LEFT JOIN FETCH k.danhSachDiaChi " +
            "WHERE (:search IS NULL OR k.maKhachHang LIKE %:search% " +
            "OR k.tenDayDu LIKE %:search% " +

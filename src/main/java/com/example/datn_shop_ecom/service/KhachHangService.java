@@ -4,6 +4,7 @@ import com.example.datn_shop_ecom.entity.KhachHang;
 
 public interface KhachHangService {
     java.util.List<KhachHang> filterKhachHang(String search, String gioiTinh, Boolean xoaMem);
+    org.springframework.data.domain.Page<KhachHang> filterKhachHangPage(String search, String gioiTinh, Boolean xoaMem, org.springframework.data.domain.Pageable pageable);
     java.util.List<KhachHang> getAllKhachHangs();
     KhachHang saveKhachHang(KhachHang khachHang);
     KhachHang findById(Long id);
