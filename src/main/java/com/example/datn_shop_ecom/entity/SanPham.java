@@ -18,7 +18,12 @@ public class SanPham {
     private String moTa;
     private String nguoiTao;
     private LocalDateTime ngayTao;
-    private String nguoiSuaCuoi;
+    @Column(name = "ngay_sua_cuoi")
     private LocalDateTime ngaySuaCuoi;
+
+    @Column(name = "xoa_mem")
     private Boolean xoaMem;
+
+    @OneToMany(mappedBy = "sanPham")
+    private java.util.List<HinhAnh> danhSachHinhAnh;
 }

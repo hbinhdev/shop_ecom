@@ -3,83 +3,563 @@
 
 <head>
     <title th:fragment="title">Quản lý hóa đơn - Bagi Store</title>
+    <style>
+        /* Card Styles */
+        .card {
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+        }
+
+        .card-header {
+            background: transparent;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 20px 25px;
+            font-weight: 700;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-header i {
+            color: #d47d32;
+            font-size: 1.2rem;
+        }
+
+        /* Filter Form */
+        .form-label {
+            font-weight: 500;
+            color: #666;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .form-control, .form-select {
+            border-radius: 10px;
+            padding: 10px 15px;
+            border: 1px solid #e0e0e0;
+            font-size: 0.95rem;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #d47d32;
+            box-shadow: 0 0 0 3px rgba(212, 125, 50, 0.1);
+        }
+
+        /* Buttons */
+        .btn-reset {
+            background-color: #34495e;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-reset:hover {
+            background-color: #2c3e50;
+            transform: translateY(-2px);
+        }
+
+        .btn-excel {
+            background-color: #f8f9fa;
+            color: #333;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-excel:hover {
+            background-color: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        /* Status Tabs */
+        .status-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .status-tab {
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            color: #666;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .status-tab:hover {
+            background-color: #f8f9fa;
+        }
+
+        .status-tab.active {
+            background: linear-gradient(90deg, #d47d32 0%, #eb984e 100%);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(212, 125, 50, 0.3);
+        }
+
+        /* Table Styles */
+        .table thead th {
+            background-color: #f8f9fa;
+            color: #666;
+            font-weight: 600;
+            text-transform: none;
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 0.9rem;
+        }
+
+        .table tbody td {
+            padding: 15px 20px;
+            vertical-align: middle;
+            border-bottom: 1px solid #f9f9f9;
+            color: #444;
+            font-size: 0.95rem;
+        }
+
+        /* Status Badges - Matching the image */
+        .badge-status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            display: inline-block;
+        }
+
+        .status-completed {
+            background-color: #e6f7ef;
+            color: #27ae60;
+        }
+
+        .status-shipping {
+            background-color: #eaf2ff;
+            color: #3498db;
+        }
+
+        .status-pending {
+            background-color: #fff8e6;
+            color: #f39c12;
+        }
+
+        .status-cancelled {
+            background-color: #ffeef0;
+            color: #e74c3c;
+        }
+
+        .type-pill {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            background-color: #f1f2f6;
+            color: #4b5563;
+        }
+
+        .type-pill.delivery {
+            background-color: #fff0f3;
+            color: #ff3c5f;
+        }
+
+        /* Action Buttons */
+        .action-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: white;
+            border: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .action-circle:hover {
+            background-color: #f8f9fa;
+            color: #d47d32;
+            transform: rotate(15deg);
+        }
+
+        .page-title {
+            font-weight: 800;
+            font-size: 1.8rem;
+            color: #2d3436;
+        }
+
+        .list-header-icon {
+            width: 40px;
+            height: 40px;
+            background: #ffeef0;
+            color: #ff3c5f;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+    </style>
 </head>
 
 <body>
     <div th:fragment="main_content">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="page-title">Quản lý hóa đơn</h2>
-            <div class="page-subtitle">Tổng số hóa đơn: <span class="fw-bold"
-                    th:text="${hoaDonPage.totalElements}"></span></div>
-        </div>
+        <style>
+            :root {
+                --primary-gradient: linear-gradient(135deg, #ff3c5f 0%, #db0b2b 100%);
+                --bg-light: #f8f9fc;
+            }
 
-        <!-- Filter Section -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <i class="bi bi-funnel-fill me-2"></i>Bộ Lọc Tìm Kiếm
+            .main-content-wrapper {
+                background-color: var(--bg-light);
+                min-height: 100vh;
+                padding: 20px;
+            }
+
+            .page-header {
+                margin-bottom: 25px;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #2d3436;
+            }
+
+            /* Card Styling */
+            .custom-card {
+                background: white;
+                border: none;
+                border-radius: 12px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+                margin-bottom: 24px;
+                padding: 25px;
+            }
+
+            .filter-label {
+                font-size: 0.85rem;
+                color: #636e72;
+                margin-bottom: 8px;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            }
+
+            .input-group-custom {
+                position: relative;
+            }
+
+            .input-group-custom input, .input-group-custom select {
+                width: 100%;
+                padding: 10px 15px;
+                border: 1px solid #dfe6e9;
+                border-radius: 10px;
+                font-size: 0.9rem;
+                color: #2d3436;
+                transition: all 0.3s;
+                background-color: white;
+            }
+
+            .input-group-custom input:focus {
+                border-color: #ff3c5f;
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(255, 60, 95, 0.1);
+            }
+
+            /* Buttons */
+            .btn-group-filter {
+                display: flex;
+                justify-content: flex-end;
+                gap: 12px;
+                margin-top: 20px;
+            }
+
+            .btn-dark-ghost {
+                background: #34495e;
+                color: white;
+                border: none;
+                padding: 10px 20px;
+                border-radius: 10px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                transition: all 0.3s;
+            }
+
+            .btn-dark-ghost:hover {
+                background: #2c3e50;
+                transform: translateY(-1px);
+            }
+
+            .btn-excel-main {
+                background: #d47d32;
+                color: white;
+                border: none;
+                padding: 10px 25px;
+                border-radius: 50px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                box-shadow: 0 4px 12px rgba(212, 125, 50, 0.2);
+                transition: all 0.3s;
+            }
+
+            .btn-excel-main:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 15px rgba(212, 125, 50, 0.3);
+                color: white;
+            }
+
+            .btn-search-main {
+                background: #d47d32;
+                color: white;
+                border: none;
+                padding: 10px 25px;
+                border-radius: 10px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            /* Status Tabs */
+            .status-tab-container {
+                display: flex;
+                gap: 12px;
+                margin-bottom: 25px;
+                overflow-x: auto;
+                padding: 5px 0;
+            }
+
+            .status-pill {
+                padding: 8px 20px;
+                background: white;
+                border: 1px solid #dfe6e9;
+                border-radius: 50px;
+                color: #636e72;
+                font-size: 0.85rem;
+                font-weight: 600;
+                text-decoration: none;
+                transition: all 0.3s;
+                white-space: nowrap;
+            }
+
+            .status-pill:hover {
+                background: #f8f9fa;
+                color: #2d3436;
+            }
+
+            .status-pill.active {
+                background: var(--primary-gradient);
+                color: white;
+                border: none;
+                box-shadow: 0 4px 12px rgba(255, 60, 95, 0.3);
+            }
+
+            /* Table Customization */
+            .invoice-table {
+                width: 100%;
+                border-collapse: separate;
+                border-spacing: 0;
+            }
+
+            .invoice-table thead th {
+                background: #fdfdfd;
+                padding: 15px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: #636e72;
+                border-bottom: 1px solid #f1f2f6;
+                text-align: left;
+            }
+
+            .invoice-table tbody td {
+                padding: 15px;
+                font-size: 0.9rem;
+                color: #2d3436;
+                border-bottom: 1px solid #f8f9fc;
+                vertical-align: middle;
+            }
+
+            /* Badges */
+            .badge-custom {
+                padding: 6px 16px;
+                border-radius: 50px;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .badge-complete { background: #e6f7ee; color: #00b894; }
+            .badge-pending { background: #fff9e6; color: #f1c40f; }
+            .badge-shipping { background: #eaf2ff; color: #0984e3; }
+            .badge-cancel { background: #ffeef0; color: #ff7675; }
+
+            .type-label {
+                padding: 6px 16px;
+                border-radius: 12px;
+                background: #f1f2f6;
+                color: #636e72;
+                font-size: 0.8rem;
+                font-weight: 600;
+            }
+
+            .type-label.delivery { background: #fff0f3; color: #ff3c5f; }
+
+            .action-btn-view {
+                width: 34px;
+                height: 34px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: white;
+                border: 1px solid #dfe6e9;
+                color: #2d3436;
+                text-decoration: none;
+                transition: all 0.2s;
+            }
+
+            .action-btn-view:hover {
+                background: #f8f9fa;
+                color: #ff3c5f;
+            }
+
+            .list-icon-bg {
+                width: 36px;
+                height: 36px;
+                background: #fff0f3;
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #ff3c5f;
+            }
+        </style>
+
+        <div class="main-content-wrapper">
+            <div class="page-header">
+                <h2 class="page-title">Quản lý hóa đơn</h2>
             </div>
-            <div class="card-body p-4">
+
+            <!-- Filter Section -->
+            <div class="custom-card">
+                <div class="d-flex align-items-center gap-2 mb-4">
+                    <i class="bi bi-funnel" style="font-size: 1.1rem; color: #636e72;"></i>
+                    <span style="font-weight: 600; color: #2d3436;">Bộ lọc</span>
+                </div>
+                
                 <form th:action="@{/admin/hoa-don}" method="get" id="filterForm">
                     <div class="row g-4">
                         <div class="col-md-3">
-                            <label class="form-label">Mã đơn hàng</label>
-                            <input type="text" name="maHoaDon" th:value="${maHoaDon}" class="form-control shadow-none"
-                                placeholder="Nhập mã đơn hàng..." onchange="this.form.submit()">
+                            <label class="filter-label">Mã hóa đơn</label>
+                            <div class="input-group-custom">
+                                <input type="text" name="maHoaDon" th:value="${maHoaDon}" placeholder="Nhập mã hóa đơn">
+                            </div>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">Khách hàng</label>
-                            <input type="text" name="tenKhachHang" th:value="${tenKhachHang}"
-                                class="form-control shadow-none" placeholder="Tên khách hàng..."
-                                onchange="this.form.submit()">
+                            <label class="filter-label">Ngày bắt đầu</label>
+                            <div class="input-group-custom">
+                                <input type="date" name="ngayBatDau" th:value="${ngayBatDau}">
+                            </div>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">Trạng thái đơn hàng</label>
-                            <select name="trangThai" class="form-select shadow-none" onchange="this.form.submit()">
-                                <option value="">Tất cả trạng thái</option>
-                                <option value="1" th:selected="${trangThai == 1}">Chờ giao hàng</option>
-                                <option value="2" th:selected="${trangThai == 2}">Đang giao</option>
-                                <option value="3" th:selected="${trangThai == 3}">Hoàn thành</option>
-                                <option value="4" th:selected="${trangThai == 4}">Đã hủy</option>
-                            </select>
+                            <label class="filter-label">Ngày kết thúc</label>
+                            <div class="input-group-custom">
+                                <input type="date" name="ngayKetThuc" th:value="${ngayKetThuc}">
+                            </div>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label">Loại đơn hàng</label>
-                            <select name="loaiHoaDon" class="form-select shadow-none" onchange="this.form.submit()">
-                                <option value="">Tất cả loại</option>
-                                <option value="1" th:selected="${loaiHoaDon == 1}">Tại cửa hàng</option>
-                                <option value="2" th:selected="${loaiHoaDon == 2}">Giao hàng</option>
-                            </select>
+                            <label class="filter-label">Loại đơn</label>
+                            <div class="input-group-custom">
+                                <select name="loaiHoaDon" onchange="this.form.submit()">
+                                    <option value="">Tất cả</option>
+                                    <option value="1" th:selected="${loaiHoaDon == 1}">Tại quầy</option>
+                                    <option value="2" th:selected="${loaiHoaDon == 2}">Giao hàng</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Ngày tạo</label>
-                            <input type="date" name="ngayTao" th:value="${ngayTao}" class="form-control shadow-none"
-                                onchange="this.form.submit()">
-                        </div>
-                        <div class="col-md-9 d-flex align-items-end justify-content-end">
-                            <button type="button" onclick="window.location.href='/admin/hoa-don'"
-                                class="btn-reset shadow-sm">
-                                <i class="bi bi-arrow-repeat"></i> Đặt lại bộ lọc
-                            </button>
-                        </div>
+                    </div>
+
+                    <div class="btn-group-filter">
+                        <button type="button" onclick="window.location.href='/admin/hoa-don'" class="btn-dark-ghost">
+                            <i class="bi bi-arrow-clockwise"></i> Đặt lại bộ lọc
+                        </button>
+                        <button type="button" class="btn-excel-main" onclick="exportToExcel()">
+                            <i class="bi bi-file-earmark-excel"></i> Xuất Excel
+                        </button>
                     </div>
                 </form>
             </div>
-        </div>
 
-        <!-- Table Section -->
-        <div class="card overflow-hidden">
-            <div class="card-body p-0">
+            <!-- List Section -->
+            <div class="custom-card">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                    <div class="list-icon-bg">
+                        <i class="bi bi-file-earmark-text"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight: 700; color: #2d3436;">Danh sách hóa đơn</div>
+                        <small style="color: #b2bec3;">Lọc nhanh theo trạng thái</small>
+                    </div>
+                </div>
+
+                <div class="status-tab-container">
+                    <a th:href="@{/admin/hoa-don(trangThai='')}" class="status-pill"
+                        th:classappend="${trangThai == null or trangThai == ''} ? 'active'">Tất cả</a>
+                    <a th:href="@{/admin/hoa-don(trangThai='1')}" class="status-pill"
+                        th:classappend="${trangThai == 1} ? 'active'">Chờ xác nhận</a>
+                    <a th:href="@{/admin/hoa-don(trangThai='2')}" class="status-pill"
+                        th:classappend="${trangThai == 2} ? 'active'">Chờ giao hàng</a>
+                    <a th:href="@{/admin/hoa-don(trangThai='3')}" class="status-pill"
+                        th:classappend="${trangThai == 3} ? 'active'">Vận chuyển</a>
+                    <a th:href="@{/admin/hoa-don(trangThai='4')}" class="status-pill"
+                        th:classappend="${trangThai == 4} ? 'active'">Đã giao hàng</a>
+                    <a th:href="@{/admin/hoa-don(trangThai='5')}" class="status-pill"
+                        th:classappend="${trangThai == 5} ? 'active'">Hoàn thành</a>
+                    <a th:href="@{/admin/hoa-don(trangThai='6')}" class="status-pill"
+                        th:classappend="${trangThai == 6} ? 'active'">Đã hủy</a>
+                    <a th:href="@{/admin/hoa-don(trangThai='7')}" class="status-pill"
+                        th:classappend="${trangThai == 7} ? 'active'">Yêu cầu hủy</a>
+                    <a th:href="@{/admin/hoa-don(trangThai='8')}" class="status-pill"
+                        th:classappend="${trangThai == 8} ? 'active'">Cần hoàn phí</a>
+                </div>
+
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0">
+                    <table class="invoice-table">
                         <thead>
                             <tr>
                                 <th>STT</th>
-                                <th>Mã đơn hàng</th>
+                                <th>Mã hóa đơn</th>
                                 <th>Tên nhân viên</th>
                                 <th>Tên khách hàng</th>
                                 <th>Ngày tạo</th>
                                 <th>Tổng tiền</th>
-                                <th>Loại hóa đơn</th>
+                                <th>Loại đơn</th>
+                                <th>SĐT khách hàng</th>
                                 <th>Trạng thái</th>
                                 <th>Hành động</th>
                             </tr>
@@ -87,68 +567,102 @@
                         <tbody>
                             <tr th:each="hd, iter : ${hoaDonPage.content}">
                                 <td th:text="${iter.count + (hoaDonPage.number * hoaDonPage.size)}"></td>
-                                <td class="fw-bold text-dark" th:text="${hd.maHoaDon}"></td>
+                                <td style="font-weight: 600;" th:text="${hd.maHoaDon}"></td>
                                 <td th:text="${hd.nhanVien != null ? hd.nhanVien.tenDayDu : 'N/A'}"></td>
                                 <td th:text="${hd.khachHang != null ? hd.khachHang.tenDayDu : 'Khách lẻ'}"></td>
-                                <td th:text="${#temporals.format(hd.ngayTao, 'HH:mm dd/MM/yyyy')}"></td>
-                                <td class="text-price"
-                                    th:text="${#numbers.formatDecimal(hd.tongTienSauKhiGiam, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                <td th:text="${#temporals.format(hd.ngayTao, 'yyyy-MM-dd')}"></td>
+                                <td style="font-weight: 600;" th:text="${#numbers.formatDecimal(hd.tongTienAfterGiam, 0, 'COMMA', 0, 'POINT')} + 'đ'"></td>
+                                <td>
+                                    <span th:if="${hd.loaiHoaDon == '1' or hd.loaiHoaDon == 'TAI_CUA_HANG'}" class="type-label">Tại quầy</span>
+                                    <span th:if="${hd.loaiHoaDon == '2' or hd.loaiHoaDon == 'GIAO_HANG'}" class="type-label delivery">Giao hàng</span>
+                                </td>
+                                <td th:text="${hd.soDienThoaiNguoiNhan != null ? hd.soDienThoaiNguoiNhan : '0000000000'}"></td>
+                                <td>
+                                    <span th:if="${hd.trangThaiHoaDon == '1' or hd.trangThaiHoaDon == 'CHO_XAC_NHAN'}" class="badge-custom badge-pending">Chờ xác nhận</span>
+                                    <span th:if="${hd.trangThaiHoaDon == '2' or hd.trangThaiHoaDon == 'DA_XAC_NHAN'}" class="badge-custom badge-shipping">Xác nhận</span>
+                                    <span th:if="${hd.trangThaiHoaDon == '3' or hd.trangThaiHoaDon == 'DANG_GIAO'}" class="badge-custom badge-shipping">Đang giao</span>
+                                    <span th:if="${hd.trangThaiHoaDon == '4' or hd.trangThaiHoaDon == 'HOAN_THANH'}" class="badge-custom badge-complete">Hoàn thành</span>
+                                    <span th:if="${hd.trangThaiHoaDon == '5' or hd.trangThaiHoaDon == 'DA_HUY'}" class="badge-custom badge-cancel">Đã hủy</span>
                                 </td>
                                 <td>
-                                    <span th:if="${hd.loaiHoaDon == '1' or hd.loaiHoaDon == 'TAI_CUA_HANG'}"
-                                        class="type-pill">Tại cửa hàng</span>
-                                    <span th:if="${hd.loaiHoaDon == '2' or hd.loaiHoaDon == 'GIAO_HANG'}"
-                                        class="type-pill">Giao hàng</span>
-                                </td>
-                                <td>
-                                    <span th:if="${hd.trangThaiHoaDon == '1' or hd.trangThaiHoaDon == 'CHO_XAC_NHAN'}"
-                                        class="badge-status status-pending">Chờ xác nhận</span>
-                                    <span th:if="${hd.trangThaiHoaDon == '2' or hd.trangThaiHoaDon == 'DA_XAC_NHAN'}"
-                                        class="badge-status status-shipping">Xác nhận</span>
-                                    <span th:if="${hd.trangThaiHoaDon == '3' or hd.trangThaiHoaDon == 'DANG_GIAO'}"
-                                        class="badge-status status-shipping">Đang giao</span>
-                                    <span th:if="${hd.trangThaiHoaDon == '4' or hd.trangThaiHoaDon == 'HOAN_THANH'}"
-                                        class="badge-status status-completed">Hoàn thành</span>
-                                    <span th:if="${hd.trangThaiHoaDon == '5' or hd.trangThaiHoaDon == 'DA_HUY'}"
-                                        class="badge-status status-cancelled">Đã hủy</span>
-                                </td>
-                                <td>
-                                    <a th:href="@{/admin/hoa-don/{id}(id=${hd.id})}" class="action-circle">
+                                    <a th:href="@{/admin/hoa-don/{id}(id=${hd.id})}" class="action-btn-view">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                </td>
-                            </tr>
-                            <tr th:if="${hoaDonPage.isEmpty()}">
-                                <td colspan="9" class="text-center py-5 text-secondary">Không tìm thấy dữ liệu nào
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-            </div>
-            <!-- Pagination -->
-            <div class="card-footer bg-white border-0 py-3" th:if="${hoaDonPage.totalPages > 1}">
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-center mb-0">
-                        <li class="page-item" th:classappend="${hoaDonPage.first} ? 'disabled'">
-                            <a class="page-link shadow-none"
-                                th:href="@{/admin/hoa-don(page=${hoaDonPage.number - 1}, maHoaDon=${maHoaDon}, tenKhachHang=${tenKhachHang}, trangThai=${trangThai}, loaiHoaDon=${loaiHoaDon}, ngayTao=${ngayTao})}">Trước</a>
-                        </li>
-                        <li class="page-item" th:each="i : ${#numbers.sequence(0, hoaDonPage.totalPages - 1)}"
-                            th:classappend="${hoaDonPage.number == i} ? 'active'">
-                            <a class="page-link shadow-none"
-                                th:href="@{/admin/hoa-don(page=${i}, maHoaDon=${maHoaDon}, tenKhachHang=${tenKhachHang}, trangThai=${trangThai}, loaiHoaDon=${loaiHoaDon}, ngayTao=${ngayTao})}"
-                                th:text="${i + 1}"></a>
-                        </li>
-                        <li class="page-item" th:classappend="${hoaDonPage.last} ? 'disabled'">
-                            <a class="page-link shadow-none"
-                                th:href="@{/admin/hoa-don(page=${hoaDonPage.number + 1}, maHoaDon=${maHoaDon}, tenKhachHang=${tenKhachHang}, trangThai=${trangThai}, loaiHoaDon=${loaiHoaDon}, ngayTao=${ngayTao})}">Sau</a>
-                        </li>
-                    </ul>
-                </nav>
+
+                <!-- Pagination -->
+                <div class="d-flex justify-content-center mt-4" th:if="${hoaDonPage.totalPages > 1}">
+                    <nav>
+                        <ul class="pagination mb-0">
+                            <li class="page-item" th:classappend="${hoaDonPage.first} ? 'disabled'">
+                                <a class="page-link border-0" th:href="@{/admin/hoa-don(page=${hoaDonPage.number - 1}, maHoaDon=${maHoaDon}, trangThai=${trangThai})}">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item mx-1" th:each="i : ${#numbers.sequence(0, hoaDonPage.totalPages - 1)}">
+                                <a class="page-link rounded-pill border-0" 
+                                   th:style="${hoaDonPage.number == i} ? 'background: var(--primary-gradient); color: white;' : 'color: #636e72;'"
+                                   th:href="@{/admin/hoa-don(page=${i}, maHoaDon=${maHoaDon}, trangThai=${trangThai})}"
+                                   th:text="${i + 1}"></a>
+                            </li>
+                            <li class="page-item" th:classappend="${hoaDonPage.last} ? 'disabled'">
+                                <a class="page-link border-0" th:href="@{/admin/hoa-don(page=${hoaDonPage.number + 1}, maHoaDon=${maHoaDon}, trangThai=${trangThai})}">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
+
+        <!-- Auto Search Script -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const filterForm = document.getElementById('filterForm');
+                const inputs = filterForm.querySelectorAll('input, select');
+                let debounceTimer;
+
+                inputs.forEach(input => {
+                    input.addEventListener('change', function() {
+                        filterForm.submit();
+                    });
+
+                    // For text input, use debounce to avoid too many requests
+                    if (input.type === 'text') {
+                        input.addEventListener('input', function() {
+                            clearTimeout(debounceTimer);
+                            debounceTimer = setTimeout(() => {
+                                filterForm.submit();
+                            }, 500); // Wait 500ms after typing
+                        });
+                    }
+                });
+            });
+
+            function exportToExcel() {
+                const filterForm = document.getElementById('filterForm');
+                const formData = new FormData(filterForm);
+                const params = new URLSearchParams(formData);
+                
+                // Add current active status tab if any
+                const activeTab = document.querySelector('.status-btn.active');
+                if (activeTab && activeTab.getAttribute('onclick')) {
+                    const statusVal = activeTab.getAttribute('onclick').match(/'([^']+)'/);
+                    if (statusVal && statusVal[1]) {
+                        params.set('trangThai', statusVal[1]);
+                    }
+                }
+
+                window.location.href = '/admin/hoa-don/export?' + params.toString();
+            }
+        </script>
     </div>
+
 </body>
 
 </html>
