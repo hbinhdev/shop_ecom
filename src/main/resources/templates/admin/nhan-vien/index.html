@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
 
 <head>
-    <title>Quản lý nhân viên - SevenStrike</title>
+    <title>Quản lý nhân viên - PeakSneaker </title>
 </head>
 
 <body>
@@ -10,7 +10,8 @@
         <div class="container-fluid p-0">
             <!-- Breadcrumb / Header Title -->
             <div class="mb-4">
-                <h4 class="fw-bold section-title">Quản lý tài khoản / <span class="fw-bold section-title">Quản lý nhân viên</span></h4>
+                <h4 class="fw-bold section-title">Quản lý tài khoản / <span class="fw-bold section-title">Quản lý nhân
+                        viên</span></h4>
             </div>
 
             <!-- Filter Section -->
@@ -20,7 +21,8 @@
                         <div class="row g-3 align-items-center mb-4">
                             <div class="col-md-5">
                                 <div class="search-box position-relative">
-                                    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                    <i
+                                        class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
                                     <input type="text" name="search" th:value="${search}"
                                         class="form-control rounded-pill ps-5 py-2 border-1"
                                         placeholder="Tìm theo Mã, Tên, SĐT, Email..." onchange="this.form.submit()">
@@ -32,11 +34,12 @@
                                     <i class="bi bi-arrow-counterclockwise"></i> Đặt lại bộ lọc
                                 </a>
                                 <a th:href="@{/admin/nhan-vien/export(search=${search}, idVaiTro=${idVaiTro}, trangThai=${trangThai})}"
-                                    class="btn btn-outline-dark rounded-pill px-4 py-2 d-flex align-items-center gap-2">
+                                    class="btn btn-excel rounded-pill px-4 py-2 d-flex align-items-center gap-2">
                                     <i class="bi bi-file-earmark-excel"></i> Xuất Excel
                                 </a>
                                 <a th:href="@{/admin/nhan-vien/create}"
-                                    class="btn btn-add-customer rounded-pill px-4 py-2 d-flex align-items-center gap-2 text-white border-0" style="background-color: #2d3436;">
+                                    class="btn btn-add-customer rounded-pill px-4 py-2 d-flex align-items-center gap-2 text-white border-0"
+                                    style="background-color: #2d3436;">
                                     <i class="bi bi-plus-lg"></i> Thêm nhân viên
                                 </a>
                             </div>
@@ -85,35 +88,42 @@
                     </thead>
                     <tbody>
                         <tr th:each="nv, stat : ${nhanViens}" class="border-bottom">
-                            <td class="ps-4 fw-medium text-muted" th:text="${stat.index + 1 + (nhanVienPage.number * nhanVienPage.size)}">1</td>
+                            <td class="ps-4 fw-medium text-muted"
+                                th:text="${stat.index + 1 + (nhanVienPage.number * nhanVienPage.size)}">1</td>
                             <td>
                                 <!-- Avatar or Initials -->
-                                <div class="avatar-container d-flex align-items-center justify-content-center bg-light rounded-3 shadow-sm overflow-hidden" 
-                                     style="width: 45px; height: 45px; border: 1px solid #dee2e6;">
-                                    <img th:if="${nv.anh != null and nv.anh != ''}" 
-                                         th:src="@{'/uploads/nhan-vien/' + ${nv.anh}}" 
-                                         class="w-100 h-100" style="object-fit: cover;">
-                                    <span th:if="${nv.anh == null or nv.anh == ''}" 
-                                          class="fw-bold text-muted small" 
-                                          th:text="${#strings.substring(nv.tenDayDu, 0, 1) + #strings.substring(nv.tenDayDu, nv.tenDayDu.indexOf(' ') + 1, nv.tenDayDu.indexOf(' ') + 2)}">TV</span>
+                                <div class="avatar-container d-flex align-items-center justify-content-center bg-light rounded-3 shadow-sm overflow-hidden"
+                                    style="width: 45px; height: 45px; border: 1px solid #dee2e6;">
+                                    <img th:if="${nv.anh != null and nv.anh != ''}"
+                                        th:src="@{'/uploads/nhan-vien/' + ${nv.anh}}" class="w-100 h-100"
+                                        style="object-fit: cover;">
+                                    <span th:if="${nv.anh == null or nv.anh == ''}" class="fw-bold text-muted small"
+                                        th:text="${#strings.substring(nv.tenDayDu, 0, 1) + #strings.substring(nv.tenDayDu, nv.tenDayDu.indexOf(' ') + 1, nv.tenDayDu.indexOf(' ') + 2)}">TV</span>
                                 </div>
                             </td>
                             <td class="small fw-semibold text-dark" th:text="${nv.maNhanVien}">NV00001</td>
                             <td>
-                                <div class="fw-semibold text-dark mb-0 lh-sm" th:text="${nv.tenDayDu}">Nguyễn Đình Hải Anh</div>
+                                <div class="fw-semibold text-dark mb-0 lh-sm" th:text="${nv.tenDayDu}">Nguyễn Đình Hải
+                                    Anh</div>
                             </td>
                             <td class="small text-muted" th:text="${nv.soDienThoai}">0986828507</td>
                             <td class="small text-muted" th:text="${nv.email}">nv.a@gmail.com</td>
                             <td class="small text-muted" style="max-width: 200px;">
-                                <div class="text-truncate" th:text="${(nv.diaChi ?: '') + (nv.xaPhuong != null ? ', ' + nv.xaPhuong : '') + (nv.quanHuyen != null ? ', ' + nv.quanHuyen : '') + (nv.tinhThanhPho != null ? ', ' + nv.tinhThanhPho : '')}">Địa chỉ...</div>
+                                <div class="text-truncate"
+                                    th:text="${(nv.diaChi ?: '') + (nv.xaPhuong != null ? ', ' + nv.xaPhuong : '') + (nv.quanHuyen != null ? ', ' + nv.quanHuyen : '') + (nv.tinhThanhPho != null ? ', ' + nv.tinhThanhPho : '')}">
+                                    Địa chỉ...</div>
                             </td>
                             <td>
-                                <span class="badge rounded-pill bg-light text-dark border px-3 py-2 fw-medium" 
-                                      th:text="${nv.vaiTro != null ? nv.vaiTro.ten : '-'}">Quản lý</span>
+                                <span class="badge rounded-pill bg-light text-dark border px-3 py-2 fw-medium"
+                                    th:text="${nv.vaiTro != null ? nv.vaiTro.ten : '-'}">Quản lý</span>
                             </td>
                             <td>
-                                <span th:if="${!nv.xoaMem}" class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Hoạt động</span>
-                                <span th:if="${nv.xoaMem}" class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng hoạt động</span>
+                                <span th:if="${!nv.xoaMem}"
+                                    class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Hoạt
+                                    động</span>
+                                <span th:if="${nv.xoaMem}"
+                                    class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng
+                                    hoạt động</span>
                             </td>
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center align-items-center gap-2">
@@ -122,8 +132,8 @@
                                             th:checked="${!nv.xoaMem}" th:data-id="${nv.id}"
                                             onchange="confirmToggleStatus(this)" style="cursor: pointer;">
                                     </div>
-                                    <a th:href="@{/admin/nhan-vien/edit/{id}(id=${nv.id})}" 
-                                       class="btn-icon rounded-circle shadow-xs">
+                                    <a th:href="@{/admin/nhan-vien/edit/{id}(id=${nv.id})}"
+                                        class="btn-icon rounded-circle shadow-xs">
                                         <i class="bi bi-eye"></i>
                                     </a>
                                 </div>
@@ -138,7 +148,9 @@
                     </tbody>
                 </table>
                 <!-- Pagination Footer -->
-                <div th:replace="~{admin/fragments/pagination :: pagination(${nhanVienPage}, '/admin/nhan-vien', 'search=${search}, idVaiTro=${idVaiTro}, trangThai=${trangThai}')}"></div>
+                <div
+                    th:replace="~{admin/fragments/pagination :: pagination(${nhanVienPage}, '/admin/nhan-vien', 'search=${search}, idVaiTro=${idVaiTro}, trangThai=${trangThai}')}">
+                </div>
             </div>
         </div>
 

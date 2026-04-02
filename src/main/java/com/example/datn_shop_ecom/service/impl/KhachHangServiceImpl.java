@@ -32,9 +32,12 @@ public class KhachHangServiceImpl implements KhachHangService {
     }
 
     @Override
-    public org.springframework.data.domain.Page<KhachHang> filterKhachHangPage(String search, String gioiTinh, Boolean xoaMem, org.springframework.data.domain.Pageable pageable) {
-        if (search != null && search.trim().isEmpty()) search = null;
-        if (gioiTinh != null && gioiTinh.trim().isEmpty()) gioiTinh = null;
+    public org.springframework.data.domain.Page<KhachHang> filterKhachHangPage(String search, String gioiTinh,
+            Boolean xoaMem, org.springframework.data.domain.Pageable pageable) {
+        if (search != null && search.trim().isEmpty())
+            search = null;
+        if (gioiTinh != null && gioiTinh.trim().isEmpty())
+            gioiTinh = null;
         return khachHangRepository.findByFiltersPage(search, gioiTinh, xoaMem, pageable);
     }
 
@@ -98,7 +101,7 @@ public class KhachHangServiceImpl implements KhachHangService {
             KhachHang saved = khachHangRepository.save(khachHang);
 
             try {
-                String subject = "Tài khoản đăng nhập SevenStrike";
+                String subject = "Tài khoản đăng nhập PeakSneaker ";
                 String body = String.format(
                         "Chào mừng %s!\n\n" +
                                 "Tài khoản của bạn đã được tạo thành công.\n" +

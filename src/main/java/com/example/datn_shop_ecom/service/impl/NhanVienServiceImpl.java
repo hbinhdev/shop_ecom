@@ -25,13 +25,16 @@ public class NhanVienServiceImpl implements NhanVienService {
 
     @Override
     public List<NhanVien> filterNhanVien(String search, Long idVaiTro, Boolean xoaMem) {
-        if (search != null && search.trim().isEmpty()) search = null;
+        if (search != null && search.trim().isEmpty())
+            search = null;
         return nhanVienRepository.findByFilters(search, idVaiTro, xoaMem);
     }
 
     @Override
-    public org.springframework.data.domain.Page<NhanVien> filterNhanVienPage(String search, Long idVaiTro, Boolean xoaMem, org.springframework.data.domain.Pageable pageable) {
-        if (search != null && search.trim().isEmpty()) search = null;
+    public org.springframework.data.domain.Page<NhanVien> filterNhanVienPage(String search, Long idVaiTro,
+            Boolean xoaMem, org.springframework.data.domain.Pageable pageable) {
+        if (search != null && search.trim().isEmpty())
+            search = null;
         return nhanVienRepository.findByFiltersPage(search, idVaiTro, xoaMem, pageable);
     }
 
@@ -51,11 +54,12 @@ public class NhanVienServiceImpl implements NhanVienService {
                 if (!java.nio.file.Files.exists(uploadPath)) {
                     java.nio.file.Files.createDirectories(uploadPath);
                 }
-                
+
                 String fileName = java.util.UUID.randomUUID().toString() + "_" + anhFile.getOriginalFilename();
                 java.nio.file.Path filePath = uploadPath.resolve(fileName);
-                java.nio.file.Files.copy(anhFile.getInputStream(), filePath, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
-                
+                java.nio.file.Files.copy(anhFile.getInputStream(), filePath,
+                        java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+
                 nhanVien.setAnh(fileName);
             } catch (java.io.IOException e) {
                 System.err.println("Lỗi upload ảnh: " + e.getMessage());
@@ -65,7 +69,7 @@ public class NhanVienServiceImpl implements NhanVienService {
         if (nhanVien.getId() != null) {
             NhanVien existing = nhanVienRepository.findById(nhanVien.getId())
                     .orElseThrow(() -> new RuntimeException("Nhân viên không tồn tại"));
-            
+
             existing.setTenDayDu(nhanVien.getTenDayDu());
             existing.setEmail(nhanVien.getEmail());
             existing.setSoDienThoai(nhanVien.getSoDienThoai());
@@ -76,14 +80,14 @@ public class NhanVienServiceImpl implements NhanVienService {
             existing.setQuanHuyen(nhanVien.getQuanHuyen());
             existing.setTinhThanhPho(nhanVien.getTinhThanhPho());
             existing.setVaiTro(nhanVien.getVaiTro());
-            
+
             if (nhanVien.getAnh() != null) {
                 existing.setAnh(nhanVien.getAnh());
             }
-            
+
             existing.setNgaySuaCuoi(LocalDateTime.now());
             existing.setNguoiSuaCuoi("Admin");
-            
+
             return nhanVienRepository.save(existing);
         } else {
             if (nhanVien.getMaNhanVien() == null || nhanVien.getMaNhanVien().isEmpty()) {
@@ -93,24 +97,24 @@ public class NhanVienServiceImpl implements NhanVienService {
                 nhanVien.setNgayTao(LocalDateTime.now());
             }
             nhanVien.setXoaMem(false);
-            
+
             String password = generateRandomPassword(8);
             nhanVien.setMatKhau(password);
             nhanVien.setNguoiTao("Admin");
-            
+
             NhanVien saved = nhanVienRepository.save(nhanVien);
 
             try {
-                String subject = "Tài khoản nhân viên SevenStrike";
+                String subject = "Tài khoản nhân viên PeakSneaker ";
                 String body = String.format(
                         "Chào mừng %s!\n\n" +
-                        "Tài khoản nhân viên của bạn đã được tạo thành công.\n" +
-                        "Thông tin đăng nhập:\n" +
-                        "- Mã NV: %s\n" +
-                        "- Email: %s\n" +
-                        "- Mật khẩu: %s\n\n" +
-                        "Vui lòng đăng nhập và đổi mật khẩu để bảo mật.\n" +
-                        "Trân trọng!",
+                                "Tài khoản nhân viên của bạn đã được tạo thành công.\n" +
+                                "Thông tin đăng nhập:\n" +
+                                "- Mã NV: %s\n" +
+                                "- Email: %s\n" +
+                                "- Mật khẩu: %s\n\n" +
+                                "Vui lòng đăng nhập và đổi mật khẩu để bảo mật.\n" +
+                                "Trân trọng!",
                         saved.getTenDayDu(), saved.getMaNhanVien(), saved.getEmail(), password);
                 emailService.sendEmail(saved.getEmail(), subject, body);
             } catch (Exception e) {
@@ -152,7 +156,7 @@ public class NhanVienServiceImpl implements NhanVienService {
     @Override
     public ByteArrayInputStream exportToExcel(String search, Long idVaiTro, Boolean xoaMem) {
         List<NhanVien> list = filterNhanVien(search, idVaiTro, xoaMem);
-        String[] columns = {"STT", "Mã NV", "Họ Tên", "Chức Vụ", "SĐT", "Email", "Địa Chỉ", "Trạng Thái"};
+        String[] columns = { "STT", "Mã NV", "Họ Tên", "Chức Vụ", "SĐT", "Email", "Địa Chỉ", "Trạng Thái" };
 
         return ExcelUtil.exportToExcel("Danh sách nhân viên", columns, list, (row, nv) -> {
             row.createCell(0).setCellValue(list.indexOf(nv) + 1);
@@ -163,9 +167,9 @@ public class NhanVienServiceImpl implements NhanVienService {
             row.createCell(5).setCellValue(nv.getEmail());
 
             String diaChiStr = (nv.getDiaChi() != null ? nv.getDiaChi() + ", " : "")
-                             + (nv.getXaPhuong() != null ? nv.getXaPhuong() + ", " : "")
-                             + (nv.getQuanHuyen() != null ? nv.getQuanHuyen() + ", " : "")
-                             + (nv.getTinhThanhPho() != null ? nv.getTinhThanhPho() : "");
+                    + (nv.getXaPhuong() != null ? nv.getXaPhuong() + ", " : "")
+                    + (nv.getQuanHuyen() != null ? nv.getQuanHuyen() + ", " : "")
+                    + (nv.getTinhThanhPho() != null ? nv.getTinhThanhPho() : "");
             row.createCell(6).setCellValue(diaChiStr.trim().isEmpty() ? "-" : diaChiStr);
             row.createCell(7).setCellValue(nv.getXoaMem() != null && nv.getXoaMem() ? "Ngừng hoạt động" : "Hoạt động");
         });
