@@ -8,24 +8,26 @@
 <body>
     <main>
         <div class="container-fluid p-0">
-            <!-- Header -->
-            <div class="mb-4 d-flex justify-content-between align-items-center">
-                <h4 class="fw-bold section-title mb-0">Quản lý tài khoản / <span class="fw-bold text-dark">Thêm nhân
-                        viên</span></h4>
-                <div class="d-flex gap-2">
-                    <a th:href="@{/admin/nhan-vien}" class="btn btn-outline-dark rounded-pill px-4">
-                        <i class="bi bi-x-lg"></i> Hủy
-                    </a>
-                    <button type="submit" form="employeeForm" class="btn btn-dark rounded-pill px-4 shadow-sm"
-                        style="background: linear-gradient(90deg, #2d3436 0%, #000000 100%);">
-                        <i class="bi bi-save"></i> Thêm nhân viên
-                    </button>
-                </div>
+            <div class="mb-4">
+                <h4 class="fw-bold section-title">Quản lý tài khoản / <span class="fw-bold">Quản lý nhân viên</span></h4>
             </div>
 
             <form th:action="@{/admin/nhan-vien/save}" th:object="${nhanVien}" method="POST" id="employeeForm"
                 enctype="multipart/form-data">
                 <div class="card shadow-sm border-0 rounded-4 p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="fw-bold section-title mb-0">THÊM NHÂN VIÊN</h4>
+                        <div class="d-flex gap-2">
+                            <a th:href="@{/admin/nhan-vien}"
+                                class="btn btn-light-outline rounded-pill px-4 py-2 d-flex align-items-center gap-2">
+                                <i class="bi bi-arrow-left"></i> Quay lại
+                            </a>
+                            <button type="submit"
+                                class="btn btn-add-customer rounded-pill px-4 py-2 d-flex align-items-center gap-2 text-white border-0">
+                                <i class="bi bi-save"></i> Lưu
+                            </button>
+                        </div>
+                    </div>
                     <!-- Scanner Button at Top Right of Card -->
                     <div class="text-end mb-2">
                         <button type="button" class="btn btn-outline-dark border-1 rounded-3 px-3 py-2 btn-sm shadow-sm"

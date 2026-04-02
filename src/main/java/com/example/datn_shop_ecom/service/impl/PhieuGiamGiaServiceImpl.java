@@ -68,6 +68,9 @@ public class PhieuGiamGiaServiceImpl implements PhieuGiamGiaService {
             if (pgg.getNgayTao() == null) {
                 pgg.setNgayTao(LocalDateTime.now());
             }
+            if (pgg.getTrangThai() == null) {
+                pgg.setTrangThai(1);
+            }
             pgg.setXoaMem(false);
             pgg.setNguoiTao("Admin");
 
