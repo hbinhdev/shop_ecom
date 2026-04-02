@@ -66,23 +66,6 @@
             transform: translateY(-2px);
         }
 
-        .btn-excel {
-            background-color: #f8f9fa;
-            color: #333;
-            border: 1px solid #e0e0e0;
-            border-radius: 10px;
-            padding: 10px 20px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
-        }
-
-        .btn-excel:hover {
-            background-color: #e9ecef;
-            transform: translateY(-2px);
-        }
 
         /* Status Tabs */
         .status-tabs {
@@ -309,29 +292,10 @@
 
             .btn-dark-ghost:hover {
                 background: #2c3e50;
-                transform: translateY(-1px);
-            }
-
-            .btn-excel-main {
-                background: #d47d32;
-                color: white;
-                border: none;
-                padding: 10px 25px;
-                border-radius: 50px;
-                font-size: 0.85rem;
-                font-weight: 600;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                box-shadow: 0 4px 12px rgba(212, 125, 50, 0.2);
-                transition: all 0.3s;
-            }
-
-            .btn-excel-main:hover {
                 transform: translateY(-2px);
-                box-shadow: 0 6px 15px rgba(212, 125, 50, 0.3);
-                color: white;
+                box-shadow: 0 4px 12px rgba(44, 62, 80, 0.3);
             }
+
 
             .btn-search-main {
                 background: #d47d32;
@@ -508,7 +472,7 @@
                         <button type="button" onclick="window.location.href='/admin/hoa-don'" class="btn-dark-ghost">
                             <i class="bi bi-arrow-clockwise"></i> Đặt lại bộ lọc
                         </button>
-                        <button type="button" class="btn-excel-main" onclick="exportToExcel()">
+                        <button type="button" class="btn btn-excel px-4" onclick="exportToExcel()" style="border-radius: 10px; font-size: 0.85rem; font-weight: 600;">
                             <i class="bi bi-file-earmark-excel"></i> Xuất Excel
                         </button>
                     </div>

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
 
 <head>
-    <title>Cập nhật nhân viên - SevenStrike</title>
+    <title>Cập nhật nhân viên - PeakSneaker </title>
 </head>
 
 <body>
@@ -10,18 +10,21 @@
         <div class="container-fluid p-0">
             <!-- Header -->
             <div class="mb-4 d-flex justify-content-between align-items-center">
-                <h4 class="fw-bold section-title mb-0">Quản lý tài khoản / <span class="fw-bold text-dark">Cập nhật nhân viên</span></h4>
+                <h4 class="fw-bold section-title mb-0">Quản lý tài khoản / <span class="fw-bold text-dark">Cập nhật nhân
+                        viên</span></h4>
                 <div class="d-flex gap-2">
                     <a th:href="@{/admin/nhan-vien}" class="btn btn-outline-dark rounded-pill px-4">
                         <i class="bi bi-x-lg"></i> Hủy
                     </a>
-                    <button type="submit" form="employeeForm" class="btn btn-dark rounded-pill px-4 shadow-sm" style="background: linear-gradient(90deg, #2d3436 0%, #000000 100%);">
+                    <button type="submit" form="employeeForm" class="btn btn-dark rounded-pill px-4 shadow-sm"
+                        style="background: linear-gradient(90deg, #2d3436 0%, #000000 100%);">
                         <i class="bi bi-save"></i> Lưu thay đổi
                     </button>
                 </div>
             </div>
 
-            <form th:action="@{/admin/nhan-vien/save}" th:object="${nhanVien}" method="POST" id="employeeForm" enctype="multipart/form-data">
+            <form th:action="@{/admin/nhan-vien/save}" th:object="${nhanVien}" method="POST" id="employeeForm"
+                enctype="multipart/form-data">
                 <!-- Hidden fields for update -->
                 <input type="hidden" th:field="*{id}">
                 <input type="hidden" th:field="*{maNhanVien}">
@@ -34,18 +37,21 @@
                     <!-- Avatar Section -->
                     <div class="text-center mb-5 mt-2">
                         <div class="position-relative d-inline-block">
-                            <div class="avatar-upload rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto shadow-sm" 
-                                 style="width: 150px; height: 150px; border: 2px dashed #dee2e6; cursor: pointer;"
-                                 onclick="document.getElementById('avatarInput').click()">
-                                <div id="uploadPlaceholder" th:classappend="*{anh != null} ? 'd-none' : ''" class="text-center text-muted">
+                            <div class="avatar-upload rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto shadow-sm"
+                                style="width: 150px; height: 150px; border: 2px dashed #dee2e6; cursor: pointer;"
+                                onclick="document.getElementById('avatarInput').click()">
+                                <div id="uploadPlaceholder" th:classappend="*{anh != null} ? 'd-none' : ''"
+                                    class="text-center text-muted">
                                     <i class="bi bi-camera fs-2 d-block"></i>
                                     <span class="small">Đổi ảnh</span>
                                 </div>
-                                <img id="avatarPreview" th:src="*{anh != null} ? @{'/uploads/nhan-vien/' + *{anh}} : ''" 
-                                     th:classappend="*{anh == null} ? 'd-none' : ''"
-                                     class="rounded-circle position-absolute top-0 start-0 w-100 h-100" style="object-fit: cover;">
+                                <img id="avatarPreview" th:src="*{anh != null} ? @{'/uploads/nhan-vien/' + *{anh}} : ''"
+                                    th:classappend="*{anh == null} ? 'd-none' : ''"
+                                    class="rounded-circle position-absolute top-0 start-0 w-100 h-100"
+                                    style="object-fit: cover;">
                             </div>
-                            <input type="file" id="avatarInput" name="anhFile" class="d-none" accept="image/*" onchange="previewImage(this)">
+                            <input type="file" id="avatarInput" name="anhFile" class="d-none" accept="image/*"
+                                onchange="previewImage(this)">
                         </div>
                         <p class="text-muted small mt-2 mb-0">PNG, JPG, JPEG - Tối đa 5MB</p>
                     </div>
@@ -58,14 +64,16 @@
                                 th:field="*{maNhanVien}" disabled>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold small text-uppercase text-muted">Tên nhân viên <span class="text-danger">*</span></label>
+                            <label class="form-label fw-bold small text-uppercase text-muted">Tên nhân viên <span
+                                    class="text-danger">*</span></label>
                             <input type="text" class="form-control rounded-3 py-2 px-3 border-1 bg-white"
                                 th:field="*{tenDayDu}" placeholder="Nguyễn Đình Hải Anh" required>
                         </div>
 
                         <!-- Email & SDT -->
                         <div class="col-md-6">
-                            <label class="form-label fw-bold small text-uppercase text-muted">Email <span class="text-danger">*</span></label>
+                            <label class="form-label fw-bold small text-uppercase text-muted">Email <span
+                                    class="text-danger">*</span></label>
                             <input type="email" class="form-control rounded-3 py-2 px-3 border-1 bg-white"
                                 th:field="*{email}" placeholder="Nhập địa chỉ email" required>
                         </div>
@@ -78,13 +86,15 @@
                         <!-- Tinh/Thanh & Quan/Huyen -->
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Tỉnh/Thành phố</label>
-                            <select class="form-select rounded-3 py-2 px-3 border-1 bg-white city-select" th:field="*{tinhThanhPho}">
+                            <select class="form-select rounded-3 py-2 px-3 border-1 bg-white city-select"
+                                th:field="*{tinhThanhPho}">
                                 <option value="">-- Chọn Tỉnh/Thành --</option>
                             </select>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Quận/Huyện</label>
-                            <select class="form-select rounded-3 py-2 px-3 border-1 bg-white district-select" th:field="*{quanHuyen}">
+                            <select class="form-select rounded-3 py-2 px-3 border-1 bg-white district-select"
+                                th:field="*{quanHuyen}">
                                 <option value="">-- Chọn Quận/Huyện --</option>
                             </select>
                         </div>
@@ -92,7 +102,8 @@
                         <!-- Xa/Phuong & Dia chi -->
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Xã/Phường</label>
-                            <select class="form-select rounded-3 py-2 px-3 border-1 bg-white ward-select" th:field="*{xaPhuong}">
+                            <select class="form-select rounded-3 py-2 px-3 border-1 bg-white ward-select"
+                                th:field="*{xaPhuong}">
                                 <option value="">-- Chọn Xã/Phường --</option>
                             </select>
                         </div>
@@ -110,8 +121,10 @@
                                 th:value="*{ngaySinh != null ? #temporals.format(ngaySinh, 'yyyy-MM-dd') : ''}">
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold small text-uppercase text-muted">Quyền hạn <span class="text-danger">*</span></label>
-                            <select class="form-select rounded-3 py-2 px-3 border-1 bg-white" th:field="*{vaiTro}" required>
+                            <label class="form-label fw-bold small text-uppercase text-muted">Quyền hạn <span
+                                    class="text-danger">*</span></label>
+                            <select class="form-select rounded-3 py-2 px-3 border-1 bg-white" th:field="*{vaiTro}"
+                                required>
                                 <option value="">-- Chọn quyền hạn --</option>
                                 <option th:each="vt : ${vaiTros}" th:value="${vt.id}" th:text="${vt.ten}"></option>
                             </select>
@@ -138,7 +151,7 @@
                 const placeholder = document.getElementById('uploadPlaceholder');
                 if (input.files && input.files[0]) {
                     const reader = new FileReader();
-                    reader.onload = function(e) {
+                    reader.onload = function (e) {
                         preview.src = e.target.result;
                         preview.classList.remove('d-none');
                         if (placeholder) placeholder.classList.add('d-none');
@@ -152,7 +165,7 @@
                 district: /*[[${nhanVien.quanHuyen}]]*/ null,
                 ward: /*[[${nhanVien.xaPhuong}]]*/ null
             };
-            
+
             initAddressSelects('.city-select', '.district-select', '.ward-select', initialValues);
         </script>
     </main>

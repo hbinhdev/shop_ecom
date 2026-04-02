@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
 
 <head>
-    <title>Thêm mới Phiếu giảm giá - SevenStrike</title>
+    <title>Thêm mới Phiếu giảm giá - PeakSneaker </title>
 </head>
 
 <body>
@@ -12,7 +12,8 @@
                 <h4 class="fw-bold section-title mb-0">Thêm mới Phiếu giảm giá</h4>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a th:href="@{/admin/phieu-giam-gia}" class="text-decoration-none">Danh sách</a></li>
+                        <li class="breadcrumb-item"><a th:href="@{/admin/phieu-giam-gia}"
+                                class="text-decoration-none">Danh sách</a></li>
                         <li class="breadcrumb-item active">Thêm mới</li>
                     </ol>
                 </nav>
@@ -26,7 +27,7 @@
                             <a th:href="@{/admin/phieu-giam-gia}" class="btn btn-outline-dark rounded-pill px-4">
                                 <i class="bi bi-x-lg mr-1"></i> Hủy
                             </a>
-                            <button type="submit" class="btn btn-dark rounded-pill px-4 shadow-sm" style="background: linear-gradient(90deg, #2d3436 0%, #000000 100%);">
+                            <button type="submit" class="btn btn-dark rounded-pill px-4 shadow-sm btn-reset-filter">
                                 <i class="bi bi-check-lg mr-1"></i> Tạo mới
                             </button>
                         </div>
@@ -35,9 +36,10 @@
                     <div class="row g-4">
                         <!-- Form fields remain the same -->
                         <div class="col-12">
-                            <label class="form-label fw-bold small text-uppercase text-muted">Mã phiếu giảm giá <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control rounded-pill py-2 px-3 bg-light border-0" 
-                                   placeholder="Mã sẽ được hệ thống tự động tạo..." readonly>
+                            <label class="form-label fw-bold small text-uppercase text-muted">Mã phiếu giảm giá <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control rounded-pill py-2 px-3 bg-light border-0"
+                                placeholder="Mã sẽ được hệ thống tự động tạo..." readonly>
                         </div>
 
                         <div class="col-12">
@@ -47,14 +49,17 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label fw-bold small text-uppercase text-muted d-block">Hình thức giảm</label>
+                            <label class="form-label fw-bold small text-uppercase text-muted d-block">Hình thức
+                                giảm</label>
                             <div class="d-flex gap-4 py-2">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" th:field="*{hinhThucGiam}" value="VNĐ" id="radioVnd" required>
+                                    <input class="form-check-input" type="radio" th:field="*{hinhThucGiam}" value="VNĐ"
+                                        id="radioVnd" required>
                                     <label class="form-check-label" for="radioVnd">VNĐ</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" th:field="*{hinhThucGiam}" value="%" id="radioPercent">
+                                    <input class="form-check-input" type="radio" th:field="*{hinhThucGiam}" value="%"
+                                        id="radioPercent">
                                     <label class="form-check-label" for="radioPercent">%</label>
                                 </div>
                             </div>
@@ -91,20 +96,24 @@
                             <label class="form-label fw-bold small text-uppercase text-muted d-block">Loại phiếu</label>
                             <div class="d-flex gap-4 py-2">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" th:field="*{loai}" value="0" id="radioPublic" required>
+                                    <input class="form-check-input" type="radio" th:field="*{loai}" value="0"
+                                        id="radioPublic" required>
                                     <label class="form-check-label" for="radioPublic">Công khai</label>
                                 </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" th:field="*{loai}" value="1" id="radioPrivate">
+                                <!-- <div class="form-check">
+                                    <input class="form-check-input" type="radio" th:field="*{loai}" value="1"
+                                        id="radioPrivate">
                                     <label class="form-check-label" for="radioPrivate">Cá nhân</label>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
 
                         <div class="col-12">
-                            <label class="form-label fw-bold small text-uppercase text-muted">Mô tả phiếu giảm giá</label>
+                            <label class="form-label fw-bold small text-uppercase text-muted">Mô tả phiếu giảm
+                                giá</label>
                             <textarea class="form-control rounded-4 py-3 px-3 border-1 bg-light-subtle"
-                                th:field="*{moTa}" rows="4" placeholder="Nhập ghi chú hoặc điều kiện áp dụng phiếu..."></textarea>
+                                th:field="*{moTa}" rows="4"
+                                placeholder="Nhập ghi chú hoặc điều kiện áp dụng phiếu..."></textarea>
                         </div>
                     </div>
                 </div>

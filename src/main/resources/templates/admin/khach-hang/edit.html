@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
 
 <head>
-    <title>Cập nhật khách hàng - SevenStrike</title>
+    <title>Cập nhật khách hàng - PeakSneaker </title>
 </head>
 
 <body>
@@ -99,7 +99,8 @@
                                         <label class="form-check-label ms-1" th:for="'defaultAddress' + ${stat.index}">
                                             Đặt làm mặc định
                                         </label>
-                                        <input type="hidden" th:field="*{danhSachDiaChi[__${stat.index}__].diaChiMacDinh}"
+                                        <input type="hidden"
+                                            th:field="*{danhSachDiaChi[__${stat.index}__].diaChiMacDinh}"
                                             class="default-status-hidden">
                                     </div>
                                     <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3"
@@ -109,19 +110,22 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label small fw-medium text-muted">Tên người nhận *</label>
-                                    <input type="text" class="form-control form-control-sm rounded-4 border-1 bg-white py-2"
+                                    <input type="text"
+                                        class="form-control form-control-sm rounded-4 border-1 bg-white py-2"
                                         th:field="*{danhSachDiaChi[__${stat.index}__].tenNguoiNhan}"
                                         placeholder="Họ và tên người nhận" required>
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label small fw-medium text-muted">Số nhà / Đường</label>
-                                    <input type="text" class="form-control form-control-sm rounded-4 border-1 bg-white py-2"
+                                    <input type="text"
+                                        class="form-control form-control-sm rounded-4 border-1 bg-white py-2"
                                         th:field="*{danhSachDiaChi[__${stat.index}__].chiTiet}"
                                         placeholder="Ví dụ: 12A Nguyễn Trãi">
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label small fw-medium text-muted">Tỉnh/Thành</label>
-                                    <select class="form-select form-select-sm rounded-4 border-1 bg-white py-2 city-select"
+                                    <select
+                                        class="form-select form-select-sm rounded-4 border-1 bg-white py-2 city-select"
                                         th:field="*{danhSachDiaChi[__${stat.index}__].tinhThanhPho}">
                                         <option value="">-- Chọn tỉnh/thành --</option>
                                         <option th:if="${dc.tinhThanhPho != null}" th:value="${dc.tinhThanhPho}"
@@ -130,7 +134,8 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label small fw-medium text-muted">Quận/Huyện</label>
-                                    <select class="form-select form-select-sm rounded-4 border-1 bg-white py-2 district-select"
+                                    <select
+                                        class="form-select form-select-sm rounded-4 border-1 bg-white py-2 district-select"
                                         th:field="*{danhSachDiaChi[__${stat.index}__].quanHuyen}">
                                         <option value="">-- Chọn quận/huyện --</option>
                                         <option th:if="${dc.quanHuyen != null}" th:value="${dc.quanHuyen}"
@@ -139,7 +144,8 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label small fw-medium text-muted">Phường/Xã</label>
-                                    <select class="form-select form-select-sm rounded-4 border-1 bg-white py-2 ward-select"
+                                    <select
+                                        class="form-select form-select-sm rounded-4 border-1 bg-white py-2 ward-select"
                                         th:field="*{danhSachDiaChi[__${stat.index}__].xaPhuong}">
                                         <option value="">-- Chọn phường/xã --</option>
                                         <option th:if="${dc.xaPhuong != null}" th:value="${dc.xaPhuong}"
@@ -203,7 +209,7 @@
                     </div>
                 `;
                 container.insertAdjacentHTML('beforeend', html);
-                fetchProvinces(); 
+                fetchProvinces();
                 addressIndex++;
             }
 
@@ -296,21 +302,21 @@
 
             document.addEventListener('DOMContentLoaded', async () => {
                 await fetchProvinces();
-                
+
                 const addressItems = document.querySelectorAll('.address-item');
-                for(let item of addressItems) {
+                for (let item of addressItems) {
                     const citySelect = item.querySelector('.city-select');
                     const districtSelect = item.querySelector('.district-select');
                     const wardSelect = item.querySelector('.ward-select');
-                    
+
                     const cityCode = citySelect.options[citySelect.selectedIndex]?.dataset.code;
-                    if(cityCode) {
+                    if (cityCode) {
                         const distRes = await fetch(`${PROVINCE_API}p/${cityCode}?depth=2`);
                         const distData = await distRes.json();
                         renderOptions(districtSelect, distData.districts, "Chọn quận/huyện", districtSelect.value);
-                        
+
                         const distCode = districtSelect.options[districtSelect.selectedIndex]?.dataset.code;
-                        if(distCode) {
+                        if (distCode) {
                             const wardRes = await fetch(`${PROVINCE_API}d/${distCode}?depth=2`);
                             const wardData = await wardRes.json();
                             renderOptions(wardSelect, wardData.wards, "Chọn phường/xã", wardSelect.value);

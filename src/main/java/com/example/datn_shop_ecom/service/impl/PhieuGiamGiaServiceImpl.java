@@ -23,14 +23,18 @@ public class PhieuGiamGiaServiceImpl implements PhieuGiamGiaService {
     private PhieuGiamGiaRepository pggRepo;
 
     @Override
-    public List<PhieuGiamGia> filterPhieuGiamGia(String search, LocalDate startDate, LocalDate endDate, Integer status) {
-        if (search != null && search.trim().isEmpty()) search = null;
+    public List<PhieuGiamGia> filterPhieuGiamGia(String search, LocalDate startDate, LocalDate endDate,
+            Integer status) {
+        if (search != null && search.trim().isEmpty())
+            search = null;
         return pggRepo.findByFilters(search, startDate, endDate, status);
     }
 
     @Override
-    public org.springframework.data.domain.Page<PhieuGiamGia> filterPhieuGiamGiaPage(String search, LocalDate startDate, LocalDate endDate, Integer status, org.springframework.data.domain.Pageable pageable) {
-        if (search != null && search.trim().isEmpty()) search = null;
+    public org.springframework.data.domain.Page<PhieuGiamGia> filterPhieuGiamGiaPage(String search, LocalDate startDate,
+            LocalDate endDate, Integer status, org.springframework.data.domain.Pageable pageable) {
+        if (search != null && search.trim().isEmpty())
+            search = null;
         return pggRepo.findByFiltersPage(search, startDate, endDate, status, pageable);
     }
 
@@ -41,7 +45,7 @@ public class PhieuGiamGiaServiceImpl implements PhieuGiamGiaService {
         if (pgg.getId() != null) {
             PhieuGiamGia existing = pggRepo.findById(pgg.getId())
                     .orElseThrow(() -> new RuntimeException("Phiếu giảm giá không tồn tại"));
-            
+
             existing.setTenPhieu(pgg.getTenPhieu());
             existing.setNgayBatDau(pgg.getNgayBatDau());
             existing.setNgayKetThuc(pgg.getNgayKetThuc());
@@ -52,10 +56,10 @@ public class PhieuGiamGiaServiceImpl implements PhieuGiamGiaService {
             existing.setTrangThai(pgg.getTrangThai());
             existing.setLoai(pgg.getLoai());
             existing.setMoTa(pgg.getMoTa());
-            
+
             existing.setNgaySuaCuoi(LocalDateTime.now());
             existing.setNguoiSuaCuoi("Admin");
-            
+
             return pggRepo.save(existing);
         } else {
             if (pgg.getMaPhieu() == null || pgg.getMaPhieu().isEmpty()) {
@@ -66,7 +70,7 @@ public class PhieuGiamGiaServiceImpl implements PhieuGiamGiaService {
             }
             pgg.setXoaMem(false);
             pgg.setNguoiTao("Admin");
-            
+
             return pggRepo.save(pgg);
         }
     }
@@ -97,7 +101,8 @@ public class PhieuGiamGiaServiceImpl implements PhieuGiamGiaService {
     @Override
     public ByteArrayInputStream exportToExcel(String search, LocalDate startDate, LocalDate endDate, Integer status) {
         List<PhieuGiamGia> list = filterPhieuGiamGia(search, startDate, endDate, status);
-        String[] columns = {"STT", "Mã Phiếu", "Tên Phiếu", "Loại", "Số lượng", "Ngày Bắt Đầu", "Ngày Kết Thúc", "Giá Trị Giảm", "Hình Thức", "Trạng Thái"};
+        String[] columns = { "STT", "Mã Phiếu", "Tên Phiếu", "Loại", "Số lượng", "Ngày Bắt Đầu", "Ngày Kết Thúc",
+                "Giá Trị Giảm", "Hình Thức", "Trạng Thái" };
 
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -111,7 +116,8 @@ public class PhieuGiamGiaServiceImpl implements PhieuGiamGiaService {
             row.createCell(6).setCellValue(pgg.getNgayKetThuc() != null ? pgg.getNgayKetThuc().format(dtf) : "-");
             row.createCell(7).setCellValue(pgg.getGiaTriGiam() != null ? pgg.getGiaTriGiam().toString() : "0");
             row.createCell(8).setCellValue(pgg.getHinhThucGiam() != null ? pgg.getHinhThucGiam() : "");
-            row.createCell(9).setCellValue(pgg.getTrangThai() != null && pgg.getTrangThai() == 1 ? "Hoạt động" : "Ngừng hoạt động");
+            row.createCell(9).setCellValue(
+                    pgg.getTrangThai() != null && pgg.getTrangThai() == 1 ? "Hoạt động" : "Ngừng hoạt động");
         });
     }
 }
