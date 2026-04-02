@@ -8,27 +8,22 @@
 <body>
     <main>
         <div class="container-fluid p-0">
-            <div class="mb-4 d-flex justify-content-between align-items-center">
-                <h4 class="fw-bold section-title mb-0">Thêm mới Phiếu giảm giá</h4>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb mb-0">
-                        <li class="breadcrumb-item"><a th:href="@{/admin/phieu-giam-gia}"
-                                class="text-decoration-none">Danh sách</a></li>
-                        <li class="breadcrumb-item active">Thêm mới</li>
-                    </ol>
-                </nav>
+            <div class="mb-4">
+                <h4 class="fw-bold section-title">Bán hàng / <span class="fw-bold">Phiếu giảm giá</span></h4>
             </div>
 
             <form th:action="@{/admin/phieu-giam-gia/save}" th:object="${pgg}" method="POST" id="pggForm">
                 <div class="card shadow-sm border-0 rounded-4 p-4">
                     <div class="d-flex justify-content-between align-items-center mb-4 pb-3 border-bottom">
-                        <h4 class="fw-bold section-title mb-0">THÔNG TIN PHIẾU GIẢM GIÁ</h4>
+                        <h4 class="fw-bold section-title mb-0">THÊM MỚI PHIẾU GIẢM GIÁ</h4>
                         <div class="d-flex gap-2">
-                            <a th:href="@{/admin/phieu-giam-gia}" class="btn btn-outline-dark rounded-pill px-4">
-                                <i class="bi bi-x-lg mr-1"></i> Hủy
+                            <a th:href="@{/admin/phieu-giam-gia}"
+                                class="btn btn-light-outline rounded-pill px-4 py-2 d-flex align-items-center gap-2">
+                                <i class="bi bi-arrow-left"></i> Quay lại
                             </a>
-                            <button type="submit" class="btn btn-dark rounded-pill px-4 shadow-sm btn-reset-filter">
-                                <i class="bi bi-check-lg mr-1"></i> Tạo mới
+                            <button type="submit"
+                                class="btn btn-add-customer rounded-pill px-4 py-2 d-flex align-items-center gap-2 text-white border-0">
+                                <i class="bi bi-save"></i> Lưu
                             </button>
                         </div>
                     </div>

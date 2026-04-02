@@ -43,11 +43,11 @@ public class PhieuGiamGia {
     private Integer soLuong;
 
     @Column(name = "trang_thai")
-    private Integer trangThai; // 0: Ngừng hoạt động, 1: Hoạt động
+    private Integer trangThai = 1;
 
     @Builder.Default
     @Column(name = "loai")
-    private Integer loai = 0; // 0: Công khai, 1: Cá nhân
+    private Integer loai = 0;
 
     @Builder.Default
     @Column(name = "xoa_mem")
