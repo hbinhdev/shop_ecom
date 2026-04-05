@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
+
+<head>
+    <title>Quản lý sản phẩm - PeakSneaker</title>
+</head>
+
+<body>
+    <main>
+        <div class="container-fluid p-0">
+            <!-- Breadcrumb / Header Title -->
+            <div class="mb-4">
+                <h4 class="fw-bold section-title">Quản lý sản phẩm / <span class="fw-bold section-title">Danh sách sản
+                        phẩm</span></h4>
+            </div>
+
+            <!-- Filter Section -->
+            <form th:action="@{/admin/san-pham}" method="GET" id="filterForm">
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <div class="row g-3 align-items-center mb-4">
+                            <div class="col-md-5">
+                                <div class="search-box position-relative">
+                                    <i
+                                        class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                    <input type="text" name="search" th:value="${search}"
+                                        class="form-control rounded-pill ps-5 py-2 border-1"
+                                        placeholder="Tìm theo Mã hoặc Tên sản phẩm..." onchange="this.form.submit()">
+                                </div>
+                            </div>
+                            <div class="col-md-7 d-flex justify-content-end gap-2">
+                                <a th:href="@{/admin/san-pham}"
+                                    class="btn btn-dark rounded-pill px-4 py-2 d-flex align-items-center gap-2 btn-reset-filter">
+                                    <i class="bi bi-arrow-counterclockwise"></i> Đặt lại bộ lọc
+                                </a>
+                                <a th:href="@{/admin/san-pham/export(search=${search}, idThuongHieu=${idThuongHieu}, idChatLieu=${idChatLieu})}"
+                                    class="btn btn-light-outline rounded-pill px-4 py-2 d-flex align-items-center gap-2">
+                                    <i class="bi bi-file-earmark-excel"></i> Xuất Excel
+                                </a>
+                                <a th:href="@{/admin/san-pham/create}"
+                                    class="btn btn-add-customer rounded-pill px-4 py-2 d-flex align-items-center gap-2 text-white border-0 shadow-sm"
+                                    style="background-color: #2d3436;">
+                                    <i class="bi bi-plus-lg"></i> Thêm sản phẩm
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-4 d-flex align-items-center gap-3">
+                                <label class="form-label mb-0 text-nowrap fw-medium">Thương hiệu:</label>
+                                <select name="idThuongHieu" class="form-select rounded-pill border-1 bg-light-subtle"
+                                    onchange="this.form.submit()">
+                                    <option value="">Tất cả</option>
+                                    <option th:each="th : ${thuongHieus}" th:value="${th.id}"
+                                        th:text="${th.tenThuongHieu}" th:selected="${th.id == idThuongHieu}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-center gap-3">
+                                <label class="form-label mb-0 text-nowrap fw-medium">Chất liệu:</label>
+                                <select name="idChatLieu" class="form-select rounded-pill border-1 bg-light-subtle"
+                                    onchange="this.form.submit()">
+                                    <option value="">Tất cả</option>
+                                    <option th:each="cl : ${chatLieus}" th:value="${cl.id}" th:text="${cl.tenChatLieu}"
+                                        th:selected="${cl.id == idChatLieu}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 d-flex align-items-center gap-3">
+                                <label class="form-label mb-0 text-nowrap fw-medium">Trạng thái:</label>
+                                <select name="status" class="form-select rounded-pill border-1 bg-light-subtle"
+                                    onchange="this.form.submit()">
+                                    <option value="">Tất cả</option>
+                                    <option value="0" th:selected="${status == '0'}">Đang kinh doanh</option>
+                                    <option value="1" th:selected="${status == '1'}">Ngừng kinh doanh</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Table Section -->
+            <div class="custom-table overflow-hidden shadow-sm rounded-4 bg-white">
+                <table class="table align-middle mb-0">
+                    <thead class="bg-light text-muted small text-uppercase fw-bold">
+                        <tr>
+                            <th class="ps-4 py-3">STT</th>
+                            <th class="py-3">Mã sản phẩm</th>
+                            <th class="py-3">Tên sản phẩm</th>
+                            <th class="py-3">Thương hiệu</th>
+                            <th class="py-3">Chất liệu</th>
+                            <th class="py-3 text-center">Tồn kho</th>
+                            <th class="py-3 text-end">Khoảng giá</th>
+                            <th class="py-3 text-center">Trạng thái</th>
+                            <th class="text-center py-3 pe-4">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="sp, stat : ${listSanPham}" class="border-bottom">
+                            <td class="ps-4 fw-medium text-muted"
+                                th:text="${stat.index + 1 + (spPage.number * spPage.size)}">1</td>
+                            <td class="small fw-semibold text-dark" th:text="${sp.maSanPham}">SP001</td>
+                            <td>
+                                <div class="fw-semibold text-dark mb-0 lh-sm" th:text="${sp.tenSanPham}">Tên SP</div>
+                            </td>
+                            <td class="small text-muted"
+                                th:text="${sp.thuongHieu != null ? sp.thuongHieu.tenThuongHieu : '-'}">Thương hiệu</td>
+                            <td class="small text-muted"
+                                th:text="${sp.chatLieu != null ? sp.chatLieu.tenChatLieu : '-'}">Chất liệu</td>
+                            <td class="small fw-bold text-dark text-center" th:text="${sp.tongTonKho}">0</td>
+                            <td class="small text-danger fw-bold text-end" th:text="${sp.khoangGia}">0đ - 0đ</td>
+                            <td class="text-center">
+                                <span th:if="${sp.xoaMem == false || sp.xoaMem == null}"
+                                    class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Kinh
+                                    doanh</span>
+                                <span th:if="${sp.xoaMem == true}"
+                                    class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Tạm
+                                    ngừng</span>
+                            </td>
+                            <td class="text-center pe-4">
+                                <div class="d-flex justify-content-center align-items-center gap-2">
+                                    <div class="form-check form-switch p-0 m-0">
+                                        <input class="form-check-input ms-0 custom-switch" type="checkbox"
+                                            th:checked="${sp.xoaMem == false || sp.xoaMem == null}"
+                                            th:data-id="${sp.id}"
+                                            onchange="confirmToggleProduct(this)"
+                                            style="cursor: pointer;">
+                                    </div>
+                                    <a th:href="@{/admin/san-pham/edit/{id}(id=${sp.id})}"
+                                        class="btn-icon rounded-circle shadow-xs" title="Sửa sản phẩm">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(listSanPham)}">
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                                Không tìm thấy sản phẩm phù hợp.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="px-3 py-3 border-top bg-light-subtle">
+                    <div
+                        th:replace="~{admin/fragments/pagination :: pagination(${spPage}, '/admin/san-pham', 'search=' + (${search} ?: '') + '&idThuongHieu=' + (${idThuongHieu} ?: '') + '&idChatLieu=' + (${idChatLieu} ?: ''))}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="~{admin/fragments/scripts :: common_scripts}"></div>
+        <script>
+            function confirmToggleProduct(checkbox) {
+                confirmToggle(checkbox, '/admin/san-pham/toggle-status', 'Đã cập nhật trạng thái sản phẩm và các biến thể!', 'Lỗi khi cập nhật trạng thái.');
+            }
+        </script>
+    </main>
+</body>
+
+</html>
