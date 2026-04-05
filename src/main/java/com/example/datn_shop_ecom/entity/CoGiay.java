@@ -1,18 +1,17 @@
-package com.example.datn_shop_ecom.entity;
+﻿package com.example.datn_shop_ecom.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "mau_sac")
+@Table(name = "co_giay")
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
-public class MauSac {
+public class CoGiay {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String maMau; // Vd: MS00001
-    private String tenMauSac;
+    private String tenCoGiay;
     private String nguoiTao;
     private LocalDateTime ngayTao;
     private String nguoiSuaCuoi;

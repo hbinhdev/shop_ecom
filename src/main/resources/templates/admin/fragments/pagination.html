@@ -5,7 +5,7 @@
                 <!-- Previous Page -->
                 <li class="page-item" th:classappend="${pageObj.first} ? 'disabled'">
                     <a class="page-link rounded-circle border-0 bg-light text-dark"
-                       th:href="@{${baseUrl}(page=${pageObj.number - 1}, __${extraParams}__)}">
+                       th:href="@{|${baseUrl}?page=${pageObj.number - 1}&${extraParams}|}">
                         <i class="bi bi-chevron-left"></i>
                     </a>
                 </li>
@@ -15,14 +15,14 @@
                     th:classappend="${pageObj.number == i} ? 'active'">
                     <a class="page-link rounded-circle border-0 text-dark"
                        th:classappend="${pageObj.number == i} ? 'bg-dark text-white' : 'bg-light-subtle'"
-                       th:href="@{${baseUrl}(page=${i}, __${extraParams}__)}"
+                       th:href="@{|${baseUrl}?page=${i}&${extraParams}|}"
                        th:text="${i + 1}">1</a>
                 </li>
 
                 <!-- Next Page -->
                 <li class="page-item" th:classappend="${pageObj.last} ? 'disabled'">
                     <a class="page-link rounded-circle border-0 bg-light text-dark"
-                       th:href="@{${baseUrl}(page=${pageObj.number + 1}, __${extraParams}__)}">
+                       th:href="@{|${baseUrl}?page=${pageObj.number + 1}&${extraParams}|}">
                         <i class="bi bi-chevron-right"></i>
                     </a>
                 </li>

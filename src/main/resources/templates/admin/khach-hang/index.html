@@ -3,6 +3,22 @@
 
 <head>
     <title>Quản lý khách hàng - PeakSneaker </title>
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .select2-container--default .select2-selection--single {
+            border: 1px solid #dee2e6 !important;
+            border-radius: 50px !important;
+            height: 42px !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 40px !important;
+            padding-left: 15px !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 40px !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -38,7 +54,8 @@
                                     <i class="bi bi-file-earmark-excel"></i> Xuất Excel
                                 </a>
                                 <a th:href="@{/admin/khach-hang/create}"
-                                    class="btn btn-add-customer rounded-pill px-4 py-2 d-flex align-items-center gap-2 text-white border-0">
+                                    class="btn rounded-pill px-4 py-2 d-flex align-items-center gap-2 text-white border-0 shadow-sm"
+                                    style="background: linear-gradient(90deg, #d47d32 0%, #eb984e 100%);">
                                     <i class="bi bi-plus-lg"></i> Thêm khách hàng
                                 </a>
                             </div>
@@ -47,7 +64,7 @@
                         <div class="row g-3 align-items-center">
                             <div class="col-md-4 d-flex align-items-center gap-3">
                                 <label class="form-label mb-0 text-nowrap fw-medium">Giới tính:</label>
-                                <select name="gioiTinh" class="form-select rounded-pill border-1 bg-light-subtle"
+                                <select name="gioiTinh" class="form-select select2-basic"
                                     onchange="this.form.submit()">
                                     <option value="" th:selected="${gioiTinh == null or gioiTinh == ''}">Tất cả</option>
                                     <option value="Nam" th:selected="${gioiTinh == 'Nam'}">Nam</option>
@@ -56,7 +73,7 @@
                             </div>
                             <div class="col-md-4 d-flex align-items-center gap-3">
                                 <label class="form-label mb-0 text-nowrap fw-medium">Trạng thái:</label>
-                                <select name="trangThai" class="form-select rounded-pill border-1 bg-light-subtle"
+                                <select name="trangThai" class="form-select select2-basic"
                                     onchange="this.form.submit()">
                                     <option value="" th:selected="${trangThai == null}">Tất cả</option>
                                     <option value="1" th:selected="${trangThai == 1}">Hoạt động</option>
@@ -108,11 +125,10 @@
                             </td>
                             <td>
                                 <span th:if="${!kh.xoaMem}"
-                                    class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Hoạt
-                                    động</span>
+                                    class="badge rounded-pill px-3 py-2 fw-medium"
+                                    style="background-color: #fff0f3; color: #d47d32; border: 1px solid #ffeada;">Hoạt động</span>
                                 <span th:if="${kh.xoaMem}"
-                                    class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng
-                                    hoạt động</span>
+                                    class="badge rounded-pill bg-secondary-subtle text-muted px-3 py-2 fw-medium border">Ngừng hoạt động</span>
                             </td>
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center align-items-center gap-2">
@@ -144,7 +160,15 @@
         </div>
         <!-- Status Toggle and Common Scripts -->
         <div th:replace="~{admin/fragments/scripts :: common_scripts}"></div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script th:inline="javascript">
+            $(document).ready(function() {
+                $('.select2-basic').select2({
+                    minimumResultsForSearch: Infinity,
+                    width: '100%'
+                });
+            });
             async function confirmToggleStatus(checkbox) {
                 await confirmToggle(checkbox, '/admin/khach-hang/toggle-status', 'Đã cập nhật trạng thái khách hàng!', 'Lỗi khi cập nhật trạng thái.');
             }

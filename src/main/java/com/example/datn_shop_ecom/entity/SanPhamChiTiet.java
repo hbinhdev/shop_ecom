@@ -25,6 +25,14 @@ public class SanPhamChiTiet {
     @JoinColumn(name = "id_kich_thuoc")
     private KichThuoc kichThuoc;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_loai_san")
+    private LoaiSan loaiSan;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_form_chan")
+    private FormChan formChan;
+
     private String maSanPhamChiTiet;
     private String duongDanAnh;
     private BigDecimal giaBan;

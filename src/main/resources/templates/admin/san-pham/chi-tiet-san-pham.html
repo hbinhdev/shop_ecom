@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
+
+<head>
+    <title>Danh sách chi tiết sản phẩm - PeakSneaker</title>
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        /* CSS PREMIUM THEO ẢNH */
+        :root {
+            --premium-orange: #ff7e5f;
+            --premium-red: #feb47b;
+            --soft-red-bg: #fff0f3;
+            --soft-red-text: #ff3c5f;
+            --dark-action: #34495e;
+        }
+
+        .form-label-pill {
+            font-size: 0.75rem;
+            color: #999;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .select2-container--default .select2-selection--single {
+            border: 1px solid #eee !important;
+            border-radius: 8px !important;
+            height: 45px !important;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 44px !important;
+            padding-left: 15px !important;
+        }
+
+        /* Price Slider Mockup Style */
+        .range-container {
+            position: relative;
+            height: 4px;
+            background: #eee;
+            border-radius: 2px;
+            margin: 20px 0;
+        }
+
+        .range-progress {
+            position: absolute;
+            height: 100%;
+            background: #ff3c5f;
+            border-radius: 2px;
+        }
+
+        .range-thumb {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: white;
+            border: 2px solid #ff3c5f;
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        /* Buttons */
+        .btn-action-light {
+            background: #f8f9fa;
+            border: 1px solid #eee;
+            color: #555;
+            font-size: 0.85rem;
+            font-weight: 500;
+            padding: 10px 18px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-action-light:hover {
+            background: #eee;
+        }
+
+        .btn-scan-qr {
+            background: linear-gradient(90deg, #ff7e5f 0%, #feb47b 100%);
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            box-shadow: 0 4px 10px rgba(255, 126, 95, 0.3);
+        }
+
+        .btn-reset-filter {
+            background: #34495e;
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Table */
+        .variant-list-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            overflow: hidden;
+            padding: 24px 0;
+        }
+
+        .variant-list-title {
+            padding: 0 24px 20px 24px;
+            font-weight: 600;
+            color: #444;
+            font-size: 0.95rem;
+        }
+
+        .table thead th {
+            background-color: #fff9f9;
+            color: #777;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 12px 10px;
+            border: none;
+            white-space: nowrap;
+        }
+
+        .table tbody td {
+            padding: 10px;
+            font-size: 0.85rem;
+            color: #444;
+            border-bottom: 1px solid #f8f8f8;
+            white-space: nowrap;
+        }
+
+        .variant-img {
+            width: 32px;
+            height: 32px;
+            object-fit: cover;
+            border-radius: 6px;
+            background: #f5f5f5;
+            flex-shrink: 0;
+        }
+
+        .badge-status {
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #fff0f3;
+            color: #ff3c5f;
+        }
+
+        .status-inactive {
+            background: #f8f9fa;
+            color: #999;
+        }
+
+        .btn-view-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            border: 1px solid #eee;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            transition: all 0.2s;
+        }
+
+        .btn-view-circle:hover {
+            background: #eee;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div class="container-fluid p-0">
+            <!-- Breadcrumb / Header Title -->
+            <div class="mb-4 d-flex justify-content-between align-items-center">
+                <h4 class="fw-bold section-title">Quản lý sản phẩm / <span class="fw-bold section-title">Danh sách chi
+                        tiết sản phẩm</span></h4>
+                <a th:href="@{/admin/san-pham}" class="btn btn-dark rounded-pill px-4">
+                    <i class="bi bi-arrow-left me-1"></i> Quay lại
+                </a>
+            </div>
+
+            <!-- BỘ LỌC TÌM KIẾM -->
+            <form th:action="@{/admin/san-pham/bien-the}" method="GET" id="mainFilterForm">
+                <div class="card shadow-sm border-0 rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <div class="row g-3 align-items-center mb-4">
+                            <div class="col-md-5">
+                                <div class="search-box position-relative">
+                                    <i
+                                        class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                    <input type="text" name="search" th:value="${search}"
+                                        class="form-control rounded-pill ps-5 py-2 border-1"
+                                        placeholder="Tìm theo Mã hoặc Tên sản phẩm..." onchange="this.form.submit()">
+                                </div>
+                            </div>
+                            <div class="col-md-7 d-flex justify-content-end gap-2">
+                                <a th:href="@{/admin/san-pham/bien-the}"
+                                    class="btn btn-dark rounded-pill px-4 py-2 d-flex align-items-center gap-2 btn-reset-filter">
+                                    <i class="bi bi-arrow-counterclockwise"></i> Đặt lại bộ lọc
+                                </a>
+                                <a th:href="@{/admin/san-pham/export-variants(search=${search}, idMauSac=${idMauSac}, idKichThuoc=${idKichThuoc}, idLoaiSan=${idLoaiSan}, minPrice=${minPrice}, maxPrice=${maxPrice}, trThai=${trThai})}"
+                                    class="btn btn-light-outline rounded-pill px-4 py-2 d-flex align-items-center gap-2">
+                                    <i class="bi bi-file-earmark-excel"></i> Xuất Excel
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 align-items-center mb-4">
+                            <div class="col-md-3 d-flex align-items-center gap-3">
+                                <label class="form-label mb-0 text-nowrap fw-medium small">Trạng thái:</label>
+                                <select name="trThai" class="form-select rounded-pill border-1 bg-light-subtle"
+                                    onchange="this.form.submit()">
+                                    <option value="">Tất cả</option>
+                                    <option value="1" th:selected="${trThai == '1'}">Kinh doanh</option>
+                                    <option value="0" th:selected="${trThai == '0'}">Ngừng bán</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-center gap-3">
+                                <label class="form-label mb-0 text-nowrap fw-medium small">Màu sắc:</label>
+                                <select name="idMauSac" class="form-select rounded-pill border-1 bg-light-subtle"
+                                    onchange="this.form.submit()">
+                                    <option value="">Tất cả</option>
+                                    <option th:each="m : ${mauSacs}" th:value="${m.id}" th:text="${m.tenMauSac}"
+                                        th:selected="${m.id == idMauSac}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-center gap-3">
+                                <label class="form-label mb-0 text-nowrap fw-medium small">Kích cỡ:</label>
+                                <select name="idKichThuoc" class="form-select rounded-pill border-1 bg-light-subtle"
+                                    onchange="this.form.submit()">
+                                    <option value="">Tất cả</option>
+                                    <option th:each="k : ${kichThuocs}" th:value="${k.id}" th:text="${k.tenKichThuoc}"
+                                        th:selected="${k.id == idKichThuoc}"></option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 d-flex align-items-center gap-3">
+                                <label class="form-label mb-0 text-nowrap fw-medium small">Loại sân:</label>
+                                <select name="idLoaiSan" class="form-select rounded-pill border-1 bg-light-subtle"
+                                    onchange="this.form.submit()">
+                                    <option value="">Tất cả</option>
+                                    <option th:each="l : ${loaiSans}" th:value="${l.id}" th:text="${l.tenLoaiSan}"
+                                        th:selected="${l.id == idLoaiSan}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 align-items-center">
+                            <div class="col-md-8">
+                                <div class="d-flex align-items-center gap-4">
+                                    <label class="form-label mb-0 text-nowrap fw-medium small">Khoảng giá:</label>
+                                    <div class="d-flex align-items-center gap-3 flex-grow-1">
+                                        <input type="range" class="form-range flex-grow-1" min="0" max="20000000"
+                                            step="100000" id="priceRange"
+                                            th:value="${#numbers.formatInteger(maxPrice ?: 20000000, 0)}"
+                                            oninput="updatePrice(this.value)">
+                                        <span class="badge bg-white text-danger border px-3 py-2 rounded-pill fw-bold"
+                                            id="priceLabel"
+                                            th:text="${'0 - ' + #numbers.formatDecimal(maxPrice ?: 20000000, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0
+                                            - 20,000,000 đ</span>
+                                    </div>
+                                    <input type="hidden" name="minPrice" value="0">
+                                    <input type="hidden" name="maxPrice" id="maxPriceInput"
+                                        th:value="${#numbers.formatInteger(maxPrice ?: 20000000, 0)}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- DANH SÁCH CHI TIẾT SẢN PHẨM (Grouped Layout) -->
+            <div class="custom-table overflow-hidden shadow-sm rounded-4 bg-white" th:with="lastProdId=null">
+                <table class="table align-middle m-0" id="variantGroupTable">
+                    <thead class="bg-light text-muted small text-uppercase fw-bold">
+                        <tr>
+                            <th class="ps-4 py-3" style="width: 60px;">STT</th>
+                            <th class="py-3" style="width: 120px;">Mã CTSP</th>
+                            <th class="py-3 text-center" style="width: 60px;">Ảnh</th>
+                            <th class="py-3">Phiên bản (Màu/Size/Sân)</th>
+                            <th class="py-3 text-center" style="width: 100px;">Tồn kho</th>
+                            <th class="py-3 text-end" style="width: 150px;">Giá bán</th>
+                            <th class="py-3 text-center" style="width: 150px;">Trạng thái</th>
+                            <th class="text-center py-3 pe-4" style="width: 150px;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <th:block th:each="v, stat : ${listVariants}">
+                            <!-- Group Header Row (Show when product changes) -->
+                            <tr th:if="${stat.index == 0 || listVariants[stat.index - 1].idSanPham != v.idSanPham}" class="bg-light-subtle border-top border-bottom">
+                                <td colspan="8" class="ps-4 py-2">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="bi bi-box-seam text-dark fs-5"></i>
+                                        <span class="fw-bold text-dark text-uppercase small">Sản phẩm: </span>
+                                        <span class="fw-bold text-primary text-uppercase" th:text="${v.tenSanPham}">Tên Sản Phẩm</span>
+                                        <span class="badge bg-secondary-subtle text-muted fw-normal ms-2" th:text="'Mã: ' + ${v.maSanPham}">SP001</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <!-- Variant Row -->
+                            <tr class="variant-row">
+                                <td class="ps-4 small text-muted font-monospace" th:text="${stat.index + 1 + (spPage != null ? spPage.number * spPage.size : 0)}">1</td>
+                                <td class="small fw-semibold text-dark" th:text="${v.maSanPhamChiTiet}">CTSP001</td>
+                                <td class="text-center">
+                                    <img th:src="${v.duongDanAnh != null ? '/uploads/san-pham/' + v.duongDanAnh : 'https://placehold.co/100x100?text=No+Image'}"
+                                        class="variant-img rounded border shadow-xs" alt="SP" 
+                                        style="width: 38px; height: 38px; object-fit: cover;">
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="fw-bold text-dark" th:text="${v.mauSac}">Đỏ</span>
+                                            <span class="text-muted">/</span>
+                                            <span class="fw-bold text-dark" th:text="${v.kichThuoc}">42</span>
+                                        </div>
+                                        <div class="extra-small text-muted" th:text="${v.loaiSan ?: '-'}">Sân cỏ nhân tạo</div>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="fw-bold fs-6" th:classappend="${v.soTonKho <= 5 ? 'text-danger' : 'text-dark'}" th:text="${v.soTonKho}">10</span>
+                                </td>
+                                <td class="text-end fw-bold text-danger" th:text="${v.giaBan != null ? #numbers.formatDecimal(v.giaBan, 0, 'COMMA', 0, 'POINT') + ' ₫' : '0 ₫'}">1,200,000 đ</td>
+                                <td class="text-center">
+                                    <span th:if="${v.trangThai == '1'}" class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Kinh doanh</span>
+                                    <span th:if="${v.trangThai == '0'}" class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng bán</span>
+                                </td>
+                                <td class="text-center pe-4">
+                                    <div class="d-flex justify-content-center align-items-center gap-2">
+                                        <div class="form-check form-switch p-0 m-0">
+                                            <input class="form-check-input ms-0 custom-switch variant-status-toggle"
+                                                type="checkbox" th:checked="${v.trangThai == '1'}" th:data-id="${v.id}"
+                                                onchange="confirmToggleVariant(this)" style="cursor: pointer;">
+                                        </div>
+                                        <button type="button" class="btn-icon rounded-circle shadow-xs"
+                                            th:data-id="${v.id}" th:data-name="${v.tenSanPham}" th:data-color="${v.mauSac}"
+                                            th:data-size="${v.kichThuoc}" th:data-qty="${v.soTonKho}"
+                                            th:data-price="${v.giaBan}" onclick="openEditModal(this)">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                        <a th:href="@{/admin/san-pham/detail/{id}(id=${v.idSanPham})}"
+                                            th:if="${v.idSanPham != null}" class="btn-icon rounded-circle shadow-xs" title="Xem chi tiết sản phẩm">
+                                            <i class="bi bi-box-arrow-in-right"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </th:block>
+
+                        <tr th:if="${#lists.isEmpty(listVariants)}">
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-2 d-block mb-2 text-muted-50"></i>
+                                Không tìm thấy biến thể sản phẩm nào phù hợp.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Pagination Footer -->
+                <div class="px-4 py-3 border-top bg-light-subtle">
+                    <div th:replace="~{admin/fragments/pagination :: pagination(${spPage}, '/admin/san-pham/bien-the', 'search=' + (${search} ?: '') + '&idMauSac=' + (${idMauSac} ?: '') + '&idKichThuoc=' + (${idKichThuoc} ?: '') + '&trThai=' + (${trThai} ?: '') + '&maxPrice=' + (${maxPrice} ?: '20000000'))}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL UPDATE SPCT -->
+        <div class="modal fade" id="editVariantModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+                    <div class="modal-header border-0 bg-light p-4">
+                        <h5 class="fw-bold mb-0 text-uppercase small"><i class="bi bi-pencil-square me-2"></i>Cập nhật
+                            thông tin chi tiết</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div id="variantInfoPanel" class="mb-4 bg-light rounded-3 p-3">
+                            <h6 id="modalSpName" class="fw-bold text-dark mb-2">Tên sản phẩm</h6>
+                            <div class="d-flex gap-2">
+                                <span class="badge bg-white text-muted border px-3 rounded-pill"
+                                    id="modalColor">Màu</span>
+                                <span class="badge bg-white text-muted border px-3 rounded-pill"
+                                    id="modalSize">Size</span>
+                            </div>
+                        </div>
+                        <input type="hidden" id="editVariantId">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Số lượng tồn</label>
+                            <input type="number" class="form-control rounded-pill px-3 py-2 border-1" id="editSoLuong"
+                                placeholder="Nhập số lượng...">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Giá bán (VNĐ)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0 rounded-pill-start ps-3"><i
+                                        class="bi bi-currency-dollar"></i></span>
+                                <input type="number" class="form-control border-start-0 rounded-pill-end pe-3 py-2"
+                                    id="editGiaBan" placeholder="Nhập giá bán...">
+                            </div>
+                        </div>
+                        <p class="text-muted extra-small italic text-center mb-0"><i class="bi bi-info-circle me-1"></i>
+                            Sau khi nhấn cập nhật, thay đổi sẽ có hiệu lực ngay lập tức.</p>
+                    </div>
+                    <div class="modal-footer border-0 p-4 pt-0">
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Hủy
+                            bỏ</button>
+                        <button type="button" class="btn btn-dark rounded-pill px-5 shadow-sm"
+                            onclick="saveVariantUpdate()">
+                            <i class="bi bi-check-lg me-1"></i> XÁC NHẬN CẬP NHẬT
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="~{admin/fragments/scripts :: common_scripts}"></div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('#checkAll').on('change', function () {
+                    $('.variant-check').prop('checked', this.checked);
+                });
+
+                // Init price label
+                updatePrice($('#priceRange').val());
+            });
+
+            function updatePrice(val) {
+                const formatted = new Intl.NumberFormat('vi-VN').format(val) + ' ₫';
+                $('#priceLabel').text('0 - ' + formatted);
+                $('#maxPriceInput').val(val);
+            }
+
+            $(document).on('change', '#priceRange', function () {
+                $('#mainFilterForm').submit();
+            });
+
+            function confirmToggleVariant(checkbox) {
+                confirmToggle(checkbox, '/admin/san-pham/variant/toggle-status', 'Đã cập nhật trạng thái biến thể!', 'Lỗi khi cập nhật trạng thái.');
+            }
+
+            // MODAL UPDATE FUNCTIONS
+            function openEditModal(btn) {
+                const el = $(btn);
+                $('#editVariantId').val(el.data('id'));
+                $('#modalSpName').text(el.data('name'));
+                $('#modalColor').text("Màu: " + el.data('color'));
+                $('#modalSize').text("Size: " + el.data('size'));
+                $('#editSoLuong').val(el.data('qty'));
+                $('#editGiaBan').val(el.data('price'));
+                new bootstrap.Modal(document.getElementById('editVariantModal')).show();
+            }
+
+            function saveVariantUpdate() {
+                const id = $('#editVariantId').val();
+                const qty = $('#editSoLuong').val();
+                const price = $('#editGiaBan').val();
+
+                if (!qty || !price) {
+                    Swal.fire('Chú ý', 'Vui lòng nhập đầy đủ thông tin!', 'warning');
+                    return;
+                }
+
+                Swal.fire({
+                    title: 'Đang lưu...',
+                    didOpen: () => Swal.showLoading()
+                });
+
+                fetch('/api/admin/product-variant/variant/save', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id: id,
+                        soLuong: qty,
+                        giaBan: price
+                    })
+                })
+                    .then(res => {
+                        if (res.ok) {
+                            Swal.fire('Thành công', 'Đã cập nhật biến thể sản phẩm!', 'success').then(() => location.reload());
+                        } else {
+                            Swal.fire('Lỗi', 'Không thể cập nhật biến thể. Vui lòng thử lại!', 'error');
+                        }
+                    })
+                    .catch(err => {
+                        Swal.fire('Lỗi', 'Đã xảy ra lỗi kết nối!', 'error');
+                    });
+            }
+        </script>
+    </main>
+</body>
+
+</html>

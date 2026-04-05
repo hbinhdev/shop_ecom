@@ -12,6 +12,7 @@
         // === Common Status Toggle ===
         async function confirmToggle(checkbox, url, successMsg, errorMsg) {
             const id = checkbox.getAttribute('data-id'), isChecked = checkbox.checked;
+            console.log(`[Toggle Debug] ID: ${id} | URL gửi đi: ${url}/${id}`);
             const result = await Swal.fire({
                 title: 'Xác nhận?', text: isChecked ? "Bạn có muốn kích hoạt lại?" : "Bạn có muốn ngừng hoạt động?",
                 icon: 'question', showCancelButton: true, confirmButtonText: 'Đồng ý', cancelButtonText: 'Hủy',
@@ -20,10 +21,12 @@
             if (result.isConfirmed) {
                 try {
                     const res = await fetch(`${url}/${id}`, { method: 'POST' });
+                    console.log(`[Toggle Debug] Phản hồi Server: ${res.status} ${res.statusText}`);
                     if (res.ok) {
                         Swal.fire('Thành công!', successMsg || 'Cập nhật thành công.', 'success').then(() => location.reload());
                     } else throw new Error();
                 } catch (e) {
+                    console.error(`[Toggle Debug] Lỗi kết nối:`, e);
                     Swal.fire('Lỗi!', errorMsg || 'Không thể kết nối máy chủ.', 'error');
                     checkbox.checked = !isChecked;
                 }

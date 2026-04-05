@@ -3,6 +3,27 @@
 
 <head>
     <title>Thêm khách hàng - PeakSneaker </title>
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <style>
+        .select2-container--default .select2-selection--single {
+            border: 1px solid #dee2e6 !important;
+            border-radius: 50px !important;
+            height: 42px !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 40px !important;
+            padding-left: 15px !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 40px !important;
+        }
+        .select2-container--default .select2-results > .select2-results__options {
+            list-style: none !important;
+            padding: 0;
+            margin: 0;
+        }
+    </style>
 </head>
 
 <body>
@@ -17,15 +38,16 @@
             <form th:action="@{/admin/khach-hang/save}" th:object="${khachHang}" method="POST" id="customerForm">
                 <div class="card shadow-sm border-0 rounded-4 p-4">
                     <div class="d-flex justify-content-between align-items-center mb-4">
-                        <h4 class="fw-bold section-title mb-0">THÊM KHÁCH HÀNG</h4>
+                        <h4 class="fw-bold section-title mb-0 text-uppercase">Thêm khách hàng</h4>
                         <div class="d-flex gap-2">
                             <a th:href="@{/admin/khach-hang}"
                                 class="btn btn-light-outline rounded-pill px-4 py-2 d-flex align-items-center gap-2">
                                 <i class="bi bi-arrow-left"></i> Quay lại
                             </a>
                             <button type="submit"
-                                class="btn btn-add-customer rounded-pill px-4 py-2 d-flex align-items-center gap-2 text-white border-0">
-                                <i class="bi bi-save"></i> Lưu
+                                class="btn rounded-pill px-4 py-2 d-flex align-items-center gap-2 text-white border-0 shadow-sm"
+                                style="background: linear-gradient(90deg, #d47d32 0%, #eb984e 100%);">
+                                <i class="bi bi-save"></i> Lưu thông tin
                             </button>
                         </div>
                     </div>
@@ -49,7 +71,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-medium">Giới tính</label>
-                            <select class="form-select rounded-pill border-1 bg-light-subtle py-2 px-3"
+                            <select class="form-select select2-basic"
                                 th:field="*{gioiTinh}">
                                 <option value="">-- Chọn --</option>
                                 <option value="Nam">Nam</option>
@@ -112,7 +134,7 @@
                                 <div class="col-md-4">
                                     <label class="form-label small fw-medium text-muted">Tỉnh/Thành</label>
                                     <select
-                                        class="form-select form-select-sm rounded-4 border-1 bg-white py-2 city-select"
+                                        class="form-select city-select select2-basic"
                                         th:field="*{danhSachDiaChi[__${stat.index}__].tinhThanhPho}">
                                         <option value="">-- Chọn tỉnh/thành --</option>
                                     </select>
@@ -120,7 +142,7 @@
                                 <div class="col-md-4">
                                     <label class="form-label small fw-medium text-muted">Quận/Huyện</label>
                                     <select
-                                        class="form-select form-select-sm rounded-4 border-1 bg-white py-2 district-select"
+                                        class="form-select district-select select2-basic"
                                         th:field="*{danhSachDiaChi[__${stat.index}__].quanHuyen}">
                                         <option value="">-- Chọn quận/huyện --</option>
                                     </select>
@@ -128,7 +150,7 @@
                                 <div class="col-md-4">
                                     <label class="form-label small fw-medium text-muted">Phường/Xã</label>
                                     <select
-                                        class="form-select form-select-sm rounded-4 border-1 bg-white py-2 ward-select"
+                                        class="form-select ward-select select2-basic"
                                         th:field="*{danhSachDiaChi[__${stat.index}__].xaPhuong}">
                                         <option value="">-- Chọn phường/xã --</option>
                                     </select>
@@ -140,8 +162,20 @@
             </form>
         </div>
 
+        <div th:replace="~{admin/fragments/scripts :: common_scripts}"></div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script th:inline="javascript">
             let addressIndex = /*[[${khachHang.danhSachDiaChi.size()}]]*/ 1;
+
+            function initSelect2() {
+                $('.select2-basic').select2({
+                    placeholder: "-- Chọn --",
+                    allowClear: true,
+                    width: '100%',
+                    theme: 'classic'
+                });
+            }
 
             function addAddress() {
                 const container = document.getElementById('addressContainer');
@@ -170,19 +204,19 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small fw-medium text-muted">Tỉnh/Thành</label>
-                                <select class="form-select form-select-sm rounded-4 border-1 bg-white py-2 city-select" name="danhSachDiaChi[${addressIndex}].tinhThanhPho">
+                                <select class="form-select city-select select2-basic" name="danhSachDiaChi[${addressIndex}].tinhThanhPho">
                                     <option value="">-- Chọn tỉnh/thành --</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small fw-medium text-muted">Quận/Huyện</label>
-                                <select class="form-select form-select-sm rounded-4 border-1 bg-white py-2 district-select" name="danhSachDiaChi[${addressIndex}].quanHuyen">
+                                <select class="form-select district-select select2-basic" name="danhSachDiaChi[${addressIndex}].quanHuyen">
                                     <option value="">-- Chọn quận/huyện --</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small fw-medium text-muted">Phường/Xã</label>
-                                <select class="form-select form-select-sm rounded-4 border-1 bg-white py-2 ward-select" name="danhSachDiaChi[${addressIndex}].xaPhuong">
+                                <select class="form-select ward-select select2-basic" name="danhSachDiaChi[${addressIndex}].xaPhuong">
                                     <option value="">-- Chọn phường/xã --</option>
                                 </select>
                             </div>
@@ -190,6 +224,8 @@
                     </div>
                 `;
                 container.insertAdjacentHTML('beforeend', html);
+                initSelect2();
+                fetchProvinces();
                 addressIndex++;
             }
 
@@ -203,15 +239,12 @@
             }
 
             function updateDefaultStatus(radio) {
-
                 document.querySelectorAll('.default-status-hidden').forEach(input => {
                     input.value = "false";
                 });
-
                 const hiddenInput = radio.closest('.form-check').querySelector('.default-status-hidden');
                 hiddenInput.value = "true";
             }
-
 
             const PROVINCE_API = "https://provinces.open-api.vn/api/";
 
@@ -235,57 +268,6 @@
                     html += `<option value="${item.name}" data-code="${item.code}">${item.name}</option>`;
                 });
                 selectElement.innerHTML = html;
-            };
-
-
-            document.addEventListener('change', async (e) => {
-                if (e.target.classList.contains('city-select')) {
-                    const citySelect = e.target;
-                    const row = citySelect.closest('.row');
-                    const districtSelect = row.querySelector('.district-select');
-                    const wardSelect = row.querySelector('.ward-select');
-                    const selectedOption = citySelect.options[citySelect.selectedIndex];
-                    const code = selectedOption.dataset.code;
-
-                    if (code) {
-                        try {
-                            const response = await fetch(`${PROVINCE_API}p/${code}?depth=2`);
-                            const data = await response.json();
-                            renderOptions(districtSelect, data.districts, "Chọn quận/huyện");
-                            wardSelect.innerHTML = '<option value="">-- Chọn phường/xã --</option>';
-                        } catch (error) {
-                            console.error("Lỗi khi tải quận huyện:", error);
-                        }
-                    }
-                }
-
-                if (e.target.classList.contains('district-select')) {
-                    const districtSelect = e.target;
-                    const row = districtSelect.closest('.row');
-                    const wardSelect = row.querySelector('.ward-select');
-                    const selectedOption = districtSelect.options[districtSelect.selectedIndex];
-                    const code = selectedOption.dataset.code;
-
-                    if (code) {
-                        try {
-                            const response = await fetch(`${PROVINCE_API}d/${code}?depth=2`);
-                            const data = await response.json();
-                            renderOptions(wardSelect, data.wards, "Chọn phường/xã");
-                        } catch (error) {
-                            console.error("Lỗi khi tải phường xã:", error);
-                        }
-                    }
-                }
-            });
-
-
-            document.addEventListener('DOMContentLoaded', fetchProvinces);
-
-
-            const originalAddAddress = addAddress;
-            addAddress = function () {
-                originalAddAddress();
-                fetchProvinces();
             };
         </script>
     </main>
