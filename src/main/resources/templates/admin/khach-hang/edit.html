@@ -4,7 +4,7 @@
 <head>
     <title>Cập nhật khách hàng - PeakSneaker </title>
     <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         .select2-container--default .select2-selection--single {
             border: 1px solid #dee2e6 !important;
@@ -23,7 +23,7 @@
             padding: 0;
             margin: 0;
         }
-    </style>
+    </style>  -->
 </head>
 
 <body>
@@ -83,8 +83,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-medium">Giới tính</label>
-                            <select class="form-select select2-basic"
-                                th:field="*{gioiTinh}">
+                            <select class="form-select select2-basic" th:field="*{gioiTinh}">
                                 <option value="">-- Chọn --</option>
                                 <option value="Nam" th:selected="*{gioiTinh == 'Nam'}">Nam</option>
                                 <option value="Nữ" th:selected="*{gioiTinh == 'Nữ'}">Nữ</option>
@@ -146,8 +145,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label small fw-medium text-muted">Tỉnh/Thành</label>
-                                    <select
-                                        class="form-select city-select select2-basic"
+                                    <select class="form-select city-select select2-basic"
                                         th:field="*{danhSachDiaChi[__${stat.index}__].tinhThanhPho}">
                                         <option value="">-- Chọn tỉnh/thành --</option>
                                         <option th:if="${dc.tinhThanhPho != null}" th:value="${dc.tinhThanhPho}"
@@ -156,8 +154,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label small fw-medium text-muted">Quận/Huyện</label>
-                                    <select
-                                        class="form-select district-select select2-basic"
+                                    <select class="form-select district-select select2-basic"
                                         th:field="*{danhSachDiaChi[__${stat.index}__].quanHuyen}">
                                         <option value="">-- Chọn quận/huyện --</option>
                                         <option th:if="${dc.quanHuyen != null}" th:value="${dc.quanHuyen}"
@@ -166,8 +163,7 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label small fw-medium text-muted">Phường/Xã</label>
-                                    <select
-                                        class="form-select ward-select select2-basic"
+                                    <select class="form-select ward-select select2-basic"
                                         th:field="*{danhSachDiaChi[__${stat.index}__].xaPhuong}">
                                         <option value="">-- Chọn phường/xã --</option>
                                         <option th:if="${dc.xaPhuong != null}" th:value="${dc.xaPhuong}"
@@ -295,7 +291,7 @@
                 selectElement.innerHTML = html;
             };
 
-            $(document).on('change', '.city-select', async function() {
+            $(document).on('change', '.city-select', async function () {
                 const citySelect = this;
                 const row = citySelect.closest('.row');
                 const districtSelect = row.querySelector('.district-select');
@@ -314,7 +310,7 @@
                 }
             });
 
-            $(document).on('change', '.district-select', async function() {
+            $(document).on('change', '.district-select', async function () {
                 const districtSelect = this;
                 const row = districtSelect.closest('.row');
                 const wardSelect = row.querySelector('.ward-select');
@@ -334,7 +330,7 @@
             $(document).ready(async () => {
                 initSelect2();
                 await fetchProvinces();
-                
+
                 // Load existing data for districts and wards
                 const addressItems = document.querySelectorAll('.address-item');
                 for (let item of addressItems) {

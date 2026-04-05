@@ -4,7 +4,7 @@
 <head>
     <title>Thêm khách hàng - PeakSneaker </title>
     <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         .select2-container--default .select2-selection--single {
             border: 1px solid #dee2e6 !important;
@@ -23,7 +23,7 @@
             padding: 0;
             margin: 0;
         }
-    </style>
+    </style> -->
 </head>
 
 <body>
@@ -71,8 +71,7 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-medium">Giới tính</label>
-                            <select class="form-select select2-basic"
-                                th:field="*{gioiTinh}">
+                            <select class="form-select select2-basic" th:field="*{gioiTinh}">
                                 <option value="">-- Chọn --</option>
                                 <option value="Nam">Nam</option>
                                 <option value="Nữ">Nữ</option>
@@ -133,24 +132,21 @@
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label small fw-medium text-muted">Tỉnh/Thành</label>
-                                    <select
-                                        class="form-select city-select select2-basic"
+                                    <select class="form-select city-select select2-basic"
                                         th:field="*{danhSachDiaChi[__${stat.index}__].tinhThanhPho}">
                                         <option value="">-- Chọn tỉnh/thành --</option>
                                     </select>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label small fw-medium text-muted">Quận/Huyện</label>
-                                    <select
-                                        class="form-select district-select select2-basic"
+                                    <select class="form-select district-select select2-basic"
                                         th:field="*{danhSachDiaChi[__${stat.index}__].quanHuyen}">
                                         <option value="">-- Chọn quận/huyện --</option>
                                     </select>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label small fw-medium text-muted">Phường/Xã</label>
-                                    <select
-                                        class="form-select ward-select select2-basic"
+                                    <select class="form-select ward-select select2-basic"
                                         th:field="*{danhSachDiaChi[__${stat.index}__].xaPhuong}">
                                         <option value="">-- Chọn phường/xã --</option>
                                     </select>
