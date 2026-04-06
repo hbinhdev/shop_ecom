@@ -28,6 +28,7 @@ public class NhanVien {
     private String tenDayDu;
 
     @Column(name = "ngay_sinh")
+    @org.springframework.format.annotation.DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate ngaySinh;
 
     @Column(name = "gioi_tinh", columnDefinition = "NVARCHAR(20)")

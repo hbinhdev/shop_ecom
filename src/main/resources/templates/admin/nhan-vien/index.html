@@ -148,7 +148,8 @@
                 </table>
                 <!-- Pagination Footer -->
                 <div
-                    th:replace="~{admin/fragments/pagination :: pagination(${nhanVienPage}, '/admin/nhan-vien', 'search=${search}, idVaiTro=${idVaiTro}, trangThai=${trangThai}')}">
+                    th:replace="~{admin/fragments/pagination :: pagination(${nhanVienPage}, '/admin/nhan-vien', 
+                    'search=' + (${search} ?: '') + '&idVaiTro=' + (${idVaiTro} ?: '') + '&trangThai=' + (${trangThai} ?: ''))}">
                 </div>
             </div>
         </div>

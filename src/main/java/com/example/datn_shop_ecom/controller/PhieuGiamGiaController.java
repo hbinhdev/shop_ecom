@@ -33,11 +33,11 @@ public class PhieuGiamGiaController {
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @RequestParam(required = false) Integer trangThai,
             @RequestParam(defaultValue = "0") int page,
-            Model model
-    ) {
+            Model model) {
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, 5);
-        org.springframework.data.domain.Page<PhieuGiamGia> pggPage = pggService.filterPhieuGiamGiaPage(search, startDate, endDate, trangThai, pageable);
-        
+        org.springframework.data.domain.Page<PhieuGiamGia> pggPage = pggService.filterPhieuGiamGiaPage(search,
+                startDate, endDate, trangThai, pageable);
+
         model.addAttribute("listPGG", pggPage.getContent());
         model.addAttribute("pggPage", pggPage);
         model.addAttribute("search", search);
@@ -45,7 +45,7 @@ public class PhieuGiamGiaController {
         model.addAttribute("endDate", endDate);
         model.addAttribute("trangThai", trangThai);
         model.addAttribute("currentPage", page);
-        
+
         return "admin/phieu-giam-gia/index";
     }
 
@@ -63,15 +63,10 @@ public class PhieuGiamGiaController {
 
     @PostMapping("/save")
     public String save(@ModelAttribute("pgg") PhieuGiamGia pgg, RedirectAttributes ra) {
-        System.out.println("**************************************************");
-        System.out.println("CONTROLLER - NHAN DUOC PHIEU: " + pgg.getTenPhieu());
-        System.out.println("CONTROLLER - LOAI PHIEU: " + pgg.getLoai());
-        System.out.println("**************************************************");
         try {
             pggService.savePGG(pgg);
             ra.addFlashAttribute("success", "Lưu phiếu giảm giá thành công!");
         } catch (Exception e) {
-            System.out.println("CONTROLLER - LOI KHI LUU: " + e.getMessage());
             ra.addFlashAttribute("error", "Lỗi: " + e.getMessage());
         }
         return "redirect:/admin/phieu-giam-gia";
@@ -104,15 +99,15 @@ public class PhieuGiamGiaController {
             @RequestParam(required = false) String search,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @RequestParam(required = false) Integer trangThai
-    ) {
+            @RequestParam(required = false) Integer trangThai) {
         ByteArrayInputStream in = pggService.exportToExcel(search, startDate, endDate, trangThai);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=phieu_giam_gia.xlsx");
 
         return ResponseEntity.ok()
                 .headers(headers)
-                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentType(
+                        MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .body(new InputStreamResource(in));
     }
 }
