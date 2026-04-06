@@ -182,7 +182,31 @@
                                     placeholder="Nhập tên sản phẩm...">
                             </div>
 
-                            <div class="col-12">
+                            <div class="col-md-6 mb-2">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Danh mục</label>
+                                <select class="form-select rounded-3 py-2 px-3 bg-white" id="idDanhMuc">
+                                    <option value="">-- Chọn danh mục --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Thương hiệu</label>
+                                <select class="form-select rounded-3 py-2 px-3 bg-white" id="idThuongHieu">
+                                    <option value="">-- Chọn thương hiệu --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Kiểu dáng</label>
+                                <select class="form-select rounded-3 py-2 px-3 bg-white" id="idKieuDang">
+                                    <option value="">-- Chọn kiểu dáng --</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Chất liệu</label>
+                                <select class="form-select rounded-3 py-2 px-3 bg-white" id="idChatLieu">
+                                    <option value="">-- Chọn chất liệu --</option>
+                                </select>
+                            </div>
+                            <div class="col-12 mt-3">
                                 <label class="form-label fw-bold small text-uppercase text-muted">Mô tả sản phẩm</label>
                                 <textarea class="form-control rounded-3 py-2 px-3" id="moTa" style="height: 120px;"
                                     placeholder="Mô tả về sản phẩm..."></textarea>
@@ -314,9 +338,12 @@
                     this.dict = await res.json();
 
                     const maps = [
-
                         ['idMauSac', this.dict.mauSac, 'tenMauSac'],
-                        ['idKichThuoc', this.dict.kichThuoc, 'tenKichThuoc']
+                        ['idKichThuoc', this.dict.kichThuoc, 'tenKichThuoc'],
+                        ['idDanhMuc', this.dict.danhMuc, 'tenDanhMuc'],
+                        ['idThuongHieu', this.dict.thuongHieu, 'tenThuongHieu'],
+                        ['idKieuDang', this.dict.kieuDang, 'tenKieuDang'],
+                        ['idChatLieu', this.dict.chatLieu, 'tenChatLieu']
                     ];
                     maps.forEach(m => this.f(m[0], m[1], m[2]));
 
@@ -328,6 +355,10 @@
                     if (sp) {
                         $('#tenSanPham').val(sp.tenSanPham);
                         $('#moTa').val(sp.moTa);
+                        $('#idDanhMuc').val(sp.idDanhMuc);
+                        $('#idThuongHieu').val(sp.idThuongHieu);
+                        $('#idKieuDang').val(sp.idKieuDang);
+                        $('#idChatLieu').val(sp.idChatLieu);
 
 
                         this.variants = /*[[${existingVariants}]]*/[];
@@ -495,10 +526,14 @@
                     if (!$('#tenSanPham').val()) return Swal.fire('Lỗi', 'Tên sản phẩm không được trống!', 'error');
                     if (!this.variants.length) return Swal.fire('Lỗi', 'Cần ít nhất 1 biến thể!', 'error');
 
+                    const idDanhMuc = $('#idDanhMuc').val();
+                    const idThuongHieu = $('#idThuongHieu').val();
+                    const idKieuDang = $('#idKieuDang').val();
+                    const idChatLieu = $('#idChatLieu').val();
                     const formData = new FormData();
                     const spId = /*[[${spData?.id}]]*/ null;
                     formData.append('data', JSON.stringify({
-                        sanPham: { id: spId, tenSanPham: $('#tenSanPham').val(), moTa: $('#moTa').val() },
+                        sanPham: { id: spId, tenSanPham: $('#tenSanPham').val(), moTa: $('#moTa').val(), idDanhMuc: idDanhMuc || null, idThuongHieu: idThuongHieu || null, idKieuDang: idKieuDang || null, idChatLieu: idChatLieu || null },
                         bienThes: this.variants.map(v => ({ id: v.id || null, idMauSac: v.cId, idKichThuoc: v.sId, soLuong: v.q, giaBan: v.p }))
                     }));
 

@@ -354,6 +354,11 @@
                                             onclick="openEditModal(this)">
                                             <i class="bi bi-pencil-square"></i>
                                         </button>
+                                        <button type="button" class="btn-icon rounded-circle shadow-xs text-danger"
+                                            th:data-id="${v.id}"
+                                            onclick="confirmDeleteVariant(this)">
+                                            <i class="bi bi-trash3"></i>
+                                        </button>
                                         <!-- <a th:href="@{/admin/san-pham/detail/{id}(id=${v.idSanPham})}"
                                             th:if="${v.idSanPham != null}" class="btn-icon rounded-circle shadow-xs"
                                             title="Xem chi tiết sản phẩm">
@@ -503,6 +508,32 @@
                     .catch(err => {
                         Swal.fire('Lỗi', 'Đã xảy ra lỗi kết nối!', 'error');
                     });
+            }
+
+            function confirmDeleteVariant(btn) {
+                const id = $(btn).data('id');
+                Swal.fire({
+                    title: 'Xác nhận xóa?',
+                    text: 'Dữ liệu biến thể này sẽ bị xóa hoàn toàn khỏi hệ thống!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ff3c5f',
+                    cancelButtonColor: '#ccc',
+                    confirmButtonText: 'Đồng ý xóa',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/api/admin/product-variant/variant/delete/${id}`, { method: 'DELETE' })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire('Thành công', data.message, 'success').then(() => location.reload());
+                                } else {
+                                    Swal.fire('Lỗi', data.message || 'Không thể xóa biến thể', 'error');
+                                }
+                            });
+                    }
+                });
             }
         </script>
     </main>

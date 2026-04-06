@@ -25,7 +25,21 @@ public class SanPham {
     @Column(name = "xoa_mem")
     private Boolean xoaMem;
 
+    @ManyToOne
+    @JoinColumn(name = "id_danh_muc")
+    private DanhMuc danhMuc;
 
+    @ManyToOne
+    @JoinColumn(name = "id_thuong_hieu")
+    private ThuongHieu thuongHieu;
+
+    @ManyToOne
+    @JoinColumn(name = "id_kieu_dang")
+    private KieuDang kieuDang;
+
+    @ManyToOne
+    @JoinColumn(name = "id_chat_lieu")
+    private ChatLieu chatLieu;
 
 
 

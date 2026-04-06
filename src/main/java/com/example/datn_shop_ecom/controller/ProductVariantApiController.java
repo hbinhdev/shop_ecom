@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/admin/product-variant")
@@ -65,6 +66,11 @@ public class ProductVariantApiController {
             sp.setTenSanPham(payload.getSanPham().getTenSanPham());
             sp.setMoTa(payload.getSanPham().getMoTa());
             
+            if (payload.getSanPham().getIdDanhMuc() != null) sp.setDanhMuc(DanhMuc.builder().id(payload.getSanPham().getIdDanhMuc()).build());
+            if (payload.getSanPham().getIdThuongHieu() != null) sp.setThuongHieu(ThuongHieu.builder().id(payload.getSanPham().getIdThuongHieu()).build());
+            if (payload.getSanPham().getIdKieuDang() != null) sp.setKieuDang(KieuDang.builder().id(payload.getSanPham().getIdKieuDang()).build());
+            if (payload.getSanPham().getIdChatLieu() != null) sp.setChatLieu(ChatLieu.builder().id(payload.getSanPham().getIdChatLieu()).build());
+            
             sp.setNgaySuaCuoi(LocalDateTime.now());
             SanPham savedSp = sanPhamRepo.save(sp);
 
@@ -98,7 +104,24 @@ public class ProductVariantApiController {
                 }
             }
 
-            // 4. Tạo hoặc Cập nhật các Biến thể và gắn Hình ảnh
+            // 4. Đồng bộ Biến thể (Xóa những biến thể không còn trong payload)
+            if (payload.getSanPham().getId() != null) {
+                List<Long> incomingIds = payload.getBienThes().stream()
+                        .map(VariantPayload::getId)
+                        .filter(java.util.Objects::nonNull)
+                        .collect(Collectors.toList());
+                
+                List<SanPhamChiTiet> existingVariants = spctRepo.findBySanPhamId(savedSp.getId());
+                for (SanPhamChiTiet ev : existingVariants) {
+                    if (!incomingIds.contains(ev.getId())) {
+                        // Xóa các hình ảnh liên quan trước khi xóa biến thể (nếu cần hinhAnhRepo)
+                        hinhAnhRepo.deleteBySanPhamChiTietId(ev.getId());
+                        spctRepo.delete(ev);
+                    }
+                }
+            }
+
+            // 5. Tạo hoặc Cập nhật các Biến thể và gắn Hình ảnh
             long spctCount = spctRepo.count();
             for (VariantPayload variant : payload.getBienThes()) {
                 SanPhamChiTiet spct;
@@ -110,6 +133,7 @@ public class ProductVariantApiController {
                     spct.setMaSanPhamChiTiet("SPCT" + String.format("%05d", spctCount));
                     spct.setNgayTao(LocalDateTime.now());
                     spct.setTrangThai("1");
+                    spct.setNguoiTao("Admin");
                 }
 
                 spct.setSanPham(savedSp);
@@ -119,6 +143,7 @@ public class ProductVariantApiController {
                 spct.setGiaBan(variant.getGiaBan());
                 spct.setSoTonKho(variant.getSoLuong());
                 spct.setNgaySuaCuoi(LocalDateTime.now());
+                spct.setNguoiSuaCuoi("Admin");
                 
                 SanPhamChiTiet savedSpct = spctRepo.save(spct);
 
@@ -143,8 +168,12 @@ public class ProductVariantApiController {
 
             return ResponseEntity.ok(Map.of("success", true, "message", "Cập nhật sản phẩm thành công!"));
         } catch (Exception e) {
+            log.error("Error creating product: ", e);
             e.printStackTrace();
-            return ResponseEntity.status(500).body(Map.of("success", false, "message", e.getMessage()));
+            Map<String, Object> error = new HashMap<>();
+            error.put("success", false);
+            error.put("message", e.getMessage() != null ? e.getMessage() : "Unknown error");
+            return ResponseEntity.status(500).body(error);
         }
     }
 
@@ -162,6 +191,10 @@ public class ProductVariantApiController {
             SanPham sp = dto.getId() != null ? sanPhamRepo.findById(dto.getId()).orElse(new SanPham()) : new SanPham();
             sp.setTenSanPham(dto.getTenSanPham());
             sp.setMoTa(dto.getMoTa());
+            if (dto.getIdDanhMuc() != null) sp.setDanhMuc(DanhMuc.builder().id(dto.getIdDanhMuc()).build());
+            if (dto.getIdThuongHieu() != null) sp.setThuongHieu(ThuongHieu.builder().id(dto.getIdThuongHieu()).build());
+            if (dto.getIdKieuDang() != null) sp.setKieuDang(KieuDang.builder().id(dto.getIdKieuDang()).build());
+            if (dto.getIdChatLieu() != null) sp.setChatLieu(ChatLieu.builder().id(dto.getIdChatLieu()).build());
 
             if(dto.getId() == null) {
                 sp.setNgayTao(LocalDateTime.now());
@@ -217,6 +250,10 @@ public class ProductVariantApiController {
         private Long id;
         private String tenSanPham;
         private String moTa;
+        private Long idDanhMuc;
+        private Long idThuongHieu;
+        private Long idKieuDang;
+        private Long idChatLieu;
     }
 
     @Data
@@ -228,5 +265,17 @@ public class ProductVariantApiController {
         private Integer soLuong;
         private BigDecimal giaBan;
         private String anhMauSac;
+    }
+
+    @DeleteMapping("/variant/delete/{id}")
+    @Transactional
+    public ResponseEntity<?> deleteVariant(@PathVariable Long id) {
+        try {
+            hinhAnhRepo.deleteBySanPhamChiTietId(id);
+            spctRepo.deleteById(id);
+            return ResponseEntity.ok(Map.of("success", true, "message", "Xóa biến thể thành công!"));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of("success", false, "message", e.getMessage()));
+        }
     }
 }

@@ -25,8 +25,6 @@ public class SanPhamChiTiet {
     @JoinColumn(name = "id_kich_thuoc")
     private KichThuoc kichThuoc;
 
-
-
     private String maSanPhamChiTiet;
     private String duongDanAnh;
     private BigDecimal giaBan;

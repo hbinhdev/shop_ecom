@@ -10,4 +10,7 @@ public interface HinhAnhRepository extends JpaRepository<HinhAnh, Long> {
     List<HinhAnh> findBySanPhamId(Long sanPhamId);
     List<HinhAnh> findBySanPhamChiTietId(Long sanPhamChiTietId);
     List<HinhAnh> findBySanPhamChiTietIdIn(List<Long> ids);
+
+    @org.springframework.transaction.annotation.Transactional
+    void deleteBySanPhamChiTietId(Long sanPhamChiTietId);
 }
