@@ -188,7 +188,8 @@
             <div class="mb-4 d-flex justify-content-between align-items-center">
                 <h4 class="fw-bold section-title">Quản lý sản phẩm / <span class="fw-bold section-title">Danh sách chi
                         tiết sản phẩm</span></h4>
-                <a th:href="@{/admin/san-pham}" class="btn btn-dark rounded-pill px-4">
+                <a th:href="@{/admin/san-pham}"
+                    class="btn btn-add-customer rounded-pill px-4 text-white border-0 shadow-sm">
                     <i class="bi bi-arrow-left me-1"></i> Quay lại
                 </a>
             </div>
@@ -212,7 +213,7 @@
                                     class="btn btn-dark rounded-pill px-4 py-2 d-flex align-items-center gap-2 btn-reset-filter">
                                     <i class="bi bi-arrow-counterclockwise"></i> Đặt lại bộ lọc
                                 </a>
-                                <a th:href="@{/admin/san-pham/export-variants(search=${search}, idMauSac=${idMauSac}, idKichThuoc=${idKichThuoc}, idLoaiSan=${idLoaiSan}, minPrice=${minPrice}, maxPrice=${maxPrice}, trThai=${trThai})}"
+                                <a th:href="@{/admin/san-pham/export-variants(search=${search}, idMauSac=${idMauSac}, idKichThuoc=${idKichThuoc}, minPrice=${minPrice}, maxPrice=${maxPrice}, trThai=${trThai})}"
                                     class="btn btn-light-outline rounded-pill px-4 py-2 d-flex align-items-center gap-2">
                                     <i class="bi bi-file-earmark-excel"></i> Xuất Excel
                                 </a>
@@ -245,15 +246,6 @@
                                     <option value="">Tất cả</option>
                                     <option th:each="k : ${kichThuocs}" th:value="${k.id}" th:text="${k.tenKichThuoc}"
                                         th:selected="${k.id == idKichThuoc}"></option>
-                                </select>
-                            </div>
-                            <div class="col-md-3 d-flex align-items-center gap-3">
-                                <label class="form-label mb-0 text-nowrap fw-medium small">Loại sân:</label>
-                                <select name="idLoaiSan" class="form-select rounded-pill border-1 bg-light-subtle"
-                                    onchange="this.form.submit()">
-                                    <option value="">Tất cả</option>
-                                    <option th:each="l : ${loaiSans}" th:value="${l.id}" th:text="${l.tenLoaiSan}"
-                                        th:selected="${l.id == idLoaiSan}"></option>
                                 </select>
                             </div>
                         </div>
@@ -290,7 +282,8 @@
                             <th class="ps-4 py-3" style="width: 60px;">STT</th>
                             <th class="py-3" style="width: 120px;">Mã CTSP</th>
                             <th class="py-3 text-center" style="width: 60px;">Ảnh</th>
-                            <th class="py-3">Phiên bản (Màu/Size/Sân)</th>
+                            <th class="py-3">Màu sắc</th>
+                            <th class="py-3" style="width: 100px;">Size</th>
                             <th class="py-3 text-center" style="width: 100px;">Tồn kho</th>
                             <th class="py-3 text-end" style="width: 150px;">Giá bán</th>
                             <th class="py-3 text-center" style="width: 150px;">Trạng thái</th>
@@ -300,43 +293,52 @@
                     <tbody>
                         <th:block th:each="v, stat : ${listVariants}">
                             <!-- Group Header Row (Show when product changes) -->
-                            <tr th:if="${stat.index == 0 || listVariants[stat.index - 1].idSanPham != v.idSanPham}" class="bg-light-subtle border-top border-bottom">
-                                <td colspan="8" class="ps-4 py-2">
+                            <tr th:if="${stat.index == 0 || listVariants[stat.index - 1].idSanPham != v.idSanPham}"
+                                class="bg-light-subtle border-top border-bottom">
+                                <td colspan="9" class="ps-4 py-2">
                                     <div class="d-flex align-items-center gap-2">
                                         <i class="bi bi-box-seam text-dark fs-5"></i>
                                         <span class="fw-bold text-dark text-uppercase small">Sản phẩm: </span>
-                                        <span class="fw-bold text-primary text-uppercase" th:text="${v.tenSanPham}">Tên Sản Phẩm</span>
-                                        <span class="badge bg-secondary-subtle text-muted fw-normal ms-2" th:text="'Mã: ' + ${v.maSanPham}">SP001</span>
+                                        <span class="fw-bold text-primary text-uppercase" th:text="${v.tenSanPham}">Tên
+                                            Sản Phẩm</span>
+                                        <span class="badge bg-secondary-subtle text-muted fw-normal ms-2"
+                                            th:text="'Mã: ' + ${v.maSanPham}">SP001</span>
                                     </div>
                                 </td>
                             </tr>
-                            
+
                             <!-- Variant Row -->
                             <tr class="variant-row">
-                                <td class="ps-4 small text-muted font-monospace" th:text="${stat.index + 1 + (spPage != null ? spPage.number * spPage.size : 0)}">1</td>
+                                <td class="ps-4 small text-muted font-monospace"
+                                    th:text="${stat.index + 1 + (spPage != null ? spPage.number * spPage.size : 0)}">1
+                                </td>
                                 <td class="small fw-semibold text-dark" th:text="${v.maSanPhamChiTiet}">CTSP001</td>
                                 <td class="text-center">
                                     <img th:src="${v.duongDanAnh != null ? '/uploads/san-pham/' + v.duongDanAnh : 'https://placehold.co/100x100?text=No+Image'}"
-                                        class="variant-img rounded border shadow-xs" alt="SP" 
+                                        class="variant-img rounded border shadow-xs" alt="SP"
                                         style="width: 38px; height: 38px; object-fit: cover;">
                                 </td>
                                 <td>
-                                    <div class="d-flex flex-column">
-                                        <div class="d-flex align-items-center gap-2">
-                                            <span class="fw-bold text-dark" th:text="${v.mauSac}">Đỏ</span>
-                                            <span class="text-muted">/</span>
-                                            <span class="fw-bold text-dark" th:text="${v.kichThuoc}">42</span>
-                                        </div>
-                                        <div class="extra-small text-muted" th:text="${v.loaiSan ?: '-'}">Sân cỏ nhân tạo</div>
-                                    </div>
+                                    <span class="fw-medium text-dark" th:text="${v.mauSac}">Đỏ</span>
                                 </td>
                                 <td class="text-center">
-                                    <span class="fw-bold fs-6" th:classappend="${v.soTonKho <= 5 ? 'text-danger' : 'text-dark'}" th:text="${v.soTonKho}">10</span>
+                                    <span class="fw-bold text-dark" th:text="${v.kichThuoc}">42</span>
                                 </td>
-                                <td class="text-end fw-bold text-danger" th:text="${v.giaBan != null ? #numbers.formatDecimal(v.giaBan, 0, 'COMMA', 0, 'POINT') + ' ₫' : '0 ₫'}">1,200,000 đ</td>
                                 <td class="text-center">
-                                    <span th:if="${v.trangThai == '1'}" class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Kinh doanh</span>
-                                    <span th:if="${v.trangThai == '0'}" class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng bán</span>
+                                    <span class="fw-bold fs-6"
+                                        th:classappend="${v.soTonKho <= 5 ? 'text-danger' : 'text-dark'}"
+                                        th:text="${v.soTonKho}">10</span>
+                                </td>
+                                <td class="text-end fw-bold text-danger"
+                                    th:text="${v.giaBan != null ? #numbers.formatDecimal(v.giaBan, 0, 'COMMA', 0, 'POINT') + ' ₫' : '0 ₫'}">
+                                    1,200,000 đ</td>
+                                <td class="text-center">
+                                    <span th:if="${v.trangThai == '1'}"
+                                        class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Kinh
+                                        doanh</span>
+                                    <span th:if="${v.trangThai == '0'}"
+                                        class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng
+                                        bán</span>
                                 </td>
                                 <td class="text-center pe-4">
                                     <div class="d-flex justify-content-center align-items-center gap-2">
@@ -346,22 +348,24 @@
                                                 onchange="confirmToggleVariant(this)" style="cursor: pointer;">
                                         </div>
                                         <button type="button" class="btn-icon rounded-circle shadow-xs"
-                                            th:data-id="${v.id}" th:data-name="${v.tenSanPham}" th:data-color="${v.mauSac}"
-                                            th:data-size="${v.kichThuoc}" th:data-qty="${v.soTonKho}"
-                                            th:data-price="${v.giaBan}" onclick="openEditModal(this)">
+                                            th:data-id="${v.id}" th:data-name="${v.tenSanPham}"
+                                            th:data-color="${v.mauSac}" th:data-size="${v.kichThuoc}"
+                                            th:data-qty="${v.soTonKho}" th:data-price="${v.giaBan}"
+                                            onclick="openEditModal(this)">
                                             <i class="bi bi-pencil-square"></i>
                                         </button>
-                                        <a th:href="@{/admin/san-pham/detail/{id}(id=${v.idSanPham})}"
-                                            th:if="${v.idSanPham != null}" class="btn-icon rounded-circle shadow-xs" title="Xem chi tiết sản phẩm">
+                                        <!-- <a th:href="@{/admin/san-pham/detail/{id}(id=${v.idSanPham})}"
+                                            th:if="${v.idSanPham != null}" class="btn-icon rounded-circle shadow-xs"
+                                            title="Xem chi tiết sản phẩm">
                                             <i class="bi bi-box-arrow-in-right"></i>
-                                        </a>
+                                        </a> -->
                                     </div>
                                 </td>
                             </tr>
                         </th:block>
 
                         <tr th:if="${#lists.isEmpty(listVariants)}">
-                            <td colspan="8" class="text-center py-5 text-muted">
+                            <td colspan="9" class="text-center py-5 text-muted">
                                 <i class="bi bi-inbox fs-2 d-block mb-2 text-muted-50"></i>
                                 Không tìm thấy biến thể sản phẩm nào phù hợp.
                             </td>
@@ -371,7 +375,8 @@
 
                 <!-- Pagination Footer -->
                 <div class="px-4 py-3 border-top bg-light-subtle">
-                    <div th:replace="~{admin/fragments/pagination :: pagination(${spPage}, '/admin/san-pham/bien-the', 'search=' + (${search} ?: '') + '&idMauSac=' + (${idMauSac} ?: '') + '&idKichThuoc=' + (${idKichThuoc} ?: '') + '&trThai=' + (${trThai} ?: '') + '&maxPrice=' + (${maxPrice} ?: '20000000'))}">
+                    <div
+                        th:replace="~{admin/fragments/pagination :: pagination(${spPage}, '/admin/san-pham/bien-the', 'search=' + (${search} ?: '') + '&idMauSac=' + (${idMauSac} ?: '') + '&idKichThuoc=' + (${idKichThuoc} ?: '') + '&trThai=' + (${trThai} ?: '') + '&maxPrice=' + (${maxPrice} ?: '20000000'))}">
                     </div>
                 </div>
             </div>
@@ -405,19 +410,19 @@
                         <div class="mb-4">
                             <label class="form-label fw-bold small text-uppercase text-muted">Giá bán (VNĐ)</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0 rounded-pill-start ps-3"><i
-                                        class="bi bi-currency-dollar"></i></span>
+                                <span class="input-group-text bg-white border-end-0 rounded-pill-start ps-3 small fw-bold text-muted">VNĐ</span>
                                 <input type="number" class="form-control border-start-0 rounded-pill-end pe-3 py-2"
                                     id="editGiaBan" placeholder="Nhập giá bán...">
                             </div>
                         </div>
-                        <p class="text-muted extra-small italic text-center mb-0"><i class="bi bi-info-circle me-1"></i>
-                            Sau khi nhấn cập nhật, thay đổi sẽ có hiệu lực ngay lập tức.</p>
+                        <!-- <p class="text-muted extra-small italic text-center mb-0"><i class="bi bi-info-circle me-1"></i>
+                            Sau khi nhấn cập nhật, thay đổi sẽ có hiệu lực ngay lập tức.</p> -->
                     </div>
                     <div class="modal-footer border-0 p-4 pt-0">
                         <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Hủy
                             bỏ</button>
-                        <button type="button" class="btn btn-dark rounded-pill px-5 shadow-sm"
+                        <button type="button"
+                            class="btn btn-add-customer rounded-pill px-5 shadow-sm text-white border-0"
                             onclick="saveVariantUpdate()">
                             <i class="bi bi-check-lg me-1"></i> XÁC NHẬN CẬP NHẬT
                         </button>

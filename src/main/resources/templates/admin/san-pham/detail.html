@@ -10,8 +10,10 @@
         <div class="container-fluid p-0 text-start">
             <!-- Breadcrumb / Header Title -->
             <div class="mb-4 d-flex justify-content-between align-items-center">
-                <h4 class="fw-bold section-title">Quản lý sản phẩm / <span class="fw-bold section-title">Chi tiết biến thể</span></h4>
-                <a th:href="@{/admin/san-pham}" class="btn btn-light-outline rounded-pill px-4 py-2 d-flex align-items-center gap-2">
+                <h4 class="fw-bold section-title">Quản lý sản phẩm / <span class="fw-bold section-title">Chi tiết biến
+                        thể</span></h4>
+                <a th:href="@{/admin/san-pham}"
+                    class="btn btn-light-outline rounded-pill px-4 py-2 d-flex align-items-center gap-2">
                     <i class="bi bi-arrow-left"></i> Quay lại danh sách
                 </a>
             </div>
@@ -20,46 +22,31 @@
             <div class="card shadow-sm border-0 rounded-4 mb-4">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
-                        <h5 class="fw-bold mb-0 text-uppercase">Thông tin sản phẩm: <span class="text-primary" th:text="${sp.tenSanPham}">Tên SP</span></h5>
+                        <h5 class="fw-bold mb-0 text-uppercase">Thông tin sản phẩm: <span class="text-primary"
+                                th:text="${sp.tenSanPham}">Tên SP</span></h5>
                         <div class="d-flex gap-2">
-                            <a th:href="@{/admin/san-pham/edit/{id}(id=${sp.id})}" class="btn btn-dark btn-sm rounded-pill px-3 py-1">
+                            <a th:href="@{/admin/san-pham/edit/{id}(id=${sp.id})}"
+                                class="btn btn-add-customer btn-sm rounded-pill px-3 py-1 text-white border-0 shadow-sm">
                                 <i class="bi bi-pencil"></i> Chỉnh sửa
                             </a>
                         </div>
                     </div>
-                    
+
                     <div class="row g-4">
                         <div class="col-md-3">
                             <label class="form-label mb-1 text-muted small fw-bold text-uppercase">Mã sản phẩm</label>
                             <div class="fw-bold text-dark" th:text="${sp.maSanPham}">SP0001</div>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label mb-1 text-muted small fw-bold text-uppercase">Thương hiệu</label>
-                            <div class="fw-bold text-dark" th:text="${sp.thuongHieu?.tenThuongHieu ?: '-'}">Nike</div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label mb-1 text-muted small fw-bold text-uppercase">Chất liệu</label>
-                            <div class="fw-bold text-dark" th:text="${sp.chatLieu?.tenChatLieu ?: '-'}">Da</div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label mb-1 text-muted small fw-bold text-uppercase">Tổng phiên bản</label>
+                            <label class="form-label mb-1 text-muted small fw-bold text-uppercase">Tổng phiên
+                                bản</label>
                             <div class="fw-bold text-dark" th:text="${#lists.size(sp.danhSachChiTiet)}">0</div>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label mb-1 text-muted small fw-bold text-uppercase">Xuất xứ</label>
-                            <div class="fw-bold text-dark" th:text="${sp.xuatXu?.tenXuatXu ?: '-'}">Việt Nam</div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label mb-1 text-muted small fw-bold text-uppercase">Kiểu dáng</label>
-                            <div class="fw-bold text-dark" th:text="${sp.coGiay?.tenCoGiay ?: '-'}">Cổ cao</div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label mb-1 text-muted small fw-bold text-uppercase">Phong cách</label>
-                            <div class="fw-bold text-dark" th:text="${sp.phongCachChoi?.tenPhongCach ?: '-'}">Outdoor</div>
-                        </div>
-                        <div class="col-md-3">
                             <label class="form-label mb-1 text-muted small fw-bold text-uppercase">Tổng tồn kho</label>
-                            <div class="fw-bold text-dark text-danger" th:text="${#aggregates.sum(sp.danhSachChiTiet.?[soTonKho != null].![soTonKho]) ?: 0}">0</div>
+                            <div class="fw-bold text-dark text-danger"
+                                th:text="${#aggregates.sum(sp.danhSachChiTiet.?[soTonKho != null].![soTonKho]) ?: 0}">0
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -69,7 +56,8 @@
             <div class="custom-table overflow-hidden shadow-sm rounded-4 bg-white">
                 <div class="p-4 bg-white border-bottom d-flex justify-content-between align-items-center">
                     <h5 class="fw-bold mb-0 text-uppercase">Danh sách biến thể chi tiết (SPCT)</h5>
-                    <button class="btn btn-dark rounded-pill px-4 py-2 d-flex align-items-center gap-2" onclick="VariantUI.openAddModal()" style="background-color: #2d3436;">
+                    <button class="btn btn-add-customer rounded-pill px-4 py-2 d-flex align-items-center gap-2 text-white border-0 shadow-sm"
+                        onclick="VariantUI.openAddModal()">
                         <i class="bi bi-plus-lg"></i> Thêm biến thể nhanh
                     </button>
                 </div>
@@ -80,7 +68,6 @@
                             <th class="py-3">Mã SPCT</th>
                             <th class="py-3">Màu sắc</th>
                             <th class="py-3">Kích cỡ</th>
-                            <th class="py-3">Loại sân</th>
                             <th class="py-3 text-center">Tồn kho</th>
                             <th class="py-3 text-end">Giá bán</th>
                             <th class="py-3 text-center">Trạng thái</th>
@@ -93,29 +80,33 @@
                             <td class="small fw-semibold text-dark" th:text="${v.maSanPhamChiTiet}">SPCT001</td>
                             <td>
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="rounded-circle border" th:style="'background-color:' + ${v.mauSac?.maMau} + '; width: 18px; height: 18px; display: inline-block;'"></span>
+                                    <span class="rounded-circle border"
+                                        th:style="'background-color:' + ${v.mauSac?.maMau} + '; width: 18px; height: 18px; display: inline-block;'"></span>
                                     <span class="small fw-medium" th:text="${v.mauSac?.tenMauSac}">Đỏ</span>
                                 </div>
                             </td>
                             <td class="small" th:text="${v.kichThuoc?.tenKichThuoc}">42</td>
-                            <td class="small text-muted" th:text="${v.loaiSan?.tenLoaiSan ?: '-'}">Sân cỏ nhân tạo</td>
                             <td class="small fw-bold text-dark text-center" th:text="${v.soTonKho}">0</td>
-                            <td class="small text-danger fw-bold text-end" th:text="${#numbers.formatDecimal(v.giaBan, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</td>
+                            <td class="small text-danger fw-bold text-end"
+                                th:text="${#numbers.formatDecimal(v.giaBan, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0 ₫</td>
                             <td class="text-center">
                                 <span th:if="${v.trangThai == '1'}"
-                                    class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Kinh doanh</span>
+                                    class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Kinh
+                                    doanh</span>
                                 <span th:if="${v.trangThai == '0'}"
-                                    class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng bán</span>
+                                    class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng
+                                    bán</span>
                             </td>
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center align-items-center gap-2">
                                     <div class="form-check form-switch p-0 m-0">
-                                        <input class="form-check-input ms-0 custom-switch" type="checkbox" 
-                                               th:checked="${v.trangThai == '1'}"
-                                               th:onchange="'VariantUI.toggleStatus(' + ${v.id} + ', this)'"
-                                               style="cursor: pointer;">
+                                        <input class="form-check-input ms-0 custom-switch" type="checkbox"
+                                            th:checked="${v.trangThai == '1'}"
+                                            th:onchange="'VariantUI.toggleStatus(' + ${v.id} + ', this)'"
+                                            style="cursor: pointer;">
                                     </div>
-                                    <button class="btn-icon rounded-circle shadow-xs" th:onclick="'VariantUI.openEditModal(' + ${v.id} + ')'" title="Sửa biến thể">
+                                    <button class="btn-icon rounded-circle shadow-xs"
+                                        th:onclick="'VariantUI.openEditModal(' + ${v.id} + ')'" title="Sửa biến thể">
                                         <i class="bi bi-pencil-fill small text-dark"></i>
                                     </button>
                                 </div>
@@ -145,39 +136,44 @@
                         <div class="modal-body p-4 bg-white">
                             <div class="row g-3 text-start">
                                 <div class="col-12 add-only">
-                                    <label class="form-label small fw-bold text-muted text-uppercase mb-1">Màu sắc</label>
-                                    <select class="form-select rounded-pill border-1 bg-light-subtle shadow-none" id="vIdMau">
+                                    <label class="form-label small fw-bold text-muted text-uppercase mb-1">Màu
+                                        sắc</label>
+                                    <select class="form-select rounded-pill border-1 bg-light-subtle shadow-none"
+                                        id="vIdMau">
                                         <option value="">-- Chọn màu --</option>
-                                        <option th:each="m : ${mauSacs}" th:value="${m.id}" th:text="${m.tenMauSac}"></option>
+                                        <option th:each="m : ${mauSacs}" th:value="${m.id}" th:text="${m.tenMauSac}">
+                                        </option>
                                     </select>
                                 </div>
                                 <div class="col-md-6 add-only">
-                                    <label class="form-label small fw-bold text-muted text-uppercase mb-1">Kích thước</label>
-                                    <select class="form-select rounded-pill border-1 bg-light-subtle shadow-none" id="vIdSize">
+                                    <label class="form-label small fw-bold text-muted text-uppercase mb-1">Kích
+                                        thước</label>
+                                    <select class="form-select rounded-pill border-1 bg-light-subtle shadow-none"
+                                        id="vIdSize">
                                         <option value="">-- Chọn size --</option>
-                                        <option th:each="k : ${kichThuocs}" th:value="${k.id}" th:text="${k.tenKichThuoc}"></option>
+                                        <option th:each="k : ${kichThuocs}" th:value="${k.id}"
+                                            th:text="${k.tenKichThuoc}"></option>
                                     </select>
                                 </div>
-                                <div class="col-md-6 add-only">
-                                    <label class="form-label small fw-bold text-muted text-uppercase mb-1">Loại sân</label>
-                                    <select class="form-select rounded-pill border-1 bg-light-subtle shadow-none" id="vIdSan">
-                                        <option value="">-- Chọn loại sân --</option>
-                                        <option th:each="l : ${loaiSans}" th:value="${l.id}" th:text="${l.tenLoaiSan}"></option>
-                                    </select>
+
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold text-muted text-uppercase mb-1">Số lượng
+                                        tồn</label>
+                                    <input type="number" class="form-control rounded-pill border-1 shadow-none"
+                                        id="vSoLuong" required min="1" value="1">
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label small fw-bold text-muted text-uppercase mb-1">Số lượng tồn</label>
-                                    <input type="number" class="form-control rounded-pill border-1 shadow-none" id="vSoLuong" required min="1" value="1">
-                                </div>
-                                <div class="col-md-6">
-                                    <label class="form-label small fw-bold text-muted text-uppercase mb-1">Giá bán (VNĐ)</label>
-                                    <input type="number" class="form-control rounded-pill border-1 shadow-none" id="vGiaBan" required min="1000" value="500000">
+                                    <label class="form-label small fw-bold text-muted text-uppercase mb-1">Giá bán
+                                        (VNĐ)</label>
+                                    <input type="number" class="form-control rounded-pill border-1 shadow-none"
+                                        id="vGiaBan" required min="1000" value="500000">
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer border-0 p-4 pt-0">
-                            <button type="button" class="btn btn-light-outline rounded-pill px-4" data-bs-dismiss="modal">Hủy bỏ</button>
-                            <button type="submit" class="btn btn-dark rounded-pill px-5">Lưu thông tin</button>
+                            <button type="button" class="btn btn-light-outline rounded-pill px-4"
+                                data-bs-dismiss="modal">Hủy bỏ</button>
+                            <button type="submit" class="btn btn-add-customer rounded-pill px-5 text-white border-0 shadow-sm">Lưu thông tin</button>
                         </div>
                     </form>
                 </div>
@@ -207,7 +203,7 @@
                     const row = event.currentTarget.closest('tr');
                     const qty = row.querySelectorAll('td')[5].innerText;
                     const priceRaw = row.querySelectorAll('td')[6].innerText.replace(/[^0-9]/g, '');
-                    
+
                     document.getElementById('vId').value = id;
                     document.getElementById('vSoLuong').value = qty;
                     document.getElementById('vGiaBan').value = priceRaw;
@@ -217,9 +213,9 @@
                 },
                 async toggleStatus(id, checkbox) {
                     const res = await fetch(`/api/admin/product-variant/variant/toggle-status/${id}`, { method: 'POST' });
-                    if(res.ok) {
+                    if (res.ok) {
                         Swal.fire({ icon: 'success', title: 'Thành công', text: 'Đã cập nhật trạng thái biến thể!', timer: 800, showConfirmButton: false })
-                        .then(() => window.location.reload());
+                            .then(() => window.location.reload());
                     } else {
                         checkbox.checked = !checkbox.checked;
                         Swal.fire('Lỗi', 'Thao tác thất bại', 'error');
@@ -232,13 +228,13 @@
                         idSanPham: idSanPham,
                         idMauSac: document.getElementById('vIdMau').value || null,
                         idKichThuoc: document.getElementById('vIdSize').value || null,
-                        idLoaiSan: document.getElementById('vIdSan').value || null,
+
                         soLuong: document.getElementById('vSoLuong').value,
                         giaBan: document.getElementById('vGiaBan').value
                     };
-                    
-                    if(!data.id) {
-                        if(!data.idMauSac || !data.idKichThuoc) {
+
+                    if (!data.id) {
+                        if (!data.idMauSac || !data.idKichThuoc) {
                             Swal.fire('Chú ý', 'Vui lòng chọn Màu và Kích thước!', 'warning');
                             return;
                         }
@@ -251,7 +247,7 @@
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
                     });
-                    if(res.ok) {
+                    if (res.ok) {
                         Swal.fire('Thành công', 'Đã lưu thông tin biến thể!', 'success').then(() => window.location.reload());
                     } else {
                         const err = await res.text();
@@ -263,4 +259,5 @@
         </script>
     </main>
 </body>
+
 </html>

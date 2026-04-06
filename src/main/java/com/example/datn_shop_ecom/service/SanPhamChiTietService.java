@@ -8,10 +8,10 @@ import java.math.BigDecimal;
 public interface SanPhamChiTietService {
     Page<SanPhamChiTiet> filterVariantPage(
         String search, Long idMauSac, Long idKichThuoc, 
-        Long idLoaiSan, BigDecimal minPrice, BigDecimal maxPrice, 
+        BigDecimal minPrice, BigDecimal maxPrice, 
         String trangThai, Pageable pageable
     );
     void toggleVariantStatus(Long id);
     SanPhamChiTiet findById(Long id);
-    java.io.ByteArrayInputStream exportToExcel(String search, Long idMauSac, Long idKichThuoc, Long idLoaiSan, java.math.BigDecimal minPrice, java.math.BigDecimal maxPrice, String trangThai);
+    java.io.ByteArrayInputStream exportToExcel(String search, Long idMauSac, Long idKichThuoc, java.math.BigDecimal minPrice, java.math.BigDecimal maxPrice, String trangThai);
 }

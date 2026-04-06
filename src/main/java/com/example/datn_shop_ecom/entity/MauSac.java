@@ -12,6 +12,7 @@ public class MauSac {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String maMau; // Vd: MS00001
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String tenMauSac;
     private String nguoiTao;
     private LocalDateTime ngayTao;

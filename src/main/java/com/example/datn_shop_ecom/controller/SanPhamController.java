@@ -3,11 +3,10 @@ package com.example.datn_shop_ecom.controller;
 import com.example.datn_shop_ecom.entity.SanPham;
 import com.example.datn_shop_ecom.entity.SanPhamChiTiet;
 import com.example.datn_shop_ecom.entity.HinhAnh;
-import com.example.datn_shop_ecom.repository.ChatLieuRepository;
+
+import com.example.datn_shop_ecom.repository.HinhAnhRepository;
 import com.example.datn_shop_ecom.repository.KichThuocRepository;
-import com.example.datn_shop_ecom.repository.LoaiSanRepository;
 import com.example.datn_shop_ecom.repository.MauSacRepository;
-import com.example.datn_shop_ecom.repository.ThuongHieuRepository;
 import com.example.datn_shop_ecom.service.SanPhamChiTietService;
 import com.example.datn_shop_ecom.service.SanPhamService;
 import lombok.extern.slf4j.Slf4j;
@@ -42,20 +41,13 @@ public class SanPhamController {
     private KichThuocRepository kichThuocRepo;
 
     @Autowired
-    private LoaiSanRepository loaiSanRepo;
-
-    @Autowired
-    private ThuongHieuRepository thuongHieuRepo;
-
-    @Autowired
-    private ChatLieuRepository chatLieuRepo;
+    private HinhAnhRepository hinhAnhRepo;
 
     @GetMapping("/bien-the")
     public String bienThe(
             @RequestParam(required = false, defaultValue = "") String search,
             @RequestParam(required = false) Long idMauSac,
             @RequestParam(required = false) Long idKichThuoc,
-            @RequestParam(required = false) Long idLoaiSan,
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false, defaultValue = "20000000") BigDecimal maxPrice,
             @RequestParam(required = false, defaultValue = "") String trThai,
@@ -64,9 +56,24 @@ public class SanPhamController {
     ) {
         // Ưu tiên sản phẩm mới cập nhật lên ĐẦU và gom nhóm chúng lại
         Pageable pageable = PageRequest.of(page, 10, Sort.by("sanPham.ngaySuaCuoi").descending().and(Sort.by("sanPham.id").descending()).and(Sort.by("id").descending()));
-        Page<SanPhamChiTiet> spctPage = spctService.filterVariantPage(search, idMauSac, idKichThuoc, idLoaiSan, minPrice, maxPrice, trThai, pageable);
+        Page<SanPhamChiTiet> spctPage = spctService.filterVariantPage(search, idMauSac, idKichThuoc, minPrice, maxPrice, trThai, pageable);
         
-        // Chuyển sang danh sách Map cực kỳ an toàn để View không bao giờ bị lỗi Lazy loading hay Circular reference
+        // Thu thập toàn bộ ID biến thể của trang hiện tại để lấy ảnh hàng loạt (tránh lỗi N+1)
+        java.util.List<Long> variantIds = new java.util.ArrayList<>();
+        if (spctPage != null) variantIds = spctPage.getContent().stream().map(v -> v.getId()).collect(java.util.stream.Collectors.toList());
+        
+        // Mapped ảnh đầu tiên của mỗi biến thể
+        java.util.Map<Long, String> imgMap = new java.util.HashMap<>();
+        if (!variantIds.isEmpty()) {
+            java.util.List<HinhAnh> allImg = hinhAnhRepo.findBySanPhamChiTietIdIn(variantIds);
+            for (HinhAnh h : allImg) {
+                if (h.getSanPhamChiTiet() != null && !imgMap.containsKey(h.getSanPhamChiTiet().getId())) {
+                    imgMap.put(h.getSanPhamChiTiet().getId(), h.getDuongDan());
+                }
+            }
+        }
+
+        // Chuyển sang danh sách Map cực kỳ an toàn
         java.util.List<java.util.Map<String, Object>> safeVariants = new java.util.ArrayList<>();
         if (spctPage != null) {
             for (SanPhamChiTiet v : spctPage.getContent()) {
@@ -77,11 +84,21 @@ public class SanPhamController {
                 vMap.put("tenSanPham", v.getSanPham() != null ? v.getSanPham().getTenSanPham() : "N/A");
                 vMap.put("mauSac", v.getMauSac() != null ? v.getMauSac().getTenMauSac() : "N/A");
                 vMap.put("kichThuoc", v.getKichThuoc() != null ? v.getKichThuoc().getTenKichThuoc() : "N/A");
-                vMap.put("loaiSan", v.getLoaiSan() != null ? v.getLoaiSan().getTenLoaiSan() : "N/A");
                 vMap.put("soTonKho", v.getSoTonKho() != null ? v.getSoTonKho() : 0);
                 vMap.put("giaBan", v.getGiaBan() != null ? v.getGiaBan() : java.math.BigDecimal.ZERO);
                 vMap.put("trangThai", v.getTrangThai());
-                vMap.put("duongDanAnh", v.getDuongDanAnh());
+                
+                // --- Xử lý lấy ảnh theo từng màu (Biến thể) ---
+                String imgPath = v.getDuongDanAnh(); // Lấy ảnh trực tiếp từ field (nếu đã lưu)
+                if ((imgPath == null || imgPath.isEmpty()) && imgMap.containsKey(v.getId())) {
+                    imgPath = imgMap.get(v.getId()); // Lấy ảnh từ bảng HinhAnh (nếu có)
+                }
+                if (imgPath == null || imgPath.isEmpty()) {
+                    imgPath = (v.getSanPham() != null) ? v.getSanPham().getDuongDanAnh() : null; // Fallback về ảnh sp cha
+                }
+                vMap.put("duongDanAnh", imgPath);
+                // ----------------------------------------------
+                
                 vMap.put("idSanPham", v.getSanPham() != null ? v.getSanPham().getId() : null);
                 safeVariants.add(vMap);
             }
@@ -92,7 +109,6 @@ public class SanPhamController {
         model.addAttribute("search", search);
         model.addAttribute("idMauSac", idMauSac);
         model.addAttribute("idKichThuoc", idKichThuoc);
-        model.addAttribute("idLoaiSan", idLoaiSan);
         model.addAttribute("minPrice", minPrice != null ? minPrice : BigDecimal.ZERO);
         model.addAttribute("maxPrice", maxPrice);
         model.addAttribute("trThai", trThai);
@@ -100,7 +116,6 @@ public class SanPhamController {
         // Filter Data
         model.addAttribute("mauSacs", mauSacRepo.findAll());
         model.addAttribute("kichThuocs", kichThuocRepo.findAll());
-        model.addAttribute("loaiSans", loaiSanRepo.findAll());
         
         return "admin/san-pham/chi-tiet-san-pham";
     }
@@ -108,24 +123,18 @@ public class SanPhamController {
     @GetMapping
     public String index(
             @RequestParam(required = false, defaultValue = "") String search,
-            @RequestParam(required = false) Long idThuongHieu,
-            @RequestParam(required = false) Long idChatLieu,
             @RequestParam(defaultValue = "0") int page,
             Model model
     ) {
         Pageable pageable = PageRequest.of(page, 5);
-        Page<SanPham> spPage = sanPhamService.filterSanPham(search, idThuongHieu, idChatLieu, pageable);
+        Page<SanPham> spPage = sanPhamService.filterSanPham(search, pageable);
         
         model.addAttribute("listSanPham", spPage.getContent());
         model.addAttribute("spPage", spPage);
         model.addAttribute("search", search);
-        model.addAttribute("idThuongHieu", idThuongHieu);
-        model.addAttribute("idChatLieu", idChatLieu);
         model.addAttribute("currentPage", page);
         
-        // Nạp danh mục cho bộ lọc
-        model.addAttribute("thuongHieus", thuongHieuRepo.findAll());
-        model.addAttribute("chatLieus", chatLieuRepo.findAll());
+
         
         return "admin/san-pham/index";
     }
@@ -143,7 +152,6 @@ public class SanPhamController {
         // Nạp thêm danh mục để phục vụ "Thêm biến thể nhanh"
         model.addAttribute("mauSacs", mauSacRepo.findAll());
         model.addAttribute("kichThuocs", kichThuocRepo.findAll());
-        model.addAttribute("loaiSans", loaiSanRepo.findAll());
         
         return "admin/san-pham/detail";
     }
@@ -158,12 +166,6 @@ public class SanPhamController {
         spData.put("id", sp.getId());
         spData.put("tenSanPham", sp.getTenSanPham());
         spData.put("moTa", sp.getMoTa());
-        spData.put("idThuongHieu", sp.getThuongHieu() != null ? sp.getThuongHieu().getId() : null);
-        spData.put("idXuatXu", sp.getXuatXu() != null ? sp.getXuatXu().getId() : null);
-        spData.put("idCoGiay", sp.getCoGiay() != null ? sp.getCoGiay().getId() : null);
-        spData.put("idChatLieu", sp.getChatLieu() != null ? sp.getChatLieu().getId() : null);
-        spData.put("idViTri", sp.getViTri() != null ? sp.getViTri().getId() : null);
-        spData.put("idPhongCach", sp.getPhongCachChoi() != null ? sp.getPhongCachChoi().getId() : null);
         
         model.addAttribute("spData", spData);
         
@@ -177,18 +179,12 @@ public class SanPhamController {
                 vMap.put("cName", v.getMauSac() != null ? v.getMauSac().getTenMauSac() : "N/A");
                 vMap.put("sId", v.getKichThuoc() != null ? v.getKichThuoc().getId() : null);
                 vMap.put("sName", v.getKichThuoc() != null ? v.getKichThuoc().getTenKichThuoc() : "N/A");
-                vMap.put("grId", v.getLoaiSan() != null ? v.getLoaiSan().getId() : null);
-                vMap.put("grName", v.getLoaiSan() != null ? v.getLoaiSan().getTenLoaiSan() : "N/A");
-                vMap.put("fId", v.getFormChan() != null ? v.getFormChan().getId() : null);
-                vMap.put("fName", v.getFormChan() != null ? v.getFormChan().getTenForm() : "N/A");
                 vMap.put("q", v.getSoTonKho());
                 vMap.put("p", v.getGiaBan());
                 
                 String cId = v.getMauSac() != null ? v.getMauSac().getId().toString() : "0";
                 String sId = v.getKichThuoc() != null ? v.getKichThuoc().getId().toString() : "0";
-                String grId = v.getLoaiSan() != null ? v.getLoaiSan().getId().toString() : "0";
-                String fId = v.getFormChan() != null ? v.getFormChan().getId().toString() : "0";
-                vMap.put("uid", cId + "-" + sId + "-" + grId + "-" + fId);
+                vMap.put("uid", cId + "-" + sId);
                 
                 variants.add(vMap);
             }
@@ -277,11 +273,9 @@ public class SanPhamController {
 
     @GetMapping("/export")
     public ResponseEntity<org.springframework.core.io.InputStreamResource> exportExcel(
-            @RequestParam(required = false) String search,
-            @RequestParam(required = false) Long idThuongHieu,
-            @RequestParam(required = false) Long idChatLieu) {
+            @RequestParam(required = false) String search) {
         
-        java.io.ByteArrayInputStream in = sanPhamService.exportToExcel(search, idThuongHieu, idChatLieu);
+        java.io.ByteArrayInputStream in = sanPhamService.exportToExcel(search);
         org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=san_pham.xlsx");
 
@@ -296,12 +290,11 @@ public class SanPhamController {
             @RequestParam(required = false) String search,
             @RequestParam(required = false) Long idMauSac,
             @RequestParam(required = false) Long idKichThuoc,
-            @RequestParam(required = false) Long idLoaiSan,
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) String trThai) {
         
-        java.io.ByteArrayInputStream in = spctService.exportToExcel(search, idMauSac, idKichThuoc, idLoaiSan, minPrice, maxPrice, trThai);
+        java.io.ByteArrayInputStream in = spctService.exportToExcel(search, idMauSac, idKichThuoc, minPrice, maxPrice, trThai);
         org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=bien_the_san_pham.xlsx");
 

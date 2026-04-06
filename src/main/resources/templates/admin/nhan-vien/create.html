@@ -9,7 +9,8 @@
     <main>
         <div class="container-fluid p-0">
             <div class="mb-4">
-                <h4 class="fw-bold section-title">Quản lý tài khoản / <span class="fw-bold">Quản lý nhân viên</span></h4>
+                <h4 class="fw-bold section-title">Quản lý tài khoản / <span class="fw-bold">Quản lý nhân viên</span>
+                </h4>
             </div>
 
             <form th:action="@{/admin/nhan-vien/save}" th:object="${nhanVien}" method="POST" id="employeeForm"
@@ -23,7 +24,7 @@
                                 <i class="bi bi-arrow-left"></i> Quay lại
                             </a>
                             <button type="submit"
-                                class="btn btn-add-customer rounded-pill px-4 py-2 d-flex align-items-center gap-2 text-white border-0">
+                                class="btn btn-add-customer rounded-pill px-4 py-2 d-flex align-items-center gap-2 text-white border-0 shadow-sm">
                                 <i class="bi bi-save"></i> Lưu
                             </button>
                         </div>
@@ -62,7 +63,7 @@
                             <label class="form-label fw-bold small text-uppercase text-muted">Tên nhân viên <span
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control rounded-3 py-2 px-3 border-1 bg-white"
-                                th:field="*{tenDayDu}" placeholder="Nguyễn Đình Hải Anh" required>
+                                th:field="*{tenDayDu}" placeholder="Nguyễn Văn A" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Số điện thoại</label>
