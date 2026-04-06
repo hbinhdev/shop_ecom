@@ -4,40 +4,135 @@
 <head>
     <title>Cập nhật sản phẩm - PeakSneaker </title>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --primary-gradient: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
             --accent-color: #FF4B2B;
         }
 
-        body { background-color: #f4f7f6; font-family: 'Outfit', sans-serif; color: #333; }
-        .section-title { color: #1a1a1a; letter-spacing: -0.01em; }
-        
+        body {
+            background-color: #f4f7f6;
+            font-family: 'Outfit', sans-serif;
+            color: #333;
+        }
+
+        .section-title {
+            color: #1a1a1a;
+            letter-spacing: -0.01em;
+        }
+
         /* Premium Components */
-        .card { transition: all 0.3s ease; border: none !important; }
-        .form-control, .form-select { border-color: #e9ecef; transition: all 0.2s; }
-        .form-control:focus, .form-select:focus { border-color: #333; box-shadow: 0 0 0 0.25rem rgba(0,0,0,0.05); }
-        
-        .btn-add-customer { background: linear-gradient(135deg, #1a1a1a 0%, #333 100%); transition: all 0.3s; color: white; border: none; }
-        .btn-add-customer:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); color: white; }
-        .btn-light-outline { background: #fff; border: 1px solid #dee2e6; color: #666; transition: all 0.2s; }
-        .btn-light-outline:hover { background: #f8f9fa; color: #333; border-color: #adb5bd; }
+        .card {
+            transition: all 0.3s ease;
+            border: none !important;
+        }
+
+        .form-control,
+        .form-select {
+            border-color: #e9ecef;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #333;
+            box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-add-customer {
+            background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
+            transition: all 0.3s;
+            color: white;
+            border: none;
+        }
+
+        .btn-add-customer:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+
+        .btn-light-outline {
+            background: #fff;
+            border: 1px solid #dee2e6;
+            color: #666;
+            transition: all 0.2s;
+        }
+
+        .btn-light-outline:hover {
+            background: #f8f9fa;
+            color: #333;
+            border-color: #adb5bd;
+        }
 
         /* Variant & Image Styles */
-        .upload-zone { border: 2px dashed #dee2e6 !important; border-radius: 12px; min-height: 160px; transition: 0.3s; background: #fbfbfb; }
-        .upload-zone:hover { border-color: #333 !important; background: #fff; }
-        
-        .color-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; border: 1px solid rgba(0,0,0,0.1); }
-        .tag-pill { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 4px 12px; display: inline-flex; align-items: center; gap: 6px; font-size: 0.85rem; }
-        
-        /* Sticky Footer Animation */
-        .sticky-footer { animation: slideUp 0.5s ease-out; position: sticky; bottom: 0; z-index: 1000; box-shadow: 0 -10px 30px rgba(0,0,0,0.04) !important; }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .upload-zone {
+            border: 2px dashed #dee2e6 !important;
+            border-radius: 12px;
+            min-height: 160px;
+            transition: 0.3s;
+            background: #fbfbfb;
+        }
 
-        .image-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .cursor-pointer { cursor: pointer; }
-        .extra-small { font-size: 0.7rem; }
+        .upload-zone:hover {
+            border-color: #333 !important;
+            background: #fff;
+        }
+
+        .color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .tag-pill {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 4px 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+
+        /* Sticky Footer Animation */
+        .sticky-footer {
+            animation: slideUp 0.5s ease-out;
+            position: sticky;
+            bottom: 0;
+            z-index: 1000;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.04) !important;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .cursor-pointer {
+            cursor: pointer;
+        }
+
+        .extra-small {
+            font-size: 0.7rem;
+        }
     </style>
 </head>
 
@@ -54,13 +149,17 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
                         <h4 class="fw-bold section-title mb-0 text-uppercase">CHỈNH SỬA THÔNG TIN SẢN PHẨM</h4>
-                        <p class="text-muted small mb-0 mt-1">Cập nhật thông tin cơ bản, thuộc tính và hình ảnh của sản phẩm.</p>
+                        <p class="text-muted small mb-0 mt-1">Cập nhật thông tin cơ bản, thuộc tính và hình ảnh của sản
+                            phẩm.</p>
                     </div>
                     <div class="d-flex gap-2">
-                        <a th:href="@{/admin/san-pham}" class="btn btn-light-outline rounded-pill px-4 py-2 d-flex align-items-center gap-2">
+                        <a th:href="@{/admin/san-pham}"
+                            class="btn btn-light-outline rounded-pill px-4 py-2 d-flex align-items-center gap-2">
                             <i class="bi bi-arrow-left"></i> Quay lại
                         </a>
-                        <button type="button" class="btn btn-add-customer rounded-pill px-4 py-2 d-flex align-items-center gap-2" onclick="VariantApp.submitData()">
+                        <button type="button"
+                            class="btn btn-add-customer rounded-pill px-4 py-2 d-flex align-items-center gap-2"
+                            onclick="VariantApp.submitData()">
                             <i class="bi bi-cloud-upload"></i> Lưu thay đổi
                         </button>
                     </div>
@@ -77,36 +176,16 @@
                         </div>
                         <div class="row g-3">
                             <div class="col-12 mb-2">
-                                <label class="form-label fw-bold small text-uppercase text-muted">Tên sản phẩm <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control rounded-3 py-2 px-3" id="tenSanPham" placeholder="Nhập tên sản phẩm...">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Tên sản phẩm <span
+                                        class="text-danger">*</span></label>
+                                <input type="text" class="form-control rounded-3 py-2 px-3" id="tenSanPham"
+                                    placeholder="Nhập tên sản phẩm...">
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold small text-uppercase text-muted">Thương hiệu</label>
-                                <select class="form-select rounded-3 py-2 px-3" id="idThuongHieu"></select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold small text-uppercase text-muted">Xuất xứ</label>
-                                <select class="form-select rounded-3 py-2 px-3" id="idXuatXu"></select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold small text-uppercase text-muted">Cổ giày</label>
-                                <select class="form-select rounded-3 py-2 px-3" id="idCoGiay"></select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold small text-uppercase text-muted">Chất liệu</label>
-                                <select class="form-select rounded-3 py-2 px-3" id="idChatLieu"></select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold small text-uppercase text-muted">Vị trí</label>
-                                <select class="form-select rounded-3 py-2 px-3" id="idViTri"></select>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-bold small text-uppercase text-muted">Phong cách</label>
-                                <select class="form-select rounded-3 py-2 px-3" id="idPhongCach"></select>
-                            </div>
+
                             <div class="col-12">
                                 <label class="form-label fw-bold small text-uppercase text-muted">Mô tả sản phẩm</label>
-                                <textarea class="form-control rounded-3 py-2 px-3" id="moTa" style="height: 120px;" placeholder="Mô tả về sản phẩm..."></textarea>
+                                <textarea class="form-control rounded-3 py-2 px-3" id="moTa" style="height: 120px;"
+                                    placeholder="Mô tả về sản phẩm..."></textarea>
                             </div>
                         </div>
                     </div>
@@ -114,15 +193,18 @@
 
                 <!-- FORM CONFIG ATTRIBUTES -->
                 <div class="col-lg-5">
-                    <div class="card shadow-sm rounded-4 p-4 h-100 bg-white" style="border: 2px dashed #e9ecef !important;">
+                    <div class="card shadow-sm rounded-4 p-4 h-100 bg-white"
+                        style="border: 2px dashed #e9ecef !important;">
                         <div class="d-flex align-items-center gap-2 mb-4 pb-2 border-bottom">
                             <i class="bi bi-gear-wide-connected fs-5 text-dark"></i>
                             <h5 class="fw-bold mb-0 text-uppercase small">Cấu hình thuộc tính</h5>
                         </div>
-                        
+
                         <div class="mb-4">
-                            <label class="form-label fw-bold small text-uppercase text-muted">Lựa chọn Màu sắc <span class="text-danger">*</span></label>
-                            <div class="bg-white rounded-3 py-2 px-3 border d-flex justify-content-between align-items-center cursor-pointer" onclick="VariantApp.openModal('Color')" style="height: 48px;">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Lựa chọn Màu sắc <span
+                                    class="text-danger">*</span></label>
+                            <div class="bg-white rounded-3 py-2 px-3 border d-flex justify-content-between align-items-center cursor-pointer"
+                                onclick="VariantApp.openModal('Color')" style="height: 48px;">
                                 <span id="colorSummaryText" class="text-muted small">Đang nạp màu sắc...</span>
                                 <i class="bi bi-palette text-muted"></i>
                             </div>
@@ -130,30 +212,25 @@
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label fw-bold small text-uppercase text-muted">Lựa chọn Kích cỡ <span class="text-danger">*</span></label>
-                            <div class="bg-white rounded-3 py-2 px-3 border d-flex justify-content-between align-items-center cursor-pointer" onclick="VariantApp.openModal('Size')" style="height: 48px;">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Lựa chọn Kích cỡ <span
+                                    class="text-danger">*</span></label>
+                            <div class="bg-white rounded-3 py-2 px-3 border d-flex justify-content-between align-items-center cursor-pointer"
+                                onclick="VariantApp.openModal('Size')" style="height: 48px;">
                                 <span id="sizeSummaryText" class="text-muted small">Đang nạp kích cỡ...</span>
                                 <i class="bi bi-rulers text-muted"></i>
                             </div>
                             <select class="d-none" id="idKichThuoc" multiple></select>
                         </div>
 
-                        <div class="row g-3 mb-4">
-                            <div class="col-6">
-                                <label class="form-label fw-bold small text-uppercase text-muted">Loại sân</label>
-                                <select class="form-select rounded-3 py-2 px-3" id="idLoaiSan"></select>
-                            </div>
-                            <div class="col-6">
-                                <label class="form-label fw-bold small text-uppercase text-muted">Form chân</label>
-                                <select class="form-select rounded-3 py-2 px-3" id="idFormChan"></select>
-                            </div>
-                        </div>
+
 
                         <div class="mt-auto">
-                            <button type="button" class="btn btn-dark w-100 rounded-pill py-3 fw-bold shadow-sm" onclick="VariantApp.generateVariants()">
+                            <button type="button" class="btn btn-add-customer w-100 rounded-pill py-3 fw-bold shadow-sm"
+                                onclick="VariantApp.generateVariants()">
                                 <i class="bi bi-arrow-repeat me-2"></i> LÀM MỚI DANH SÁCH BIẾN THỂ
                             </button>
-                            <p class="text-center text-muted extra-small mt-2 px-3 italic">Hành động này sẽ xóa các thiết lập cũ và tạo lại biến thể dựa trên thuộc tính mới.</p>
+                            <p class="text-center text-muted extra-small mt-2 px-3 italic">Hành động này sẽ xóa các
+                                thiết lập cũ và tạo lại biến thể dựa trên thuộc tính mới.</p>
                         </div>
                     </div>
                 </div>
@@ -163,10 +240,13 @@
             <div id="variantSection" class="mt-5" style="display: none;">
                 <div class="card shadow-sm rounded-4 overflow-hidden bg-white">
                     <div class="card-header bg-white border-0 p-4 d-flex justify-content-between align-items-center">
-                        <h5 class="fw-bold m-0 text-uppercase small"><i class="bi bi-grid-3x3-gap me-2"></i>Chi tiết các biến thể</h5>
+                        <h5 class="fw-bold m-0 text-uppercase small"><i class="bi bi-grid-3x3-gap me-2"></i>Chi tiết các
+                            biến thể</h5>
                         <div class="d-flex gap-2">
-                            <button class="btn btn-light-outline btn-sm rounded-pill px-3 py-2" onclick="VariantApp.quickFillAll()">Thiết lập nhanh</button>
-                            <button class="btn btn-outline-danger btn-sm rounded-pill px-3 py-2" onclick="VariantApp.clearAll()">Xóa hết</button>
+                            <button class="btn btn-light-outline btn-sm rounded-pill px-3 py-2"
+                                onclick="VariantApp.quickFillAll()">Thiết lập nhanh</button>
+                            <button class="btn btn-outline-danger btn-sm rounded-pill px-3 py-2"
+                                onclick="VariantApp.clearAll()">Xóa hết</button>
                         </div>
                     </div>
                     <div class="p-4 pt-0">
@@ -179,7 +259,8 @@
             <div id="imageSection" class="mt-5 mb-5" style="display: none;">
                 <div class="card shadow-sm rounded-4 bg-white overflow-hidden">
                     <div class="card-header bg-white border-0 p-4 pb-0">
-                        <h5 class="fw-bold m-0 text-uppercase small"><i class="bi bi-camera me-2"></i>Quản lý album ảnh theo màu</h5>
+                        <h5 class="fw-bold m-0 text-uppercase small"><i class="bi bi-camera me-2"></i>Quản lý album ảnh
+                            theo màu</h5>
                         <p class="text-muted small mt-2">Dưới đây là các ảnh hiện tại và các ảnh bạn tải lên thêm.</p>
                     </div>
                     <div class="card-body p-4">
@@ -189,13 +270,13 @@
             </div>
 
             <!-- STICKY BOTTOM ACTIONS -->
-            <div class="card rounded-4 p-4 mt-5 bg-white sticky-footer d-flex flex-row justify-content-end gap-3 align-items-center">
+            <!-- <div class="card rounded-4 p-4 mt-5 bg-white sticky-footer d-flex flex-row justify-content-end gap-3 align-items-center">
                 <span class="text-muted small me-auto"><i class="bi bi-info-circle me-1"></i> Mọi thay đổi sẽ có hiệu lực ngay sau khi bạn nhấn cập nhật.</span>
                 <a th:href="@{/admin/san-pham}" class="btn btn-light-outline rounded-pill px-5 py-2">Hủy bỏ</a>
-                <button type="button" class="btn btn-add-customer rounded-pill px-5 py-2 shadow" onclick="VariantApp.submitData()">
+                <button type="button" class="btn btn-add-customer rounded-pill px-5 py-2 text-white border-0 shadow-sm" onclick="VariantApp.submitData()">
                     <i class="bi bi-check-lg me-1"></i> XÁC NHẬN CẬP NHẬT SẢN PHẨM
                 </button>
-            </div>
+            </div> -->
         </div>
 
         <!-- MODAL PICKER -->
@@ -208,11 +289,15 @@
                     </div>
                     <div class="modal-body p-4">
                         <div id="modalSummaryBox" class="mb-4 d-flex flex-wrap gap-2 pb-2 border-bottom"></div>
-                        <div class="row g-3" id="modalGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;"></div>
+                        <div class="row g-3" id="modalGrid"
+                            style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;"></div>
                     </div>
                     <div class="modal-footer border-0 p-4">
-                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Đóng</button>
-                        <button type="button" class="btn btn-dark rounded-pill px-4" onclick="VariantApp.confirmSelection()">Hoàn thành</button>
+                        <button type="button" class="btn btn-light rounded-pill px-4"
+                            data-bs-dismiss="modal">Đóng</button>
+                        <button type="button"
+                            class="btn btn-add-customer rounded-pill px-4 text-white border-0 shadow-sm"
+                            onclick="VariantApp.confirmSelection()">Hoàn thành</button>
                     </div>
                 </div>
             </div>
@@ -227,16 +312,9 @@
                 async init() {
                     const res = await fetch('/api/admin/dictionary/all');
                     this.dict = await res.json();
-                    
+
                     const maps = [
-                        ['idThuongHieu', this.dict.thuongHieu, 'tenThuongHieu'],
-                        ['idXuatXu', this.dict.xuatXu, 'tenXuatXu'],
-                        ['idCoGiay', this.dict.coGiay, 'tenCoGiay'],
-                        ['idChatLieu', this.dict.chatLieu, 'tenChatLieu'],
-                        ['idViTri', this.dict.viTri, 'tenViTri'],
-                        ['idPhongCach', this.dict.phongCachChoi, 'tenPhongCach'],
-                        ['idLoaiSan', this.dict.loaiSan, 'tenLoaiSan'],
-                        ['idFormChan', this.dict.formChan, 'tenForm'],
+
                         ['idMauSac', this.dict.mauSac, 'tenMauSac'],
                         ['idKichThuoc', this.dict.kichThuoc, 'tenKichThuoc']
                     ];
@@ -247,32 +325,26 @@
                 },
                 loadProductData() {
                     const sp = /*[[${spData}]]*/ null;
-                    if(sp) {
+                    if (sp) {
                         $('#tenSanPham').val(sp.tenSanPham);
                         $('#moTa').val(sp.moTa);
-                        $('#idThuongHieu').val(sp.idThuongHieu);
-                        $('#idXuatXu').val(sp.idXuatXu);
-                        $('#idCoGiay').val(sp.idCoGiay);
-                        $('#idChatLieu').val(sp.idChatLieu);
-                        $('#idViTri').val(sp.idViTri);
-                        $('#idPhongCach').val(sp.idPhongCach);
 
-                        this.variants = /*[[${existingVariants}]]*/ [];
-                        if(this.variants.length > 0) {
+
+                        this.variants = /*[[${existingVariants}]]*/[];
+                        if (this.variants.length > 0) {
                             const cIds = [...new Set(this.variants.map(v => v.cId.toString()))];
                             const sIds = [...new Set(this.variants.map(v => v.sId.toString()))];
                             $('#idMauSac').val(cIds);
                             $('#idKichThuoc').val(sIds);
-                            
-                            $('#idLoaiSan').val(this.variants[0].grId);
-                            $('#idFormChan').val(this.variants[0].fId);
+
+
 
                             this.updateSummaryText('Color', cIds);
                             this.updateSummaryText('Size', sIds);
                             this.renderR();
                             this.renderImageCards();
-                            document.getElementById('variantSection').style.display='block';
-                            document.getElementById('imageSection').style.display='block';
+                            document.getElementById('variantSection').style.display = 'block';
+                            document.getElementById('imageSection').style.display = 'block';
                         }
                     }
                 },
@@ -280,10 +352,10 @@
                     const span = document.getElementById(`${type.toLowerCase()}SummaryText`);
                     const list = type === 'Color' ? this.dict.mauSac : this.dict.kichThuoc;
                     const prop = type === 'Color' ? 'tenMauSac' : 'tenKichThuoc';
-                    if(!ids.length) { span.innerText = 'Nhấn để chọn...'; span.className = 'text-muted small'; }
+                    if (!ids.length) { span.innerText = 'Nhấn để chọn...'; span.className = 'text-muted small'; }
                     else { span.innerText = ids.map(id => list.find(x => x.id == id)[prop]).join(', '); span.className = 'fw-bold text-dark small'; }
                 },
-                f(id, l, p) { const s = $('#' + id); s.empty().append(s.prop('multiple') ? '' : '<option value="">-- Chọn --</option>'); if(l) l.forEach(i => s.append(new Option(i[p], i.id))); },
+                f(id, l, p) { const s = $('#' + id); s.empty().append(s.prop('multiple') ? '' : '<option value="">-- Chọn --</option>'); if (l) l.forEach(i => s.append(new Option(i[p], i.id))); },
                 openModal(type) {
                     this.currentType = type;
                     const fieldId = type === 'Color' ? '#idMauSac' : '#idKichThuoc';
@@ -298,18 +370,18 @@
                     document.getElementById('modalGrid').innerHTML = (list || []).map(it => `
                         <div class="card border rounded-3 p-2 text-center cursor-pointer mb-0 ${this.tempIds.includes(it.id.toString()) ? 'border-primary bg-light' : ''}" 
                              onclick="VariantApp.toggle('${it.id}')" style="font-size: 0.85rem">
-                            ${this.currentType==='Color'?`<span class="color-dot me-1" style="background-color:${colorPicker[it[prop]]||'#ccc'}"></span>`:''}${it[prop]}
+                            ${this.currentType === 'Color' ? `<span class="color-dot me-1" style="background-color:${colorPicker[it[prop]] || '#ccc'}"></span>` : ''}${it[prop]}
                         </div>`).join('');
                 },
-                toggle(id) { const i = this.tempIds.indexOf(id.toString()); if(i>-1) this.tempIds.splice(i,1); else this.tempIds.push(id.toString()); this.renderGrid(); this.updateSummary(); },
+                toggle(id) { const i = this.tempIds.indexOf(id.toString()); if (i > -1) this.tempIds.splice(i, 1); else this.tempIds.push(id.toString()); this.renderGrid(); this.updateSummary(); },
                 updateSummary() {
                     const box = document.getElementById('modalSummaryBox');
                     const list = this.currentType === 'Color' ? this.dict.mauSac : this.dict.kichThuoc;
                     const prop = this.currentType === 'Color' ? 'tenMauSac' : 'tenKichThuoc';
-                    if(!this.tempIds.length) box.innerHTML = `<span class="text-muted small w-100 py-2">Chưa chọn mục nào...</span>`;
-                    else box.innerHTML = this.tempIds.map(id => { 
-                        const it=list.find(x=>x.id==id); 
-                        return `<div class="tag-pill">${this.currentType==='Color'?`<span class="color-dot" style="background-color:${colorPicker[it[prop]]||'#ccc'}"></span>`:''}${it[prop]} <i class="bi bi-x-circle ms-1 cursor-pointer text-danger" onclick="VariantApp.toggle('${id}')"></i></div>`; 
+                    if (!this.tempIds.length) box.innerHTML = `<span class="text-muted small w-100 py-2">Chưa chọn mục nào...</span>`;
+                    else box.innerHTML = this.tempIds.map(id => {
+                        const it = list.find(x => x.id == id);
+                        return `<div class="tag-pill">${this.currentType === 'Color' ? `<span class="color-dot" style="background-color:${colorPicker[it[prop]] || '#ccc'}"></span>` : ''}${it[prop]} <i class="bi bi-x-circle ms-1 cursor-pointer text-danger" onclick="VariantApp.toggle('${id}')"></i></div>`;
                     }).join('');
                 },
                 confirmSelection() {
@@ -318,33 +390,33 @@
                     const list = this.currentType === 'Color' ? this.dict.mauSac : this.dict.kichThuoc;
                     const prop = this.currentType === 'Color' ? 'tenMauSac' : 'tenKichThuoc';
                     $(tid).val(this.tempIds);
-                    if(!this.tempIds.length) { span.innerText = 'Nhấn để chọn...'; span.className = 'text-muted small'; }
+                    if (!this.tempIds.length) { span.innerText = 'Nhấn để chọn...'; span.className = 'text-muted small'; }
                     else { span.innerText = this.tempIds.map(id => list.find(x => x.id == id)[prop]).join(', '); span.className = 'fw-bold text-dark small'; }
                     bootstrap.Modal.getInstance(document.getElementById('pickerModal')).hide();
                 },
                 generateVariants() {
-                    const c = $('#idMauSac').val() || []; const s = $('#idKichThuoc').val() || []; const g = $('#idLoaiSan').val(); const f = $('#idFormChan').val();
-                    if(!c.length || !s.length || !g || !f) return Swal.fire('Thông báo', 'Dữ liệu chưa đầy đủ!', 'warning');
-                    this.variants = []; c.forEach(cid => s.forEach(sid => { this.variants.push({ uid: `${cid}-${sid}-${g}-${f}`, cId: cid, cName: this.getN('mauSac', cid, 'tenMauSac'), sId: sid, sName: this.getN('kichThuoc', sid, 'tenKichThuoc'), grId: g, grName: this.getN('loaiSan', g, 'tenLoaiSan'), fId: f, fName: this.getN('formChan', f, 'tenForm'), q: '', p: '' }); }));
+                    const c = $('#idMauSac').val() || []; const s = $('#idKichThuoc').val() || [];
+                    if (!c.length || !s.length) return Swal.fire('Thông báo', 'Dữ liệu chưa đầy đủ!', 'warning');
+                    this.variants = []; c.forEach(cid => s.forEach(sid => { this.variants.push({ uid: `${cid}-${sid}`, cId: cid, cName: this.getN('mauSac', cid, 'tenMauSac'), sId: sid, sName: this.getN('kichThuoc', sid, 'tenKichThuoc'), q: '', p: '' }); }));
                     this.renderR(); this.renderImageCards();
-                    document.getElementById('variantSection').style.display='block';
-                    document.getElementById('imageSection').style.display='block';
+                    document.getElementById('variantSection').style.display = 'block';
+                    document.getElementById('imageSection').style.display = 'block';
                 },
                 renderImageCards() {
                     const ids = $('#idMauSac').val() || [];
                     const grid = document.getElementById('colorImageGrid');
                     const existingImgs = /*[[${existingImages}]]*/ {};
-                    
+
                     grid.innerHTML = ids.map(id => {
                         const it = this.dict.mauSac.find(x => x.id == id);
                         let exHtml = '';
                         const colorImgs = existingImgs[id.toString()] || [];
-                        if(colorImgs.length > 0) {
-                            exHtml = `<div class="preview-scroll d-flex gap-2 p-1 overflow-auto w-100">` + 
-                                     colorImgs.map(url => `<img src="/uploads/san-pham/${url}" style="width:100px; height:100px; object-fit:cover;" class="rounded border shadow-xs">`).join('') + 
-                                     `</div>`;
+                        if (colorImgs.length > 0) {
+                            exHtml = `<div class="preview-scroll d-flex gap-2 p-1 overflow-auto w-100">` +
+                                colorImgs.map(url => `<img src="/uploads/san-pham/${url}" style="width:100px; height:100px; object-fit:cover;" class="rounded border shadow-xs">`).join('') +
+                                `</div>`;
                         }
-                        
+
                         return `
                         <div class="card border rounded-3 overflow-hidden bg-white shadow-xs">
                             <div class="card-header bg-light py-2 px-3 border-bottom d-flex align-items-center gap-2">
@@ -356,7 +428,7 @@
                                 ${exHtml ? '<div class="small text-primary mt-2 fw-bold" style="font-size:0.65rem">ĐÃ CÓ ' + colorImgs.length + ' ẢNH - NHẤN ĐỂ THAY THẾ</div>' : ''}
                             </div>
                             <input type="file" id="input-${id}" class="d-none" multiple accept="image/*" onchange="VariantApp.handleFiles('${id}', this.files)">
-                            <button type="button" class="btn btn-dark btn-sm rounded-0 w-100 py-2" onclick="document.getElementById('input-${id}').click()">CHỌN ẢNH THAY THẾ</button>
+                            <button type="button" class="btn btn-add-customer btn-sm rounded-0 w-100 py-2 text-white border-0 shadow-sm" onclick="document.getElementById('input-${id}').click()">CHỌN ẢNH THAY THẾ</button>
                         </div>`;
                     }).join('');
                 },
@@ -366,27 +438,27 @@
                     this.colorFiles[cid] = Array.from(files);
                     this.colorFiles[cid].forEach(f => {
                         const reader = new FileReader();
-                        reader.onload = (e) => { const img = document.createElement('img'); img.src = e.target.result; img.style.width='100px'; img.style.height='100px'; img.style.objectFit='cover'; img.className='rounded border shadow-xs'; container.appendChild(img); };
+                        reader.onload = (e) => { const img = document.createElement('img'); img.src = e.target.result; img.style.width = '100px'; img.style.height = '100px'; img.style.objectFit = 'cover'; img.className = 'rounded border shadow-xs'; container.appendChild(img); };
                         reader.readAsDataURL(f);
                     });
                 },
                 getN(k, i, p) { const it = this.dict[k].find(x => x.id == i); return it ? it[p] : 'N/A'; },
                 renderR() {
                     const cont = document.getElementById('variantGroupContainer'); cont.innerHTML = ''; const grp = {};
-                    this.variants.forEach(v => { if(!grp[v.cId]) grp[v.cId] = { n: v.cName, i: [] }; grp[v.cId].i.push(v); });
+                    this.variants.forEach(v => { if (!grp[v.cId]) grp[v.cId] = { n: v.cName, i: [] }; grp[v.cId].i.push(v); });
                     for (const [cid, g] of Object.entries(grp)) {
                         let rs = g.i.map(v => `
                         <tr>
                             <td class="ps-4 py-3">
                                 <div class="fw-bold text-dark">Size: ${v.sName}</div>
-                                <div class="text-muted extra-small" style="font-size: 0.7rem">${v.grName} <i class="bi bi-dot"></i> ${v.fName}</div>
+                                <div class="text-muted extra-small" style="font-size: 0.7rem"></div>
                             </td>
                             <td style="width: 150px">
                                 <input type="number" class="form-control form-control-sm border text-center rounded-pill" placeholder="SL" value="${v.q}" onchange="VariantApp.uv('${v.uid}', 'q', this.value)">
                             </td>
                             <td style="width: 200px">
                                 <div class="input-group input-group-sm rounded-pill overflow-hidden border">
-                                    <span class="input-group-text bg-white border-0 py-0"><i class="bi bi-currency-dollar small"></i></span>
+                                    <span class="input-group-text bg-white border-0 py-0 small fw-bold text-muted">VNĐ</span>
                                     <input type="number" class="form-control border-0 fw-bold text-danger text-end pe-3" placeholder="Giá" value="${v.p}" onchange="VariantApp.uv('${v.uid}', 'p', this.value)">
                                 </div>
                             </td>
@@ -397,8 +469,8 @@
                         cont.innerHTML += `
                         <div class="mb-4 border rounded-3 overflow-hidden bg-white shadow-xs">
                             <div class="bg-light px-4 py-2 border-bottom d-flex justify-content-between align-items-center">
-                                <div><span class="color-dot me-2 shadow-sm" style="background-color:${colorPicker[g.n]||'#ccc'}"></span><span class="fw-bold text-uppercase" style="font-size: 0.8rem">${g.n}</span></div>
-                                <button class="btn btn-dark btn-sm rounded-pill px-3" style="font-size: 0.70rem" onclick="VariantApp.qF('${cid}')">THIẾT LẬP NHANH</button>
+                                <div><span class="color-dot me-2 shadow-sm" style="background-color:${colorPicker[g.n] || '#ccc'}"></span><span class="fw-bold text-uppercase" style="font-size: 0.8rem">${g.n}</span></div>
+                                <button class="btn btn-add-customer btn-sm rounded-pill px-3 text-white border-0 shadow-sm" style="font-size: 0.70rem" onclick="VariantApp.qF('${cid}')">THIẾT LẬP NHANH</button>
                             </div>
                             <table class="table mb-0 align-middle">
                                 <thead class="bg-white">
@@ -414,27 +486,27 @@
                         </div>`;
                     }
                 },
-                uv(u, f, v) { const it = this.variants.find(x => x.uid === u); if(it) it[f] = v; },
+                uv(u, f, v) { const it = this.variants.find(x => x.uid === u); if (it) it[f] = v; },
                 rm(u) { this.variants = this.variants.filter(x => x.uid !== u); this.renderR(); },
-                async qF(cid) { const { value: r } = await Swal.fire({ title: 'Nhập thông tin', html: '<div class="text-start mb-2"><label class="small fw-bold">Số lượng mặc định</label><input id="q" class="form-control" type="number"></div><div class="text-start"><label class="small fw-bold">Giá bán mặc định</label><input id="p" class="form-control" type="number"></div>', preConfirm: () => [$('#q').val(), $('#p').val()] }); if (r) { this.variants.forEach(v => { if(v.cId == cid) { v.q = r[0]; v.p = r[1]; } }); this.renderR(); } },
+                async qF(cid) { const { value: r } = await Swal.fire({ title: 'Nhập thông tin', html: '<div class="text-start mb-2"><label class="small fw-bold">Số lượng mặc định</label><input id="q" class="form-control" type="number"></div><div class="text-start"><label class="small fw-bold">Giá bán mặc định</label><input id="p" class="form-control" type="number"></div>', preConfirm: () => [$('#q').val(), $('#p').val()] }); if (r) { this.variants.forEach(v => { if (v.cId == cid) { v.q = r[0]; v.p = r[1]; } }); this.renderR(); } },
                 async quickFillAll() { const { value: r } = await Swal.fire({ title: 'Thiết lập tất cả', html: '<div class="text-start mb-2"><label class="small fw-bold">Số lượng mặc định</label><input id="qa" class="form-control" type="number"></div><div class="text-start"><label class="small fw-bold">Giá bán mặc định</label><input id="pa" class="form-control" type="number"></div>', preConfirm: () => [$('#qa').val(), $('#pa').val()] }); if (r) { this.variants.forEach(v => { v.q = r[0]; v.p = r[1]; }); this.renderR(); } },
-                clearAll() { this.variants = []; this.renderR(); document.getElementById('variantSection').style.display='none'; document.getElementById('imageSection').style.display='none'; },
+                clearAll() { this.variants = []; this.renderR(); document.getElementById('variantSection').style.display = 'none'; document.getElementById('imageSection').style.display = 'none'; },
                 async submitData() {
-                    if(!$('#tenSanPham').val()) return Swal.fire('Lỗi', 'Tên sản phẩm không được trống!', 'error');
-                    if(!this.variants.length) return Swal.fire('Lỗi', 'Cần ít nhất 1 biến thể!', 'error');
-                    
+                    if (!$('#tenSanPham').val()) return Swal.fire('Lỗi', 'Tên sản phẩm không được trống!', 'error');
+                    if (!this.variants.length) return Swal.fire('Lỗi', 'Cần ít nhất 1 biến thể!', 'error');
+
                     const formData = new FormData();
                     const spId = /*[[${spData?.id}]]*/ null;
                     formData.append('data', JSON.stringify({
-                        sanPham: { id: spId, tenSanPham: $('#tenSanPham').val(), moTa: $('#moTa').val(), idThuongHieu: $('#idThuongHieu').val(), idXuatXu: $('#idXuatXu').val(), idCoGiay: $('#idCoGiay').val(), idChatLieu: $('#idChatLieu').val(), idViTri: $('#idViTri').val(), idPhongCach: $('#idPhongCach').val() },
-                        bienThes: this.variants.map(v => ({ id: v.id || null, idMauSac: v.cId, idKichThuoc: v.sId, idLoaiSan: v.grId, idFormChan: v.fId, soLuong: v.q, giaBan: v.p }))
+                        sanPham: { id: spId, tenSanPham: $('#tenSanPham').val(), moTa: $('#moTa').val() },
+                        bienThes: this.variants.map(v => ({ id: v.id || null, idMauSac: v.cId, idKichThuoc: v.sId, soLuong: v.q, giaBan: v.p }))
                     }));
-                    
+
                     for (const [cid, files] of Object.entries(this.colorFiles)) { files.forEach(f => formData.append(`files_${cid}`, f)); }
-                    
+
                     Swal.fire({ title: 'Đang xử lý...', didOpen: () => Swal.showLoading() });
                     const res = await fetch('/api/admin/product-variant/create-all-with-images', { method: 'POST', body: formData });
-                    if(res.ok) Swal.fire('Thành công', 'Đã lưu sản phẩm!', 'success').then(() => window.location.href = '/admin/san-pham');
+                    if (res.ok) Swal.fire('Thành công', 'Đã lưu sản phẩm!', 'success').then(() => window.location.href = '/admin/san-pham');
                     else Swal.fire('Lỗi', 'Không thể lưu. Vui lòng kiểm tra lại dữ liệu!', 'error');
                 }
             };
@@ -442,4 +514,5 @@
         </script>
     </main>
 </body>
+
 </html>

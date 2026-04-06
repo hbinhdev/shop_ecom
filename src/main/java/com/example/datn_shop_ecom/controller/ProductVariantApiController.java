@@ -65,13 +65,6 @@ public class ProductVariantApiController {
             sp.setTenSanPham(payload.getSanPham().getTenSanPham());
             sp.setMoTa(payload.getSanPham().getMoTa());
             
-            if(payload.getSanPham().getIdThuongHieu() != null) sp.setThuongHieu(ThuongHieu.builder().id(payload.getSanPham().getIdThuongHieu()).build());
-            if(payload.getSanPham().getIdXuatXu() != null) sp.setXuatXu(XuatXu.builder().id(payload.getSanPham().getIdXuatXu()).build());
-            if(payload.getSanPham().getIdCoGiay() != null) sp.setCoGiay(CoGiay.builder().id(payload.getSanPham().getIdCoGiay()).build());
-            if(payload.getSanPham().getIdChatLieu() != null) sp.setChatLieu(ChatLieu.builder().id(payload.getSanPham().getIdChatLieu()).build());
-            if(payload.getSanPham().getIdViTri() != null) sp.setViTri(ViTri.builder().id(payload.getSanPham().getIdViTri()).build());
-            if(payload.getSanPham().getIdPhongCach() != null) sp.setPhongCachChoi(PhongCachChoi.builder().id(payload.getSanPham().getIdPhongCach()).build());
-            
             sp.setNgaySuaCuoi(LocalDateTime.now());
             SanPham savedSp = sanPhamRepo.save(sp);
 
@@ -122,8 +115,6 @@ public class ProductVariantApiController {
                 spct.setSanPham(savedSp);
                 spct.setMauSac(MauSac.builder().id(variant.getIdMauSac()).build());
                 spct.setKichThuoc(KichThuoc.builder().id(variant.getIdKichThuoc()).build());
-                if(variant.getIdLoaiSan() != null) spct.setLoaiSan(LoaiSan.builder().id(variant.getIdLoaiSan()).build());
-                if(variant.getIdFormChan() != null) spct.setFormChan(FormChan.builder().id(variant.getIdFormChan()).build());
                 
                 spct.setGiaBan(variant.getGiaBan());
                 spct.setSoTonKho(variant.getSoLuong());
@@ -133,7 +124,11 @@ public class ProductVariantApiController {
 
                 // Gắn tất cả các ảnh thuộc về màu này cho biến thể này
                 List<String> imagesOfColor = colorToImages.get(variant.getIdMauSac());
-                if (imagesOfColor != null) {
+                if (imagesOfColor != null && !imagesOfColor.isEmpty()) {
+                    // Set ảnh đầu tiên của màu này làm ảnh đại diện cho biến thể
+                    savedSpct.setDuongDanAnh(imagesOfColor.get(0));
+                    spctRepo.save(savedSpct);
+
                     for (String imgPath : imagesOfColor) {
                         HinhAnh ha = HinhAnh.builder()
                                 .sanPham(savedSp)
@@ -167,13 +162,6 @@ public class ProductVariantApiController {
             SanPham sp = dto.getId() != null ? sanPhamRepo.findById(dto.getId()).orElse(new SanPham()) : new SanPham();
             sp.setTenSanPham(dto.getTenSanPham());
             sp.setMoTa(dto.getMoTa());
-            
-            if(dto.getIdThuongHieu() != null) sp.setThuongHieu(ThuongHieu.builder().id(dto.getIdThuongHieu()).build());
-            if(dto.getIdXuatXu() != null) sp.setXuatXu(XuatXu.builder().id(dto.getIdXuatXu()).build());
-            if(dto.getIdCoGiay() != null) sp.setCoGiay(CoGiay.builder().id(dto.getIdCoGiay()).build());
-            if(dto.getIdChatLieu() != null) sp.setChatLieu(ChatLieu.builder().id(dto.getIdChatLieu()).build());
-            if(dto.getIdViTri() != null) sp.setViTri(ViTri.builder().id(dto.getIdViTri()).build());
-            if(dto.getIdPhongCach() != null) sp.setPhongCachChoi(PhongCachChoi.builder().id(dto.getIdPhongCach()).build());
 
             if(dto.getId() == null) {
                 sp.setNgayTao(LocalDateTime.now());
@@ -201,7 +189,6 @@ public class ProductVariantApiController {
                 if (dto.getIdSanPham() != null) spct.setSanPham(sanPhamRepo.findById(dto.getIdSanPham()).orElse(null));
                 if (dto.getIdMauSac() != null) spct.setMauSac(MauSac.builder().id(dto.getIdMauSac()).build());
                 if (dto.getIdKichThuoc() != null) spct.setKichThuoc(KichThuoc.builder().id(dto.getIdKichThuoc()).build());
-                if (dto.getIdLoaiSan() != null) spct.setLoaiSan(LoaiSan.builder().id(dto.getIdLoaiSan()).build());
                 
                 spct.setMaSanPhamChiTiet("SPCT" + String.format("%05d", spctRepo.count() + 1));
                 spct.setTrangThai("1");
@@ -230,12 +217,6 @@ public class ProductVariantApiController {
         private Long id;
         private String tenSanPham;
         private String moTa;
-        private Long idThuongHieu;
-        private Long idXuatXu;
-        private Long idCoGiay;
-        private Long idChatLieu;
-        private Long idViTri;
-        private Long idPhongCach;
     }
 
     @Data
@@ -244,8 +225,6 @@ public class ProductVariantApiController {
         private Long idSanPham;
         private Long idMauSac;
         private Long idKichThuoc;
-        private Long idLoaiSan;
-        private Long idFormChan;
         private Integer soLuong;
         private BigDecimal giaBan;
         private String anhMauSac;

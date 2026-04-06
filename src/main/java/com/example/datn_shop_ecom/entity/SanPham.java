@@ -12,9 +12,10 @@ public class SanPham {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String maSanPham;
+    @Column(columnDefinition = "NVARCHAR(255)")
     private String tenSanPham;
     private String duongDanAnh;
-    @Column(columnDefinition = "TEXT")
+    @Column(columnDefinition = "NVARCHAR(MAX)")
     private String moTa;
     private String nguoiTao;
     private LocalDateTime ngayTao;
@@ -24,29 +25,11 @@ public class SanPham {
     @Column(name = "xoa_mem")
     private Boolean xoaMem;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_thuong_hieu")
-    private ThuongHieu thuongHieu;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_xuat_xu")
-    private XuatXu xuatXu;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_co_giay")
-    private CoGiay coGiay;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_chat_lieu")
-    private ChatLieu chatLieu;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_vi_tri")
-    private ViTri viTri;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_phong_cach")
-    private PhongCachChoi phongCachChoi;
 
     @OneToMany(mappedBy = "sanPham")
     private java.util.List<HinhAnh> danhSachHinhAnh;

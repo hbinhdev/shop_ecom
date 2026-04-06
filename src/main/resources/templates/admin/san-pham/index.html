@@ -33,37 +33,19 @@
                                     class="btn btn-dark rounded-pill px-4 py-2 d-flex align-items-center gap-2 btn-reset-filter">
                                     <i class="bi bi-arrow-counterclockwise"></i> Đặt lại bộ lọc
                                 </a>
-                                <a th:href="@{/admin/san-pham/export(search=${search}, idThuongHieu=${idThuongHieu}, idChatLieu=${idChatLieu})}"
+                                <a th:href="@{/admin/san-pham/export(search=${search})}"
                                     class="btn btn-light-outline rounded-pill px-4 py-2 d-flex align-items-center gap-2">
                                     <i class="bi bi-file-earmark-excel"></i> Xuất Excel
                                 </a>
                                 <a th:href="@{/admin/san-pham/create}"
-                                    class="btn btn-add-customer rounded-pill px-4 py-2 d-flex align-items-center gap-2 text-white border-0 shadow-sm"
-                                    style="background-color: #2d3436;">
+                                    class="btn btn-add-customer rounded-pill px-4 py-2 d-flex align-items-center gap-2 text-white border-0 shadow-sm">
                                     <i class="bi bi-plus-lg"></i> Thêm sản phẩm
                                 </a>
                             </div>
                         </div>
 
                         <div class="row g-3 align-items-center">
-                            <div class="col-md-4 d-flex align-items-center gap-3">
-                                <label class="form-label mb-0 text-nowrap fw-medium">Thương hiệu:</label>
-                                <select name="idThuongHieu" class="form-select rounded-pill border-1 bg-light-subtle"
-                                    onchange="this.form.submit()">
-                                    <option value="">Tất cả</option>
-                                    <option th:each="th : ${thuongHieus}" th:value="${th.id}"
-                                        th:text="${th.tenThuongHieu}" th:selected="${th.id == idThuongHieu}"></option>
-                                </select>
-                            </div>
-                            <div class="col-md-4 d-flex align-items-center gap-3">
-                                <label class="form-label mb-0 text-nowrap fw-medium">Chất liệu:</label>
-                                <select name="idChatLieu" class="form-select rounded-pill border-1 bg-light-subtle"
-                                    onchange="this.form.submit()">
-                                    <option value="">Tất cả</option>
-                                    <option th:each="cl : ${chatLieus}" th:value="${cl.id}" th:text="${cl.tenChatLieu}"
-                                        th:selected="${cl.id == idChatLieu}"></option>
-                                </select>
-                            </div>
+
                             <div class="col-md-4 d-flex align-items-center gap-3">
                                 <label class="form-label mb-0 text-nowrap fw-medium">Trạng thái:</label>
                                 <select name="status" class="form-select rounded-pill border-1 bg-light-subtle"
@@ -86,8 +68,6 @@
                             <th class="ps-4 py-3">STT</th>
                             <th class="py-3">Mã sản phẩm</th>
                             <th class="py-3">Tên sản phẩm</th>
-                            <th class="py-3">Thương hiệu</th>
-                            <th class="py-3">Chất liệu</th>
                             <th class="py-3 text-center">Tồn kho</th>
                             <th class="py-3 text-end">Khoảng giá</th>
                             <th class="py-3 text-center">Trạng thái</th>
@@ -102,10 +82,6 @@
                             <td>
                                 <div class="fw-semibold text-dark mb-0 lh-sm" th:text="${sp.tenSanPham}">Tên SP</div>
                             </td>
-                            <td class="small text-muted"
-                                th:text="${sp.thuongHieu != null ? sp.thuongHieu.tenThuongHieu : '-'}">Thương hiệu</td>
-                            <td class="small text-muted"
-                                th:text="${sp.chatLieu != null ? sp.chatLieu.tenChatLieu : '-'}">Chất liệu</td>
                             <td class="small fw-bold text-dark text-center" th:text="${sp.tongTonKho}">0</td>
                             <td class="small text-danger fw-bold text-end" th:text="${sp.khoangGia}">0đ - 0đ</td>
                             <td class="text-center">
@@ -143,7 +119,7 @@
                 </table>
                 <div class="px-3 py-3 border-top bg-light-subtle">
                     <div
-                        th:replace="~{admin/fragments/pagination :: pagination(${spPage}, '/admin/san-pham', 'search=' + (${search} ?: '') + '&idThuongHieu=' + (${idThuongHieu} ?: '') + '&idChatLieu=' + (${idChatLieu} ?: ''))}">
+                        th:replace="~{admin/fragments/pagination :: pagination(${spPage}, '/admin/san-pham', 'search=' + (${search} ?: ''))}">
                     </div>
                 </div>
             </div>

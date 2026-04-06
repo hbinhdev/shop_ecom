@@ -26,13 +26,13 @@ public class SanPhamServiceImpl implements SanPhamService {
     @Override
     public Page<SanPham> filterSanPhamPage(String search, Pageable pageable) {
         if (search != null && search.trim().isEmpty()) search = null;
-        return sanPhamRepo.findByFilters(search, null, null, pageable);
+        return sanPhamRepo.findByFilters(search, pageable);
     }
 
     @Override
-    public Page<SanPham> filterSanPham(String search, Long idThuongHieu, Long idChatLieu, Pageable pageable) {
+    public Page<SanPham> filterSanPham(String search, Pageable pageable) {
         if (search != null && search.trim().isEmpty()) search = null;
-        return sanPhamRepo.findByFilters(search, idThuongHieu, idChatLieu, pageable);
+        return sanPhamRepo.findByFilters(search, pageable);
     }
 
     @Override
@@ -78,21 +78,19 @@ public class SanPhamServiceImpl implements SanPhamService {
     }
 
     @Override
-    public java.io.ByteArrayInputStream exportToExcel(String search, Long idThuongHieu, Long idChatLieu) {
+    public java.io.ByteArrayInputStream exportToExcel(String search) {
         if (search != null && search.trim().isEmpty()) search = null;
         // Sử dụng repo để lấy tất cả (không phân trang cho export)
-        java.util.List<SanPham> dataList = sanPhamRepo.findByFilters(search, idThuongHieu, idChatLieu, org.springframework.data.domain.Pageable.unpaged()).getContent();
+        java.util.List<SanPham> dataList = sanPhamRepo.findByFilters(search, org.springframework.data.domain.Pageable.unpaged()).getContent();
         
-        String[] columns = {"STT", "Mã sản phẩm", "Tên sản phẩm", "Thương hiệu", "Chất liệu", "Ngày tạo", "Trạng thái"};
+        String[] columns = {"STT", "Mã sản phẩm", "Tên sản phẩm", "Ngày tạo", "Trạng thái"};
         
         return com.example.datn_shop_ecom.util.ExcelUtil.exportToExcel("Danh sách sản phẩm", columns, dataList, (row, sp) -> {
             row.createCell(0).setCellValue(row.getRowNum());
             row.createCell(1).setCellValue(sp.getMaSanPham());
             row.createCell(2).setCellValue(sp.getTenSanPham());
-            row.createCell(3).setCellValue(sp.getThuongHieu() != null ? sp.getThuongHieu().getTenThuongHieu() : "N/A");
-            row.createCell(4).setCellValue(sp.getChatLieu() != null ? sp.getChatLieu().getTenChatLieu() : "N/A");
-            row.createCell(5).setCellValue(sp.getNgayTao() != null ? sp.getNgayTao().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "N/A");
-            row.createCell(6).setCellValue(sp.getXoaMem() != null && sp.getXoaMem() ? "Ngừng kinh doanh" : "Đang kinh doanh");
+            row.createCell(3).setCellValue(sp.getNgayTao() != null ? sp.getNgayTao().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "N/A");
+            row.createCell(4).setCellValue(sp.getXoaMem() != null && sp.getXoaMem() ? "Ngừng kinh doanh" : "Đang kinh doanh");
         });
     }
 }
