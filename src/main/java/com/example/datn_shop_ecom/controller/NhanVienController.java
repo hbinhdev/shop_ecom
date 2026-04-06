@@ -70,8 +70,16 @@ public class NhanVienController {
 
     @PostMapping("/save")
     public String save(@ModelAttribute("nhanVien") NhanVien nhanVien, 
+                       org.springframework.validation.BindingResult result,
                        @RequestParam(value = "anhFile", required = false) org.springframework.web.multipart.MultipartFile anhFile,
-                       RedirectAttributes redirectAttributes) {
+                       RedirectAttributes redirectAttributes,
+                       Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("nhanVien", nhanVien);
+            model.addAttribute("vaiTros", vaiTroRepository.findAllByXoaMemFalse());
+            model.addAttribute("error", "Dữ liệu nhập vào chưa đúng: " + result.getFieldError().getDefaultMessage());
+            return (nhanVien.getId() == null) ? "admin/nhan-vien/create" : "admin/nhan-vien/edit";
+        }
         try {
             nhanVienService.saveNhanVien(nhanVien, anhFile);
             String message = (nhanVien.getId() == null) ? "Thêm nhân viên thành công!" : "Cập nhật nhân viên thành công!";
