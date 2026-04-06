@@ -24,15 +24,15 @@ public class SanPhamServiceImpl implements SanPhamService {
     private SanPhamChiTietRepository spctRepo;
 
     @Override
-    public Page<SanPham> filterSanPhamPage(String search, Pageable pageable) {
+    public Page<SanPham> filterSanPhamPage(String search, Boolean trangThai, Long idDanhMuc, Long idThuongHieu, Long idKieuDang, Long idChatLieu, Pageable pageable) {
         if (search != null && search.trim().isEmpty()) search = null;
-        return sanPhamRepo.findByFilters(search, pageable);
+        return sanPhamRepo.findByFilters(search, trangThai, idDanhMuc, idThuongHieu, idKieuDang, idChatLieu, pageable);
     }
 
     @Override
-    public Page<SanPham> filterSanPham(String search, Pageable pageable) {
+    public Page<SanPham> filterSanPham(String search, Boolean trangThai, Long idDanhMuc, Long idThuongHieu, Long idKieuDang, Long idChatLieu, Pageable pageable) {
         if (search != null && search.trim().isEmpty()) search = null;
-        return sanPhamRepo.findByFilters(search, pageable);
+        return sanPhamRepo.findByFilters(search, trangThai, idDanhMuc, idThuongHieu, idKieuDang, idChatLieu, pageable);
     }
 
     @Override
@@ -78,10 +78,10 @@ public class SanPhamServiceImpl implements SanPhamService {
     }
 
     @Override
-    public java.io.ByteArrayInputStream exportToExcel(String search) {
+    public java.io.ByteArrayInputStream exportToExcel(String search, Boolean trangThai, Long idDanhMuc, Long idThuongHieu, Long idKieuDang, Long idChatLieu) {
         if (search != null && search.trim().isEmpty()) search = null;
         // Sử dụng repo để lấy tất cả (không phân trang cho export)
-        java.util.List<SanPham> dataList = sanPhamRepo.findByFilters(search, org.springframework.data.domain.Pageable.unpaged()).getContent();
+        java.util.List<SanPham> dataList = sanPhamRepo.findByFilters(search, trangThai, idDanhMuc, idThuongHieu, idKieuDang, idChatLieu, org.springframework.data.domain.Pageable.unpaged()).getContent();
         
         String[] columns = {"STT", "Mã sản phẩm", "Tên sản phẩm", "Ngày tạo", "Trạng thái"};
         

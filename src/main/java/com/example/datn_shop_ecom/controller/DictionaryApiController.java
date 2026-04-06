@@ -23,6 +23,10 @@ public class DictionaryApiController {
         
         result.put("mauSac", entityManager.createQuery("SELECT m FROM MauSac m").getResultList());
         result.put("kichThuoc", entityManager.createQuery("SELECT k FROM KichThuoc k").getResultList());
+        result.put("danhMuc", entityManager.createQuery("SELECT d FROM DanhMuc d").getResultList());
+        result.put("thuongHieu", entityManager.createQuery("SELECT t FROM ThuongHieu t").getResultList());
+        result.put("kieuDang", entityManager.createQuery("SELECT k FROM KieuDang k").getResultList());
+        result.put("chatLieu", entityManager.createQuery("SELECT c FROM ChatLieu c").getResultList());
         
         return ResponseEntity.ok(result);
     }

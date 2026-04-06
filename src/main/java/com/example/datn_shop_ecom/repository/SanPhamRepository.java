@@ -12,9 +12,19 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SanPhamRepository extends JpaRepository<SanPham, Long> {
     @Query("SELECT s FROM SanPham s WHERE " +
-           "(:search IS NULL OR s.tenSanPham LIKE %:search% OR s.maSanPham LIKE %:search%)")
+           "(:search IS NULL OR s.tenSanPham LIKE %:search% OR s.maSanPham LIKE %:search%) AND " +
+           "(:trangThai IS NULL OR s.xoaMem = :trangThai) AND " +
+           "(:idDanhMuc IS NULL OR s.danhMuc.id = :idDanhMuc) AND " +
+           "(:idThuongHieu IS NULL OR s.thuongHieu.id = :idThuongHieu) AND " +
+           "(:idKieuDang IS NULL OR s.kieuDang.id = :idKieuDang) AND " +
+           "(:idChatLieu IS NULL OR s.chatLieu.id = :idChatLieu)")
     Page<SanPham> findByFilters(
-            @Param("search") String search, 
+            @Param("search") String search,
+            @Param("trangThai") Boolean trangThai,
+            @Param("idDanhMuc") Long idDanhMuc,
+            @Param("idThuongHieu") Long idThuongHieu,
+            @Param("idKieuDang") Long idKieuDang,
+            @Param("idChatLieu") Long idChatLieu,
             Pageable pageable);
 
     @Modifying

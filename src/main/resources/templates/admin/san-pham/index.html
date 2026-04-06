@@ -18,7 +18,7 @@
             <form th:action="@{/admin/san-pham}" method="GET" id="filterForm">
                 <div class="card shadow-sm border-0 rounded-4 mb-4">
                     <div class="card-body p-4">
-                        <div class="row g-3 align-items-center mb-4">
+                        <div class="row g-3 align-items-center mb-4 pb-3 border-bottom">
                             <div class="col-md-5">
                                 <div class="search-box position-relative">
                                     <i
@@ -31,9 +31,9 @@
                             <div class="col-md-7 d-flex justify-content-end gap-2">
                                 <a th:href="@{/admin/san-pham}"
                                     class="btn btn-dark rounded-pill px-4 py-2 d-flex align-items-center gap-2 btn-reset-filter">
-                                    <i class="bi bi-arrow-counterclockwise"></i> Đặt lại bộ lọc
+                                    <i class="bi bi-arrow-counterclockwise"></i> Đặt lại
                                 </a>
-                                <a th:href="@{/admin/san-pham/export(search=${search})}"
+                                <a th:href="@{/admin/san-pham/export(search=${search}, trangThai=${trangThai}, idThuongHieu=${idThuongHieu}, idChatLieu=${idChatLieu})}"
                                     class="btn btn-light-outline rounded-pill px-4 py-2 d-flex align-items-center gap-2">
                                     <i class="bi bi-file-earmark-excel"></i> Xuất Excel
                                 </a>
@@ -45,14 +45,33 @@
                         </div>
 
                         <div class="row g-3 align-items-center">
+                            <!-- Thương hiệu -->
+                            <div class="col-md-4 d-flex align-items-center gap-3">
+                                <label class="form-label mb-0 text-nowrap fw-medium">Thương hiệu:</label>
+                                <select name="idThuongHieu" class="form-select rounded-pill border-1 bg-light-subtle" onchange="this.form.submit()">
+                                    <option value="">Tất cả</option>
+                                    <option th:each="th : ${listThuongHieu}" th:value="${th.id}" 
+                                            th:text="${th.tenThuongHieu}" th:selected="${th.id == idThuongHieu}"></option>
+                                </select>
+                            </div>
 
+                            <!-- Chất liệu -->
+                            <div class="col-md-4 d-flex align-items-center gap-3">
+                                <label class="form-label mb-0 text-nowrap fw-medium">Chất liệu:</label>
+                                <select name="idChatLieu" class="form-select rounded-pill border-1 bg-light-subtle" onchange="this.form.submit()">
+                                    <option value="">Tất cả</option>
+                                    <option th:each="cl : ${listChatLieu}" th:value="${cl.id}" 
+                                            th:text="${cl.tenChatLieu}" th:selected="${cl.id == idChatLieu}"></option>
+                                </select>
+                            </div>
+
+                            <!-- Trạng thái -->
                             <div class="col-md-4 d-flex align-items-center gap-3">
                                 <label class="form-label mb-0 text-nowrap fw-medium">Trạng thái:</label>
-                                <select name="status" class="form-select rounded-pill border-1 bg-light-subtle"
-                                    onchange="this.form.submit()">
+                                <select name="trangThai" class="form-select rounded-pill border-1 bg-light-subtle" onchange="this.form.submit()">
                                     <option value="">Tất cả</option>
-                                    <option value="0" th:selected="${status == '0'}">Đang kinh doanh</option>
-                                    <option value="1" th:selected="${status == '1'}">Ngừng kinh doanh</option>
+                                    <option value="false" th:selected="${trangThai == false}">Đang kinh doanh</option>
+                                    <option value="true" th:selected="${trangThai == true}">Ngừng kinh doanh</option>
                                 </select>
                             </div>
                         </div>
@@ -119,7 +138,11 @@
                 </table>
                 <div class="px-3 py-3 border-top bg-light-subtle">
                     <div
-                        th:replace="~{admin/fragments/pagination :: pagination(${spPage}, '/admin/san-pham', 'search=' + (${search} ?: ''))}">
+                        th:replace="~{admin/fragments/pagination :: pagination(${spPage}, '/admin/san-pham', 
+                        'search=' + (${search} ?: '') + 
+                        '&trangThai=' + (${trangThai} ?: '') + 
+                        '&idThuongHieu=' + (${idThuongHieu} ?: '') + 
+                        '&idChatLieu=' + (${idChatLieu} ?: ''))}">
                     </div>
                 </div>
             </div>

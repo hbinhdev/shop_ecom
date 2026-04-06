@@ -4,9 +4,7 @@ import com.example.datn_shop_ecom.entity.SanPham;
 import com.example.datn_shop_ecom.entity.SanPhamChiTiet;
 import com.example.datn_shop_ecom.entity.HinhAnh;
 
-import com.example.datn_shop_ecom.repository.HinhAnhRepository;
-import com.example.datn_shop_ecom.repository.KichThuocRepository;
-import com.example.datn_shop_ecom.repository.MauSacRepository;
+import com.example.datn_shop_ecom.repository.*;
 import com.example.datn_shop_ecom.service.SanPhamChiTietService;
 import com.example.datn_shop_ecom.service.SanPhamService;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +37,18 @@ public class SanPhamController {
 
     @Autowired
     private KichThuocRepository kichThuocRepo;
+
+    @Autowired
+    private DanhMucRepository danhMucRepo;
+
+    @Autowired
+    private ThuongHieuRepository thuongHieuRepo;
+
+    @Autowired
+    private KieuDangRepository kieuDangRepo;
+
+    @Autowired
+    private ChatLieuRepository chatLieuRepo;
 
     @Autowired
     private HinhAnhRepository hinhAnhRepo;
@@ -123,16 +133,32 @@ public class SanPhamController {
     @GetMapping
     public String index(
             @RequestParam(required = false, defaultValue = "") String search,
+            @RequestParam(required = false) Boolean trangThai,
+            @RequestParam(required = false) Long idDanhMuc,
+            @RequestParam(required = false) Long idThuongHieu,
+            @RequestParam(required = false) Long idKieuDang,
+            @RequestParam(required = false) Long idChatLieu,
             @RequestParam(defaultValue = "0") int page,
             Model model
     ) {
-        Pageable pageable = PageRequest.of(page, 5);
-        Page<SanPham> spPage = sanPhamService.filterSanPham(search, pageable);
+        Pageable pageable = PageRequest.of(page, 5, Sort.by("ngayTao").descending());
+        Page<SanPham> spPage = sanPhamService.filterSanPham(search, trangThai, idDanhMuc, idThuongHieu, idKieuDang, idChatLieu, pageable);
         
         model.addAttribute("listSanPham", spPage.getContent());
         model.addAttribute("spPage", spPage);
         model.addAttribute("search", search);
+        model.addAttribute("trangThai", trangThai);
+        model.addAttribute("idDanhMuc", idDanhMuc);
+        model.addAttribute("idThuongHieu", idThuongHieu);
+        model.addAttribute("idKieuDang", idKieuDang);
+        model.addAttribute("idChatLieu", idChatLieu);
         model.addAttribute("currentPage", page);
+        
+        // Luôn nạp danh sách thuộc tính cho bộ lọc
+        model.addAttribute("listDanhMuc", danhMucRepo.findAll());
+        model.addAttribute("listThuongHieu", thuongHieuRepo.findAll());
+        model.addAttribute("listKieuDang", kieuDangRepo.findAll());
+        model.addAttribute("listChatLieu", chatLieuRepo.findAll());
         
 
         
@@ -166,6 +192,10 @@ public class SanPhamController {
         spData.put("id", sp.getId());
         spData.put("tenSanPham", sp.getTenSanPham());
         spData.put("moTa", sp.getMoTa());
+        spData.put("idDanhMuc", sp.getDanhMuc() != null ? sp.getDanhMuc().getId() : "");
+        spData.put("idThuongHieu", sp.getThuongHieu() != null ? sp.getThuongHieu().getId() : "");
+        spData.put("idKieuDang", sp.getKieuDang() != null ? sp.getKieuDang().getId() : "");
+        spData.put("idChatLieu", sp.getChatLieu() != null ? sp.getChatLieu().getId() : "");
         
         model.addAttribute("spData", spData);
         
@@ -273,9 +303,14 @@ public class SanPhamController {
 
     @GetMapping("/export")
     public ResponseEntity<org.springframework.core.io.InputStreamResource> exportExcel(
-            @RequestParam(required = false) String search) {
+            @RequestParam(required = false, defaultValue = "") String search,
+            @RequestParam(required = false) Boolean trangThai,
+            @RequestParam(required = false) Long idDanhMuc,
+            @RequestParam(required = false) Long idThuongHieu,
+            @RequestParam(required = false) Long idKieuDang,
+            @RequestParam(required = false) Long idChatLieu) {
         
-        java.io.ByteArrayInputStream in = sanPhamService.exportToExcel(search);
+        java.io.ByteArrayInputStream in = sanPhamService.exportToExcel(search, trangThai, idDanhMuc, idThuongHieu, idKieuDang, idChatLieu);
         org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=san_pham.xlsx");
 
