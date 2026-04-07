@@ -136,7 +136,8 @@
                 </table>
                 <!-- Pagination Footer -->
                 <div
-                    th:replace="~{admin/fragments/pagination :: pagination(${pggPage}, '/admin/phieu-giam-gia', 'search=${search}, startDate=${startDate}, endDate=${endDate}, trangThai=${trangThai}')}">
+                    th:replace="~{admin/fragments/pagination :: pagination(${pggPage}, '/admin/phieu-giam-gia', 
+                    'search=' + (${search} ?: '') + '&startDate=' + (${startDate} ?: '') + '&endDate=' + (${endDate} ?: '') + '&trangThai=' + (${trangThai} ?: ''))}">
                 </div>
             </div>
         </div>
