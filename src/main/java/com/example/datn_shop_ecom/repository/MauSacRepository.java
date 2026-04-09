@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MauSacRepository extends JpaRepository<MauSac, Long> {
+    java.util.List<MauSac> findAllByXoaMemFalse();
 }
 

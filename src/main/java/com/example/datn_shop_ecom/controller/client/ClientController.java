@@ -2,6 +2,7 @@ package com.example.datn_shop_ecom.controller.client;
 
 import com.example.datn_shop_ecom.entity.SanPham;
 import com.example.datn_shop_ecom.service.*;
+import com.example.datn_shop_ecom.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,6 +41,12 @@ public class ClientController {
         return "client/home/index";
     }
 
+    @Autowired
+    private MauSacRepository mauSacRepo;
+
+    @Autowired
+    private KichThuocRepository kichThuocRepo;
+
     @GetMapping("/san-pham")
     public String shop(Model model, 
                        @RequestParam(required = false) Long danhMuc,
@@ -47,13 +54,15 @@ public class ClientController {
                        @RequestParam(required = false) String search) {
         model.addAttribute("pageTitle", "Cửa hàng - PeakSneaker");
         
-        
+        // Load data for filters
         model.addAttribute("danhMucs", danhMucService.findAll());
         model.addAttribute("thuongHieus", thuongHieuService.findAll());
         model.addAttribute("chatLieus", chatLieuService.findAll());
         model.addAttribute("kieuDangs", kieuDangService.findAll());
+        model.addAttribute("mauSacs", mauSacRepo.findAllByXoaMemFalse());
+        model.addAttribute("kichThuocs", kichThuocRepo.findAllByXoaMemFalse());
         
-        
+        // Data products
         model.addAttribute("products", sanPhamService.findAllByXoaMemFalse());
         
         return "client/san-pham/index";

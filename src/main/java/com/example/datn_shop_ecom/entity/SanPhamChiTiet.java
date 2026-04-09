@@ -15,6 +15,7 @@ public class SanPhamChiTiet {
 
     @ManyToOne
     @JoinColumn(name = "id_san_pham")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private SanPham sanPham;
 
     @ManyToOne

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{client/layout/main :: layout(~{::main}, ${pageTitle})}">
 
 <body>
@@ -58,7 +58,7 @@
                     <div th:each="p : ${latestProducts}" class="col-6 col-md-4 col-lg-3">
                         <div class="product-card border shadow-sm h-100">
                             <div class="product-img-wrapper mb-3">
-                                <img th:src="${p.duongDanAnh != null ? p.duongDanAnh : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600'}"
+                                <img th:src="${p.duongDanAnh != null ? '/uploads/san-pham/' + p.duongDanAnh : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600'}"
                                     class="img-fluid" th:alt="${p.tenSanPham}">
                             </div>
                             <div>

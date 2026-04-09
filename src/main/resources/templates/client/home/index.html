@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{client/layout/main :: layout(~{::main}, ${pageTitle})}">
 
 <body>
@@ -46,18 +46,20 @@
                     <a th:href="@{/san-pham}" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold small">XEM TẤT CẢ <i class="bi bi-arrow-right ms-1"></i></a>
                 </div>
                 <div class="row g-4">
-                    <div th:each="p : ${latestProducts}" class="col-6 col-md-4 col-lg-3">
-                        <a th:href="@{'/san-pham/detail/' + ${p.id}}" class="text-decoration-none">
-                            <div class="product-card border shadow-sm h-100">
-                                <div class="product-img-wrapper mb-3">
-                                    <img th:src="${p.duongDanAnh != null ? p.duongDanAnh : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600'}" class="img-fluid" th:alt="${p.tenSanPham}">
+                    <div th:each="p : ${latestProducts}" class="col-6 col-md-3">
+                        <a th:href="@{'/san-pham/detail/' + ${p.id}}" class="text-decoration-none p-card-link">
+                            <div class="product-card h-100">
+                                <div class="product-img-wrapper" th:with="displayImg=${p.duongDanAnh != null ? p.duongDanAnh : (p.danhSachHinhAnh != null && !p.danhSachHinhAnh.isEmpty() ? p.danhSachHinhAnh[0].duongDan : (p.danhSachChiTiet != null && !p.danhSachChiTiet.isEmpty() && p.danhSachChiTiet[0].duongDanAnh != null ? p.danhSachChiTiet[0].duongDanAnh : null))}">
+                                    <img th:src="${displayImg != null ? (displayImg.startsWith('http') ? displayImg : '/uploads/san-pham/' + displayImg) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600'}" th:alt="${p.tenSanPham}">
                                 </div>
-                                <div>
-                                    <small class="text-muted" th:text="${p.danhMuc != null ? p.danhMuc.tenDanhMuc : 'Sneaker'}">Sneaker</small>
-                                    <h6 class="fw-bold text-dark mb-2 text-truncate" th:text="${p.tenSanPham}">Tên giày</h6>
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="fw-bold text-primary">Chi tiết</span>
-                                        <i class="bi bi-arrow-right-short text-primary fs-4"></i>
+                                <div class="card-content">
+                                    <small class="text-muted mb-1 d-block" th:text="${p.danhMuc != null ? p.danhMuc.tenDanhMuc : 'Sneaker'}">Sneaker</small>
+                                    <h6 class="fw-bold text-dark mb-2 product-title" th:text="${p.tenSanPham}">Tên giày</h6>
+                                    <div class="mt-auto">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="fw-bold text-danger fs-6" th:text="${p.getKhoangGia()}">Giá</span>
+                                            <i class="bi bi-arrow-right-short text-danger fs-5"></i>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -67,6 +69,59 @@
             </div>
         </section>
     </main>
+
+    <style>
+        .product-card {
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #eee !important;
+        }
+
+        .product-img-wrapper {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            background-color: #f8f9fa;
+        }
+
+        .product-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .product-img-wrapper img {
+            transform: scale(1.05);
+        }
+
+        .p-card-link:hover .product-card {
+            transform: translateY(-5px);
+            border-color: #ff4d00 !important;
+        }
+
+        .card-content {
+            padding: 1rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-title {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 2.6rem;
+            line-height: 1.3;
+            font-size: 0.95rem;
+        }
+    </style>
 </body>
 </html>
 

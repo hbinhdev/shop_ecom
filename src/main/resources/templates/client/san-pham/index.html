@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{client/layout/main :: layout(~{::main}, ${pageTitle})}">
 
 <body>
@@ -6,11 +6,12 @@
         <div class="container">
             <div class="row g-4">
                 
+                <!-- SIDEBAR BỘ LỌC -->
                 <aside class="col-lg-3">
                     <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 100px;">
-                        <h5 class="fw-bold mb-4 border-bottom pb-2">BỘ LỌC</h5>
+                        <h5 class="fw-bold mb-4 border-bottom pb-2 text-primary">BỘ LỌC</h5>
                         
-                        
+                        <!-- Tìm kiếm -->
                         <div class="mb-4">
                             <label class="form-label small fw-bold text-muted">TÌM KIẾM</label>
                             <div class="input-group">
@@ -19,10 +20,10 @@
                             </div>
                         </div>
 
-                        
+                        <!-- Danh mục -->
                         <div class="mb-4">
-                            <label class="form-label small fw-bold text-muted text-uppercase">Danh mục</label>
-                            <div class="d-flex flex-column gap-2">
+                            <label class="form-label small fw-bold text-muted text-uppercase text-primary">Danh mục</label>
+                            <div class="d-flex flex-column gap-2 mt-2">
                                 <div class="form-check" th:each="dm : ${danhMucs}">
                                     <input class="form-check-input" type="checkbox" th:value="${dm.id}" th:id="'cat' + ${dm.id}">
                                     <label class="form-check-label small" th:for="'cat' + ${dm.id}" th:text="${dm.tenDanhMuc}">Danh mục</label>
@@ -30,10 +31,10 @@
                             </div>
                         </div>
 
-                        
+                        <!-- Thương hiệu -->
                         <div class="mb-4">
-                            <label class="form-label small fw-bold text-muted text-uppercase">Thương hiệu</label>
-                            <div class="d-flex flex-column gap-2">
+                            <label class="form-label small fw-bold text-muted text-uppercase text-primary">Thương hiệu</label>
+                            <div class="d-flex flex-column gap-2 mt-2">
                                 <div class="form-check" th:each="th : ${thuongHieus}">
                                     <input class="form-check-input" type="checkbox" th:value="${th.id}" th:id="'brand' + ${th.id}">
                                     <label class="form-check-label small" th:for="'brand' + ${th.id}" th:text="${th.tenThuongHieu}">Thương hiệu</label>
@@ -41,11 +42,52 @@
                             </div>
                         </div>
 
-                        <button class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow-sm">ÁP DỤNG</button>
+                        <!-- Màu sắc -->
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-muted text-uppercase text-primary">Màu sắc</label>
+                            <div class="d-flex flex-wrap gap-2 mt-2">
+                                <div th:each="ms : ${mauSacs}" class="size-filter-item" th:text="${ms.tenMauSac}"
+                                     th:style="|border-left: 5px solid ${ms.maMau != null ? ms.maMau : '#ddd'}; width: auto; padding: 0 15px;|">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kích cỡ -->
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-muted text-uppercase text-primary">Kích cỡ</label>
+                            <div class="d-flex flex-wrap gap-2 mt-2">
+                                <div th:each="kt : ${kichThuocs}" class="size-filter-item" th:text="${kt.tenKichThuoc}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kiểu dáng -->
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-muted text-uppercase text-primary">Kiểu dáng</label>
+                            <div class="d-flex flex-column gap-2 mt-2">
+                                <div class="form-check" th:each="kd : ${kieuDangs}">
+                                    <input class="form-check-input" type="checkbox" th:value="${kd.id}" th:id="'style' + ${kd.id}">
+                                    <label class="form-check-label small" th:for="'style' + ${kd.id}" th:text="${kd.tenKieuDang}">Kiểu dáng</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chất liệu -->
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-muted text-uppercase text-primary">Chất liệu</label>
+                            <div class="d-flex flex-column gap-2 mt-2">
+                                <div class="form-check" th:each="cl : ${chatLieus}">
+                                    <input class="form-check-input" type="checkbox" th:value="${cl.id}" th:id="'material' + ${cl.id}">
+                                    <label class="form-check-label small" th:for="'material' + ${cl.id}" th:text="${cl.tenChatLieu}">Chất liệu</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow-sm mt-3">ÁP DỤNG</button>
                     </div>
                 </aside>
 
-                
+                <!-- DANH SÁCH SẢN PHẨM -->
                 <div class="col-lg-9">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <span class="text-muted small">Hiển thị <span th:text="${products.size()}">0</span> sản phẩm</span>
@@ -59,17 +101,20 @@
                     <div class="row g-4">
                         <div th:each="p : ${products}" class="col-6 col-md-4">
                             <a th:href="@{'/san-pham/detail/' + ${p.id}}" class="text-decoration-none p-card-link">
-                                <div class="product-card border shadow-sm h-100">
-                                    <div class="product-img-wrapper mb-3">
-                                        <img th:src="${p.duongDanAnh != null ? p.duongDanAnh : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600'}" 
-                                             class="img-fluid" th:alt="${p.tenSanPham}">
+                                <div class="product-card h-100">
+                                    <div class="product-img-wrapper" th:with="displayImg=${p.duongDanAnh != null ? p.duongDanAnh : (p.danhSachHinhAnh != null && !p.danhSachHinhAnh.isEmpty() ? p.danhSachHinhAnh[0].duongDan : (p.danhSachChiTiet != null && !p.danhSachChiTiet.isEmpty() && p.danhSachChiTiet[0].duongDanAnh != null ? p.danhSachChiTiet[0].duongDanAnh : null))}">
+                                        <img th:src="${displayImg != null ? (displayImg.startsWith('http') ? displayImg : '/uploads/san-pham/' + displayImg) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600'}" 
+                                             th:alt="${p.tenSanPham}">
                                     </div>
-                                    <div>
-                                        <small class="text-muted" th:text="${p.danhMuc != null ? p.danhMuc.tenDanhMuc : 'Sneaker'}">Sneaker</small>
-                                        <h6 class="fw-bold text-dark mb-2 text-truncate" th:text="${p.tenSanPham}">Tên giày Sneaker</h6>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span class="fw-bold text-primary">Chi tiết</span>
-                                            <i class="bi bi-arrow-right-short text-primary fs-4"></i>
+                                    <div class="card-content">
+                                        <small class="text-muted mb-1 d-block" th:text="${p.danhMuc != null ? p.danhMuc.tenDanhMuc : 'Sneaker'}">Sneaker</small>
+                                        <h6 class="fw-bold text-dark mb-1 product-title" th:text="${p.tenSanPham}">Tên giày Sneaker</h6>
+                                        <div class="mt-auto">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="fw-bold text-danger fs-6" th:text="${p.getKhoangGia()}">Giá</span>
+                                                <i class="bi bi-arrow-right-short text-danger fs-5"></i>
+                                            </div>
+                                            <div class="text-uppercase text-muted fw-bold" style="font-size: 0.6rem; letter-spacing: 0.5px;">CHI TIẾT</div>
                                         </div>
                                     </div>
                                 </div>
@@ -82,11 +127,98 @@
     </main>
 
     <style>
+        .product-card {
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #eee !important;
+        }
+
+        .product-img-wrapper {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            background-color: #f8f9fa;
+        }
+
+        .product-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .product-img-wrapper img {
+            transform: scale(1.05);
+        }
+
         .p-card-link:hover .product-card {
             transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(212, 125, 50, 0.2) !important;
+            border-color: #ff4d00 !important;
+        }
+
+        .card-content {
+            padding: 1rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-title {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 2.6rem;
+            line-height: 1.3;
+            font-size: 0.95rem;
+        }
+
+        /* Filter Styles */
+        .color-filter-item {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: 2px solid #eee;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .color-filter-item:hover {
+            transform: scale(1.2);
+            border-color: #333;
+        }
+        .color-filter-item.active {
+            border-color: #333;
+            box-shadow: 0 0 0 2px #fff, 0 0 0 4px #333;
+        }
+
+        .size-filter-item {
+            width: 44px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #fff;
+        }
+        .size-filter-item:hover {
+            border-color: #333;
+            background: #f8f9fa;
+        }
+        .size-filter-item.active {
+            background: #333;
+            color: #fff;
+            border-color: #333;
         }
     </style>
 </body>
 </html>
-
