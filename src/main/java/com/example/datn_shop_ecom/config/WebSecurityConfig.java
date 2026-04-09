@@ -41,10 +41,10 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/", "/san-pham/**", "/ve-chung-toi/**", "/phieu-giam-gia/**", "/tra-cuu/**",
                                 "/client/**", "/assets/**", "/uploads/**", "/css/**", "/js/**", "/images/**",
-                                "/vendor/**")
+                                "/vendor/**", "/login", "/register")
                         .permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/admin/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated());
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
