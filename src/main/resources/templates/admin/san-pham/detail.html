@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
 
 <head>
@@ -8,7 +8,7 @@
 <body>
     <main>
         <div class="container-fluid p-0 text-start">
-            <!-- Breadcrumb / Header Title -->
+            
             <div class="mb-4 d-flex justify-content-between align-items-center">
                 <h4 class="fw-bold section-title">Quản lý sản phẩm / <span class="fw-bold section-title">Chi tiết biến
                         thể</span></h4>
@@ -18,7 +18,7 @@
                 </a>
             </div>
 
-            <!-- PRODUCT INFORMATION CARD (Styled like Filter Section) -->
+            
             <div class="card shadow-sm border-0 rounded-4 mb-4">
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
@@ -52,7 +52,7 @@
                 </div>
             </div>
 
-            <!-- TABLE SECTION (Using custom-table like index.html) -->
+            
             <div class="custom-table overflow-hidden shadow-sm rounded-4 bg-white">
                 <div class="p-4 bg-white border-bottom d-flex justify-content-between align-items-center">
                     <h5 class="fw-bold mb-0 text-uppercase">Danh sách biến thể chi tiết (SPCT)</h5>
@@ -123,7 +123,7 @@
             </div>
         </div>
 
-        <!-- MODAL FOR ADD/EDIT (Styled to match Admin UI) -->
+        
         <div class="modal fade" id="variantModal" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
@@ -180,8 +180,6 @@
             </div>
         </div>
 
-        <div th:replace="~{admin/fragments/scripts :: common_scripts}"></div>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script th:inline="javascript">
             const VariantUI = {
                 modal: null,
@@ -222,7 +220,7 @@
                     }
                 },
                 async saveVariant() {
-                    const idSanPham = /*[[${sp.id}]]*/ null;
+                    const idSanPham =  null;
                     const data = {
                         id: document.getElementById('vId').value || null,
                         idSanPham: idSanPham,

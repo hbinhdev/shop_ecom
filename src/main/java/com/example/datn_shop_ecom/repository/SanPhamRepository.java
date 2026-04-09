@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.repository;
+﻿package com.example.datn_shop_ecom.repository;
 
 import com.example.datn_shop_ecom.entity.SanPham;
 import org.springframework.data.domain.Page;
@@ -30,4 +30,7 @@ public interface SanPhamRepository extends JpaRepository<SanPham, Long> {
     @Modifying
     @Query("UPDATE SanPham s SET s.xoaMem = :xoaMem WHERE s.id = :id")
     void updateXoaMem(@Param("id") Long id, @Param("xoaMem") Boolean xoaMem);
+
+    java.util.List<SanPham> findAllByXoaMemFalse();
 }
+

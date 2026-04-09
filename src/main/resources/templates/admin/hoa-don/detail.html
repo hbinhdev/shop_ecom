@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main_content}, ~{::title})}">
 
 <head>
@@ -61,7 +61,7 @@
                 transform: translateX(-5px);
             }
 
-            /* Status Stepper */
+            
             .status-progress-container {
                 background: white;
                 border-radius: 16px;
@@ -142,7 +142,7 @@
                 margin-top: 5px;
             }
 
-            /* Info Cards */
+            
             .custom-card {
                 background: white;
                 border-radius: 16px;
@@ -183,7 +183,7 @@
                 font-size: 0.9rem;
             }
 
-            /* Table Styles */
+            
             .product-table {
                 width: 100%;
                 border-collapse: collapse;
@@ -207,7 +207,7 @@
                 color: #000000;
             }
 
-            /* Summary */
+            
             .summary-item {
                 display: flex;
                 justify-content: space-between;
@@ -313,28 +313,28 @@
                 </a>
             </div>
 
-            <!-- Status Progress -->
+            
             <div class="status-progress-container">
                 <div class="status-stepper">
-                    <!-- Step 1: Chờ xác nhận -->
+                    
                     <div class="status-step"
                         th:classappend="${#lists.contains({'1','2','3','4','CHO_XAC_NHAN','DA_XAC_NHAN','DANG_GIAO','HOAN_THANH'}, hd.trangThaiHoaDon)} ? 'completed' : ''">
                         <div class="step-circle"><i class="bi bi-file-earmark-check"></i></div>
                         <div class="step-label">Chờ xác nhận</div>
                     </div>
-                    <!-- Step 2: Xác nhận -->
+                    
                     <div class="status-step"
                         th:classappend="${#lists.contains({'2','3','4','DA_XAC_NHAN','DANG_GIAO','HOAN_THANH'}, hd.trangThaiHoaDon)} ? 'completed' : ''">
                         <div class="step-circle"><i class="bi bi-box-seam"></i></div>
                         <div class="step-label">Đã xác nhận</div>
                     </div>
-                    <!-- Step 3: Đang giao -->
+                    
                     <div class="status-step"
                         th:classappend="${#lists.contains({'3','4','DANG_GIAO','HOAN_THANH'}, hd.trangThaiHoaDon)} ? 'completed' : ''">
                         <div class="step-circle"><i class="bi bi-truck"></i></div>
                         <div class="step-label">Đang giao</div>
                     </div>
-                    <!-- Step 4: Hoàn thành -->
+                    
                     <div class="status-step"
                         th:classappend="${#lists.contains({'4','HOAN_THANH'}, hd.trangThaiHoaDon)} ? 'completed' : ''">
                         <div class="step-circle"><i class="bi bi-check-circle-fill"></i></div>
@@ -348,7 +348,7 @@
 
             <div class="row">
                 <div class="col-lg-8">
-                    <!-- Info Cards -->
+                    
                     <div class="row">
                         <div class="col-md-6">
                             <div class="custom-card">
@@ -404,7 +404,7 @@
                         </div>
                     </div>
 
-                    <!-- Products -->
+                    
                     <div class="custom-card">
                         <div class="card-header-styled">
                             <div class="header-icon-bg"><i class="bi bi-bag"></i></div>
@@ -454,7 +454,7 @@
                 </div>
 
                 <div class="col-lg-4">
-                    <!-- Summary -->
+                    
                     <div class="custom-card p-4">
                         <div
                             style="font-weight: 700; font-size: 1rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
@@ -488,7 +488,7 @@
                         </button>
                     </div>
 
-                    <!-- Payment History -->
+                    
                     <div class="custom-card p-4">
                         <div
                             style="font-weight: 700; font-size: 1rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
@@ -511,7 +511,7 @@
                         </div>
                     </div>
 
-                    <!-- Order History (Timeline) -->
+                    
                     <div class="custom-card p-4">
                         <div
                             style="font-weight: 700; font-size: 1rem; margin-bottom: 25px; display: flex; align-items: center; gap: 10px;">

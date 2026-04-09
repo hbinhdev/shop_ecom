@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.controller;
+﻿package com.example.datn_shop_ecom.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,3 +31,4 @@ public class DictionaryApiController {
         return ResponseEntity.ok(result);
     }
 }
+

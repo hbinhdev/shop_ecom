@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.service.impl;
+﻿package com.example.datn_shop_ecom.service.impl;
 
 import com.example.datn_shop_ecom.entity.NhanVien;
 import com.example.datn_shop_ecom.repository.NhanVienRepository;
@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -46,7 +47,42 @@ public class NhanVienServiceImpl implements NhanVienService {
     @Override
     @Transactional
     public NhanVien saveNhanVien(NhanVien nhanVien, org.springframework.web.multipart.MultipartFile anhFile) {
-        // Handle file upload
+        
+        if (nhanVien.getTenDayDu() == null || nhanVien.getTenDayDu().trim().isEmpty()) {
+            throw new RuntimeException("Họ tên không được để trống");
+        }
+        if (nhanVien.getEmail() == null || !nhanVien.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new RuntimeException("Email không đúng định dạng");
+        }
+        if (nhanVien.getSoDienThoai() == null || !nhanVien.getSoDienThoai().matches("0\\d{9}")) {
+            throw new RuntimeException("Số điện thoại phải gồm 10 chữ số và bắt đầu bằng số 0");
+        }
+        
+        if (nhanVien.getNgaySinh() != null) {
+            java.time.LocalDate birth = nhanVien.getNgaySinh();
+            java.time.LocalDate now = java.time.LocalDate.now();
+            if (java.time.Period.between(birth, now).getYears() < 18) {
+                throw new RuntimeException("Nhân viên phải từ 18 tuổi trở lên");
+            }
+        }
+
+        
+        if (nhanVienRepository.existsByEmail(nhanVien.getEmail())) {
+            Optional<NhanVien> existing = nhanVienRepository.findByEmail(nhanVien.getEmail());
+            if (existing.isPresent() && !existing.get().getId().equals(nhanVien.getId())) {
+                throw new RuntimeException("Email đã tồn tại trong hệ thống!");
+            }
+        }
+
+        
+        if (nhanVienRepository.existsBySoDienThoai(nhanVien.getSoDienThoai())) {
+            Optional<NhanVien> existing = nhanVienRepository.findBySoDienThoai(nhanVien.getSoDienThoai());
+            if (existing.isPresent() && !existing.get().getId().equals(nhanVien.getId())) {
+                throw new RuntimeException("Số điện thoại đã tồn tại trong hệ thống!");
+            }
+        }
+
+        
         if (anhFile != null && !anhFile.isEmpty()) {
             try {
                 String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/uploads/nhan-vien/";
@@ -62,7 +98,7 @@ public class NhanVienServiceImpl implements NhanVienService {
 
                 nhanVien.setAnh(fileName);
             } catch (java.io.IOException e) {
-                System.err.println("Lỗi upload ảnh: " + e.getMessage());
+                
             }
         }
 
@@ -118,7 +154,7 @@ public class NhanVienServiceImpl implements NhanVienService {
                         saved.getTenDayDu(), saved.getMaNhanVien(), saved.getEmail(), password);
                 emailService.sendEmail(saved.getEmail(), subject, body);
             } catch (Exception e) {
-                System.err.println("Lỗi gửi mail: " + e.getMessage());
+                
             }
 
             return saved;
@@ -175,3 +211,4 @@ public class NhanVienServiceImpl implements NhanVienService {
         });
     }
 }
+

@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.entity;
+﻿package com.example.datn_shop_ecom.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -56,3 +56,4 @@ public class KhachHang {
     @OneToMany(mappedBy = "khachHang", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<DiaChi> danhSachDiaChi = new java.util.ArrayList<>();
 }
+

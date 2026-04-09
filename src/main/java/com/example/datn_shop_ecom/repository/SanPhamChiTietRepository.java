@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.repository;
+﻿package com.example.datn_shop_ecom.repository;
 
 import com.example.datn_shop_ecom.entity.SanPhamChiTiet;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,3 +23,4 @@ public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, 
 
     List<SanPhamChiTiet> findBySanPhamId(Long sanPhamId);
 }
+

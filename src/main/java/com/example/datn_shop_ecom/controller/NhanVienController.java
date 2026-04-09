@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.controller;
+﻿package com.example.datn_shop_ecom.controller;
 
 import com.example.datn_shop_ecom.entity.NhanVien;
 import com.example.datn_shop_ecom.repository.VaiTroRepository;
@@ -86,8 +86,10 @@ public class NhanVienController {
             redirectAttributes.addFlashAttribute("success", message);
             return "redirect:/admin/nhan-vien";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Lỗi: " + e.getMessage());
-            return (nhanVien.getId() == null) ? "redirect:/admin/nhan-vien/create" : "redirect:/admin/nhan-vien/edit/" + nhanVien.getId();
+            model.addAttribute("nhanVien", nhanVien);
+            model.addAttribute("vaiTros", vaiTroRepository.findAllByXoaMemFalse());
+            model.addAttribute("error", "Lỗi: " + e.getMessage());
+            return (nhanVien.getId() == null) ? "admin/nhan-vien/create" : "admin/nhan-vien/edit";
         }
     }
 
@@ -124,3 +126,4 @@ public class NhanVienController {
                 .body(new InputStreamResource(in));
     }
 }
+

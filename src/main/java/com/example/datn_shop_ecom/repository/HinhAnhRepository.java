@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.repository;
+﻿package com.example.datn_shop_ecom.repository;
 
 import com.example.datn_shop_ecom.entity.HinhAnh;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,3 +14,4 @@ public interface HinhAnhRepository extends JpaRepository<HinhAnh, Long> {
     @org.springframework.transaction.annotation.Transactional
     void deleteBySanPhamChiTietId(Long sanPhamChiTietId);
 }
+

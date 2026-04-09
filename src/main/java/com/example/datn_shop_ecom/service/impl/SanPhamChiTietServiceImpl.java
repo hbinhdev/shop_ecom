@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.service.impl;
+﻿package com.example.datn_shop_ecom.service.impl;
 
 import com.example.datn_shop_ecom.entity.SanPhamChiTiet;
 import com.example.datn_shop_ecom.repository.SanPhamChiTietRepository;
@@ -21,7 +21,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
 
     @Override
     public Page<SanPhamChiTiet> filterVariantPage(
-            String search, Long idMauSac, Long idKichThuoc, 
+            String search, Long idSanPham, Long idMauSac, Long idKichThuoc, 
             BigDecimal minPrice, BigDecimal maxPrice, 
             String trangThai, Pageable pageable
     ) {
@@ -30,6 +30,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
 
             if (search != null && !search.trim().isEmpty()) {
                 String keyword = "%" + search.trim().toLowerCase() + "%";
+                
                 predicates.add(cb.or(
                     cb.like(cb.lower(root.get("maSanPhamChiTiet")), keyword),
                     cb.like(cb.lower(root.get("sanPham").get("tenSanPham")), keyword),
@@ -37,13 +38,29 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
                 ));
             }
 
-            if (idMauSac != null) predicates.add(cb.equal(root.get("mauSac").get("id"), idMauSac));
-            if (idKichThuoc != null) predicates.add(cb.equal(root.get("kichThuoc").get("id"), idKichThuoc));
+            if (idSanPham != null && idSanPham > 0) {
+                predicates.add(cb.equal(root.get("sanPham").get("id"), idSanPham));
+            }
             
-            if (minPrice != null) predicates.add(cb.greaterThanOrEqualTo(root.get("giaBan"), minPrice));
-            if (maxPrice != null) predicates.add(cb.lessThanOrEqualTo(root.get("giaBan"), maxPrice));
+            if (idMauSac != null && idMauSac > 0) {
+                predicates.add(cb.equal(root.get("mauSac").get("id"), idMauSac));
+            }
             
-            if (trangThai != null && !trangThai.isEmpty()) predicates.add(cb.equal(root.get("trangThai"), trangThai));
+            if (idKichThuoc != null && idKichThuoc > 0) {
+                predicates.add(cb.equal(root.get("kichThuoc").get("id"), idKichThuoc));
+            }
+            
+            if (minPrice != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("giaBan"), minPrice));
+            }
+            
+            if (maxPrice != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("giaBan"), maxPrice));
+            }
+            
+            if (trangThai != null && !trangThai.isEmpty()) {
+                predicates.add(cb.equal(root.get("trangThai"), trangThai));
+            }
 
             return cb.and(predicates.toArray(new Predicate[0]));
         }, pageable);
@@ -64,7 +81,12 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
     }
 
     @Override
-    public java.io.ByteArrayInputStream exportToExcel(String search, Long idMauSac, Long idKichThuoc, BigDecimal minPrice, BigDecimal maxPrice, String trangThai) {
+    public List<SanPhamChiTiet> findBySanPhamId(Long id) {
+        return repository.findBySanPhamId(id);
+    }
+
+    @Override
+    public java.io.ByteArrayInputStream exportToExcel(String search, Long idSanPham, Long idMauSac, Long idKichThuoc, BigDecimal minPrice, BigDecimal maxPrice, String trangThai) {
         org.springframework.data.jpa.domain.Specification<SanPhamChiTiet> spec = (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (search != null && !search.trim().isEmpty()) {
@@ -75,6 +97,7 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
                     cb.like(cb.lower(root.get("sanPham").get("maSanPham")), keyword)
                 ));
             }
+            if (idSanPham != null) predicates.add(cb.equal(root.get("sanPham").get("id"), idSanPham));
             if (idMauSac != null) predicates.add(cb.equal(root.get("mauSac").get("id"), idMauSac));
             if (idKichThuoc != null) predicates.add(cb.equal(root.get("kichThuoc").get("id"), idKichThuoc));
             if (minPrice != null) predicates.add(cb.greaterThanOrEqualTo(root.get("giaBan"), minPrice));
@@ -100,3 +123,4 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
         });
     }
 }
+

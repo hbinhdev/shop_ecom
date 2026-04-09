@@ -1,0 +1,98 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{client/layout/main :: layout(~{::main}, ${pageTitle})}">
+
+<body>
+    <main class="py-5">
+        <div class="container">
+            
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/san-pham}" class="text-decoration-none">Sản phẩm</a></li>
+                    <li class="breadcrumb-item active" aria-current="page" th:text="${p.tenSanPham}">Tên sản phẩm</li>
+                </ol>
+            </nav>
+
+            <div class="row g-5">
+                
+                <div class="col-lg-6">
+                    <div class="bg-white rounded-5 p-4 shadow-sm text-center mb-3">
+                        <img th:src="${p.duongDanAnh != null ? p.duongDanAnh : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600'}" 
+                             class="img-fluid rounded-4" style="max-height: 500px;" alt="Main Image">
+                    </div>
+                </div>
+
+                
+                <div class="col-lg-6">
+                    <div class="ps-lg-4">
+                        <small class="text-primary fw-bold text-uppercase" th:text="${p.danhMuc != null ? p.danhMuc.tenDanhMuc : 'Sneaker'}">Danh mục</small>
+                        <h1 class="fw-bold text-dark mt-2 mb-3" th:text="${p.tenSanPham}">Tên giày Sneaker chuẩn Auth</h1>
+                        
+                        <div class="d-flex align-items-center gap-3 mb-4">
+                            <h3 class="fw-bold text-primary mb-0">Liên hệ</h3>
+                            <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill small">CÒN HÀNG</span>
+                        </div>
+
+                        <div class="mb-4">
+                            <h6 class="fw-bold mb-3">MÔ TẢ NGẮN</h6>
+                            <p class="text-muted" th:text="${p.moTa != null ? p.moTa : 'Chưa có mô tả chi tiết cho sản phẩm này.'}">Mô tả sản phẩm...</p>
+                        </div>
+
+                        <div class="row g-3 mb-5">
+                            <div class="col-6 col-md-4">
+                                <div class="p-3 bg-light rounded-4 text-center">
+                                    <small class="text-muted d-block">CHẤT LIỆU</small>
+                                    <span class="fw-bold" th:text="${p.chatLieu != null ? p.chatLieu.tenChatLieu : 'N/A'}">Vải</span>
+                                </div>
+                            </div>
+                            <div class="col-6 col-md-4">
+                                <div class="p-3 bg-light rounded-4 text-center">
+                                    <small class="text-muted d-block">THƯƠNG HIỆU</small>
+                                    <span class="fw-bold" th:text="${p.thuongHieu != null ? p.thuongHieu.tenThuongHieu : 'N/A'}">Nike</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-3">
+                            <button class="btn btn-primary btn-lg rounded-pill fw-bold py-3 shadow-sm">THÊM VÀO GIỎ HÀNG</button>
+                            <button class="btn btn-outline-dark btn-lg rounded-pill fw-bold py-3">MUA NGAY</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <section class="mt-5 pt-5">
+                <h4 class="fw-bold mb-4">SẢN PHẨM LIÊN QUAN</h4>
+                <div class="row g-4">
+                    <div th:each="rp : ${relatedProducts}" class="col-6 col-md-3">
+                        <a th:href="@{'/san-pham/detail/' + ${rp.id}}" class="text-decoration-none p-card-link">
+                            <div class="product-card border shadow-sm">
+                                <div class="product-img-wrapper mb-3">
+                                    <img th:src="${rp.duongDanAnh != null ? rp.duongDanAnh : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600'}" 
+                                         class="img-fluid" th:alt="${rp.tenSanPham}">
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold text-dark mb-1 text-truncate" th:text="${rp.tenSanPham}">Tên giày</h6>
+                                    <small class="text-primary fw-bold">Xem chi tiết</small>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <style>
+        .breadcrumb-item a { color: var(--text-muted); }
+        .breadcrumb-item.active { color: var(--primary-color); font-weight: 600; }
+        .p-card-link:hover .product-card {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(212, 125, 50, 0.2) !important;
+        }
+    </style>
+</body>
+
+</html>
+

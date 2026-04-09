@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.service;
+﻿package com.example.datn_shop_ecom.service;
 
 import com.example.datn_shop_ecom.entity.PhieuGiamGia;
 import java.io.ByteArrayInputStream;
@@ -18,6 +18,7 @@ public interface PhieuGiamGiaService {
     void softDelete(Long id);
     
     String generateMaPGG();
-    
+    List<PhieuGiamGia> findAllByXoaMemFalse();
     ByteArrayInputStream exportToExcel(String search, LocalDate startDate, LocalDate endDate, Integer status);
 }
+

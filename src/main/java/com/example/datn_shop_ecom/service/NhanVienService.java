@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.service;
+﻿package com.example.datn_shop_ecom.service;
 
 import com.example.datn_shop_ecom.entity.NhanVien;
 import java.io.ByteArrayInputStream;
@@ -14,3 +14,4 @@ public interface NhanVienService {
     String generateMaNhanVien();
     ByteArrayInputStream exportToExcel(String search, Long idVaiTro, Boolean xoaMem);
 }
+

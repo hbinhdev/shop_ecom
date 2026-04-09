@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.controller;
+﻿package com.example.datn_shop_ecom.controller;
 
 import com.example.datn_shop_ecom.entity.*;
 import com.example.datn_shop_ecom.repository.HinhAnhRepository;
@@ -45,16 +45,32 @@ public class ProductVariantApiController {
     @Transactional
     public ResponseEntity<?> createAllWithImages(MultipartHttpServletRequest request) {
         try {
-            // 1. Parse JSON data
+            
             String jsonData = request.getParameter("data");
             ProductCreatePayload payload = objectMapper.readValue(jsonData, ProductCreatePayload.class);
 
-            // 2. Tạo hoặc Cập nhật Sản phẩm cha
+            
+            if (payload.getSanPham() == null || payload.getSanPham().getTenSanPham() == null || payload.getSanPham().getTenSanPham().trim().isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên sản phẩm không được để trống"));
+            }
+            if (payload.getBienThes() == null || payload.getBienThes().isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Cần có ít nhất một biến thể sản phẩm"));
+            }
+            for (VariantPayload variant : payload.getBienThes()) {
+                if (variant.getGiaBan() == null || variant.getGiaBan().doubleValue() <= 0) {
+                    return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Giá bán của biến thể phải lớn hơn 0"));
+                }
+                if (variant.getSoLuong() == null || variant.getSoLuong() < 0) {
+                    return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Số lượng tồn kho không được nhỏ hơn 0"));
+                }
+            }
+
+            
             Long spId = payload.getSanPham().getId();
             SanPham sp;
             if (spId != null) {
                 sp = sanPhamRepo.findById(spId).orElse(new SanPham());
-                // Nếu là update, không đổi ngày tạo và mã sp
+                
             } else {
                 sp = new SanPham();
                 sp.setNgayTao(LocalDateTime.now());
@@ -74,7 +90,7 @@ public class ProductVariantApiController {
             sp.setNgaySuaCuoi(LocalDateTime.now());
             SanPham savedSp = sanPhamRepo.save(sp);
 
-            // 3. Xử lý lưu File vật lý và Map Color -> FileNames
+            
             Map<Long, List<String>> colorToImages = new HashMap<>();
             String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/uploads/san-pham/";
             Files.createDirectories(Paths.get(uploadDir));
@@ -104,7 +120,7 @@ public class ProductVariantApiController {
                 }
             }
 
-            // 4. Đồng bộ Biến thể (Xóa những biến thể không còn trong payload)
+            
             if (payload.getSanPham().getId() != null) {
                 List<Long> incomingIds = payload.getBienThes().stream()
                         .map(VariantPayload::getId)
@@ -114,14 +130,14 @@ public class ProductVariantApiController {
                 List<SanPhamChiTiet> existingVariants = spctRepo.findBySanPhamId(savedSp.getId());
                 for (SanPhamChiTiet ev : existingVariants) {
                     if (!incomingIds.contains(ev.getId())) {
-                        // Xóa các hình ảnh liên quan trước khi xóa biến thể (nếu cần hinhAnhRepo)
+                        
                         hinhAnhRepo.deleteBySanPhamChiTietId(ev.getId());
                         spctRepo.delete(ev);
                     }
                 }
             }
 
-            // 5. Tạo hoặc Cập nhật các Biến thể và gắn Hình ảnh
+            
             long spctCount = spctRepo.count();
             for (VariantPayload variant : payload.getBienThes()) {
                 SanPhamChiTiet spct;
@@ -147,10 +163,10 @@ public class ProductVariantApiController {
                 
                 SanPhamChiTiet savedSpct = spctRepo.save(spct);
 
-                // Gắn tất cả các ảnh thuộc về màu này cho biến thể này
+                
                 List<String> imagesOfColor = colorToImages.get(variant.getIdMauSac());
                 if (imagesOfColor != null && !imagesOfColor.isEmpty()) {
-                    // Set ảnh đầu tiên của màu này làm ảnh đại diện cho biến thể
+                    
                     savedSpct.setDuongDanAnh(imagesOfColor.get(0));
                     spctRepo.save(savedSpct);
 
@@ -218,7 +234,7 @@ public class ProductVariantApiController {
                 spct = spctRepo.findById(dto.getId()).orElse(new SanPhamChiTiet());
             } else {
                 spct = new SanPhamChiTiet();
-                // Chỉ set các thông tin định danh khi thêm mới
+                
                 if (dto.getIdSanPham() != null) spct.setSanPham(sanPhamRepo.findById(dto.getIdSanPham()).orElse(null));
                 if (dto.getIdMauSac() != null) spct.setMauSac(MauSac.builder().id(dto.getIdMauSac()).build());
                 if (dto.getIdKichThuoc() != null) spct.setKichThuoc(KichThuoc.builder().id(dto.getIdKichThuoc()).build());
@@ -238,7 +254,7 @@ public class ProductVariantApiController {
         }
     }
 
-    // Helper DTOs
+    
     @Data
     public static class ProductCreatePayload {
         private SanPhamDto sanPham;
@@ -275,7 +291,9 @@ public class ProductVariantApiController {
             spctRepo.deleteById(id);
             return ResponseEntity.ok(Map.of("success", true, "message", "Xóa biến thể thành công!"));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(Map.of("success", false, "message", e.getMessage()));
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Lỗi mã nguồn: " + e.getMessage()));
         }
     }
 }
+

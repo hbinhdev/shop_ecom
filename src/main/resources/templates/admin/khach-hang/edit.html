@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
 
 <head>
@@ -8,14 +8,14 @@
 <body>
     <main>
         <div class="container-fluid p-0">
-            <!-- Breadcrumb -->
+            
             <div class="mb-4">
                 <h4 class="fw-bold section-title">Quản lý tài khoản / <span class="fw-bold">Quản lý khách hàng</span>
                 </h4>
             </div>
 
             <form th:action="@{/admin/khach-hang/save}" th:object="${khachHang}" method="POST" id="customerForm">
-                <!-- Hidden fields for update -->
+                
                 <input type="hidden" th:field="*{id}">
                 <input type="hidden" th:field="*{maKhachHang}">
                 <input type="hidden" th:field="*{ngayTao}">
@@ -160,7 +160,7 @@
         </div>
 
         <script th:inline="javascript">
-            let addressIndex = /*[[${khachHang.danhSachDiaChi.size()}]]*/ 0;
+            let addressIndex =  0;
 
             function addAddress() {
                 const container = document.getElementById('addressContainer');
@@ -209,7 +209,15 @@
                     </div>
                 `;
                 container.insertAdjacentHTML('beforeend', html);
-                fetchProvinces();
+                
+                // Khởi tạo logic chọn địa chỉ cho hàng mới
+                if (typeof initAddressSelects === 'function') {
+                    const newItem = container.lastElementChild;
+                    const citySel = newItem.querySelector('.city-select');
+                    const distSel = newItem.querySelector('.district-select');
+                    const wardSel = newItem.querySelector('.ward-select');
+                    initAddressSelects(citySel, distSel, wardSel);
+                }
                 addressIndex++;
             }
 
@@ -229,98 +237,24 @@
                 const hiddenInput = radio.closest('.form-check').querySelector('.default-status-hidden');
                 hiddenInput.value = "true";
             }
-
-            // === API TỈNH THÀNH ===
-            const PROVINCE_API = "https://provinces.open-api.vn/api/";
-
-            const fetchProvinces = async () => {
-                try {
-                    const response = await fetch(PROVINCE_API + "p/");
-                    const data = await response.json();
-                    document.querySelectorAll('.city-select').forEach(select => {
-                        const currentValue = select.value;
-                        let html = `<option value="">-- Chọn tỉnh/thành --</option>`;
-                        data.forEach(item => {
-                            const selected = (item.name === currentValue) ? 'selected' : '';
-                            html += `<option value="${item.name}" data-code="${item.code}" ${selected}>${item.name}</option>`;
-                        });
-                        select.innerHTML = html;
-                    });
-                } catch (error) {
-                    console.error("Lỗi khi tải tỉnh thành:", error);
-                }
-            };
-
-            const renderOptions = (selectElement, data, label, currentValue) => {
-                let html = `<option value="">-- ${label} --</option>`;
-                data.forEach(item => {
-                    const selected = (item.name === currentValue) ? 'selected' : '';
-                    html += `<option value="${item.name}" data-code="${item.code}" ${selected}>${item.name}</option>`;
-                });
-                selectElement.innerHTML = html;
-            };
-
-            document.addEventListener('change', async (e) => {
-                if (e.target.classList.contains('city-select')) {
-                    const citySelect = e.target;
-                    const row = citySelect.closest('.row');
-                    const districtSelect = row.querySelector('.district-select');
-                    const wardSelect = row.querySelector('.ward-select');
-                    const selectedOption = citySelect.options[citySelect.selectedIndex];
-                    const code = selectedOption.dataset.code;
-
-                    if (code) {
-                        try {
-                            const response = await fetch(`${PROVINCE_API}p/${code}?depth=2`);
-                            const data = await response.json();
-                            renderOptions(districtSelect, data.districts, "Chọn quận/huyện");
-                            wardSelect.innerHTML = '<option value="">-- Chọn phường/xã --</option>';
-                        } catch (error) {
-                            console.error("Lỗi khi tải quận huyện:", error);
-                        }
-                    }
-                }
-
-                if (e.target.classList.contains('district-select')) {
-                    const districtSelect = e.target;
-                    const row = districtSelect.closest('.row');
-                    const wardSelect = row.querySelector('.ward-select');
-                    const selectedOption = districtSelect.options[districtSelect.selectedIndex];
-                    const code = selectedOption.dataset.code;
-
-                    if (code) {
-                        try {
-                            const response = await fetch(`${PROVINCE_API}d/${code}?depth=2`);
-                            const data = await response.json();
-                            renderOptions(wardSelect, data.wards, "Chọn phường/xã");
-                        } catch (error) {
-                            console.error("Lỗi khi tải phường xã:", error);
-                        }
-                    }
-                }
-            });
-
+            
+            // Tự động load lại toàn bộ địa chỉ khi mở trang cập nhật
             document.addEventListener('DOMContentLoaded', async () => {
-                await fetchProvinces();
-
                 const addressItems = document.querySelectorAll('.address-item');
                 for (let item of addressItems) {
-                    const citySelect = item.querySelector('.city-select');
-                    const districtSelect = item.querySelector('.district-select');
-                    const wardSelect = item.querySelector('.ward-select');
-
-                    const cityCode = citySelect.options[citySelect.selectedIndex]?.dataset.code;
-                    if (cityCode) {
-                        const distRes = await fetch(`${PROVINCE_API}p/${cityCode}?depth=2`);
-                        const distData = await distRes.json();
-                        renderOptions(districtSelect, distData.districts, "Chọn quận/huyện", districtSelect.value);
-
-                        const distCode = districtSelect.options[districtSelect.selectedIndex]?.dataset.code;
-                        if (distCode) {
-                            const wardRes = await fetch(`${PROVINCE_API}d/${distCode}?depth=2`);
-                            const wardData = await wardRes.json();
-                            renderOptions(wardSelect, wardData.wards, "Chọn phường/xã", wardSelect.value);
-                        }
+                    const citySel = item.querySelector('.city-select');
+                    const distSel = item.querySelector('.district-select');
+                    const wardSel = item.querySelector('.ward-select');
+                    
+                    const initialValues = {
+                        city: citySel.value,
+                        district: districtSel.value,
+                        ward: wardSel.value
+                    };
+                    
+                    if (typeof initAddressSelects === 'function') {
+                        
+                        await initAddressSelects(citySel, distSel, wardSel, initialValues);
                     }
                 }
             });

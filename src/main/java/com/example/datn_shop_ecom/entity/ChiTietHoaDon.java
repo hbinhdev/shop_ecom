@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.entity;
+﻿package com.example.datn_shop_ecom.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -49,3 +49,4 @@ public class ChiTietHoaDon {
     @Column(name = "nguoi_sua_cuoi", length = 50)
     private String nguoiSuaCuoi;
 }
+

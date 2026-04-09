@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.controller;
+﻿package com.example.datn_shop_ecom.controller;
 
 import com.example.datn_shop_ecom.entity.PhieuGiamGia;
 import com.example.datn_shop_ecom.service.PhieuGiamGiaService;
@@ -62,14 +62,16 @@ public class PhieuGiamGiaController {
     }
 
     @PostMapping("/save")
-    public String save(@ModelAttribute("pgg") PhieuGiamGia pgg, RedirectAttributes ra) {
+    public String save(@ModelAttribute("pgg") PhieuGiamGia pgg, RedirectAttributes ra, Model model) {
         try {
             pggService.savePGG(pgg);
             ra.addFlashAttribute("success", "Lưu phiếu giảm giá thành công!");
+            return "redirect:/admin/phieu-giam-gia";
         } catch (Exception e) {
-            ra.addFlashAttribute("error", "Lỗi: " + e.getMessage());
+            model.addAttribute("pgg", pgg);
+            model.addAttribute("error", "Lỗi: " + e.getMessage());
+            return (pgg.getId() == null) ? "admin/phieu-giam-gia/create" : "admin/phieu-giam-gia/edit";
         }
-        return "redirect:/admin/phieu-giam-gia";
     }
 
     @PostMapping("/toggle-status/{id}")
@@ -111,3 +113,4 @@ public class PhieuGiamGiaController {
                 .body(new InputStreamResource(in));
     }
 }
+

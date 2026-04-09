@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.service;
+﻿package com.example.datn_shop_ecom.service;
 
 import com.example.datn_shop_ecom.entity.ChiTietHoaDon;
 import com.example.datn_shop_ecom.entity.HoaDon;
@@ -18,3 +18,4 @@ public interface HoaDonService {
     java.util.List<LichSuHoaDon> findHistoryByHoaDonId(Long hoaDonId);
     java.util.List<LichSuThanhToan> findPaymentHistoryByHoaDonId(Long hoaDonId);
 }
+

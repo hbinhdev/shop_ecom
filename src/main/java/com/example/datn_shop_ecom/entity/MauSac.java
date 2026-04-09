@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.entity;
+﻿package com.example.datn_shop_ecom.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -11,7 +11,7 @@ public class MauSac {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String maMau; // Vd: MS00001
+    private String maMau; 
     @Column(columnDefinition = "NVARCHAR(255)")
     private String tenMauSac;
     private String nguoiTao;
@@ -20,3 +20,4 @@ public class MauSac {
     private LocalDateTime ngaySuaCuoi;
     private Boolean xoaMem;
 }
+
