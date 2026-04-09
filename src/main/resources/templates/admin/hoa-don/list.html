@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main_content}, ~{::title})}">
 
 <head>
     <title th:fragment="title">Quản lý hóa đơn - Bagi Store</title>
     <style>
-        /* Card Styles */
+        
         .card {
             border: none;
             border-radius: 16px;
@@ -27,7 +27,7 @@
             font-size: 1.2rem;
         }
 
-        /* Filter Form */
+        
         .form-label {
             font-weight: 500;
             color: #666;
@@ -47,7 +47,7 @@
             box-shadow: 0 0 0 3px rgba(212, 125, 50, 0.1);
         }
 
-        /* Buttons */
+        
         .btn-reset {
             background-color: #34495e;
             color: white;
@@ -67,7 +67,7 @@
         }
 
 
-        /* Status Tabs */
+        
         .status-tabs {
             display: flex;
             gap: 10px;
@@ -101,7 +101,7 @@
             box-shadow: 0 4px 15px rgba(212, 125, 50, 0.3);
         }
 
-        /* Table Styles */
+        
         .table thead th {
             background-color: #f8f9fa;
             color: #666;
@@ -120,7 +120,7 @@
             font-size: 0.95rem;
         }
 
-        /* Status Badges - Matching the image */
+        
         .badge-status {
             padding: 8px 16px;
             border-radius: 20px;
@@ -163,7 +163,7 @@
             color: #ff3c5f;
         }
 
-        /* Action Buttons */
+        
         .action-circle {
             width: 36px;
             height: 36px;
@@ -228,7 +228,7 @@
                 color: #2d3436;
             }
 
-            /* Card Styling */
+            
             .custom-card {
                 background: white;
                 border: none;
@@ -268,7 +268,7 @@
                 box-shadow: 0 0 0 3px rgba(255, 60, 95, 0.1);
             }
 
-            /* Buttons */
+            
             .btn-group-filter {
                 display: flex;
                 justify-content: flex-end;
@@ -310,7 +310,7 @@
                 gap: 8px;
             }
 
-            /* Status Tabs */
+            
             .status-tab-container {
                 display: flex;
                 gap: 12px;
@@ -344,7 +344,7 @@
                 box-shadow: 0 4px 12px rgba(255, 60, 95, 0.3);
             }
 
-            /* Table Customization */
+            
             .invoice-table {
                 width: 100%;
                 border-collapse: separate;
@@ -369,7 +369,7 @@
                 vertical-align: middle;
             }
 
-            /* Badges */
+            
             .badge-custom {
                 padding: 6px 16px;
                 border-radius: 50px;
@@ -429,7 +429,7 @@
                 <h2 class="page-title">Quản lý hóa đơn</h2>
             </div>
 
-            <!-- Filter Section -->
+            
             <div class="custom-card">
                 <div class="d-flex align-items-center gap-2 mb-4">
                     <i class="bi bi-funnel" style="font-size: 1.1rem; color: #636e72;"></i>
@@ -479,7 +479,7 @@
                 </form>
             </div>
 
-            <!-- List Section -->
+            
             <div class="custom-card">
                 <div class="d-flex align-items-center gap-3 mb-4">
                     <div class="list-icon-bg">
@@ -558,7 +558,7 @@
                     </table>
                 </div>
 
-                <!-- Pagination -->
+                
                 <div class="d-flex justify-content-center mt-4" th:if="${hoaDonPage.totalPages > 1}">
                     <nav>
                         <ul class="pagination mb-0">
@@ -584,7 +584,7 @@
             </div>
         </div>
 
-        <!-- Auto Search Script -->
+        
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const filterForm = document.getElementById('filterForm');
@@ -602,7 +602,7 @@
                             clearTimeout(debounceTimer);
                             debounceTimer = setTimeout(() => {
                                 filterForm.submit();
-                            }, 500); // Wait 500ms after typing
+                            }, 500); 
                         });
                     }
                 });
@@ -613,7 +613,7 @@
                 const formData = new FormData(filterForm);
                 const params = new URLSearchParams(formData);
                 
-                // Add current active status tab if any
+                
                 const activeTab = document.querySelector('.status-btn.active');
                 if (activeTab && activeTab.getAttribute('onclick')) {
                     const statusVal = activeTab.getAttribute('onclick').match(/'([^']+)'/);

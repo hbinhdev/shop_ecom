@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
 
 <head>
@@ -29,7 +29,7 @@
                     </div>
 
                     <div class="row g-4">
-                        <!-- Form fields remain the same -->
+                        
                         <div class="col-12">
                             <label class="form-label fw-bold small text-uppercase text-muted">Mã phiếu giảm giá <span
                                     class="text-danger">*</span></label>
@@ -61,19 +61,28 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Giá trị giảm</label>
-                            <input type="number" class="form-control rounded-pill py-2 px-3 border-1 bg-light-subtle"
-                                th:field="*{giaTriGiam}" min="0" placeholder="0" required>
+                            <div class="input-group">
+                                <input type="text" class="form-control rounded-start-pill py-2 px-3 border-1 bg-light-subtle number-format"
+                                    th:id="giaTriGiam" th:name="giaTriGiam" th:value="${pgg.giaTriGiam}"
+                                    placeholder="0" required>
+                                <span class="input-group-text rounded-end-pill bg-white px-3 fw-bold text-muted small" id="discountUnit">VNĐ</span>
+                            </div>
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Số lượng sử dụng</label>
-                            <input type="number" class="form-control rounded-pill py-2 px-3 border-1 bg-light-subtle"
-                                th:field="*{soLuong}" min="1" placeholder="0" required>
+                            <input type="text" class="form-control rounded-pill py-2 px-3 border-1 bg-light-subtle number-format"
+                                th:id="soLuong" th:name="soLuong" th:value="${pgg.soLuong}"
+                                placeholder="0" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Hóa đơn tối thiểu</label>
-                            <input type="number" class="form-control rounded-pill py-2 px-3 border-1 bg-light-subtle"
-                                th:field="*{giaTriToiThieu}" min="0" placeholder="0">
+                            <div class="input-group">
+                                <input type="text" class="form-control rounded-start-pill py-2 px-3 border-1 bg-light-subtle number-format"
+                                    th:id="giaTriToiThieu" th:name="giaTriToiThieu" th:value="${pgg.giaTriToiThieu}"
+                                    placeholder="0">
+                                <span class="input-group-text rounded-end-pill bg-white px-3 fw-bold text-muted small">VNĐ</span>
+                            </div>
                         </div>
 
                         <div class="col-md-6">
@@ -95,11 +104,7 @@
                                         id="radioPublic" required>
                                     <label class="form-check-label" for="radioPublic">Công khai</label>
                                 </div>
-                                <!-- <div class="form-check">
-                                    <input class="form-check-input" type="radio" th:field="*{loai}" value="1"
-                                        id="radioPrivate">
-                                    <label class="form-check-label" for="radioPrivate">Cá nhân</label>
-                                </div> -->
+                                
                             </div>
                         </div>
 
@@ -114,6 +119,57 @@
                 </div>
             </form>
         </div>
+        <script th:inline="javascript">
+            
+            document.querySelectorAll('input[name="hinhThucGiam"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const unit = this.value; // 'VNĐ' hoặc '%'
+                    
+                    const unitLabel = document.getElementById('discountUnit');
+                    if (unitLabel) unitLabel.innerText = unit;
+                    
+                    const inputGiam = document.getElementById('giaTriGiam');
+                    if (inputGiam) {
+                        if (unit === '%') {
+                            
+                            inputGiam.classList.remove('number-format');
+                            // Xử lý giá trị: Xóa dấu chấm và giới hạn max 100
+                            let val = inputGiam.value.replace(/\./g, "");
+                            if (parseInt(val) > 100) val = "100";
+                            inputGiam.value = val;
+                        } else {
+                            
+                            inputGiam.classList.add('number-format');
+                            if (typeof applyGlobalFormatting === 'function') {
+                                applyGlobalFormatting(inputGiam);
+                            }
+                        }
+                    }
+                });
+            });
+
+            // Lắng nghe thêm sự kiện input để giới hạn % ngay khi gõ
+            document.getElementById('giaTriGiam').addEventListener('input', function() {
+                const isPercent = document.querySelector('input[name="hinhThucGiam"]:checked')?.value === '%';
+                if (isPercent) {
+                    let val = this.value.replace(/\D/g, "");
+                    if (parseInt(val) > 100) {
+                        this.value = "100";
+                    } else {
+                        this.value = val;
+                    }
+                }
+            });
+
+            // Tự động kích hoạt khi load trang
+            document.addEventListener('DOMContentLoaded', () => {
+                
+                const checkedRadio = document.querySelector('input[name="hinhThucGiam"]:checked');
+                if (checkedRadio) {
+                    checkedRadio.dispatchEvent(new Event('change'));
+                }
+            });
+        </script>
     </main>
 </body>
 

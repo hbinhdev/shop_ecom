@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{client/layout/main :: layout(~{::main}, ${pageTitle})}">
+
+<body>
+    <main>
+        
+        <section class="hero-section">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-7">
+                        <h1 class="mb-4">Hệ thống giày Sneaker <br><span class="text-primary">đẳng cấp</span></h1>
+                        <p class="lead mb-5 opacity-75">Khám phá bộ sưu tập mới nhất với chất lượng dịch vụ hàng đầu.
+                        </p>
+                        <div class="d-flex gap-3">
+                            <a th:href="@{/san-pham}" class="btn btn-premium text-white px-5">MUA NGAY</a>
+                            <a href="#" class="btn btn-light rounded-pill px-4">TÌM HIỂU THÊM</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-5 d-none d-lg-block">
+                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600"
+                            class="img-fluid rounded-4" alt="Sneaker Hero">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        
+        <section class="py-4 border-top border-bottom bg-white">
+            <div class="container">
+                <div class="d-flex gap-4 align-items-center overflow-auto scroll-hide py-2">
+                    <div th:each="v : ${hotVouchers}" class="d-flex align-items-center gap-3 pe-4 border-end">
+                        <div class="text-primary fs-4"><i class="bi bi-patch-check-fill"></i></div>
+                        <div>
+                            <div class="fw-bold small" th:text="${v.tenPhieu}">Tên phiếu</div>
+                            <div class="text-primary small fw-bold" th:text="${v.giaTriGiam} + ' ' + ${v.hinhThucGiam}">
+                                Giảm 50k</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        
+        <section class="py-5">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-end mb-5">
+                    <div>
+                        <h2 class="section-title-client">SẢN PHẨM MỚI NHẤT</h2>
+                        <p class="text-muted mb-0">Những mẫu giày vừa cập bến tại PeakSneaker</p>
+                    </div>
+                    <a th:href="@{/san-pham}"
+                        class="text-decoration-none text-dark fw-bold border-bottom border-dark border-2 pb-1">XEM TẤT
+                        CẢ</a>
+                </div>
+
+                <div class="row g-4">
+                    
+                    <div th:each="p : ${latestProducts}" class="col-6 col-md-4 col-lg-3">
+                        <div class="product-card border shadow-sm h-100">
+                            <div class="product-img-wrapper mb-3">
+                                <img th:src="${p.duongDanAnh != null ? p.duongDanAnh : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600'}"
+                                    class="img-fluid" th:alt="${p.tenSanPham}">
+                            </div>
+                            <div>
+                                <small class="text-muted"
+                                    th:text="${p.danhMuc != null ? p.danhMuc.tenDanhMuc : 'Sneaker'}">Sneaker</small>
+                                <h6 class="fw-bold text-dark mb-2 text-truncate" th:text="${p.tenSanPham}">Tên giày
+                                    Sneaker chuẩn Auth</h6>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="fw-bold text-primary">Liên hệ</span>
+                                    <button class="btn btn-sm btn-outline-primary rounded-circle"><i
+                                            class="bi bi-cart-plus"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        
+        
+    </main>
+
+    <style>
+        .scroll-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .product-card:hover .card-actions {
+            opacity: 1 !important;
+            transform: translateY(0) !important;
+        }
+
+        .card-actions {
+            transition: var(--transition-smooth);
+            transform: translateY(20px);
+        }
+    </style>
+</body>
+
+</html>

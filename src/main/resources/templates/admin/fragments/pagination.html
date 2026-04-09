@@ -1,8 +1,8 @@
-<th:block th:fragment="pagination(pageObj, baseUrl, extraParams)">
+﻿<th:block th:fragment="pagination(pageObj, baseUrl, extraParams)">
     <div class="card-footer bg-white border-0 py-3 mt-3" th:if="${pageObj.totalPages > 1}">
         <nav aria-label="Page navigation">
             <ul class="pagination pagination-sm justify-content-center mb-0 gap-1">
-                <!-- Previous Page -->
+                
                 <li class="page-item" th:classappend="${pageObj.first} ? 'disabled'">
                     <a class="page-link rounded-circle border-0 bg-light text-dark"
                        th:href="@{|${baseUrl}?page=${pageObj.number - 1}&${extraParams}|}">
@@ -10,7 +10,7 @@
                     </a>
                 </li>
 
-                <!-- Page Numbers -->
+                
                 <li class="page-item" th:each="i : ${#numbers.sequence(0, pageObj.totalPages - 1)}"
                     th:classappend="${pageObj.number == i} ? 'active'">
                     <a class="page-link rounded-circle border-0 text-dark"
@@ -19,7 +19,7 @@
                        th:text="${i + 1}">1</a>
                 </li>
 
-                <!-- Next Page -->
+                
                 <li class="page-item" th:classappend="${pageObj.last} ? 'disabled'">
                     <a class="page-link rounded-circle border-0 bg-light text-dark"
                        th:href="@{|${baseUrl}?page=${pageObj.number + 1}&${extraParams}|}">
@@ -30,3 +30,4 @@
         </nav>
     </div>
 </th:block>
+

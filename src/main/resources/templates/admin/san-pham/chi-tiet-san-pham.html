@@ -1,12 +1,12 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
 
 <head>
     <title>Danh sách chi tiết sản phẩm - PeakSneaker</title>
-    <!-- Select2 CSS -->
+    
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
-        /* CSS PREMIUM THEO ẢNH */
+        
         :root {
             --premium-orange: #ff7e5f;
             --premium-red: #feb47b;
@@ -33,7 +33,7 @@
             padding-left: 15px !important;
         }
 
-        /* Price Slider Mockup Style */
+        
         .range-container {
             position: relative;
             height: 4px;
@@ -61,7 +61,7 @@
             cursor: pointer;
         }
 
-        /* Buttons */
+        
         .btn-action-light {
             background: #f8f9fa;
             border: 1px solid #eee;
@@ -101,7 +101,7 @@
             font-weight: 500;
         }
 
-        /* Table */
+        
         .variant-list-card {
             background: white;
             border-radius: 12px;
@@ -184,7 +184,7 @@
 <body>
     <main>
         <div class="container-fluid p-0">
-            <!-- Breadcrumb / Header Title -->
+            
             <div class="mb-4 d-flex justify-content-between align-items-center">
                 <h4 class="fw-bold section-title">Quản lý sản phẩm / <span class="fw-bold section-title">Danh sách chi
                         tiết sản phẩm</span></h4>
@@ -194,79 +194,85 @@
                 </a>
             </div>
 
-            <!-- BỘ LỌC TÌM KIẾM -->
+            
             <form th:action="@{/admin/san-pham/bien-the}" method="GET" id="mainFilterForm">
                 <div class="card shadow-sm border-0 rounded-4 mb-4">
                     <div class="card-body p-4">
                         <div class="row g-3 align-items-center mb-4">
                             <div class="col-md-5">
+                                <label class="form-label-pill">TÌM KIẾM CHUNG</label>
                                 <div class="search-box position-relative">
                                     <i
                                         class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
                                     <input type="text" name="search" th:value="${search}"
                                         class="form-control rounded-pill ps-5 py-2 border-1"
-                                        placeholder="Tìm theo Mã hoặc Tên sản phẩm..." onchange="this.form.submit()">
+                                        placeholder="Mã CTSP hoặc tên sản phẩm..." onchange="submitForm(this)">
                                 </div>
                             </div>
                             <div class="col-md-7 d-flex justify-content-end gap-2">
+                                <a th:if="${idSanPham != null}" th:href="@{/admin/san-pham/bien-the}"
+                                    class="btn btn-outline-primary rounded-pill px-4 py-2 d-flex align-items-center gap-2">
+                                    <i class="bi bi-eye"></i> Hiển thị đầy đủ
+                                </a>
                                 <a th:href="@{/admin/san-pham/bien-the}"
-                                    class="btn btn-dark rounded-pill px-4 py-2 d-flex align-items-center gap-2 btn-reset-filter">
-                                    <i class="bi bi-arrow-counterclockwise"></i> Đặt lại bộ lọc
+                                    class="btn btn-dark rounded-pill px-4 py-2 d-flex align-items-center gap-2 btn-reset-filter shadow-sm">
+                                    <i class="bi bi-arrow-counterclockwise"></i> Làm mới
                                 </a>
                                 <a th:href="@{/admin/san-pham/export-variants(search=${search}, idMauSac=${idMauSac}, idKichThuoc=${idKichThuoc}, minPrice=${minPrice}, maxPrice=${maxPrice}, trThai=${trThai})}"
-                                    class="btn btn-light-outline rounded-pill px-4 py-2 d-flex align-items-center gap-2">
+                                    class="btn btn-light-outline rounded-pill px-4 py-2 d-flex align-items-center gap-2 shadow-sm">
                                     <i class="bi bi-file-earmark-excel"></i> Xuất Excel
                                 </a>
                             </div>
                         </div>
 
-                        <div class="row g-3 align-items-center mb-4">
-                            <div class="col-md-3 d-flex align-items-center gap-3">
-                                <label class="form-label mb-0 text-nowrap fw-medium small">Trạng thái:</label>
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-2">
+                                <label class="form-label-pill">TRẠNG THÁI</label>
                                 <select name="trThai" class="form-select rounded-pill border-1 bg-light-subtle"
-                                    onchange="this.form.submit()">
+                                    onchange="submitForm(this)">
                                     <option value="">Tất cả</option>
                                     <option value="1" th:selected="${trThai == '1'}">Kinh doanh</option>
                                     <option value="0" th:selected="${trThai == '0'}">Ngừng bán</option>
                                 </select>
                             </div>
-                            <div class="col-md-3 d-flex align-items-center gap-3">
-                                <label class="form-label mb-0 text-nowrap fw-medium small">Màu sắc:</label>
+                            <div class="col-md-2">
+                                <label class="form-label-pill">MÀU SẮC</label>
                                 <select name="idMauSac" class="form-select rounded-pill border-1 bg-light-subtle"
-                                    onchange="this.form.submit()">
+                                    onchange="submitForm(this)">
                                     <option value="">Tất cả</option>
                                     <option th:each="m : ${mauSacs}" th:value="${m.id}" th:text="${m.tenMauSac}"
                                         th:selected="${m.id == idMauSac}"></option>
                                 </select>
                             </div>
-                            <div class="col-md-3 d-flex align-items-center gap-3">
-                                <label class="form-label mb-0 text-nowrap fw-medium small">Kích cỡ:</label>
+                            <div class="col-md-2">
+                                <label class="form-label-pill">KÍCH CỠ</label>
                                 <select name="idKichThuoc" class="form-select rounded-pill border-1 bg-light-subtle"
-                                    onchange="this.form.submit()">
+                                    onchange="submitForm(this)">
                                     <option value="">Tất cả</option>
                                     <option th:each="k : ${kichThuocs}" th:value="${k.id}" th:text="${k.tenKichThuoc}"
                                         th:selected="${k.id == idKichThuoc}"></option>
                                 </select>
                             </div>
-                        </div>
-
-                        <div class="row g-3 align-items-center">
-                            <div class="col-md-8">
-                                <div class="d-flex align-items-center gap-4">
-                                    <label class="form-label mb-0 text-nowrap fw-medium small">Khoảng giá:</label>
-                                    <div class="d-flex align-items-center gap-3 flex-grow-1">
-                                        <input type="range" class="form-range flex-grow-1" min="0" max="20000000"
-                                            step="100000" id="priceRange"
-                                            th:value="${#numbers.formatInteger(maxPrice ?: 20000000, 0)}"
-                                            oninput="updatePrice(this.value)">
-                                        <span class="badge bg-white text-danger border px-3 py-2 rounded-pill fw-bold"
-                                            id="priceLabel"
-                                            th:text="${'0 - ' + #numbers.formatDecimal(maxPrice ?: 20000000, 0, 'COMMA', 0, 'POINT') + ' ₫'}">0
-                                            - 20,000,000 đ</span>
+                            <div class="col-md-6">
+                                <label class="form-label-pill">KHOẢNG GIÁ (VNĐ)</label>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="position-relative flex-grow-1">
+                                        <input type="text" name="minPrice"
+                                            th:value="${#numbers.formatInteger(minPrice ?: 0, 0, 'POINT')}"
+                                            class="form-control rounded-pill py-2 border-1 number-format"
+                                            placeholder="Từ..." onchange="submitForm(this)">
+                                        <span
+                                            class="position-absolute end-0 top-50 translate-middle-y me-3 small text-muted">đ</span>
                                     </div>
-                                    <input type="hidden" name="minPrice" value="0">
-                                    <input type="hidden" name="maxPrice" id="maxPriceInput"
-                                        th:value="${#numbers.formatInteger(maxPrice ?: 20000000, 0)}">
+                                    <span class="text-muted">→</span>
+                                    <div class="position-relative flex-grow-1">
+                                        <input type="text" name="maxPrice"
+                                            th:value="${#numbers.formatInteger(maxPrice ?: 20000000, 0, 'POINT')}"
+                                            class="form-control rounded-pill py-2 border-1 number-format"
+                                            placeholder="Đến..." onchange="submitForm(this)">
+                                        <span
+                                            class="position-absolute end-0 top-50 translate-middle-y me-3 small text-muted">đ</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -274,55 +280,63 @@
                 </div>
             </form>
 
-            <!-- DANH SÁCH CHI TIẾT SẢN PHẨM (Grouped Layout) -->
-            <div class="custom-table overflow-hidden shadow-sm rounded-4 bg-white" th:with="lastProdId=null">
+            
+            <div class="custom-table overflow-hidden shadow-sm rounded-4 bg-white">
                 <table class="table align-middle m-0" id="variantGroupTable">
-                    <thead class="bg-light text-muted small text-uppercase fw-bold">
+                    <thead class="bg-light text-muted small text-uppercase">
                         <tr>
-                            <th class="ps-4 py-3" style="width: 60px;">STT</th>
-                            <th class="py-3" style="width: 120px;">Mã CTSP</th>
-                            <th class="py-3 text-center" style="width: 60px;">Ảnh</th>
-                            <th class="py-3">Màu sắc</th>
-                            <th class="py-3" style="width: 100px;">Size</th>
+                            <th class="ps-4 py-3" style="width: 50px;">STT</th>
+                            <th class="py-3 text-center" style="width: 70px;">Ảnh</th>
+                            <th class="py-3" style="width: 140px;">Mã CTSP</th>
+                            <th class="py-3">Tên sản phẩm & Phân loại</th>
                             <th class="py-3 text-center" style="width: 100px;">Tồn kho</th>
-                            <th class="py-3 text-end" style="width: 150px;">Giá bán</th>
-                            <th class="py-3 text-center" style="width: 150px;">Trạng thái</th>
-                            <th class="text-center py-3 pe-4" style="width: 150px;">Thao tác</th>
+                            <th class="py-3 text-end" style="width: 130px;">Giá bán</th>
+                            <th class="py-3 text-center" style="width: 130px;">Trạng thái</th>
+                            <th class="text-center py-3 pe-4" style="width: 100px;">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
                         <th:block th:each="v, stat : ${listVariants}">
-                            <!-- Group Header Row (Show when product changes) -->
+                            
                             <tr th:if="${stat.index == 0 || listVariants[stat.index - 1].idSanPham != v.idSanPham}"
                                 class="bg-light-subtle border-top border-bottom">
-                                <td colspan="9" class="ps-4 py-2">
+                                <td colspan="8" class="ps-4 py-2">
                                     <div class="d-flex align-items-center gap-2">
-                                        <i class="bi bi-box-seam text-dark fs-5"></i>
-                                        <span class="fw-bold text-dark text-uppercase small">Sản phẩm: </span>
-                                        <span class="fw-bold text-primary text-uppercase" th:text="${v.tenSanPham}">Tên
-                                            Sản Phẩm</span>
+                                        <i class="bi bi-box-seam text-dark"></i>
+                                        <span class="fw-bold text-dark text-uppercase small"
+                                            th:text="${v.tenSanPham}">SẢN PHẨM</span>
                                         <span class="badge bg-secondary-subtle text-muted fw-normal ms-2"
-                                            th:text="'Mã: ' + ${v.maSanPham}">SP001</span>
+                                            th:text="'Mã gốc: ' + ${v.maSanPham}">SP001</span>
                                     </div>
                                 </td>
                             </tr>
 
-                            <!-- Variant Row -->
                             <tr class="variant-row">
-                                <td class="ps-4 small text-muted font-monospace"
+                                <td class="ps-4 small text-muted"
                                     th:text="${stat.index + 1 + (spPage != null ? spPage.number * spPage.size : 0)}">1
                                 </td>
-                                <td class="small fw-semibold text-dark" th:text="${v.maSanPhamChiTiet}">CTSP001</td>
                                 <td class="text-center">
-                                    <img th:src="${v.duongDanAnh != null ? '/uploads/san-pham/' + v.duongDanAnh : 'https://placehold.co/100x100?text=No+Image'}"
-                                        class="variant-img rounded border shadow-xs" alt="SP"
-                                        style="width: 38px; height: 38px; object-fit: cover;">
+                                    <div class="variant-img-wrapper rounded border overflow-hidden shadow-xs mx-auto"
+                                        style="width: 48px; height: 48px; background: #f8f9fa;">
+                                        <img th:src="${v.duongDanAnh != null ? '/uploads/san-pham/' + v.duongDanAnh : 'https://placehold.co/100x100?text=SP'}"
+                                            class="w-100 h-100 object-fit-cover" alt="SP"
+                                            onerror="this.src='https://placehold.co/100x100?text=None'">
+                                    </div>
                                 </td>
                                 <td>
-                                    <span class="fw-medium text-dark" th:text="${v.mauSac}">Đỏ</span>
+                                    <span class="badge bg-dark-subtle text-dark font-monospace px-2 py-1"
+                                        th:text="${v.maSanPhamChiTiet}">CTSP001</span>
                                 </td>
-                                <td class="text-center">
-                                    <span class="fw-bold text-dark" th:text="${v.kichThuoc}">42</span>
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <span class="fw-medium text-dark" th:text="${v.tenSanPham}">Tên SP</span>
+                                        <div class="d-flex gap-2 mt-1">
+                                            <span class="badge bg-light text-dark border fw-normal"
+                                                th:text="'Màu: ' + ${v.mauSac}">Đỏ</span>
+                                            <span class="badge bg-light text-dark border fw-normal"
+                                                th:text="'Size: ' + ${v.kichThuoc}">42</span>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td class="text-center">
                                     <span class="fw-bold fs-6"
@@ -330,7 +344,7 @@
                                         th:text="${v.soTonKho}">10</span>
                                 </td>
                                 <td class="text-end fw-bold text-danger"
-                                    th:text="${v.giaBan != null ? #numbers.formatDecimal(v.giaBan, 0, 'COMMA', 0, 'POINT') + ' ₫' : '0 ₫'}">
+                                    th:text="${v.giaBan != null ? #numbers.formatDecimal(v.giaBan, 1, 'POINT', 0, 'COMMA') + ' ₫' : '0 ₫'}">
                                     1,200,000 đ</td>
                                 <td class="text-center">
                                     <span th:if="${v.trangThai == '1'}"
@@ -342,52 +356,37 @@
                                 </td>
                                 <td class="text-center pe-4">
                                     <div class="d-flex justify-content-center align-items-center gap-2">
-                                        <div class="form-check form-switch p-0 m-0">
-                                            <input class="form-check-input ms-0 custom-switch variant-status-toggle"
-                                                type="checkbox" th:checked="${v.trangThai == '1'}" th:data-id="${v.id}"
-                                                onchange="confirmToggleVariant(this)" style="cursor: pointer;">
-                                        </div>
                                         <button type="button" class="btn-icon rounded-circle shadow-xs"
                                             th:data-id="${v.id}" th:data-name="${v.tenSanPham}"
                                             th:data-color="${v.mauSac}" th:data-size="${v.kichThuoc}"
                                             th:data-qty="${v.soTonKho}" th:data-price="${v.giaBan}"
-                                            onclick="openEditModal(this)">
+                                            onclick="openEditModal(this)" title="Sửa biến thể">
                                             <i class="bi bi-pencil-square"></i>
                                         </button>
-                                        <button type="button" class="btn-icon rounded-circle shadow-xs text-danger"
-                                            th:data-id="${v.id}"
-                                            onclick="confirmDeleteVariant(this)">
-                                            <i class="bi bi-trash3"></i>
-                                        </button>
-                                        <!-- <a th:href="@{/admin/san-pham/detail/{id}(id=${v.idSanPham})}"
-                                            th:if="${v.idSanPham != null}" class="btn-icon rounded-circle shadow-xs"
-                                            title="Xem chi tiết sản phẩm">
-                                            <i class="bi bi-box-arrow-in-right"></i>
-                                        </a> -->
+                                        
                                     </div>
                                 </td>
                             </tr>
                         </th:block>
-
                         <tr th:if="${#lists.isEmpty(listVariants)}">
-                            <td colspan="9" class="text-center py-5 text-muted">
+                            <td colspan="8" class="text-center py-5 text-muted">
                                 <i class="bi bi-inbox fs-2 d-block mb-2 text-muted-50"></i>
                                 Không tìm thấy biến thể sản phẩm nào phù hợp.
                             </td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
 
-                <!-- Pagination Footer -->
-                <div class="px-4 py-3 border-top bg-light-subtle">
-                    <div
-                        th:replace="~{admin/fragments/pagination :: pagination(${spPage}, '/admin/san-pham/bien-the', 'search=' + (${search} ?: '') + '&idMauSac=' + (${idMauSac} ?: '') + '&idKichThuoc=' + (${idKichThuoc} ?: '') + '&trThai=' + (${trThai} ?: '') + '&maxPrice=' + (${maxPrice} ?: '20000000'))}">
-                    </div>
+            
+            <div th:if="${spPage != null}" class="px-4 py-3 border-top bg-light-subtle">
+                <div
+                    th:replace="~{admin/fragments/pagination :: pagination(${spPage}, '/admin/san-pham/bien-the', 'search=' + (${search} ?: '') + '&idSanPham=' + (${idSanPham} ?: '') + '&idMauSac=' + (${idMauSac} ?: '') + '&idKichThuoc=' + (${idKichThuoc} ?: '') + '&trThai=' + (${trThai} ?: '') + '&minPrice=' + (${minPrice} ?: '') + '&maxPrice=' + (${maxPrice} ?: ''))}">
                 </div>
             </div>
         </div>
 
-        <!-- MODAL UPDATE SPCT -->
+        
         <div class="modal fade" id="editVariantModal" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
@@ -409,19 +408,19 @@
                         <input type="hidden" id="editVariantId">
                         <div class="mb-3">
                             <label class="form-label fw-bold small text-uppercase text-muted">Số lượng tồn</label>
-                            <input type="number" class="form-control rounded-pill px-3 py-2 border-1" id="editSoLuong"
-                                placeholder="Nhập số lượng...">
+                            <input type="text" class="form-control rounded-pill px-3 py-2 border-1 number-format"
+                                id="editSoLuong" placeholder="Nhập số lượng...">
                         </div>
                         <div class="mb-4">
                             <label class="form-label fw-bold small text-uppercase text-muted">Giá bán (VNĐ)</label>
                             <div class="input-group">
-                                <span class="input-group-text bg-white border-end-0 rounded-pill-start ps-3 small fw-bold text-muted">VNĐ</span>
-                                <input type="number" class="form-control border-start-0 rounded-pill-end pe-3 py-2"
+                                <span
+                                    class="input-group-text bg-white border-end-0 rounded-pill-start ps-3 small fw-bold text-muted">VNĐ</span>
+                                <input type="text"
+                                    class="form-control border-start-0 rounded-pill-end pe-3 py-2 number-format"
                                     id="editGiaBan" placeholder="Nhập giá bán...">
                             </div>
                         </div>
-                        <!-- <p class="text-muted extra-small italic text-center mb-0"><i class="bi bi-info-circle me-1"></i>
-                            Sau khi nhấn cập nhật, thay đổi sẽ có hiệu lực ngay lập tức.</p> -->
                     </div>
                     <div class="modal-footer border-0 p-4 pt-0">
                         <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Hủy
@@ -436,48 +435,73 @@
             </div>
         </div>
 
-        <div th:replace="~{admin/fragments/scripts :: common_scripts}"></div>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script>
+        
+        <script th:inline="javascript">
             $(document).ready(function () {
-                $('#checkAll').on('change', function () {
-                    $('.variant-check').prop('checked', this.checked);
+                // Khởi tạo Select2 cho bộ lọc sản phẩm
+                $('.select2-filter').select2({
+                    theme: 'bootstrap-5',
+                    placeholder: '-- Chọn sản phẩm --',
+                    allowClear: true,
+                    width: '100%'
+                }).on('change', function () {
+                    submitForm(this);
                 });
-
-                // Init price label
-                updatePrice($('#priceRange').val());
             });
 
-            function updatePrice(val) {
-                const formatted = new Intl.NumberFormat('vi-VN').format(val) + ' ₫';
-                $('#priceLabel').text('0 - ' + formatted);
-                $('#maxPriceInput').val(val);
+            function confirmDeleteVariant(btn) {
+                const id = $(btn).data('id');
+                Swal.fire({
+                    title: 'Xác nhận xóa?',
+                    text: 'Dữ liệu biến thể này sẽ bị xóa hoàn toàn khỏi hệ thống!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ff3c5f',
+                    cancelButtonColor: '#ccc',
+                    confirmButtonText: 'Đồng ý xóa',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/api/admin/product-variant/variant/delete/${id}`, { method: 'DELETE' })
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire('Thành công', data.message, 'success').then(() => location.reload());
+                                } else {
+                                    Swal.fire('Lỗi', data.message || 'Không thể xóa biến thể', 'error');
+                                }
+                            });
+                    }
+                });
             }
 
-            $(document).on('change', '#priceRange', function () {
-                $('#mainFilterForm').submit();
-            });
-
-            function confirmToggleVariant(checkbox) {
-                confirmToggle(checkbox, '/admin/san-pham/variant/toggle-status', 'Đã cập nhật trạng thái biến thể!', 'Lỗi khi cập nhật trạng thái.');
-            }
-
-            // MODAL UPDATE FUNCTIONS
             function openEditModal(btn) {
                 const el = $(btn);
                 $('#editVariantId').val(el.data('id'));
                 $('#modalSpName').text(el.data('name'));
                 $('#modalColor').text("Màu: " + el.data('color'));
                 $('#modalSize').text("Size: " + el.data('size'));
-                $('#editSoLuong').val(el.data('qty'));
-                $('#editGiaBan').val(el.data('price'));
+
+                // Định dạng số trước khi đưa vào modal
+                const qtyVal = el.data('qty').toString();
+                const priceVal = el.data('price').toString();
+
+                $('#editSoLuong').val(qtyVal);
+                $('#editGiaBan').val(priceVal);
+
+                // Kích hoạt format ngay sau khi nạp giá trị
+                if (typeof applyGlobalFormatting === 'function') {
+                    applyGlobalFormatting(document.getElementById('editSoLuong'));
+                    applyGlobalFormatting(document.getElementById('editGiaBan'));
+                }
+
                 new bootstrap.Modal(document.getElementById('editVariantModal')).show();
             }
 
             function saveVariantUpdate() {
                 const id = $('#editVariantId').val();
-                const qty = $('#editSoLuong').val();
-                const price = $('#editGiaBan').val();
+                let qty = $('#editSoLuong').val().replace(/\./g, "");
+                let price = $('#editGiaBan').val().replace(/\./g, "");
 
                 if (!qty || !price) {
                     Swal.fire('Chú ý', 'Vui lòng nhập đầy đủ thông tin!', 'warning');
@@ -508,32 +532,6 @@
                     .catch(err => {
                         Swal.fire('Lỗi', 'Đã xảy ra lỗi kết nối!', 'error');
                     });
-            }
-
-            function confirmDeleteVariant(btn) {
-                const id = $(btn).data('id');
-                Swal.fire({
-                    title: 'Xác nhận xóa?',
-                    text: 'Dữ liệu biến thể này sẽ bị xóa hoàn toàn khỏi hệ thống!',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#ff3c5f',
-                    cancelButtonColor: '#ccc',
-                    confirmButtonText: 'Đồng ý xóa',
-                    cancelButtonText: 'Hủy'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        fetch(`/api/admin/product-variant/variant/delete/${id}`, { method: 'DELETE' })
-                            .then(res => res.json())
-                            .then(data => {
-                                if (data.success) {
-                                    Swal.fire('Thành công', data.message, 'success').then(() => location.reload());
-                                } else {
-                                    Swal.fire('Lỗi', data.message || 'Không thể xóa biến thể', 'error');
-                                }
-                            });
-                    }
-                });
             }
         </script>
     </main>

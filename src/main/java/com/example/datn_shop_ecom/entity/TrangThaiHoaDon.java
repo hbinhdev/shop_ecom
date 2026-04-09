@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.entity;
+﻿package com.example.datn_shop_ecom.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,3 +17,4 @@ public class TrangThaiHoaDon {
     @Column(name = "mo_ta", columnDefinition = "NVARCHAR(255)")
     private String moTa;
 }
+

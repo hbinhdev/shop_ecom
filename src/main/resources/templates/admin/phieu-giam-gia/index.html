@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
 
 <head>
@@ -12,7 +12,7 @@
                 <h4 class="fw-bold section-title">Bán hàng / <span class="fw-bold">Phiếu giảm giá</span></h4>
             </div>
 
-            <!-- Filter Section -->
+            
             <form th:action="@{/admin/phieu-giam-gia}" method="GET" id="filterForm">
                 <div class="card shadow-sm border-0 rounded-4 mb-4">
                     <div class="card-body p-4">
@@ -67,7 +67,7 @@
                 </div>
             </form>
 
-            <!-- Table -->
+            
             <div class="custom-table overflow-hidden shadow-sm rounded-4 bg-white">
                 <table class="table align-middle">
                     <thead class="bg-light text-muted small text-uppercase fw-bold">
@@ -134,7 +134,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <!-- Pagination Footer -->
+                
                 <div
                     th:replace="~{admin/fragments/pagination :: pagination(${pggPage}, '/admin/phieu-giam-gia', 
                     'search=' + (${search} ?: '') + '&startDate=' + (${startDate} ?: '') + '&endDate=' + (${endDate} ?: '') + '&trangThai=' + (${trangThai} ?: ''))}">
@@ -142,7 +142,7 @@
             </div>
         </div>
 
-        <div th:replace="~{admin/fragments/scripts :: common_scripts}"></div>
+        
         <script th:inline="javascript">
             async function confirmTogglePGG(checkbox) {
                 await confirmToggle(checkbox, '/admin/phieu-giam-gia/toggle-status', 'Đã cập nhật trạng thái phiếu giảm giá!', 'Lỗi cập nhật.');

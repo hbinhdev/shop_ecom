@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.service;
+﻿package com.example.datn_shop_ecom.service;
 
 import com.example.datn_shop_ecom.entity.KhachHang;
 
@@ -12,3 +12,4 @@ public interface KhachHangService {
     String generateMaKhachHang();
     java.io.ByteArrayInputStream exportToExcel(String search, String gioiTinh, Boolean xoaMem);
 }
+

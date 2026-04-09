@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.repository;
+﻿package com.example.datn_shop_ecom.repository;
 
 import com.example.datn_shop_ecom.entity.PhieuGiamGia;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -51,4 +51,7 @@ public interface PhieuGiamGiaRepository extends JpaRepository<PhieuGiamGia, Long
     @Transactional
     @Query("UPDATE PhieuGiamGia p SET p.xoaMem = true, p.ngaySuaCuoi = :now WHERE p.id = :id")
     void softDelete(@Param("id") Long id, @Param("now") LocalDateTime now);
+
+    List<PhieuGiamGia> findAllByXoaMemFalse();
 }
+

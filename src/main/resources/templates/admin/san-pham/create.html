@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
 
 <head>
     <title>Thêm mới sản phẩm - PeakSneaker </title>
-    <!-- Google Fonts -->
+    
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
@@ -24,7 +24,7 @@
             letter-spacing: -0.01em;
         }
 
-        /* Premium Components */
+        
         .card {
             transition: all 0.3s ease;
             border: none !important;
@@ -68,7 +68,7 @@
             border-color: #adb5bd;
         }
 
-        /* Variant & Image Styles */
+        
         .upload-zone {
             border: 2px dashed #dee2e6 !important;
             border-radius: 12px;
@@ -101,7 +101,7 @@
             font-size: 0.85rem;
         }
 
-        /* Sticky Footer Animation */
+        
         .sticky-footer {
             animation: slideUp 0.5s ease-out;
             position: sticky;
@@ -134,36 +134,11 @@
 
 <body>
     <main>
-        <div class="container-fluid p-0">
-            <!-- HEADER -->
-            <div class="mb-4">
-                <h4 class="fw-bold section-title">Quản lý Sản phẩm / <span class="fw-bold">Thêm mới sản phẩm</span></h4>
-            </div>
-
-            <!-- ACTIONS BAR -->
-            <div class="card shadow-sm rounded-4 p-4 mb-4 bg-white">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <h4 class="fw-bold section-title mb-0">THIẾT LẬP SẢN PHẨM</h4>
-                        <p class="text-muted small mb-0 mt-1">Hoàn thành các bước nhập liệu để tạo sản phẩm và biến thể.
-                        </p>
-                    </div>
-                    <div class="d-flex gap-2">
-                        <a th:href="@{/admin/san-pham}"
-                            class="btn btn-light-outline rounded-pill px-4 py-2 d-flex align-items-center gap-2">
-                            <i class="bi bi-arrow-left"></i> Quay lại
-                        </a>
-                        <button type="button"
-                            class="btn btn-add-customer rounded-pill px-4 py-2 d-flex align-items-center gap-2"
-                            onclick="VariantApp.submitData()">
-                            <i class="bi bi-save"></i> Lưu nhanh
-                        </button>
-                    </div>
-                </div>
-            </div>
+        <div class="p-0">
+            
 
             <div class="row g-4">
-                <!-- BASIC INFO -->
+                
                 <div class="col-lg-7">
                     <div class="card shadow-sm rounded-4 p-4 h-100 bg-white">
                         <div class="d-flex align-items-center gap-2 mb-4 pb-2 border-bottom">
@@ -213,7 +188,7 @@
                     </div>
                 </div>
 
-                <!-- ATTRIBUTES -->
+                
                 <div class="col-lg-5">
                     <div class="card shadow-sm rounded-4 p-4 h-100 bg-white"
                         style="border: 2px dashed #e9ecef !important;">
@@ -256,17 +231,27 @@
                 </div>
             </div>
 
-            <!-- VARIANTS TABLE -->
-            <div id="variantSection" class="mt-5" style="display: none;">
+            
+            <div id="imageSection" class="mt-5" style="display: none;">
+                <div class="card shadow-sm rounded-4 bg-white overflow-hidden">
+                    <div class="card-header bg-white border-0 p-4 pb-0">
+                        <h5 class="fw-bold m-0 text-uppercase small"><i class="bi bi-images me-2"></i>Quản lý hình ảnh theo màu</h5>
+                        <p class="text-muted small mt-2">Vui lòng tải lên ảnh cho từng phối màu đã chọn. (Thêm ảnh từ đầu quy trình)</p>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="image-grid" id="colorImageGrid"></div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div id="variantSection" class="mt-5 mb-5" style="display: none;">
                 <div class="card shadow-sm rounded-4 overflow-hidden bg-white">
                     <div class="card-header bg-white border-0 p-4 d-flex justify-content-between align-items-center">
-                        <h5 class="fw-bold m-0 text-uppercase small"><i class="bi bi-table me-2"></i>Danh sách biến thể
-                            sản phẩm</h5>
+                        <h5 class="fw-bold m-0 text-uppercase small"><i class="bi bi-table me-2"></i>Danh sách biến thể sản phẩm</h5>
                         <div class="d-flex gap-2">
-                            <button class="btn btn-light-outline btn-sm rounded-pill px-3 py-2"
-                                onclick="VariantApp.quickFillAll()">Thiết lập nhanh</button>
-                            <button class="btn btn-outline-danger btn-sm rounded-pill px-3 py-2"
-                                onclick="VariantApp.clearAll()">Xóa tất cả</button>
+                            <button class="btn btn-light-outline btn-sm rounded-pill px-3 py-2" onclick="VariantApp.quickFillAll()">Thiết lập nhanh</button>
+                            <button class="btn btn-outline-danger btn-sm rounded-pill px-3 py-2" onclick="VariantApp.clearAll()">Xóa tất cả</button>
                         </div>
                     </div>
                     <div class="p-4 pt-0">
@@ -275,31 +260,11 @@
                 </div>
             </div>
 
-            <!-- IMAGES SECTION -->
-            <div id="imageSection" class="mt-5 mb-5" style="display: none;">
-                <div class="card shadow-sm rounded-4 bg-white overflow-hidden">
-                    <div class="card-header bg-white border-0 p-4 pb-0">
-                        <h5 class="fw-bold m-0 text-uppercase small"><i class="bi bi-images me-2"></i>Quản lý hình ảnh
-                            theo màu</h5>
-                        <p class="text-muted small mt-2">Vui lòng tải lên ảnh cho từng phối màu đã chọn.</p>
-                    </div>
-                    <div class="card-body p-4">
-                        <div class="image-grid" id="colorImageGrid"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- STICKY FOOTER -->
-            <!-- <div class="card rounded-4 p-4 mt-5 bg-white sticky-footer d-flex flex-row justify-content-end gap-3 align-items-center">
-                <span class="text-muted small me-auto"><i class="bi bi-shield-check me-1"></i> Hệ thống sẽ lưu trữ và tạo các biến thể tương ứng.</span>
-                <a th:href="@{/admin/san-pham}" class="btn btn-light-outline rounded-pill px-5 py-2">Hủy xóa</a>
-                <button type="button" class="btn btn-add-customer rounded-pill px-5 py-2 text-white border-0 shadow-sm" onclick="VariantApp.submitData()">
-                    <i class="bi bi-check-circle me-1"></i> HOÀN TẤT VÀ LƯU DỮ LIỆU
-                </button>
-            </div> -->
+            
+            
         </div>
 
-        <!-- Picker Modal -->
+        
         <div class="modal fade" id="pickerModal" tabindex="-1">
             <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content border-0 rounded-4 shadow">
@@ -324,8 +289,7 @@
             </div>
         </div>
 
-        <div th:replace="~{admin/fragments/scripts :: common_scripts}"></div>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        
         <script th:inline="javascript">
             const colorPicker = { 'Xanh dương': '#3b82f6', 'Trắng': '#ffffff', 'Đen': '#000000', 'Đỏ': '#ef4444', 'Vàng': '#f59e0b', 'Cam': '#fb923c', 'Xanh lá': '#22c55e', 'Tím': '#a855f7' };
             const VariantApp = {
@@ -413,17 +377,26 @@
                 },
                 handleFiles(cid, files) {
                     const div = document.getElementById(`placeholder-${cid}`);
-                    div.innerHTML = `<div class="preview-scroll d-flex gap-2 p-1 overflow-auto w-100" style="height:100%"></div>`;
-                    const container = div.querySelector('.preview-scroll');
-                    this.colorFiles[cid] = Array.from(files);
-                    this.colorFiles[cid].forEach(f => {
+                    let container = div.querySelector('.preview-scroll');
+                    if (!container) {
+                        div.innerHTML = `<div class="preview-scroll d-flex gap-2 p-1 overflow-auto w-100" style="height:120px"></div>`;
+                        container = div.querySelector('.preview-scroll');
+                    }
+                    
+                    if (!this.colorFiles[cid]) this.colorFiles[cid] = [];
+                    const newFiles = Array.from(files);
+                    this.colorFiles[cid] = [...this.colorFiles[cid], ...newFiles];
+                    
+                    newFiles.forEach(f => {
                         const reader = new FileReader();
                         reader.onload = (e) => {
-                            const img = document.createElement('img');
-                            img.src = e.target.result;
-                            img.style.width = '100px'; img.style.height = '100px'; img.style.objectFit = 'cover';
-                            img.className = 'rounded border';
-                            container.appendChild(img);
+                            const wrapper = document.createElement('div');
+                            wrapper.className = 'position-relative flex-shrink-0';
+                            wrapper.innerHTML = `
+                                <img src="${e.target.result}" style="width: 100px; height: 100px; object-fit: cover;" class="rounded border shadow-sm">
+                                <span class="position-absolute top-0 end-0 badge rounded-circle bg-danger cursor-pointer" onclick="this.parentElement.remove()" style="margin: -5px -5px 0 0">×</span>
+                            `;
+                            container.appendChild(wrapper);
                         };
                         reader.readAsDataURL(f);
                     });
@@ -440,12 +413,12 @@
                                 <div class="text-muted extra-small" style="font-size: 0.7rem"></div>
                             </td>
                             <td style="width: 150px">
-                                <input type="number" class="form-control form-control-sm border text-center rounded-pill" placeholder="SL" value="${v.q}" onchange="VariantApp.uv('${v.uid}', 'q', this.value)">
+                                <input type="text" class="form-control form-control-sm border text-center rounded-pill number-format" placeholder="SL" value="${new Intl.NumberFormat('vi-VN').format(v.q || 0)}" onchange="VariantApp.uv('${v.uid}', 'q', this.value)">
                             </td>
                             <td style="width: 200px">
                                 <div class="input-group input-group-sm rounded-pill overflow-hidden border">
                                     <span class="input-group-text bg-white border-0 py-0 small fw-bold text-muted">VNĐ</span>
-                                    <input type="number" class="form-control border-0 fw-bold text-danger text-end pe-3" placeholder="Giá" value="${v.p}" onchange="VariantApp.uv('${v.uid}', 'p', this.value)">
+                                    <input type="text" class="form-control border-0 fw-bold text-danger text-end pe-3 number-format" placeholder="Giá" value="${new Intl.NumberFormat('vi-VN').format(v.p || 0)}" onchange="VariantApp.uv('${v.uid}', 'p', this.value)">
                                 </div>
                             </td>
                             <td class="text-center">
@@ -472,7 +445,7 @@
                         </div>`;
                     }
                 },
-                uv(u, f, v) { const it = this.variants.find(x => x.uid === u); if (it) it[f] = v; },
+                uv(u, f, v) { const it = this.variants.find(x => x.uid === u); if (it) it[f] = v.toString().replace(/\./g, ""); },
                 rm(u) { this.variants = this.variants.filter(x => x.uid !== u); this.renderR(); },
                 async qF(cid) {
                     const { value: r } = await Swal.fire({ title: 'Cấu hình nhanh nhóm', html: '<div class="text-start mb-2"><label class="small fw-bold">Số lượng</label><input id="q" class="form-control" type="number"></div><div class="text-start"><label class="small fw-bold">Giá bán</label><input id="p" class="form-control" type="number"></div>', preConfirm: () => [$('#q').val(), $('#p').val()] });
@@ -485,8 +458,28 @@
                 clearAll() { this.variants = []; this.renderR(); document.getElementById('variantSection').style.display = 'none'; document.getElementById('imageSection').style.display = 'none'; },
                 async submitData() {
                     const ten = $('#tenSanPham').val();
-                    if (!ten) return Swal.fire('Thiếu thông tin', 'Vui lòng nhập tên sản phẩm!', 'warning');
-                    if (!this.variants.length) return Swal.fire('Thiếu dữ liệu', 'Vui lòng tạo ít nhất một biến thể!', 'warning');
+                    if (!ten || ten.trim() === '') return Toast.fire({ icon: 'warning', title: 'Thiếu thông tin', text: 'Vui lòng nhập tên sản phẩm!' });
+                    if (!this.variants.length) return Toast.fire({ icon: 'warning', title: 'Thiếu dữ liệu', text: 'Vui lòng tạo ít nhất một biến thể!' });
+
+                    
+                    for (const v of this.variants) {
+                        if (!v.p || parseFloat(v.p) <= 0) {
+                            return Toast.fire({ icon: 'warning', title: 'Dữ liệu sai', text: `Giá bán của biến thể màu ${v.cName} - size ${v.sName} phải lớn hơn 0!` });
+                        }
+                        if (v.q === '' || parseInt(v.q) < 0) {
+                            return Toast.fire({ icon: 'warning', title: 'Dữ liệu sai', text: `Số lượng của biến thể màu ${v.cName} - size ${v.sName} không được nhỏ hơn 0!` });
+                        }
+                    }
+
+                    // Validate hình ảnh: Mỗi màu sắc phải có ít nhất 1 ảnh
+                    const selectedColorIds = $('#idMauSac').val() || [];
+                    for (const cid of selectedColorIds) {
+                        const files = this.colorFiles[cid];
+                        if (!files || files.length === 0) {
+                            const colorName = this.getN('mauSac', cid, 'tenMauSac');
+                            return Toast.fire({ icon: 'warning', title: 'Thiếu hình ảnh', text: `Vui lòng tải lên ít nhất một hình ảnh cho màu: ${colorName}` });
+                        }
+                    }
 
                     const idDanhMuc = $('#idDanhMuc').val();
                     const idThuongHieu = $('#idThuongHieu').val();
@@ -500,10 +493,16 @@
 
                     for (const [cid, files] of Object.entries(this.colorFiles)) { files.forEach(f => formData.append(`files_${cid}`, f)); }
 
-                    Swal.fire({ title: 'Đang xử lý...', didOpen: () => Swal.showLoading() });
+                    Swal.fire({ title: 'Đang xử lý...', didOpen: () => Swal.showLoading(), allowOutsideClick: false });
                     const res = await fetch('/api/admin/product-variant/create-all-with-images', { method: 'POST', body: formData });
-                    if (res.ok) Swal.fire('Thành công', 'Đã lưu sản phẩm!', 'success').then(() => window.location.href = '/admin/san-pham');
-                    else Swal.fire('Lỗi', 'Không thể lưu sản phẩm. Vui lòng kiểm tra lại!', 'error');
+                    const result = await res.json();
+                    if (res.ok && result.success) {
+                        Swal.close();
+                        Toast.fire({ icon: 'success', title: 'Đã lưu sản phẩm thành công!' }).then(() => window.location.href = '/admin/san-pham');
+                    } else {
+                        Swal.close();
+                        Toast.fire({ icon: 'error', title: 'Lỗi lưu dữ liệu', text: result.message || 'Không thể lưu sản phẩm. Vui lòng kiểm tra lại!' });
+                    }
                 }
             };
             $(document).ready(() => VariantApp.init());

@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.entity;
+﻿package com.example.datn_shop_ecom.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -18,3 +18,4 @@ public class DanhMuc {
     private LocalDateTime ngaySuaCuoi;
     private Boolean xoaMem;
 }
+

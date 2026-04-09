@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
 
 <head>
     <title>Cập nhật sản phẩm - PeakSneaker </title>
-    <!-- Google Fonts -->
+    
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
@@ -24,7 +24,7 @@
             letter-spacing: -0.01em;
         }
 
-        /* Premium Components */
+        
         .card {
             transition: all 0.3s ease;
             border: none !important;
@@ -68,7 +68,7 @@
             border-color: #adb5bd;
         }
 
-        /* Variant & Image Styles */
+        
         .upload-zone {
             border: 2px dashed #dee2e6 !important;
             border-radius: 12px;
@@ -101,7 +101,7 @@
             font-size: 0.85rem;
         }
 
-        /* Sticky Footer Animation */
+        
         .sticky-footer {
             animation: slideUp 0.5s ease-out;
             position: sticky;
@@ -139,12 +139,12 @@
 <body>
     <main>
         <div class="container-fluid p-0">
-            <!-- BREAKCRUMB & TITLES -->
+            
             <div class="mb-4">
                 <h4 class="fw-bold section-title">Quản lý Sản phẩm / <span class="fw-bold">Cập nhật sản phẩm</span></h4>
             </div>
 
-            <!-- TOP ACTIONS CARD -->
+            
             <div class="card shadow-sm rounded-4 p-4 mb-4 bg-white">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
@@ -167,7 +167,7 @@
             </div>
 
             <div class="row g-4">
-                <!-- FORM BASIC INFO -->
+                
                 <div class="col-lg-7">
                     <div class="card shadow-sm rounded-4 p-4 h-100 bg-white">
                         <div class="d-flex align-items-center gap-2 mb-4 pb-2 border-bottom">
@@ -215,7 +215,7 @@
                     </div>
                 </div>
 
-                <!-- FORM CONFIG ATTRIBUTES -->
+                
                 <div class="col-lg-5">
                     <div class="card shadow-sm rounded-4 p-4 h-100 bg-white"
                         style="border: 2px dashed #e9ecef !important;">
@@ -260,31 +260,11 @@
                 </div>
             </div>
 
-            <!-- VARIANTS DISPLAY -->
-            <div id="variantSection" class="mt-5" style="display: none;">
-                <div class="card shadow-sm rounded-4 overflow-hidden bg-white">
-                    <div class="card-header bg-white border-0 p-4 d-flex justify-content-between align-items-center">
-                        <h5 class="fw-bold m-0 text-uppercase small"><i class="bi bi-grid-3x3-gap me-2"></i>Chi tiết các
-                            biến thể</h5>
-                        <div class="d-flex gap-2">
-                            <button class="btn btn-light-outline btn-sm rounded-pill px-3 py-2"
-                                onclick="VariantApp.quickFillAll()">Thiết lập nhanh</button>
-                            <button class="btn btn-outline-danger btn-sm rounded-pill px-3 py-2"
-                                onclick="VariantApp.clearAll()">Xóa hết</button>
-                        </div>
-                    </div>
-                    <div class="p-4 pt-0">
-                        <div id="variantGroupContainer"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- PHOTOS DISPLAY -->
-            <div id="imageSection" class="mt-5 mb-5" style="display: none;">
+            
+            <div id="imageSection" class="mt-5" style="display: none;">
                 <div class="card shadow-sm rounded-4 bg-white overflow-hidden">
                     <div class="card-header bg-white border-0 p-4 pb-0">
-                        <h5 class="fw-bold m-0 text-uppercase small"><i class="bi bi-camera me-2"></i>Quản lý album ảnh
-                            theo màu</h5>
+                        <h5 class="fw-bold m-0 text-uppercase small"><i class="bi bi-camera me-2"></i>Quản lý album ảnh theo màu</h5>
                         <p class="text-muted small mt-2">Dưới đây là các ảnh hiện tại và các ảnh bạn tải lên thêm.</p>
                     </div>
                     <div class="card-body p-4">
@@ -293,17 +273,27 @@
                 </div>
             </div>
 
-            <!-- STICKY BOTTOM ACTIONS -->
-            <!-- <div class="card rounded-4 p-4 mt-5 bg-white sticky-footer d-flex flex-row justify-content-end gap-3 align-items-center">
-                <span class="text-muted small me-auto"><i class="bi bi-info-circle me-1"></i> Mọi thay đổi sẽ có hiệu lực ngay sau khi bạn nhấn cập nhật.</span>
-                <a th:href="@{/admin/san-pham}" class="btn btn-light-outline rounded-pill px-5 py-2">Hủy bỏ</a>
-                <button type="button" class="btn btn-add-customer rounded-pill px-5 py-2 text-white border-0 shadow-sm" onclick="VariantApp.submitData()">
-                    <i class="bi bi-check-lg me-1"></i> XÁC NHẬN CẬP NHẬT SẢN PHẨM
-                </button>
-            </div> -->
+            
+            <div id="variantSection" class="mt-5 mb-5" style="display: none;">
+                <div class="card shadow-sm rounded-4 overflow-hidden bg-white">
+                    <div class="card-header bg-white border-0 p-4 d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold m-0 text-uppercase small"><i class="bi bi-grid-3x3-gap me-2"></i>Chi tiết các biến thể</h5>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-light-outline btn-sm rounded-pill px-3 py-2" onclick="VariantApp.quickFillAll()">Thiết lập nhanh</button>
+                            <button class="btn btn-outline-danger btn-sm rounded-pill px-3 py-2" onclick="VariantApp.clearAll()">Xóa hết</button>
+                        </div>
+                    </div>
+                    <div class="p-4 pt-0">
+                        <div id="variantGroupContainer"></div>
+                    </div>
+                </div>
+            </div>
+
+            
+            
         </div>
 
-        <!-- MODAL PICKER -->
+        
         <div class="modal fade" id="pickerModal" tabindex="-1">
             <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content border-0 rounded-4 shadow-lg">
@@ -327,8 +317,6 @@
             </div>
         </div>
 
-        <div th:replace="~{admin/fragments/scripts :: common_scripts}"></div>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script th:inline="javascript">
             const colorPicker = { 'Xanh dương': '#3b82f6', 'Trắng': '#ffffff', 'Đen': '#000000', 'Đỏ': '#ef4444', 'Vàng': '#f59e0b', 'Cam': '#fb923c', 'Xanh lá': '#22c55e', 'Tím': '#a855f7' };
             const VariantApp = {
@@ -351,7 +339,7 @@
                     this.loadProductData();
                 },
                 loadProductData() {
-                    const sp = /*[[${spData}]]*/ null;
+                    const sp =  null;
                     if (sp) {
                         $('#tenSanPham').val(sp.tenSanPham);
                         $('#moTa').val(sp.moTa);
@@ -361,7 +349,7 @@
                         $('#idChatLieu').val(sp.idChatLieu);
 
 
-                        this.variants = /*[[${existingVariants}]]*/[];
+                        this.variants = [];
                         if (this.variants.length > 0) {
                             const cIds = [...new Set(this.variants.map(v => v.cId.toString()))];
                             const sIds = [...new Set(this.variants.map(v => v.sId.toString()))];
@@ -436,7 +424,7 @@
                 renderImageCards() {
                     const ids = $('#idMauSac').val() || [];
                     const grid = document.getElementById('colorImageGrid');
-                    const existingImgs = /*[[${existingImages}]]*/ {};
+                    const existingImgs =  {};
 
                     grid.innerHTML = ids.map(id => {
                         const it = this.dict.mauSac.find(x => x.id == id);
@@ -458,80 +446,7 @@
                                 ${exHtml || '<i class="bi bi-cloud-arrow-up fs-2 text-muted"></i><span class="text-muted small">Tải ảnh mới lên</span>'}
                                 ${exHtml ? '<div class="small text-primary mt-2 fw-bold" style="font-size:0.65rem">ĐÃ CÓ ' + colorImgs.length + ' ẢNH - NHẤN ĐỂ THAY THẾ</div>' : ''}
                             </div>
-                            <input type="file" id="input-${id}" class="d-none" multiple accept="image/*" onchange="VariantApp.handleFiles('${id}', this.files)">
-                            <button type="button" class="btn btn-add-customer btn-sm rounded-0 w-100 py-2 text-white border-0 shadow-sm" onclick="document.getElementById('input-${id}').click()">CHỌN ẢNH THAY THẾ</button>
-                        </div>`;
-                    }).join('');
-                },
-                handleFiles(cid, files) {
-                    const div = document.getElementById(`placeholder-${cid}`); div.innerHTML = `<div class="preview-scroll d-flex gap-2 p-1 overflow-auto w-100" style="height:100%"></div>`;
-                    const container = div.querySelector('.preview-scroll');
-                    this.colorFiles[cid] = Array.from(files);
-                    this.colorFiles[cid].forEach(f => {
-                        const reader = new FileReader();
-                        reader.onload = (e) => { const img = document.createElement('img'); img.src = e.target.result; img.style.width = '100px'; img.style.height = '100px'; img.style.objectFit = 'cover'; img.className = 'rounded border shadow-xs'; container.appendChild(img); };
-                        reader.readAsDataURL(f);
-                    });
-                },
-                getN(k, i, p) { const it = this.dict[k].find(x => x.id == i); return it ? it[p] : 'N/A'; },
-                renderR() {
-                    const cont = document.getElementById('variantGroupContainer'); cont.innerHTML = ''; const grp = {};
-                    this.variants.forEach(v => { if (!grp[v.cId]) grp[v.cId] = { n: v.cName, i: [] }; grp[v.cId].i.push(v); });
-                    for (const [cid, g] of Object.entries(grp)) {
-                        let rs = g.i.map(v => `
-                        <tr>
-                            <td class="ps-4 py-3">
-                                <div class="fw-bold text-dark">Size: ${v.sName}</div>
-                                <div class="text-muted extra-small" style="font-size: 0.7rem"></div>
-                            </td>
-                            <td style="width: 150px">
-                                <input type="number" class="form-control form-control-sm border text-center rounded-pill" placeholder="SL" value="${v.q}" onchange="VariantApp.uv('${v.uid}', 'q', this.value)">
-                            </td>
-                            <td style="width: 200px">
-                                <div class="input-group input-group-sm rounded-pill overflow-hidden border">
-                                    <span class="input-group-text bg-white border-0 py-0 small fw-bold text-muted">VNĐ</span>
-                                    <input type="number" class="form-control border-0 fw-bold text-danger text-end pe-3" placeholder="Giá" value="${v.p}" onchange="VariantApp.uv('${v.uid}', 'p', this.value)">
-                                </div>
-                            </td>
-                            <td class="text-center">
-                                <button class="btn btn-outline-danger btn-sm border-0 rounded-circle" onclick="VariantApp.rm('${v.uid}')"><i class="bi bi-trash3"></i></button>
-                            </td>
-                        </tr>`).join('');
-                        cont.innerHTML += `
-                        <div class="mb-4 border rounded-3 overflow-hidden bg-white shadow-xs">
-                            <div class="bg-light px-4 py-2 border-bottom d-flex justify-content-between align-items-center">
-                                <div><span class="color-dot me-2 shadow-sm" style="background-color:${colorPicker[g.n] || '#ccc'}"></span><span class="fw-bold text-uppercase" style="font-size: 0.8rem">${g.n}</span></div>
-                                <button class="btn btn-add-customer btn-sm rounded-pill px-3 text-white border-0 shadow-sm" style="font-size: 0.70rem" onclick="VariantApp.qF('${cid}')">THIẾT LẬP NHANH</button>
-                            </div>
-                            <table class="table mb-0 align-middle">
-                                <thead class="bg-white">
-                                    <tr class="text-uppercase text-muted" style="font-size: 0.65rem">
-                                        <th class="ps-4">Biến thể chi tiết</th>
-                                        <th class="text-center">Số lượng</th>
-                                        <th class="text-center">Giá bán</th>
-                                        <th class="text-center">Xóa</th>
-                                    </tr>
-                                </thead>
-                                <tbody>${rs}</tbody>
-                            </table>
-                        </div>`;
-                    }
-                },
-                uv(u, f, v) { const it = this.variants.find(x => x.uid === u); if (it) it[f] = v; },
-                rm(u) { this.variants = this.variants.filter(x => x.uid !== u); this.renderR(); },
-                async qF(cid) { const { value: r } = await Swal.fire({ title: 'Nhập thông tin', html: '<div class="text-start mb-2"><label class="small fw-bold">Số lượng mặc định</label><input id="q" class="form-control" type="number"></div><div class="text-start"><label class="small fw-bold">Giá bán mặc định</label><input id="p" class="form-control" type="number"></div>', preConfirm: () => [$('#q').val(), $('#p').val()] }); if (r) { this.variants.forEach(v => { if (v.cId == cid) { v.q = r[0]; v.p = r[1]; } }); this.renderR(); } },
-                async quickFillAll() { const { value: r } = await Swal.fire({ title: 'Thiết lập tất cả', html: '<div class="text-start mb-2"><label class="small fw-bold">Số lượng mặc định</label><input id="qa" class="form-control" type="number"></div><div class="text-start"><label class="small fw-bold">Giá bán mặc định</label><input id="pa" class="form-control" type="number"></div>', preConfirm: () => [$('#qa').val(), $('#pa').val()] }); if (r) { this.variants.forEach(v => { v.q = r[0]; v.p = r[1]; }); this.renderR(); } },
-                clearAll() { this.variants = []; this.renderR(); document.getElementById('variantSection').style.display = 'none'; document.getElementById('imageSection').style.display = 'none'; },
-                async submitData() {
-                    if (!$('#tenSanPham').val()) return Swal.fire('Lỗi', 'Tên sản phẩm không được trống!', 'error');
-                    if (!this.variants.length) return Swal.fire('Lỗi', 'Cần ít nhất 1 biến thể!', 'error');
-
-                    const idDanhMuc = $('#idDanhMuc').val();
-                    const idThuongHieu = $('#idThuongHieu').val();
-                    const idKieuDang = $('#idKieuDang').val();
-                    const idChatLieu = $('#idChatLieu').val();
-                    const formData = new FormData();
-                    const spId = /*[[${spData?.id}]]*/ null;
+                            <input type="file" id="input-${id}" class="d-none" multiple accept="image null;
                     formData.append('data', JSON.stringify({
                         sanPham: { id: spId, tenSanPham: $('#tenSanPham').val(), moTa: $('#moTa').val(), idDanhMuc: idDanhMuc || null, idThuongHieu: idThuongHieu || null, idKieuDang: idKieuDang || null, idChatLieu: idChatLieu || null },
                         bienThes: this.variants.map(v => ({ id: v.id || null, idMauSac: v.cId, idKichThuoc: v.sId, soLuong: v.q, giaBan: v.p }))

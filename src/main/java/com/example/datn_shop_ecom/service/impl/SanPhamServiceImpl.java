@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.service.impl;
+﻿package com.example.datn_shop_ecom.service.impl;
 
 import com.example.datn_shop_ecom.entity.SanPham;
 import com.example.datn_shop_ecom.repository.SanPhamChiTietRepository;
@@ -51,7 +51,7 @@ public class SanPhamServiceImpl implements SanPhamService {
                 sanPham.setMaSanPham(String.format("SP%05d", count + 1));
             }
             sanPham.setNgayTao(LocalDateTime.now());
-            sanPham.setXoaMem(false); // false = Đang kinh doanh
+            sanPham.setXoaMem(false); 
             sanPham.setNguoiTao("Admin");
             return sanPhamRepo.save(sanPham);
         }
@@ -63,16 +63,26 @@ public class SanPhamServiceImpl implements SanPhamService {
     }
 
     @Override
+    public java.util.List<SanPham> findAll() {
+        return sanPhamRepo.findAll();
+    }
+
+    @Override
+    public java.util.List<SanPham> findAllByXoaMemFalse() {
+        return sanPhamRepo.findAllByXoaMemFalse();
+    }
+
+    @Override
     @Transactional
     public void toggleStatus(Long id) {
         SanPham sp = findById(id);
         boolean currentStatus = sp.getXoaMem() != null ? sp.getXoaMem() : false;
         boolean newStatus = !currentStatus;
         
-        // 1. Cập nhật trạng thái sản phẩm
+        
         sanPhamRepo.updateXoaMem(id, newStatus);
         
-        // 2. Logic đồng bộ trạng thái SPCT (Nếu xoaMem = true => Ngừng hoạt động ('0'), xoaMem = false => Hoạt động ('1'))
+        
         String newSpctStatus = newStatus ? "0" : "1";
         spctRepo.updateTrangThaiBySanPhamId(id, newSpctStatus);
     }
@@ -80,7 +90,7 @@ public class SanPhamServiceImpl implements SanPhamService {
     @Override
     public java.io.ByteArrayInputStream exportToExcel(String search, Boolean trangThai, Long idDanhMuc, Long idThuongHieu, Long idKieuDang, Long idChatLieu) {
         if (search != null && search.trim().isEmpty()) search = null;
-        // Sử dụng repo để lấy tất cả (không phân trang cho export)
+        
         java.util.List<SanPham> dataList = sanPhamRepo.findByFilters(search, trangThai, idDanhMuc, idThuongHieu, idKieuDang, idChatLieu, org.springframework.data.domain.Pageable.unpaged()).getContent();
         
         String[] columns = {"STT", "Mã sản phẩm", "Tên sản phẩm", "Ngày tạo", "Trạng thái"};
@@ -94,3 +104,4 @@ public class SanPhamServiceImpl implements SanPhamService {
         });
     }
 }
+

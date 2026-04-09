@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.service;
+﻿package com.example.datn_shop_ecom.service;
 
 import com.example.datn_shop_ecom.entity.SanPhamChiTiet;
 import org.springframework.data.domain.Page;
@@ -7,11 +7,13 @@ import java.math.BigDecimal;
 
 public interface SanPhamChiTietService {
     Page<SanPhamChiTiet> filterVariantPage(
-        String search, Long idMauSac, Long idKichThuoc, 
+        String search, Long idSanPham, Long idMauSac, Long idKichThuoc, 
         BigDecimal minPrice, BigDecimal maxPrice, 
         String trangThai, Pageable pageable
     );
     void toggleVariantStatus(Long id);
     SanPhamChiTiet findById(Long id);
-    java.io.ByteArrayInputStream exportToExcel(String search, Long idMauSac, Long idKichThuoc, java.math.BigDecimal minPrice, java.math.BigDecimal maxPrice, String trangThai);
+    java.util.List<SanPhamChiTiet> findBySanPhamId(Long id);
+    java.io.ByteArrayInputStream exportToExcel(String search, Long idSanPham, Long idMauSac, Long idKichThuoc, java.math.BigDecimal minPrice, java.math.BigDecimal maxPrice, String trangThai);
 }
+

@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.entity;
+﻿package com.example.datn_shop_ecom.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -66,3 +66,4 @@ public class SanPham {
         return String.format("%,.0f đ - %,.0f đ", min, max);
     }
 }
+

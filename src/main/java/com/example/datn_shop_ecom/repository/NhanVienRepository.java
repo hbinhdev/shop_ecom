@@ -1,4 +1,4 @@
-package com.example.datn_shop_ecom.repository;
+﻿package com.example.datn_shop_ecom.repository;
 
 import com.example.datn_shop_ecom.entity.NhanVien;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -41,9 +41,12 @@ public interface NhanVienRepository extends JpaRepository<NhanVien, Long> {
     Optional<NhanVien> findByMaNhanVien(String maNhanVien);
     Optional<NhanVien> findByEmail(String email);
     Optional<NhanVien> findBySoDienThoai(String soDienThoai);
+    boolean existsByEmail(String email);
+    boolean existsBySoDienThoai(String soDienThoai);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Transactional
     @Query("UPDATE NhanVien n SET n.xoaMem = :xoaMem, n.ngaySuaCuoi = CURRENT_TIMESTAMP, n.nguoiSuaCuoi = :nguoiSua WHERE n.id = :id")
     void updateStatus(@Param("id") Long id, @Param("xoaMem") Boolean xoaMem, @Param("nguoiSua") String nguoiSua);
 }
+

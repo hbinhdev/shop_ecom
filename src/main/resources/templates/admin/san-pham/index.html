@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
 
 <head>
@@ -8,13 +8,13 @@
 <body>
     <main>
         <div class="container-fluid p-0">
-            <!-- Breadcrumb / Header Title -->
+            
             <div class="mb-4">
                 <h4 class="fw-bold section-title">Quản lý sản phẩm / <span class="fw-bold section-title">Danh sách sản
                         phẩm</span></h4>
             </div>
 
-            <!-- Filter Section -->
+            
             <form th:action="@{/admin/san-pham}" method="GET" id="filterForm">
                 <div class="card shadow-sm border-0 rounded-4 mb-4">
                     <div class="card-body p-4">
@@ -45,7 +45,7 @@
                         </div>
 
                         <div class="row g-3 align-items-center">
-                            <!-- Thương hiệu -->
+                            
                             <div class="col-md-4 d-flex align-items-center gap-3">
                                 <label class="form-label mb-0 text-nowrap fw-medium">Thương hiệu:</label>
                                 <select name="idThuongHieu" class="form-select rounded-pill border-1 bg-light-subtle" onchange="this.form.submit()">
@@ -55,7 +55,7 @@
                                 </select>
                             </div>
 
-                            <!-- Chất liệu -->
+                            
                             <div class="col-md-4 d-flex align-items-center gap-3">
                                 <label class="form-label mb-0 text-nowrap fw-medium">Chất liệu:</label>
                                 <select name="idChatLieu" class="form-select rounded-pill border-1 bg-light-subtle" onchange="this.form.submit()">
@@ -65,7 +65,7 @@
                                 </select>
                             </div>
 
-                            <!-- Trạng thái -->
+                            
                             <div class="col-md-4 d-flex align-items-center gap-3">
                                 <label class="form-label mb-0 text-nowrap fw-medium">Trạng thái:</label>
                                 <select name="trangThai" class="form-select rounded-pill border-1 bg-light-subtle" onchange="this.form.submit()">
@@ -79,7 +79,7 @@
                 </div>
             </form>
 
-            <!-- Table Section -->
+            
             <div class="custom-table overflow-hidden shadow-sm rounded-4 bg-white">
                 <table class="table align-middle mb-0">
                     <thead class="bg-light text-muted small text-uppercase fw-bold">
@@ -120,8 +120,8 @@
                                             onchange="confirmToggleProduct(this)"
                                             style="cursor: pointer;">
                                     </div>
-                                    <a th:href="@{/admin/san-pham/edit/{id}(id=${sp.id})}"
-                                        class="btn-icon rounded-circle shadow-xs" title="Sửa sản phẩm">
+                                    <a th:href="@{/admin/san-pham/bien-the(idSanPham=${sp.id})}"
+                                        class="btn-icon rounded-circle shadow-xs" title="Xem biến thể">
                                         <i class="bi bi-eye"></i>
                                     </a>
 
@@ -148,7 +148,7 @@
             </div>
         </div>
 
-        <div th:replace="~{admin/fragments/scripts :: common_scripts}"></div>
+        
         <script>
             function confirmToggleProduct(checkbox) {
                 confirmToggle(checkbox, '/admin/san-pham/toggle-status', 'Đã cập nhật trạng thái sản phẩm và các biến thể!', 'Lỗi khi cập nhật trạng thái.');
