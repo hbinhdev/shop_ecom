@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
 <div th:fragment="common_scripts">
@@ -34,7 +34,7 @@
         }
 
         
-        const PROVINCE_API = "https:
+        const PROVINCE_API = "https://provinces.open-api.vn/api/";
         async function fetchProvinces(citySelectSelector) {
             try {
                 const response = await fetch(PROVINCE_API + "p/");
@@ -343,8 +343,8 @@
         
         document.addEventListener('DOMContentLoaded', function() {
             
-            const successMsg =  null;
-            const errorMsg =  null;
+            const successMsg = /*[[${successMsg}]]*/ null;
+            const errorMsg = /*[[${errorMsg}]]*/ null;
             
             if (successMsg) {
                 Toast.fire({ icon: 'success', title: successMsg });

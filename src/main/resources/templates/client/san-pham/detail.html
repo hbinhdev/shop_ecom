@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{client/layout/main :: layout(~{::main}, ${pageTitle})}">
 
 <body>
@@ -21,17 +21,19 @@
                 <div class="col-lg-6">
                     <div class="sticky-top" style="top: 100px; z-index: 10;">
                         <div class="premium-card p-3 mb-4 bg-white shadow-lg overflow-hidden"
-                            style="border-radius: 3rem;">
+                            style="border-radius: 3rem;"
+                            th:with="displayImg=${p.duongDanAnh != null ? p.duongDanAnh : (p.danhSachHinhAnh != null && !p.danhSachHinhAnh.isEmpty() ? p.danhSachHinhAnh[0].duongDan : (p.danhSachChiTiet != null && !p.danhSachChiTiet.isEmpty() && p.danhSachChiTiet[0].duongDanAnh != null ? p.danhSachChiTiet[0].duongDanAnh : null))}">
                             <div class="p-4 bg-light rounded-5 text-center">
-                                <img th:src="${p.duongDanAnh != null ? p.duongDanAnh : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800'}"
+                                <img th:src="${displayImg != null ? (displayImg.startsWith('http') ? displayImg : '/uploads/san-pham/' + displayImg) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800'}"
                                     class="img-fluid hover-zoom"
                                     style="max-height: 500px; transition: transform 0.5s ease;" alt="Main Image">
                             </div>
                         </div>
                         <div class="d-flex gap-3 px-2">
                             <div class="rounded-4 border-2 border border-primary p-1 bg-white shadow-sm"
-                                style="width: 80px; height: 80px;">
-                                <img th:src="${p.duongDanAnh != null ? p.duongDanAnh : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800'}"
+                                style="width: 80px; height: 80px;"
+                                th:with="displayImg=${p.duongDanAnh != null ? p.duongDanAnh : (p.danhSachHinhAnh != null && !p.danhSachHinhAnh.isEmpty() ? p.danhSachHinhAnh[0].duongDan : (p.danhSachChiTiet != null && !p.danhSachChiTiet.isEmpty() && p.danhSachChiTiet[0].duongDanAnh != null ? p.danhSachChiTiet[0].duongDanAnh : null))}">
+                                <img th:src="${displayImg != null ? (displayImg.startsWith('http') ? displayImg : '/uploads/san-pham/' + displayImg) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800'}"
                                     class="w-100 h-100 object-fit-cover rounded-3">
                             </div>
                             
@@ -184,15 +186,16 @@
                     <div th:each="rp : ${relatedProducts}" class="col-6 col-md-3">
                         <a th:href="@{'/san-pham/detail/' + ${rp.id}}" class="text-decoration-none p-card-link">
                             <div class="premium-card p-3 h-100 bg-white">
-                                <div class="rounded-4 bg-light p-3 mb-3 text-center overflow-hidden">
-                                    <img th:src="${rp.duongDanAnh != null ? rp.duongDanAnh : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600'}"
-                                        class="img-fluid" style="height: 180px; object-fit: contain;">
+                                <div class="related-img-wrapper mb-3"
+                                    th:with="rpImg=${rp.duongDanAnh != null ? rp.duongDanAnh : (rp.danhSachHinhAnh != null && !rp.danhSachHinhAnh.isEmpty() ? rp.danhSachHinhAnh[0].duongDan : (rp.danhSachChiTiet != null && !rp.danhSachChiTiet.isEmpty() && rp.danhSachChiTiet[0].duongDanAnh != null ? rp.danhSachChiTiet[0].duongDanAnh : null))}">
+                                    <img th:src="${rpImg != null ? (rpImg.startsWith('http') ? rpImg : '/uploads/san-pham/' + rpImg) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600'}"
+                                        class="img-fluid" alt="Related Image">
                                 </div>
-                                <h6 class="fw-bold text-dark text-truncate px-1" th:text="${rp.tenSanPham}">Tên giày
+                                <h6 class="fw-bold text-dark product-title-small px-1" th:text="${rp.tenSanPham}">Tên giày
                                 </h6>
                                 <div class="d-flex justify-content-between align-items-center mt-3 px-1">
-                                    <span class="text-primary fw-bold" th:text="${rp.getKhoangGia()}">Giá</span>
-                                    <i class="bi bi-arrow-up-right-circle-fill text-primary fs-4"></i>
+                                    <span class="text-danger fw-bold" th:text="${rp.getKhoangGia()}">Giá</span>
+                                    <i class="bi bi-arrow-up-right-circle-fill text-danger fs-4"></i>
                                 </div>
                             </div>
                         </a>
@@ -201,6 +204,45 @@
             </section>
         </div>
     </main>
+    <style>
+        .related-img-wrapper {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            border-radius: 12px;
+            background-color: #f8f9fa;
+        }
+
+        .related-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .premium-card {
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid #eee !important;
+        }
+
+        .product-title-small {
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 1.5rem;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .p-card-link:hover .premium-card {
+            transform: translateY(-5px);
+            border-color: #ff4d00 !important;
+        }
+    </style>
 </body>
 
 </html>

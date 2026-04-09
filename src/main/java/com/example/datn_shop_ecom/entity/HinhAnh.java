@@ -14,10 +14,12 @@ public class HinhAnh {
 
     @ManyToOne
     @JoinColumn(name = "id_san_pham")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private SanPham sanPham;
 
     @ManyToOne
     @JoinColumn(name = "id_san_pham_chi_tiet")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private SanPhamChiTiet sanPhamChiTiet;
 
     @Column(columnDefinition = "VARCHAR(MAX)")

@@ -171,11 +171,12 @@ public class SanPhamController {
     @GetMapping("/create")
     public String create(Model model) {
         model.addAttribute("title_focus", "Thiết lập sản phẩm & Biến thể");
-        model.addAttribute("hideLayout", true);
+        model.addAttribute("hideLayout", false);
         return "admin/san-pham/create";
     }
 
     @GetMapping("/detail/{id}")
+    @org.springframework.transaction.annotation.Transactional
     public String detail(@PathVariable Long id, Model model) {
         SanPham sp = sanPhamService.findById(id);
         model.addAttribute("sp", sp);
@@ -188,11 +189,12 @@ public class SanPhamController {
     }
 
     @GetMapping("/edit/{id}")
+    @org.springframework.transaction.annotation.Transactional
     public String edit(@PathVariable Long id, Model model) {
         SanPham sp = sanPhamService.findById(id);
         model.addAttribute("sp", sp);
         model.addAttribute("title_focus", "Chỉnh sửa sản phẩm: " + sp.getTenSanPham());
-        model.addAttribute("hideLayout", true);
+        model.addAttribute("hideLayout", false);
         
         
         java.util.Map<String, Object> spData = new java.util.HashMap<>();
