@@ -68,18 +68,18 @@
 
                     <div class="row g-4">
                         <div th:each="p : ${products}" class="col-6 col-md-4">
-                            <a th:href="@{'/san-pham/detail/' + ${p.id}}" class="text-decoration-none p-card-link">
-                                <div class="product-card border shadow-sm h-100">
+                            <a th:href="@{'/san-pham/detail/' + ${p.id}}" class="text-decoration-none p-card-link d-block h-100">
+                                <div class="product-card border-0 shadow-sm h-100">
                                     <div class="product-img-wrapper mb-3">
                                         <img th:src="${p.duongDanAnh != null ? '/uploads/san-pham/' + p.duongDanAnh : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600'}" 
-                                             class="img-fluid" th:alt="${p.tenSanPham}">
+                                             th:alt="${p.tenSanPham}">
                                     </div>
-                                    <div>
+                                    <div class="d-flex flex-column flex-grow-1">
                                         <small class="text-muted" th:text="${p.danhMuc != null ? p.danhMuc.tenDanhMuc : 'Sneaker'}">Sneaker</small>
                                         <h6 class="fw-bold text-dark mb-2 text-truncate" th:text="${p.tenSanPham}">Tên giày Sneaker</h6>
-                                        <div class="d-flex justify-content-between align-items-center">
-                                            <span class="fw-bold text-primary">Chi tiết</span>
-                                            <i class="bi bi-arrow-right-short text-primary fs-4"></i>
+                                        <div class="mt-auto d-flex justify-content-between align-items-center">
+                                            <span class="fw-bold text-primary small">Chi tiết</span>
+                                            <i class="bi bi-arrow-right-short text-primary fs-5"></i>
                                         </div>
                                     </div>
                                 </div>

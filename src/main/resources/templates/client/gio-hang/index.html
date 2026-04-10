@@ -1,12 +1,277 @@
-﻿<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{client/layout/main :: layout(~{::main}, ${pageTitle})}">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{client/layout/main :: layout(~{::main}, 'Giỏ hàng - PeakSneaker')}">
 <body>
-    <main class="py-5 text-center">
-        <div class="container">
-            <h2 class="fw-bold">GIỎ HÀNG</h2>
-            <p class="text-muted">Chức năng đang được phát triển...</p>
+<main class="py-5" style="background:#f8f9fa; min-height: 70vh;">
+<div class="container">
+
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none text-muted">Trang chủ</a></li>
+            <li class="breadcrumb-item active fw-bold">Giỏ hàng</li>
+        </ol>
+    </nav>
+
+    <!-- EMPTY CART -->
+    <div id="emptyCart" class="text-center py-5 d-none">
+        <div style="font-size:5rem; color:#ddd; line-height:1;">🛒</div>
+        <h4 class="fw-bold mt-3 text-muted">Giỏ hàng trống</h4>
+        <p class="text-muted">Hãy thêm sản phẩm vào giỏ hàng để tiếp tục mua sắm!</p>
+        <a th:href="@{/san-pham}" class="btn btn-premium text-white px-5 py-3 mt-2">
+            <i class="bi bi-bag-heart me-2"></i>Khám phá sản phẩm
+        </a>
+    </div>
+
+    <!-- CART CONTENT -->
+    <div id="cartContent" class="row g-4 d-none">
+        <!-- LEFT: Cart Items -->
+        <div class="col-lg-8">
+            <div class="cart-header mb-3 d-flex justify-content-between align-items-center">
+                <h5 class="fw-bold mb-0">
+                    <i class="bi bi-cart3 me-2 text-primary"></i>
+                    Sản phẩm trong giỏ (<span id="cartCount">0</span>)
+                </h5>
+                <button class="btn btn-sm btn-outline-danger rounded-pill px-3" onclick="clearCart()">
+                    <i class="bi bi-trash3 me-1"></i>Xóa tất cả
+                </button>
+            </div>
+
+            <!-- Stock error alert -->
+            <div id="stockError" class="alert alert-danger rounded-4 d-none mb-3">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                <span id="stockErrorMsg"></span>
+            </div>
+
+            <div id="cartItemsContainer"></div>
         </div>
-    </main>
+
+        <!-- RIGHT: Order Summary -->
+        <div class="col-lg-4">
+            <div class="cart-summary-card">
+                <h6 class="fw-bold mb-4">
+                    <i class="bi bi-receipt me-2 text-primary"></i>Tóm tắt đơn hàng
+                </h6>
+
+                <div class="d-flex justify-content-between mb-2 small">
+                    <span class="text-muted">Tạm tính (<span id="sumCount">0</span> sản phẩm)</span>
+                    <span class="fw-medium" id="sumSubtotal">0 ₫</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2 small">
+                    <span class="text-muted">Phí vận chuyển</span>
+                    <span class="fw-medium text-success" id="sumShip">30.000 ₫</span>
+                </div>
+                <hr class="my-3">
+                <div class="d-flex justify-content-between mb-4">
+                    <span class="fw-bold">Tổng cộng</span>
+                    <span class="fw-black fs-5 text-primary" id="sumTotal">0 ₫</span>
+                </div>
+
+                <!-- Voucher -->
+                <div class="mb-4">
+                    <label class="form-label small fw-medium text-muted">Mã giảm giá</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control rounded-start-pill border-end-0"
+                            placeholder="Nhập mã voucher" id="voucherInput" style="border: 1.5px solid #e0e0e0;">
+                        <button class="btn btn-outline-primary rounded-end-pill border-start-0 border px-3"
+                            onclick="applyVoucher()" style="border: 1.5px solid #e0e0e0;">Áp dụng</button>
+                    </div>
+                </div>
+
+                <!-- Checkout button -->
+                <button class="btn btn-premium text-white w-100 py-3 fw-bold" onclick="proceedToCheckout()" id="checkoutBtn">
+                    <i class="bi bi-credit-card me-2"></i>TIẾN HÀNH THANH TOÁN
+                </button>
+                <a th:href="@{/san-pham}" class="btn btn-outline-secondary rounded-pill w-100 mt-2 py-2">
+                    <i class="bi bi-arrow-left me-1"></i>Tiếp tục mua sắm
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+</main>
+
+<style>
+    .cart-summary-card {
+        background: white; border-radius: 24px; padding: 1.8rem;
+        border: 1px solid #f0f0f0; box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        position: sticky; top: 100px;
+    }
+    .cart-item-card {
+        background: white; border-radius: 20px; padding: 1.2rem 1.5rem;
+        border: 1px solid #f0f0f0; box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        margin-bottom: 12px; transition: all 0.2s;
+    }
+    .cart-item-card:hover { border-color: rgba(212,125,50,0.3); }
+    .cart-item-img {
+        width: 80px; height: 80px; border-radius: 12px;
+        object-fit: cover; border: 1px solid #eee; flex-shrink: 0;
+    }
+    .qty-control {
+        display: flex; align-items: center; gap: 8px;
+        background: #f8f9fa; border-radius: 50px; padding: 4px 8px;
+    }
+    .qty-btn {
+        width: 30px; height: 30px; border-radius: 50%; border: none;
+        background: white; box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        cursor: pointer; display: flex; align-items: center; justify-content: center;
+        font-weight: 700; transition: all 0.2s; color: #333;
+    }
+    .qty-btn:hover { background: #d47d32; color: white; }
+    .qty-value { font-weight: 700; min-width: 28px; text-align: center; }
+    .item-remove-btn {
+        color: #ccc; font-size: 1.2rem; cursor: pointer; transition: color 0.2s;
+        background: none; border: none; padding: 4px;
+    }
+    .item-remove-btn:hover { color: #e74c3c; }
+</style>
+
+<script>
+    const SHIP_FEE = 30000;
+    const FALLBACK_IMG = 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=120';
+
+    /* ===== CART STORAGE ===== */
+    function getCart() {
+        try { return JSON.parse(localStorage.getItem('pk_cart') || '[]'); } catch { return []; }
+    }
+    function saveCart(cart) {
+        localStorage.setItem('pk_cart', JSON.stringify(cart));
+        updateNavCartBadge();
+    }
+    function updateNavCartBadge() {
+        const cart = getCart();
+        const total = cart.reduce((s, i) => s + i.soLuong, 0);
+        const badge = document.getElementById('cartBadge');
+        if (badge) badge.textContent = total;
+    }
+
+    /* ===== RENDER CART ===== */
+    function renderCart() {
+        const cart = getCart();
+        const empty = document.getElementById('emptyCart');
+        const content = document.getElementById('cartContent');
+
+        if (cart.length === 0) {
+            empty.classList.remove('d-none');
+            content.classList.add('d-none');
+            return;
+        }
+        empty.classList.add('d-none');
+        content.classList.remove('d-none');
+
+        const container = document.getElementById('cartItemsContainer');
+        container.innerHTML = cart.map((item, idx) => `
+            <div class="cart-item-card" id="item-${idx}">
+                <div class="d-flex align-items-center gap-3">
+                    <img src="${item.anh || FALLBACK_IMG}" alt="${item.ten}"
+                        class="cart-item-img"
+                        onerror="this.src='${FALLBACK_IMG}'">
+                    <div class="flex-grow-1">
+                        <div class="fw-bold mb-1" style="font-size:0.92rem;">${item.ten}</div>
+                        <div class="small text-muted mb-2">
+                            ${item.mauSac ? `<span class="badge bg-light text-dark border me-1">${item.mauSac}</span>` : ''}
+                            ${item.kichThuoc ? `<span class="badge bg-light text-dark border">${item.kichThuoc}</span>` : ''}
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                            <div class="qty-control">
+                                <button class="qty-btn" onclick="changeQty(${idx}, -1)">−</button>
+                                <span class="qty-value">${item.soLuong}</span>
+                                <button class="qty-btn" onclick="changeQty(${idx}, 1)">+</button>
+                            </div>
+                            <span class="fw-black text-primary">${formatVND(item.gia * item.soLuong)}</span>
+                        </div>
+                    </div>
+                    <button class="item-remove-btn" onclick="removeItem(${idx})" title="Xóa">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </button>
+                </div>
+            </div>
+        `).join('');
+
+        updateSummary(cart);
+    }
+
+    function updateSummary(cart) {
+        const count = cart.reduce((s, i) => s + i.soLuong, 0);
+        const subtotal = cart.reduce((s, i) => s + (i.gia * i.soLuong), 0);
+        const total = subtotal + SHIP_FEE;
+        document.getElementById('cartCount').textContent = cart.length;
+        document.getElementById('sumCount').textContent = count;
+        document.getElementById('sumSubtotal').textContent = formatVND(subtotal);
+        document.getElementById('sumTotal').textContent = formatVND(total);
+    }
+
+    function formatVND(n) {
+        return new Intl.NumberFormat('vi-VN').format(n) + ' ₫';
+    }
+
+    /* ===== CART ACTIONS ===== */
+    function changeQty(idx, delta) {
+        const cart = getCart();
+        cart[idx].soLuong = Math.max(1, cart[idx].soLuong + delta);
+        saveCart(cart);
+        renderCart();
+    }
+    function removeItem(idx) {
+        const cart = getCart();
+        cart.splice(idx, 1);
+        saveCart(cart);
+        renderCart();
+    }
+    function clearCart() {
+        if (confirm('Xóa tất cả sản phẩm khỏi giỏ hàng?')) {
+            saveCart([]);
+            renderCart();
+        }
+    }
+    function applyVoucher() {
+        alert('Tính năng voucher sẽ được áp dụng ở trang thanh toán.');
+    }
+
+    /* ===== CHECKOUT ===== */
+    async function proceedToCheckout() {
+        const cart = getCart();
+        if (cart.length === 0) return;
+
+        // Validate stock via API
+        document.getElementById('checkoutBtn').disabled = true;
+        document.getElementById('checkoutBtn').innerHTML =
+            '<span class="spinner-border spinner-border-sm me-2"></span>Đang kiểm tra...';
+
+        try {
+            const payload = cart.map(i => ({ spctId: i.spctId, soLuong: i.soLuong }));
+            const res = await fetch('/api/client/validate-cart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+
+            if (!data.success) {
+                const errNames = data.errors.map(e =>
+                    `${e.tenSanPham} (yêu cầu: ${e.soLuongYeuCau}, còn: ${e.soTonKho})`
+                ).join(', ');
+                document.getElementById('stockErrorMsg').textContent =
+                    'Một số sản phẩm không đủ tồn kho: ' + errNames;
+                document.getElementById('stockError').classList.remove('d-none');
+                document.getElementById('stockError').scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+            document.getElementById('stockError').classList.add('d-none');
+            window.location.href = '/thanh-toan';
+        } catch (e) {
+            alert('Lỗi kết nối, vui lòng thử lại!');
+        } finally {
+            document.getElementById('checkoutBtn').disabled = false;
+            document.getElementById('checkoutBtn').innerHTML =
+                '<i class="bi bi-credit-card me-2"></i>TIẾN HÀNH THANH TOÁN';
+        }
+    }
+
+    /* ===== INIT ===== */
+    document.addEventListener('DOMContentLoaded', () => {
+        renderCart();
+        updateNavCartBadge();
+    });
+</script>
 </body>
 </html>
-

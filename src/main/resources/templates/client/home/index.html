@@ -3,67 +3,238 @@
 
 <body>
     <main>
-        <section class="hero-section">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-lg-7">
-                        <h1 class="mb-4">Hệ thống giày Sneaker <br><span class="text-primary">đẳng cấp</span></h1>
-                        <p class="lead mb-5 opacity-75">Khám phá bộ sưu tập mới nhất với chất lượng dịch vụ hàng đầu.</p>
-                        <div class="d-flex gap-3">
-                            <a th:href="@{/san-pham}" class="btn btn-premium text-white px-5">MUA NGAY</a>
+        <!-- HERO SECTION -->
+        <section class="hero-section position-relative overflow-hidden">
+            <div class="hero-bg-overlay"></div>
+            <div class="container position-relative" style="z-index:2;">
+                <div class="row align-items-center min-vh-60">
+                    <div class="col-lg-6">
+                        <span class="badge bg-primary px-3 py-2 mb-3 rounded-pill fw-normal" style="font-size:0.8rem; letter-spacing:1px;">🔥 BỘ SƯU TẬP MỚI 2026</span>
+                        <h1 class="hero-title fw-black mb-4">Sneaker <br><span class="text-gradient">Đẳng Cấp</span><br>Chính Hãng</h1>
+                        <p class="lead mb-5 text-muted">Khám phá hàng ngàn mẫu giày Sneaker chính hãng với chất lượng vượt trội và phong cách thời thượng.</p>
+                        <div class="d-flex gap-3 flex-wrap">
+                            <a th:href="@{/san-pham}" class="btn btn-premium text-white px-5 py-3 fs-6">
+                                <i class="bi bi-bag-fill me-2"></i>MUA NGAY
+                            </a>
+                            <a href="#new-arrivals" class="btn btn-outline-dark rounded-pill px-5 py-3 fs-6 fw-bold">
+                                Xem mới nhất <i class="bi bi-arrow-down ms-1"></i>
+                            </a>
+                        </div>
+                        <!-- Stats -->
+                        <div class="d-flex gap-4 mt-5">
+                            <div>
+                                <div class="fw-black fs-4 text-primary">5000+</div>
+                                <div class="text-muted small">Khách hàng</div>
+                            </div>
+                            <div class="vr"></div>
+                            <div>
+                                <div class="fw-black fs-4 text-primary">200+</div>
+                                <div class="text-muted small">Mẫu giày</div>
+                            </div>
+                            <div class="vr"></div>
+                            <div>
+                                <div class="fw-black fs-4 text-primary">100%</div>
+                                <div class="text-muted small">Chính hãng</div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-lg-5 d-none d-lg-block">
-                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600" class="img-fluid rounded-4" alt="Hero">
+                    <div class="col-lg-6 d-none d-lg-block text-center position-relative">
+                        <div class="hero-img-float">
+                            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=700"
+                                class="img-fluid hero-shoe-img" alt="Featured Sneaker">
+                        </div>
+                        <div class="hero-badge-1 d-none d-xl-flex">
+                            <i class="bi bi-patch-check-fill text-primary me-2 fs-5"></i>
+                            <div>
+                                <div class="fw-bold small">Chính Hãng</div>
+                                <div class="text-muted" style="font-size:0.7rem;">100% Authentic</div>
+                            </div>
+                        </div>
+                        <div class="hero-badge-2 d-none d-xl-flex">
+                            <i class="bi bi-truck text-success me-2 fs-5"></i>
+                            <div>
+                                <div class="fw-bold small">Miễn phí ship</div>
+                                <div class="text-muted" style="font-size:0.7rem;">Từ 500k</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        
-        <section class="py-4 border-top border-bottom bg-white">
+        <!-- VOUCHER MARQUEE -->
+        <section class="py-3 bg-primary">
             <div class="container">
-                <div class="d-flex gap-4 align-items-center overflow-auto scroll-hide py-2">
-                    <div th:each="v : ${hotVouchers}" class="d-flex align-items-center gap-3 pe-4 border-end">
-                        <div class="text-primary fs-4"><i class="bi bi-patch-check-fill"></i></div>
-                        <div>
-                            <div class="fw-bold small" th:text="${v.tenPhieu}">Tên phiếu</div>
-                            <div class="text-primary small fw-bold" th:text="${v.giaTriGiam} + ' ' + ${v.hinhThucGiam}">Giảm 50k</div>
+                <div class="d-flex align-items-center gap-4 overflow-hidden">
+                    <span class="text-white fw-bold small text-nowrap"><i class="bi bi-stars me-1"></i>PHIẾU GIẢM GIÁ HOT:</span>
+                    <div class="d-flex gap-4 align-items-center overflow-auto scroll-hide">
+                        <div th:each="v : ${hotVouchers}" class="d-flex align-items-center gap-2 text-nowrap">
+                            <span class="badge bg-white text-primary rounded-pill px-3 py-2 fw-bold" th:text="${v.tenPhieu}">Voucher</span>
+                            <span class="text-white small fw-medium" th:text="'Giảm ' + ${v.giaTriGiam}">Giảm 50k</span>
+                            <span class="text-white opacity-50 mx-2">|</span>
+                        </div>
+                        <!-- Fallback khi không có voucher -->
+                        <div th:if="${hotVouchers == null or hotVouchers.isEmpty()}" class="d-flex gap-4">
+                            <span class="badge bg-white text-primary rounded-pill px-3 py-2 fw-bold">SUMMER2026</span>
+                            <span class="text-white small">Giảm 10% cho đơn từ 1 triệu</span>
+                            <span class="text-white opacity-50 mx-2">|</span>
+                            <span class="badge bg-white text-primary rounded-pill px-3 py-2 fw-bold">NEWMEMBER</span>
+                            <span class="text-white small">Giảm 50.000đ cho thành viên mới</span>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        
-        <section class="py-5">
+        <!-- CATEGORIES QUICK NAV -->
+        <section class="py-4 bg-white border-bottom">
+            <div class="container">
+                <div class="row g-3 text-center">
+                    <div class="col-6 col-md-3">
+                        <a href="/san-pham" class="category-chip text-decoration-none d-flex align-items-center gap-2 justify-content-center">
+                            <span class="category-icon">👟</span>
+                            <span class="fw-bold small">Giày Nam</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a href="/san-pham" class="category-chip text-decoration-none d-flex align-items-center gap-2 justify-content-center">
+                            <span class="category-icon">👠</span>
+                            <span class="fw-bold small">Giày Nữ</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a href="/san-pham" class="category-chip text-decoration-none d-flex align-items-center gap-2 justify-content-center">
+                            <span class="category-icon">🏃</span>
+                            <span class="fw-bold small">Thể Thao</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a href="/san-pham" class="category-chip text-decoration-none d-flex align-items-center gap-2 justify-content-center">
+                            <span class="category-icon">✨</span>
+                            <span class="fw-bold small">Cao Cấp</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SẢN PHẨM MỚI NHẤT -->
+        <section class="py-5 bg-light" id="new-arrivals">
             <div class="container">
                 <div class="d-flex justify-content-between align-items-end mb-5">
                     <div>
-                        <h2 class="section-title-premium fs-1">SẢN PHẨM MỚI NHẤT</h2>
-                        <p class="text-muted mt-2 mb-0">Những mẫu Sneaker vừa cập bến tại PeakSneaker.</p>
+                        <p class="text-primary fw-bold small text-uppercase mb-1" style="letter-spacing:2px;">✦ MỚI NHẤT</p>
+                        <h2 class="section-title-premium fs-1 mb-0">SẢN PHẨM MỚI</h2>
                     </div>
-                    <a th:href="@{/san-pham}" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold small">XEM TẤT CẢ <i class="bi bi-arrow-right ms-1"></i></a>
+                    <a th:href="@{/san-pham}" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold small">
+                        XEM TẤT CẢ <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
                 </div>
                 <div class="row g-4">
                     <div th:each="p : ${latestProducts}" class="col-6 col-md-3">
                         <a th:href="@{'/san-pham/detail/' + ${p.id}}" class="text-decoration-none p-card-link">
                             <div class="product-card h-100">
-                                <div class="product-img-wrapper" th:with="displayImg=${p.duongDanAnh != null ? p.duongDanAnh : (p.danhSachHinhAnh != null && !p.danhSachHinhAnh.isEmpty() ? p.danhSachHinhAnh[0].duongDan : (p.danhSachChiTiet != null && !p.danhSachChiTiet.isEmpty() && p.danhSachChiTiet[0].duongDanAnh != null ? p.danhSachChiTiet[0].duongDanAnh : null))}">
-                                    <img th:src="${displayImg != null ? (displayImg.startsWith('http') ? displayImg : '/uploads/san-pham/' + displayImg) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600'}" th:alt="${p.tenSanPham}">
+                                <div class="product-badge-new">MỚI</div>
+                                <div class="product-img-wrapper"
+                                    th:with="displayImg=${p.duongDanAnh != null ? p.duongDanAnh : (p.danhSachHinhAnh != null && !p.danhSachHinhAnh.isEmpty() ? p.danhSachHinhAnh[0].duongDan : (p.danhSachChiTiet != null && !p.danhSachChiTiet.isEmpty() && p.danhSachChiTiet[0].duongDanAnh != null ? p.danhSachChiTiet[0].duongDanAnh : null))}">
+                                    <img th:src="${displayImg != null ? (displayImg.startsWith('http') ? displayImg : '/uploads/san-pham/' + displayImg) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600'}"
+                                        th:alt="${p.tenSanPham}"
+                                        onerror="this.src='https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600'">
                                 </div>
                                 <div class="card-content">
                                     <small class="text-muted mb-1 d-block" th:text="${p.danhMuc != null ? p.danhMuc.tenDanhMuc : 'Sneaker'}">Sneaker</small>
                                     <h6 class="fw-bold text-dark mb-2 product-title" th:text="${p.tenSanPham}">Tên giày</h6>
                                     <div class="mt-auto">
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <span class="fw-bold text-danger fs-6" th:text="${p.getKhoangGia()}">Giá</span>
-                                            <i class="bi bi-arrow-right-short text-danger fs-5"></i>
+                                            <span class="fw-bold text-primary fs-6" th:text="${p.getKhoangGia()}">Giá</span>
+                                            <span class="btn btn-sm btn-outline-primary rounded-pill px-3" style="font-size:0.7rem;">Xem →</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </a>
+                    </div>
+                    <!-- Demo fallback -->
+                    <div th:if="${latestProducts == null or latestProducts.isEmpty()}" class="col-12">
+                        <div class="text-center py-5 text-muted">
+                            <i class="bi bi-box-seam fs-1 opacity-25"></i>
+                            <p class="mt-3">Chưa có sản phẩm nào.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SẢN PHẨM BÁN CHẠY -->
+        <section class="py-5 bg-white">
+            <div class="container">
+                <div class="d-flex justify-content-between align-items-end mb-5">
+                    <div>
+                        <p class="text-danger fw-bold small text-uppercase mb-1" style="letter-spacing:2px;">🔥 HOT</p>
+                        <h2 class="section-title-premium fs-1 mb-0" style="--accent: #e74c3c;">BÁN CHẠY NHẤT</h2>
+                    </div>
+                    <a th:href="@{/san-pham}" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold small">
+                        XEM TẤT CẢ <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                </div>
+                <div class="row g-4">
+                    <div th:each="p : ${bestSellerProducts}" class="col-6 col-md-3">
+                        <a th:href="@{'/san-pham/detail/' + ${p.id}}" class="text-decoration-none p-card-link">
+                            <div class="product-card h-100">
+                                <div class="product-badge-hot">HOT</div>
+                                <div class="product-img-wrapper"
+                                    th:with="displayImg=${p.duongDanAnh != null ? p.duongDanAnh : (p.danhSachHinhAnh != null && !p.danhSachHinhAnh.isEmpty() ? p.danhSachHinhAnh[0].duongDan : (p.danhSachChiTiet != null && !p.danhSachChiTiet.isEmpty() && p.danhSachChiTiet[0].duongDanAnh != null ? p.danhSachChiTiet[0].duongDanAnh : null))}">
+                                    <img th:src="${displayImg != null ? (displayImg.startsWith('http') ? displayImg : '/uploads/san-pham/' + displayImg) : 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?q=80&w=600'}"
+                                        th:alt="${p.tenSanPham}"
+                                        onerror="this.src='https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?q=80&w=600'">
+                                </div>
+                                <div class="card-content">
+                                    <small class="text-muted mb-1 d-block" th:text="${p.danhMuc != null ? p.danhMuc.tenDanhMuc : 'Sneaker'}">Sneaker</small>
+                                    <h6 class="fw-bold text-dark mb-2 product-title" th:text="${p.tenSanPham}">Tên giày bán chạy</h6>
+                                    <div class="mt-auto">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="fw-bold text-danger fs-6" th:text="${p.getKhoangGia()}">Giá</span>
+                                            <span class="btn btn-sm btn-outline-danger rounded-pill px-3" style="font-size:0.7rem;">Xem →</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <!-- Fallback khi không có dữ liệu bán chạy -->
+                    <div th:if="${bestSellerProducts == null or bestSellerProducts.isEmpty()}" class="col-12">
+                        <div class="text-center py-5 text-muted">
+                            <i class="bi bi-fire fs-1 opacity-25"></i>
+                            <p class="mt-3">Chưa có dữ liệu bán chạy.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TRUST BADGES -->
+        <section class="py-5 bg-dark text-white">
+            <div class="container">
+                <div class="row g-4 text-center">
+                    <div class="col-6 col-md-3">
+                        <i class="bi bi-patch-check-fill fs-1 text-primary mb-3 d-block"></i>
+                        <h6 class="fw-bold">Chính Hãng 100%</h6>
+                        <p class="text-muted small mb-0">Cam kết tất cả sản phẩm đều chính hãng từ nhà sản xuất.</p>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <i class="bi bi-truck fs-1 text-primary mb-3 d-block"></i>
+                        <h6 class="fw-bold">Miễn Phí Vận Chuyển</h6>
+                        <p class="text-muted small mb-0">Giao hàng miễn phí cho đơn hàng trên 500.000đ toàn quốc.</p>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <i class="bi bi-arrow-counterclockwise fs-1 text-primary mb-3 d-block"></i>
+                        <h6 class="fw-bold">Đổi Trả Dễ Dàng</h6>
+                        <p class="text-muted small mb-0">Hỗ trợ đổi trả trong 30 ngày nếu có lỗi từ nhà sản xuất.</p>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <i class="bi bi-headset fs-1 text-primary mb-3 d-block"></i>
+                        <h6 class="fw-bold">Hỗ Trợ 24/7</h6>
+                        <p class="text-muted small mb-0">Đội ngũ hỗ trợ khách hàng luôn sẵn sàng giúp đỡ bạn.</p>
                     </div>
                 </div>
             </div>
@@ -71,46 +242,123 @@
     </main>
 
     <style>
+        .hero-section {
+            min-height: 75vh;
+            background: linear-gradient(135deg, #fff9f5 0%, #ffffff 60%, #fdf0e8 100%);
+            display: flex;
+            align-items: center;
+            padding: 4rem 0;
+        }
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            line-height: 1.1;
+            letter-spacing: -2px;
+            font-weight: 900;
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #d47d32, #e9a45e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-shoe-img {
+            max-height: 520px;
+            filter: drop-shadow(0 30px 50px rgba(212,125,50,0.25));
+            animation: floatShoe 4s ease-in-out infinite;
+        }
+        @keyframes floatShoe {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-18px); }
+        }
+        .hero-badge-1, .hero-badge-2 {
+            position: absolute;
+            background: white;
+            padding: 12px 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            align-items: center;
+        }
+        .hero-badge-1 { top: 10%; right: 5%; }
+        .hero-badge-2 { bottom: 15%; left: 0; }
+
+        .category-chip {
+            padding: 12px 20px;
+            border-radius: 50px;
+            border: 2px solid #eee;
+            color: #333;
+            transition: all 0.25s;
+            background: #fafafa;
+        }
+        .category-chip:hover {
+            border-color: #d47d32;
+            background: rgba(212,125,50,0.06);
+            color: #d47d32;
+            transform: translateY(-2px);
+        }
+        .category-icon { font-size: 1.3rem; }
+
         .product-card {
-            border-radius: 15px;
+            border-radius: 20px;
             overflow: hidden;
-            transition: all 0.3s ease;
+            transition: all 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
             background: #fff;
             display: flex;
             flex-direction: column;
-            border: 1px solid #eee !important;
+            border: 1px solid #f0f0f0 !important;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            position: relative;
         }
-
+        .p-card-link:hover .product-card {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(212,125,50,0.18);
+            border-color: #d47d32 !important;
+        }
+        .product-badge-new {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: #1abc9c;
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding: 4px 10px;
+            border-radius: 50px;
+            z-index: 2;
+        }
+        .product-badge-hot {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding: 4px 10px;
+            border-radius: 50px;
+            z-index: 2;
+        }
         .product-img-wrapper {
             width: 100%;
             aspect-ratio: 1 / 1;
             overflow: hidden;
             background-color: #f8f9fa;
         }
-
         .product-img-wrapper img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.5s ease;
+            transition: transform 0.55s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
-
-        .product-card:hover .product-img-wrapper img {
-            transform: scale(1.05);
-        }
-
-        .p-card-link:hover .product-card {
-            transform: translateY(-5px);
-            border-color: #ff4d00 !important;
-        }
+        .p-card-link:hover .product-img-wrapper img { transform: scale(1.08); }
 
         .card-content {
-            padding: 1rem;
+            padding: 1rem 1.1rem;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
         }
-
         .product-title {
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -119,9 +367,18 @@
             overflow: hidden;
             height: 2.6rem;
             line-height: 1.3;
-            font-size: 0.95rem;
+            font-size: 0.92rem;
+        }
+
+        .section-title-premium::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 4px;
+            background: var(--primary-color, #d47d32);
+            border-radius: 10px;
+            margin-top: 10px;
         }
     </style>
 </body>
 </html>
-

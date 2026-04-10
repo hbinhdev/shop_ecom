@@ -7,6 +7,7 @@ public interface KhachHangService {
     org.springframework.data.domain.Page<KhachHang> filterKhachHangPage(String search, String gioiTinh, Boolean xoaMem, org.springframework.data.domain.Pageable pageable);
     java.util.List<KhachHang> getAllKhachHangs();
     KhachHang saveKhachHang(KhachHang khachHang);
+    KhachHang registerKhachHang(KhachHang khachHang);
     KhachHang findById(Long id);
     void toggleStatus(Long id);
     String generateMaKhachHang();
