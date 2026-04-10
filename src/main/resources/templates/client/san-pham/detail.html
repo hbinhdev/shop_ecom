@@ -92,19 +92,21 @@
                             </div>
                         </div>
 
-                        
+                        <!-- Quantity & Action -->
                         <div class="d-flex gap-3 mb-5 mt-4">
-                            <div class="dropdown">
-                                <button
-                                    class="btn btn-light rounded-pill px-4 py-3 fw-bold border overflow-hidden d-flex align-items-center gap-3 shadow-sm bg-white"
-                                    type="button">
-                                    <span class="small text-muted">Số lượng:</span> <span class="fs-5">1</span> <i
-                                        class="bi bi-chevron-down small"></i>
-                                </button>
+                            <div class="qty-selector-detail">
+                                <button class="btn-qty" onclick="changeDetailQty(-1)">−</button>
+                                <input type="number" id="detailQty" value="1" min="1" class="qty-input-detail">
+                                <button class="btn-qty" onclick="changeDetailQty(1)">+</button>
                             </div>
-                            <button class="btn btn-premium flex-grow-1 fs-5 py-3">
+                            <button class="btn btn-premium flex-grow-1 fs-5 py-3" onclick="handleAddToCart()">
                                 <i class="bi bi-bag-plus-fill me-2"></i> THÊM VÀO GIỎ HÀNG
                             </button>
+                        </div>
+
+                        <!-- Stock Info -->
+                        <div id="variantStockInfo" class="mb-4 small text-muted d-none">
+                            Tồn kho: <span id="stockCount" class="fw-bold text-dark">0</span> sản phẩm
                         </div>
                     </div>
                 </div>
@@ -242,7 +244,122 @@
             transform: translateY(-5px);
             border-color: #ff4d00 !important;
         }
+
+        /* Qty selector */
+        .qty-selector-detail {
+            display: flex; align-items: center; background: #f8f9fa;
+            border-radius: 50px; border: 1.5px solid #eee; padding: 4px;
+        }
+        .btn-qty {
+            width: 44px; height: 44px; border-radius: 50%; border: none;
+            background: white; color: #333; font-weight: bold; font-size: 1.2rem;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s;
+        }
+        .btn-qty:hover { background: #d47d32; color: white; }
+        .qty-input-detail {
+            width: 50px; border: none; background: transparent; text-align: center;
+            font-weight: 700; font-size: 1.1rem; outline: none;
+        }
+        .qty-input-detail::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+        /* Color/Size Active */
+        .glass-swatch { 
+            cursor: pointer; padding: 8px 16px; border-radius: 12px; border: 1.5px solid #eee;
+            font-size: 0.85rem; font-weight: 600; transition: all 0.2s; background: white;
+        }
+        .glass-swatch:hover { border-color: #d47d32; }
+        .glass-swatch.active { border-color: #d47d32; background: rgba(212,125,50,0.05); color: #d47d32; }
+        .glass-swatch.disabled { opacity: 0.4; cursor: not-allowed; text-decoration: line-through; }
     </style>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const variants = /*[[${variants}]]*/ [];
+        const product = /*[[${p}]]*/ {};
+        /*]]>*/
+
+        let selectedColor = null;
+        let selectedSize = null;
+
+        document.querySelectorAll('[data-color]').forEach(el => {
+            el.addEventListener('click', () => {
+                document.querySelectorAll('[data-color]').forEach(x => x.classList.remove('active'));
+                el.classList.add('active');
+                selectedColor = el.getAttribute('data-color');
+                updateStockInfo();
+            });
+        });
+
+        document.querySelectorAll('[data-size]').forEach(el => {
+            el.addEventListener('click', () => {
+                document.querySelectorAll('[data-size]').forEach(x => x.classList.remove('active'));
+                el.classList.add('active');
+                selectedSize = el.getAttribute('data-size');
+                updateStockInfo();
+            });
+        });
+
+        function changeDetailQty(delta) {
+            const input = document.getElementById('detailQty');
+            let val = parseInt(input.value) + delta;
+            input.value = Math.max(1, val);
+        }
+
+        function updateStockInfo() {
+            if (selectedColor && selectedSize) {
+                const match = variants.find(v => v.mauSac.id == selectedColor && v.kichThuoc.id == selectedSize);
+                const infoBox = document.getElementById('variantStockInfo');
+                const countBox = document.getElementById('stockCount');
+                if (match) {
+                    infoBox.classList.remove('d-none');
+                    countBox.textContent = match.soTonKho;
+                } else {
+                    infoBox.classList.add('d-none');
+                }
+            }
+        }
+
+        async function handleAddToCart() {
+            if (!selectedColor || !selectedSize) {
+                alert('Vui lòng chọn Màu sắc và Kích thước!');
+                return;
+            }
+
+            const match = variants.find(v => v.mauSac.id == selectedColor && v.kichThuoc.id == selectedSize);
+            if (!match) {
+                alert('Biến thể này hiện không tồn tại hoặc đã hết hàng!');
+                return;
+            }
+
+            const qty = parseInt(document.getElementById('detailQty').value);
+            if (match.soTonKho < qty) {
+                alert('Số lượng trong kho không đủ (còn: ' + match.soTonKho + ')');
+                return;
+            }
+
+            // Gọi hàm addToCart global từ auth.js
+            const cartItem = {
+                spctId: match.id,
+                ten: product.tenSanPham,
+                anh: match.duongDanAnh || product.duongDanAnh,
+                gia: match.giaBan,
+                mauSac: match.mauSac.tenMauSac,
+                kichThuoc: match.kichThuoc.tenKichThuoc,
+                soLuong: qty
+            };
+
+            addToCart(cartItem);
+        }
+
+        // Tự động chọn cái đầu tiên
+        document.addEventListener('DOMContentLoaded', () => {
+            const firstColor = document.querySelector('[data-color]');
+            const firstSize = document.querySelector('[data-size]');
+            if (firstColor) firstColor.click();
+            if (firstSize) firstSize.click();
+        });
+    </script>
 </body>
 
 </html>

@@ -161,6 +161,59 @@ public class KhachHangServiceImpl implements KhachHangService {
     }
 
     @Override
+    @Transactional
+    public KhachHang registerKhachHang(KhachHang khachHang) {
+        if (khachHang.getTenDayDu() == null || khachHang.getTenDayDu().trim().isEmpty())
+            throw new RuntimeException("Ho tên không được để trống");
+        if (khachHang.getEmail() == null || !khachHang.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$"))
+            throw new RuntimeException("Email không đúng định dạng");
+        if (khachHang.getSoDienThoai() == null || !khachHang.getSoDienThoai().matches("0\\d{9}"))
+            throw new RuntimeException("Số điện thoại phải gồm 10 chữ số");
+        
+        if (khachHangRepository.existsByEmail(khachHang.getEmail()))
+            throw new RuntimeException("Email đã tồn tại trong hệ thống!");
+        if (khachHangRepository.existsBySoDienThoai(khachHang.getSoDienThoai()))
+            throw new RuntimeException("Số điện thoại đã tồn tại trong hệ thống!");
+            
+        // Tự sinh mật khẩu ngẫu nhiên
+        String randomPwd = generateRandomPassword(8);
+        khachHang.setMatKhau(randomPwd);
+        
+        if (khachHang.getMaKhachHang() == null || khachHang.getMaKhachHang().isEmpty())
+            khachHang.setMaKhachHang(generateMaKhachHang());
+            
+        khachHang.setNgayTao(LocalDateTime.now());
+        khachHang.setXoaMem(false);
+        
+        if (khachHang.getDanhSachDiaChi() != null) {
+            khachHang.getDanhSachDiaChi().forEach(dc -> {
+                dc.setKhachHang(khachHang);
+                dc.setNgayTao(LocalDateTime.now());
+                if (dc.getDiaChiMacDinh() == null) dc.setDiaChiMacDinh(false);
+            });
+        }
+        
+        KhachHang saved = khachHangRepository.save(khachHang);
+        
+        // Gửi mật khẩu qua Email
+        try {
+            String subject = "Chào mừng bạn đến với PeakSneaker - Thông tin tài khoản";
+            String content = "Chào " + saved.getTenDayDu() + ",\n\n" +
+                             "Chúc mừng bạn đã đăng ký tài khoản thành công tại PeakSneaker.\n" +
+                             "Thông tin đăng nhập của bạn như sau:\n" +
+                             "- Email: " + saved.getEmail() + "\n" +
+                             "- Mật khẩu: " + randomPwd + "\n\n" +
+                             "Vui lòng sử dụng mật khẩu này để đăng nhập và bạn có thể đổi lại mật khẩu trong phần Tài khoản.\n" +
+                             "Trân trọng!";
+            emailService.sendEmail(saved.getEmail(), subject, content);
+        } catch (Exception e) {
+            System.err.println("Lỗi gửi mail: " + e.getMessage());
+        }
+        
+        return saved;
+    }
+
+    @Override
     public String generateMaKhachHang() {
         long count = khachHangRepository.count();
         return String.format("KH%05d", count + 1);

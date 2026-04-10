@@ -56,23 +56,24 @@
                 <div class="row g-4">
                     
                     <div th:each="p : ${latestProducts}" class="col-6 col-md-4 col-lg-3">
-                        <div class="product-card border shadow-sm h-100">
-                            <div class="product-img-wrapper mb-3">
-                                <img th:src="${p.duongDanAnh != null ? '/uploads/san-pham/' + p.duongDanAnh : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600'}"
-                                    class="img-fluid" th:alt="${p.tenSanPham}">
-                            </div>
-                            <div>
-                                <small class="text-muted"
-                                    th:text="${p.danhMuc != null ? p.danhMuc.tenDanhMuc : 'Sneaker'}">Sneaker</small>
-                                <h6 class="fw-bold text-dark mb-2 text-truncate" th:text="${p.tenSanPham}">Tên giày
-                                    Sneaker chuẩn Auth</h6>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="fw-bold text-primary">Liên hệ</span>
-                                    <button class="btn btn-sm btn-outline-primary rounded-circle"><i
-                                            class="bi bi-cart-plus"></i></button>
+                        <a th:href="@{'/san-pham/detail/' + ${p.id}}" class="text-decoration-none d-block h-100">
+                            <div class="product-card border-0 shadow-sm h-100">
+                                <div class="product-img-wrapper mb-3">
+                                    <img th:src="${p.duongDanAnh != null ? '/uploads/san-pham/' + p.duongDanAnh : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600'}"
+                                        th:alt="${p.tenSanPham}">
+                                </div>
+                                <div class="d-flex flex-column flex-grow-1">
+                                    <small class="text-muted"
+                                        th:text="${p.danhMuc != null ? p.danhMuc.tenDanhMuc : 'Sneaker'}">Sneaker</small>
+                                    <h6 class="fw-bold text-dark mb-2 text-truncate" th:text="${p.tenSanPham}">Tên giày
+                                        Sneaker chuẩn Auth</h6>
+                                    <div class="mt-auto d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold text-primary small">Chi tiết</span>
+                                        <i class="bi bi-arrow-right-short text-primary fs-5"></i>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 </div>
             </div>

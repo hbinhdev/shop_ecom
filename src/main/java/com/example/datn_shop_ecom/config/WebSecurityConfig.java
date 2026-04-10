@@ -50,10 +50,12 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/admin/**", "/api/admin/**").permitAll()
                         .requestMatchers("/", "/san-pham/**", "/ve-chung-toi/**", "/phieu-giam-gia/**", "/tra-cuu/**",
+                                "/dang-ky", "/dang-nhap", "/gio-hang/**", "/tai-khoan/**", "/thanh-toan/**",
                                 "/client/**", "/assets/**", "/uploads/**", "/css/**", "/js/**", "/images/**",
-                                "/vendor/**").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
+                                "/vendor/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/api/auth/**", "/api/client/**").permitAll()
                         .anyRequest().authenticated());
+
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 

@@ -1,5 +1,7 @@
 package com.example.datn_shop_ecom.controller.client;
 
+import com.example.datn_shop_ecom.entity.DiaChi;
+import com.example.datn_shop_ecom.entity.KhachHang;
 import com.example.datn_shop_ecom.entity.SanPham;
 import com.example.datn_shop_ecom.service.*;
 import com.example.datn_shop_ecom.repository.*;
@@ -7,9 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/")
@@ -23,6 +28,9 @@ public class ClientController {
 
     @Autowired
     private DanhMucService danhMucService;
+
+    @Autowired
+    private KhachHangService khachHangService;
 
     @Autowired
     private ThuongHieuService thuongHieuService;
@@ -111,8 +119,59 @@ public class ClientController {
 
     @GetMapping("/tra-cuu")
     public String trackOrder(Model model) {
-        model.addAttribute("pageTitle", "Tra cứu đơn hàng - PeakSneaker");
-        return "client/tra-cuu";
+        model.addAttribute("pageTitle", "Tra cuưu đơn hàng - PeakSneaker");
+        return "client/tra-cuu/index";
+    }
+
+    @GetMapping("/dang-nhap")
+    public String loginPage(Model model) {
+        model.addAttribute("pageTitle", "Đăng nhập - PeakSneaker");
+        return "client/dang-nhap";
+    }
+
+    @GetMapping("/gio-hang")
+    public String cart(Model model) {
+        model.addAttribute("pageTitle", "Giỏ hàng - PeakSneaker");
+        return "client/gio-hang/index";
+    }
+
+    @GetMapping("/thanh-toan")
+    public String checkout(Model model) {
+        model.addAttribute("pageTitle", "Thanh toán - PeakSneaker");
+        return "client/thanh-toan/index";
+    }
+
+    @GetMapping("/tai-khoan")
+    public String account(Model model) {
+        model.addAttribute("pageTitle", "Tài khoản - PeakSneaker");
+        return "client/tai-khoan/index";
+    }
+
+    // ===== ĐĂNG KÝ TÀI KHOẢN =====
+    @GetMapping("/dang-ky")
+    public String registerForm(Model model) {
+        model.addAttribute("pageTitle", "Đăng ký tài khoản - PeakSneaker");
+        KhachHang khachHang = new KhachHang();
+        khachHang.getDanhSachDiaChi().add(new DiaChi());
+        model.addAttribute("khachHang", khachHang);
+        return "client/dang-ky";
+    }
+
+    @PostMapping("/dang-ky")
+    public String register(
+            @ModelAttribute("khachHang") KhachHang khachHang,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+        try {
+            khachHangService.registerKhachHang(khachHang);
+            redirectAttributes.addFlashAttribute("success", "Đăng ký thành công! Vui lòng kiểm tra Email để nhận mật khẩu đăng nhập.");
+            return "redirect:/dang-nhap";
+        } catch (Exception e) {
+            model.addAttribute("pageTitle", "Đăng ký tài khoản - PeakSneaker");
+            model.addAttribute("khachHang", khachHang);
+            model.addAttribute("error", "Đăng ký thất bại: " + e.getMessage());
+            return "client/dang-ky";
+        }
     }
 }
 

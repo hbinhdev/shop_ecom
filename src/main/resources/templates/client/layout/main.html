@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content, title)">
 
 <head>
@@ -9,7 +9,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
@@ -21,10 +21,48 @@
         }
 
         body {
-            font-family: 'Outfit', sans-serif;
-            background-color: #fcfcfc;
+            font-family: 'Be Vietnam Pro', 'Outfit', sans-serif;
+            background-color: #f5f5f7;
             color: #2b2d42;
         }
+
+        .navbar-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid #d47d32;
+            flex-shrink: 0;
+        }
+        .navbar-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .nav-avatar-initials {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d47d32, #a65d21);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .btn-premium {
+            background: linear-gradient(135deg, #d47d32 0%, #a65d21 100%);
+            border: none;
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+        .btn-premium:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(212,125,50,0.35);
+        }
+        .scroll-hide::-webkit-scrollbar { display: none; }
+        .scroll-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 
     
@@ -73,14 +111,37 @@
                     <a href="#" class="btn btn-link text-dark text-decoration-none">
                         <i class="bi bi-search fs-5"></i>
                     </a>
-                    <a href="#" class="btn btn-link text-dark text-decoration-none position-relative">
+                    <a th:href="@{/gio-hang}" class="btn btn-link text-dark text-decoration-none position-relative">
                         <i class="bi bi-cart3 fs-5"></i>
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary"
-                            style="font-size: 0.6rem;">0</span>
+                            style="font-size: 0.6rem;" id="cartBadge">0</span>
                     </a>
-                    <div id="authSection">
-                        <a th:href="@{/login}" class="btn btn-primary rounded-pill px-4 shadow-sm border-0">Đăng
-                            nhập</a>
+                    <div id="authSection" class="d-flex align-items-center gap-2">
+                        <!-- Nút Đăng ký -->
+                        <a th:href="@{/dang-ky}" class="btn btn-outline-primary rounded-pill px-3 fw-bold d-none d-md-inline-flex" id="registerBtn" style="font-size:0.9rem; border:1.5px solid #d47d32; color:#d47d32;">
+                            Đăng ký
+                        </a>
+                        
+                        <!-- Khi chưa đăng nhập -->
+                        <a th:href="@{/dang-nhap}" class="btn btn-primary rounded-pill px-4 shadow-sm border-0" id="loginBtn">Đăng nhập</a>
+                        
+                        <!-- Khi đã đăng nhập -->
+                        <div class="dropdown d-none" id="userDropdown">
+                            <a href="#" class="d-flex align-items-center gap-2 text-decoration-none" data-bs-toggle="dropdown">
+                                <div class="navbar-avatar">
+                                    <div class="nav-avatar-initials" id="navAvatarInitials">A</div>
+                                </div>
+                                <span class="fw-bold small text-dark" id="navUserName">Tài khoản</span>
+                                <i class="bi bi-chevron-down small text-muted"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm rounded-4 mt-2" style="min-width:200px;">
+                                <li><a class="dropdown-item rounded-3 py-2" href="/tai-khoan"><i class="bi bi-person me-2 text-primary"></i>Tài khoản của tôi</a></li>
+                                <li><a class="dropdown-item rounded-3 py-2" href="/tai-khoan#orders"><i class="bi bi-bag me-2 text-primary"></i>Đơn hàng</a></li>
+                                <li><a class="dropdown-item rounded-3 py-2" href="/tra-cuu"><i class="bi bi-search me-2 text-primary"></i>Tra cứu đơn</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item rounded-3 py-2 text-danger" href="#" onclick="logoutNav(event)"><i class="bi bi-box-arrow-left me-2"></i>Đăng xuất</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
