@@ -29,6 +29,12 @@ public class HoaDonServiceImpl implements HoaDonService {
     private com.example.datn_shop_ecom.repository.ChiTietHoaDonRepository chiTietHoaDonRepository;
 
     @Autowired
+    private com.example.datn_shop_ecom.repository.SanPhamChiTietRepository spctRepository;
+
+    @Autowired
+    private com.example.datn_shop_ecom.repository.TrangThaiHoaDonRepository trangThaiHoaDonRepository;
+
+    @Autowired
     private com.example.datn_shop_ecom.repository.LichSuHoaDonRepository lichSuHoaDonRepository;
 
     @Autowired
@@ -36,6 +42,54 @@ public class HoaDonServiceImpl implements HoaDonService {
 
     @Autowired(required = false)
     private EmailService emailService;
+
+    @Override
+    @Transactional
+    public HoaDon updateTrangThai(Long id, String status, String note, String user) {
+        HoaDon hd = hoaDonRepository.findById(id).orElse(null);
+        if (hd == null) return null;
+
+        String currentStatus = hd.getTrangThaiHoaDon();
+        
+        // Logic trừ tồn kho khi xác nhận đơn hàng
+        // Chú ý: "2" hoặc "DA_XAC_NHAN" là trạng thái xác nhận
+        if (("2".equals(status) || "DA_XAC_NHAN".equals(status)) && 
+            ("1".equals(currentStatus) || "CHO_XAC_NHAN".equals(currentStatus))) {
+            
+            List<ChiTietHoaDon> details = chiTietHoaDonRepository.findByHoaDonId(id);
+            for (ChiTietHoaDon d : details) {
+                com.example.datn_shop_ecom.entity.SanPhamChiTiet spct = d.getSanPhamChiTiet();
+                if (spct != null) {
+                    spct.setSoTonKho(spct.getSoTonKho() - d.getSoLuong());
+                    spctRepository.save(spct);
+                }
+            }
+        }
+
+        hd.setTrangThaiHoaDon(status);
+        hd.setNgaySuaCuoi(LocalDateTime.now());
+        hd.setNguoiSuaCuoi(user);
+        HoaDon saved = hoaDonRepository.save(hd);
+
+        // Lưu lịch sử
+        com.example.datn_shop_ecom.entity.LichSuHoaDon history = new com.example.datn_shop_ecom.entity.LichSuHoaDon();
+        history.setHoaDon(saved);
+        history.setMoTa(note != null ? note : "Cập nhật trạng thái đơn hàng");
+        history.setNguoiTao(user);
+        history.setNgayTao(LocalDateTime.now());
+        
+        // Cố gắng tìm TrangThaiHoaDon entity tương ứng để set
+        try {
+            Long statusId = Long.parseLong(status);
+            trangThaiHoaDonRepository.findById(statusId).ifPresent(history::setTrangThaiMoi);
+        } catch (Exception e) {
+            // Nếu status không phải là số (là string CHO_XAC_NHAN), có thể tìm theo mã hoặc bỏ qua
+        }
+        
+        lichSuHoaDonRepository.save(history);
+
+        return saved;
+    }
 
     @Override
     public List<HoaDon> findAllMatchingInvoices(String maHoaDon, String tenKhachHang, Integer trangThai, Integer loaiHoaDon, LocalDate ngayBatDau, LocalDate ngayKetThuc) {

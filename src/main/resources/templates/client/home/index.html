@@ -9,9 +9,12 @@
             <div class="container position-relative" style="z-index:2;">
                 <div class="row align-items-center min-vh-60">
                     <div class="col-lg-6">
-                        <span class="badge bg-primary px-3 py-2 mb-3 rounded-pill fw-normal" style="font-size:0.8rem; letter-spacing:1px;">🔥 BỘ SƯU TẬP MỚI 2026</span>
-                        <h1 class="hero-title fw-black mb-4">Sneaker <br><span class="text-gradient">Đẳng Cấp</span><br>Chính Hãng</h1>
-                        <p class="lead mb-5 text-muted">Khám phá hàng ngàn mẫu giày Sneaker chính hãng với chất lượng vượt trội và phong cách thời thượng.</p>
+                        <span class="badge bg-primary px-3 py-2 mb-3 rounded-pill fw-normal"
+                            style="font-size:0.8rem; letter-spacing:1px;">🔥 BỘ SƯU TẬP MỚI 2026</span>
+                        <h1 class="hero-title fw-black mb-4">Sneaker <br><span class="text-gradient">Đẳng
+                                Cấp</span><br>Chính Hãng</h1>
+                        <p class="lead mb-5 text-muted">Khám phá hàng ngàn mẫu giày Sneaker chính hãng với chất lượng
+                            vượt trội và phong cách thời thượng.</p>
                         <div class="d-flex gap-3 flex-wrap">
                             <a th:href="@{/san-pham}" class="btn btn-premium text-white px-5 py-3 fs-6">
                                 <i class="bi bi-bag-fill me-2"></i>MUA NGAY
@@ -43,20 +46,7 @@
                             <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=700"
                                 class="img-fluid hero-shoe-img" alt="Featured Sneaker">
                         </div>
-                        <div class="hero-badge-1 d-none d-xl-flex">
-                            <i class="bi bi-patch-check-fill text-primary me-2 fs-5"></i>
-                            <div>
-                                <div class="fw-bold small">Chính Hãng</div>
-                                <div class="text-muted" style="font-size:0.7rem;">100% Authentic</div>
-                            </div>
-                        </div>
-                        <div class="hero-badge-2 d-none d-xl-flex">
-                            <i class="bi bi-truck text-success me-2 fs-5"></i>
-                            <div>
-                                <div class="fw-bold small">Miễn phí ship</div>
-                                <div class="text-muted" style="font-size:0.7rem;">Từ 500k</div>
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -66,10 +56,12 @@
         <section class="py-3 bg-primary">
             <div class="container">
                 <div class="d-flex align-items-center gap-4 overflow-hidden">
-                    <span class="text-white fw-bold small text-nowrap"><i class="bi bi-stars me-1"></i>PHIẾU GIẢM GIÁ HOT:</span>
+                    <span class="text-white fw-bold small text-nowrap"><i class="bi bi-stars me-1"></i>PHIẾU GIẢM GIÁ
+                        HOT:</span>
                     <div class="d-flex gap-4 align-items-center overflow-auto scroll-hide">
                         <div th:each="v : ${hotVouchers}" class="d-flex align-items-center gap-2 text-nowrap">
-                            <span class="badge bg-white text-primary rounded-pill px-3 py-2 fw-bold" th:text="${v.tenPhieu}">Voucher</span>
+                            <span class="badge bg-white text-primary rounded-pill px-3 py-2 fw-bold"
+                                th:text="${v.tenPhieu}">Voucher</span>
                             <span class="text-white small fw-medium" th:text="'Giảm ' + ${v.giaTriGiam}">Giảm 50k</span>
                             <span class="text-white opacity-50 mx-2">|</span>
                         </div>
@@ -87,43 +79,15 @@
         </section>
 
         <!-- CATEGORIES QUICK NAV -->
-        <section class="py-4 bg-white border-bottom">
-            <div class="container">
-                <div class="row g-3 text-center">
-                    <div class="col-6 col-md-3">
-                        <a href="/san-pham" class="category-chip text-decoration-none d-flex align-items-center gap-2 justify-content-center">
-                            <span class="category-icon">👟</span>
-                            <span class="fw-bold small">Giày Nam</span>
-                        </a>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <a href="/san-pham" class="category-chip text-decoration-none d-flex align-items-center gap-2 justify-content-center">
-                            <span class="category-icon">👠</span>
-                            <span class="fw-bold small">Giày Nữ</span>
-                        </a>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <a href="/san-pham" class="category-chip text-decoration-none d-flex align-items-center gap-2 justify-content-center">
-                            <span class="category-icon">🏃</span>
-                            <span class="fw-bold small">Thể Thao</span>
-                        </a>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <a href="/san-pham" class="category-chip text-decoration-none d-flex align-items-center gap-2 justify-content-center">
-                            <span class="category-icon">✨</span>
-                            <span class="fw-bold small">Cao Cấp</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
+
 
         <!-- SẢN PHẨM MỚI NHẤT -->
         <section class="py-5 bg-light" id="new-arrivals">
             <div class="container">
                 <div class="d-flex justify-content-between align-items-end mb-5">
                     <div>
-                        <p class="text-primary fw-bold small text-uppercase mb-1" style="letter-spacing:2px;">✦ MỚI NHẤT</p>
+                        <p class="text-primary fw-bold small text-uppercase mb-1" style="letter-spacing:2px;">✦ MỚI NHẤT
+                        </p>
                         <h2 class="section-title-premium fs-1 mb-0">SẢN PHẨM MỚI</h2>
                     </div>
                     <a th:href="@{/san-pham}" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold small">
@@ -134,7 +98,7 @@
                     <div th:each="p : ${latestProducts}" class="col-6 col-md-3">
                         <a th:href="@{'/san-pham/detail/' + ${p.id}}" class="text-decoration-none p-card-link">
                             <div class="product-card h-100">
-                                <div class="product-badge-new">MỚI</div>
+
                                 <div class="product-img-wrapper"
                                     th:with="displayImg=${p.duongDanAnh != null ? p.duongDanAnh : (p.danhSachHinhAnh != null && !p.danhSachHinhAnh.isEmpty() ? p.danhSachHinhAnh[0].duongDan : (p.danhSachChiTiet != null && !p.danhSachChiTiet.isEmpty() && p.danhSachChiTiet[0].duongDanAnh != null ? p.danhSachChiTiet[0].duongDanAnh : null))}">
                                     <img th:src="${displayImg != null ? (displayImg.startsWith('http') ? displayImg : '/uploads/san-pham/' + displayImg) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600'}"
@@ -142,12 +106,16 @@
                                         onerror="this.src='https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600'">
                                 </div>
                                 <div class="card-content">
-                                    <small class="text-muted mb-1 d-block" th:text="${p.danhMuc != null ? p.danhMuc.tenDanhMuc : 'Sneaker'}">Sneaker</small>
-                                    <h6 class="fw-bold text-dark mb-2 product-title" th:text="${p.tenSanPham}">Tên giày</h6>
+                                    <small class="text-muted mb-1 d-block"
+                                        th:text="${p.danhMuc != null ? p.danhMuc.tenDanhMuc : 'Sneaker'}">Sneaker</small>
+                                    <h6 class="fw-bold text-dark mb-2 product-title" th:text="${p.tenSanPham}">Tên giày
+                                    </h6>
                                     <div class="mt-auto">
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <span class="fw-bold text-primary fs-6" th:text="${p.getKhoangGia()}">Giá</span>
-                                            <span class="btn btn-sm btn-outline-primary rounded-pill px-3" style="font-size:0.7rem;">Xem →</span>
+                                            <span class="fw-bold text-primary fs-6"
+                                                th:text="${p.getKhoangGia()}">Giá</span>
+                                            <span class="btn btn-sm btn-outline-primary rounded-pill px-3"
+                                                style="font-size:0.7rem;">Xem →</span>
                                         </div>
                                     </div>
                                 </div>
@@ -178,10 +146,10 @@
                     </a>
                 </div>
                 <div class="row g-4">
-                    <div th:each="p : ${bestSellerProducts}" class="col-6 col-md-3">
+                    <div th:each="p : ${bestSellers}" class="col-6 col-md-3">
                         <a th:href="@{'/san-pham/detail/' + ${p.id}}" class="text-decoration-none p-card-link">
                             <div class="product-card h-100">
-                                <div class="product-badge-hot">HOT</div>
+
                                 <div class="product-img-wrapper"
                                     th:with="displayImg=${p.duongDanAnh != null ? p.duongDanAnh : (p.danhSachHinhAnh != null && !p.danhSachHinhAnh.isEmpty() ? p.danhSachHinhAnh[0].duongDan : (p.danhSachChiTiet != null && !p.danhSachChiTiet.isEmpty() && p.danhSachChiTiet[0].duongDanAnh != null ? p.danhSachChiTiet[0].duongDanAnh : null))}">
                                     <img th:src="${displayImg != null ? (displayImg.startsWith('http') ? displayImg : '/uploads/san-pham/' + displayImg) : 'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?q=80&w=600'}"
@@ -189,12 +157,16 @@
                                         onerror="this.src='https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?q=80&w=600'">
                                 </div>
                                 <div class="card-content">
-                                    <small class="text-muted mb-1 d-block" th:text="${p.danhMuc != null ? p.danhMuc.tenDanhMuc : 'Sneaker'}">Sneaker</small>
-                                    <h6 class="fw-bold text-dark mb-2 product-title" th:text="${p.tenSanPham}">Tên giày bán chạy</h6>
+                                    <small class="text-muted mb-1 d-block"
+                                        th:text="${p.danhMuc != null ? p.danhMuc.tenDanhMuc : 'Sneaker'}">Sneaker</small>
+                                    <h6 class="fw-bold text-dark mb-2 product-title" th:text="${p.tenSanPham}">Tên giày
+                                        bán chạy</h6>
                                     <div class="mt-auto">
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <span class="fw-bold text-danger fs-6" th:text="${p.getKhoangGia()}">Giá</span>
-                                            <span class="btn btn-sm btn-outline-danger rounded-pill px-3" style="font-size:0.7rem;">Xem →</span>
+                                            <span class="fw-bold text-danger fs-6"
+                                                th:text="${p.getKhoangGia()}">Giá</span>
+                                            <span class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                                                style="font-size:0.7rem;">Xem →</span>
                                         </div>
                                     </div>
                                 </div>
@@ -202,10 +174,10 @@
                         </a>
                     </div>
                     <!-- Fallback khi không có dữ liệu bán chạy -->
-                    <div th:if="${bestSellerProducts == null or bestSellerProducts.isEmpty()}" class="col-12">
+                    <div th:if="${bestSellers == null or bestSellers.isEmpty()}" class="col-12">
                         <div class="text-center py-5 text-muted">
                             <i class="bi bi-fire fs-1 opacity-25"></i>
-                            <p class="mt-3">Chưa có dữ liệu bán chạy.</p>
+                            <p class="mt-3">Chưa có dữ liệu bán chạy nhất.</p>
                         </div>
                     </div>
                 </div>
@@ -219,22 +191,22 @@
                     <div class="col-6 col-md-3">
                         <i class="bi bi-patch-check-fill fs-1 text-primary mb-3 d-block"></i>
                         <h6 class="fw-bold">Chính Hãng 100%</h6>
-                        <p class="text-muted small mb-0">Cam kết tất cả sản phẩm đều chính hãng từ nhà sản xuất.</p>
+                        <p class="text-white-50 small mb-0">Cam kết tất cả sản phẩm đều chính hãng từ nhà sản xuất.</p>
                     </div>
                     <div class="col-6 col-md-3">
                         <i class="bi bi-truck fs-1 text-primary mb-3 d-block"></i>
                         <h6 class="fw-bold">Miễn Phí Vận Chuyển</h6>
-                        <p class="text-muted small mb-0">Giao hàng miễn phí cho đơn hàng trên 500.000đ toàn quốc.</p>
+                        <p class="text-white-50 small mb-0">Giao hàng miễn phí cho đơn hàng trên 500.000đ toàn quốc.</p>
                     </div>
                     <div class="col-6 col-md-3">
                         <i class="bi bi-arrow-counterclockwise fs-1 text-primary mb-3 d-block"></i>
                         <h6 class="fw-bold">Đổi Trả Dễ Dàng</h6>
-                        <p class="text-muted small mb-0">Hỗ trợ đổi trả trong 30 ngày nếu có lỗi từ nhà sản xuất.</p>
+                        <p class="text-white-50 small mb-0">Hỗ trợ đổi trả trong 30 ngày nếu có lỗi từ nhà sản xuất.</p>
                     </div>
                     <div class="col-6 col-md-3">
                         <i class="bi bi-headset fs-1 text-primary mb-3 d-block"></i>
                         <h6 class="fw-bold">Hỗ Trợ 24/7</h6>
-                        <p class="text-muted small mb-0">Đội ngũ hỗ trợ khách hàng luôn sẵn sàng giúp đỡ bạn.</p>
+                        <p class="text-white-50 small mb-0">Đội ngũ hỗ trợ khách hàng luôn sẵn sàng giúp đỡ bạn.</p>
                     </div>
                 </div>
             </div>
@@ -249,37 +221,58 @@
             align-items: center;
             padding: 4rem 0;
         }
+
         .hero-title {
             font-size: clamp(2.5rem, 5vw, 4rem);
             line-height: 1.1;
             letter-spacing: -2px;
             font-weight: 900;
         }
+
         .text-gradient {
             background: linear-gradient(135deg, #d47d32, #e9a45e);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
+
         .hero-shoe-img {
             max-height: 520px;
-            filter: drop-shadow(0 30px 50px rgba(212,125,50,0.25));
+            filter: drop-shadow(0 30px 50px rgba(212, 125, 50, 0.25));
             animation: floatShoe 4s ease-in-out infinite;
         }
+
         @keyframes floatShoe {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-18px); }
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-18px);
+            }
         }
-        .hero-badge-1, .hero-badge-2 {
+
+        .hero-badge-1,
+        .hero-badge-2 {
             position: absolute;
             background: white;
             padding: 12px 20px;
             border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
             align-items: center;
         }
-        .hero-badge-1 { top: 10%; right: 5%; }
-        .hero-badge-2 { bottom: 15%; left: 0; }
+
+        .hero-badge-1 {
+            top: 10%;
+            right: 5%;
+        }
+
+        .hero-badge-2 {
+            bottom: 15%;
+            left: 0;
+        }
 
         .category-chip {
             padding: 12px 20px;
@@ -289,13 +282,17 @@
             transition: all 0.25s;
             background: #fafafa;
         }
+
         .category-chip:hover {
             border-color: #d47d32;
-            background: rgba(212,125,50,0.06);
+            background: rgba(212, 125, 50, 0.06);
             color: #d47d32;
             transform: translateY(-2px);
         }
-        .category-icon { font-size: 1.3rem; }
+
+        .category-icon {
+            font-size: 1.3rem;
+        }
 
         .product-card {
             border-radius: 20px;
@@ -305,14 +302,16 @@
             display: flex;
             flex-direction: column;
             border: 1px solid #f0f0f0 !important;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
             position: relative;
         }
+
         .p-card-link:hover .product-card {
             transform: translateY(-8px);
-            box-shadow: 0 15px 40px rgba(212,125,50,0.18);
+            box-shadow: 0 15px 40px rgba(212, 125, 50, 0.18);
             border-color: #d47d32 !important;
         }
+
         .product-badge-new {
             position: absolute;
             top: 12px;
@@ -326,6 +325,7 @@
             border-radius: 50px;
             z-index: 2;
         }
+
         .product-badge-hot {
             position: absolute;
             top: 12px;
@@ -339,19 +339,24 @@
             border-radius: 50px;
             z-index: 2;
         }
+
         .product-img-wrapper {
             width: 100%;
             aspect-ratio: 1 / 1;
             overflow: hidden;
             background-color: #f8f9fa;
         }
+
         .product-img-wrapper img {
             width: 100%;
             height: 100%;
             object-fit: cover;
             transition: transform 0.55s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
-        .p-card-link:hover .product-img-wrapper img { transform: scale(1.08); }
+
+        .p-card-link:hover .product-img-wrapper img {
+            transform: scale(1.08);
+        }
 
         .card-content {
             padding: 1rem 1.1rem;
@@ -359,6 +364,7 @@
             display: flex;
             flex-direction: column;
         }
+
         .product-title {
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -381,4 +387,5 @@
         }
     </style>
 </body>
+
 </html>

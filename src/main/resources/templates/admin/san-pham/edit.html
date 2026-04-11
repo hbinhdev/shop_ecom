@@ -416,10 +416,35 @@
                     bootstrap.Modal.getInstance(document.getElementById('pickerModal')).hide();
                 },
                 generateVariants() {
-                    const c = $('#idMauSac').val() || []; const s = $('#idKichThuoc').val() || [];
+                    const c = $('#idMauSac').val() || []; 
+                    const s = $('#idKichThuoc').val() || [];
                     if (!c.length || !s.length) return Swal.fire('Thông báo', 'Dữ liệu chưa đầy đủ!', 'warning');
-                    this.variants = []; c.forEach(cid => s.forEach(sid => { this.variants.push({ uid: `${cid}-${sid}`, cId: cid, cName: this.getN('mauSac', cid, 'tenMauSac'), sId: sid, sName: this.getN('kichThuoc', sid, 'tenKichThuoc'), q: '', p: '' }); }));
-                    this.renderR(); this.renderImageCards();
+                    
+                    // Lưu lại các biến thể cũ để map ID
+                    const oldVariants = [...this.variants];
+                    this.variants = []; 
+                    
+                    c.forEach(cid => {
+                        s.forEach(sid => {
+                            const uid = `${cid}-${sid}`;
+                            // Tìm xem biến thể này đã tồn tại chưa
+                            const existing = oldVariants.find(v => v.uid === uid);
+                            
+                            this.variants.push({
+                                id: existing ? existing.id : null, // GIỮ LẠI ID NẾU CÓ
+                                uid: uid,
+                                cId: cid,
+                                cName: this.getN('mauSac', cid, 'tenMauSac'),
+                                sId: sid,
+                                sName: this.getN('kichThuoc', sid, 'tenKichThuoc'),
+                                q: existing ? existing.q : '',
+                                p: existing ? existing.p : ''
+                            });
+                        });
+                    });
+                    
+                    this.renderR(); 
+                    this.renderImageCards();
                     document.getElementById('variantSection').style.display = 'block';
                     document.getElementById('imageSection').style.display = 'block';
                 },

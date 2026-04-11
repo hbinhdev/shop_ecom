@@ -35,16 +35,11 @@ public class ClientController {
     @Autowired
     private ThuongHieuService thuongHieuService;
 
-    @Autowired
-    private ChatLieuService chatLieuService;
-
-    @Autowired
-    private KieuDangService kieuDangService;
-
     @GetMapping("/")
     public String index(Model model) {
         model.addAttribute("pageTitle", "Trang chủ - PeakSneaker");
-        model.addAttribute("latestProducts", sanPhamService.findAllByXoaMemFalse().stream().limit(8).collect(java.util.stream.Collectors.toList()));
+        model.addAttribute("latestProducts", sanPhamService.getLatestProducts(8));
+        model.addAttribute("bestSellers", sanPhamService.getTopBestSellers(8));
         model.addAttribute("hotVouchers", pggService.findAllByXoaMemFalse().stream().limit(4).collect(java.util.stream.Collectors.toList()));
         return "client/home/index";
     }
@@ -55,23 +50,44 @@ public class ClientController {
     @Autowired
     private KichThuocRepository kichThuocRepo;
 
+    @Autowired
+    private KieuDangService kieuDangService;
+
+    @Autowired
+    private ChatLieuService chatLieuService;
+
     @GetMapping("/san-pham")
     public String shop(Model model, 
                        @RequestParam(required = false) Long danhMuc,
                        @RequestParam(required = false) Long thuongHieu,
-                       @RequestParam(required = false) String search) {
+                       @RequestParam(required = false) Long kieuDang,
+                       @RequestParam(required = false) Long chatLieu,
+                       @RequestParam(required = false) Long mauSac,
+                       @RequestParam(required = false) Long kichThuoc,
+                       @RequestParam(required = false, name = "search") String search,
+                       @RequestParam(required = false, defaultValue = "newest") String sort) {
         model.addAttribute("pageTitle", "Cửa hàng - PeakSneaker");
         
-        // Load data for filters
+        // Load data for sidebar filters
         model.addAttribute("danhMucs", danhMucService.findAll());
         model.addAttribute("thuongHieus", thuongHieuService.findAll());
-        model.addAttribute("chatLieus", chatLieuService.findAll());
         model.addAttribute("kieuDangs", kieuDangService.findAll());
+        model.addAttribute("chatLieus", chatLieuService.findAll());
         model.addAttribute("mauSacs", mauSacRepo.findAllByXoaMemFalse());
         model.addAttribute("kichThuocs", kichThuocRepo.findAllByXoaMemFalse());
         
-        // Data products
-        model.addAttribute("products", sanPhamService.findAllByXoaMemFalse());
+        // Keep selected values in UI
+        model.addAttribute("selectedDanhMuc", danhMuc);
+        model.addAttribute("selectedThuongHieu", thuongHieu);
+        model.addAttribute("selectedKieuDang", kieuDang);
+        model.addAttribute("selectedChatLieu", chatLieu);
+        model.addAttribute("selectedMauSac", mauSac);
+        model.addAttribute("selectedKichThuoc", kichThuoc);
+        model.addAttribute("searchQuery", search);
+        model.addAttribute("selectedSort", sort);
+        
+        // Filtered products
+        model.addAttribute("products", sanPhamService.findByClientFilters(search, danhMuc, thuongHieu, kieuDang, chatLieu, mauSac, kichThuoc, sort));
         
         return "client/san-pham/index";
     }
