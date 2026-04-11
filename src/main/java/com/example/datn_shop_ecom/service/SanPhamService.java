@@ -11,6 +11,9 @@ public interface SanPhamService {
     SanPham findById(Long id);
     java.util.List<SanPham> findAll();
     java.util.List<SanPham> findAllByXoaMemFalse();
+    java.util.List<SanPham> findByClientFilters(String search, Long idDanhMuc, Long idThuongHieu, Long idKieuDang, Long idChatLieu, Long idMauSac, Long idKichThuoc, String sort);
+    java.util.List<SanPham> getTopBestSellers(int limit);
+    java.util.List<SanPham> getLatestProducts(int limit);
     void toggleStatus(Long id);
 
     java.io.ByteArrayInputStream exportToExcel(String search, Boolean trangThai, Long idDanhMuc, Long idThuongHieu, Long idKieuDang, Long idChatLieu);

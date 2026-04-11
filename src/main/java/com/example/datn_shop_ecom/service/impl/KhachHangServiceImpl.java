@@ -164,11 +164,11 @@ public class KhachHangServiceImpl implements KhachHangService {
     @Transactional
     public KhachHang registerKhachHang(KhachHang khachHang) {
         if (khachHang.getTenDayDu() == null || khachHang.getTenDayDu().trim().isEmpty())
-            throw new RuntimeException("Ho tên không được để trống");
+            throw new RuntimeException("Họ tên không được để trống");
         if (khachHang.getEmail() == null || !khachHang.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$"))
             throw new RuntimeException("Email không đúng định dạng");
         if (khachHang.getSoDienThoai() == null || !khachHang.getSoDienThoai().matches("0\\d{9}"))
-            throw new RuntimeException("Số điện thoại phải gồm 10 chữ số");
+            throw new RuntimeException("Số điện thoại phải gồm 10 chữ số và bắt đầu bằng số 0");
         
         if (khachHangRepository.existsByEmail(khachHang.getEmail()))
             throw new RuntimeException("Email đã tồn tại trong hệ thống!");

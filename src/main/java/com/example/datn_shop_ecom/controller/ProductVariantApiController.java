@@ -121,6 +121,7 @@ public class ProductVariantApiController {
             }
 
             
+            // 124: Safe variant sync logic
             if (payload.getSanPham().getId() != null) {
                 List<Long> incomingIds = payload.getBienThes().stream()
                         .map(VariantPayload::getId)
@@ -129,8 +130,10 @@ public class ProductVariantApiController {
                 
                 List<SanPhamChiTiet> existingVariants = spctRepo.findBySanPhamId(savedSp.getId());
                 for (SanPhamChiTiet ev : existingVariants) {
-                    if (!incomingIds.contains(ev.getId())) {
-                        
+                    // Only delete if it's NOT in the incoming list AND the incoming list is NOT empty 
+                    // (to prevent wiping all data if frontend sends empty list by mistake)
+                    if (!incomingIds.isEmpty() && !incomingIds.contains(ev.getId())) {
+                        log.info("Deleting variant ID: {} because it was removed in UI", ev.getId());
                         hinhAnhRepo.deleteBySanPhamChiTietId(ev.getId());
                         spctRepo.delete(ev);
                     }
@@ -242,10 +245,13 @@ public class ProductVariantApiController {
                 spct.setMaSanPhamChiTiet("SPCT" + String.format("%05d", spctRepo.count() + 1));
                 spct.setTrangThai("1");
                 spct.setNgayTao(LocalDateTime.now());
+                spct.setNguoiTao("Admin");
             }
             
             spct.setGiaBan(dto.getGiaBan());
             spct.setSoTonKho(dto.getSoLuong());
+            spct.setNgaySuaCuoi(LocalDateTime.now());
+            spct.setNguoiSuaCuoi("Admin");
             
             spctRepo.save(spct);
             return ResponseEntity.ok(Map.of("success", true));

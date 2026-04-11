@@ -103,5 +103,22 @@ public class SanPhamServiceImpl implements SanPhamService {
             row.createCell(4).setCellValue(sp.getXoaMem() != null && sp.getXoaMem() ? "Ngừng kinh doanh" : "Đang kinh doanh");
         });
     }
+
+    @Override
+    public java.util.List<SanPham> findByClientFilters(String search, Long idDanhMuc, Long idThuongHieu, Long idKieuDang, Long idChatLieu, Long idMauSac, Long idKichThuoc, String sortStr) {
+        if (search != null && search.trim().isEmpty()) search = null;
+        org.springframework.data.domain.Sort sort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "id");
+        return sanPhamRepo.findByClientFilters(search, idDanhMuc, idThuongHieu, idKieuDang, idChatLieu, idMauSac, idKichThuoc, sort);
+    }
+
+    @Override
+    public java.util.List<SanPham> getTopBestSellers(int limit) {
+        return sanPhamRepo.findTopBestSellers(org.springframework.data.domain.PageRequest.of(0, limit));
+    }
+
+    @Override
+    public java.util.List<SanPham> getLatestProducts(int limit) {
+        return sanPhamRepo.findAllByXoaMemFalseOrderByIdDesc(org.springframework.data.domain.PageRequest.of(0, limit));
+    }
 }
 

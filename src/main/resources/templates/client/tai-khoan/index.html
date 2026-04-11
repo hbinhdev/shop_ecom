@@ -5,6 +5,12 @@
 <body>
     <main class="py-5" style="background-color: #f8f9fa; min-height: 90vh;">
         <div class="container">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none text-muted">Trang chủ</a></li>
+                    <li class="breadcrumb-item active fw-bold">Tài khoản</li>
+                </ol>
+            </nav>
             <!-- Auth Check Banner -->
             <div id="authRequired" class="text-center py-5 d-none">
                 <div class="display-1 mb-4">🔓</div>

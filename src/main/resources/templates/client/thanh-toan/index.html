@@ -1,10 +1,19 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
     th:replace="~{client/layout/main :: layout(~{::main}, 'Thanh toán - PeakSneaker')}">
 
 <body>
     <main id="co-container" class="py-5" style="background-color: #f8f9fa; min-height: 90vh;">
         <div class="container container-co">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none text-muted">Trang chủ</a>
+                    </li>
+                    <li class="breadcrumb-item"><a th:href="@{/gio-hang}" class="text-decoration-none text-muted">Giỏ
+                            hàng</a></li>
+                    <li class="breadcrumb-item active fw-bold">Thanh toán</li>
+                </ol>
+            </nav>
             <!-- Màn hình chính -->
             <div id="checkoutWrap" class="row g-4">
                 <!-- Cột Trái: Thông tin giao hàng -->
@@ -201,18 +210,27 @@
                 if (cartData.length === 0) {
                     box.innerHTML = '<div class="text-center py-4 text-muted small">Chưa có sản phẩm nào được chọn</div>';
                 } else {
-                    box.innerHTML = cartData.map(i => `
-                    <div class="d-flex gap-3 mb-3 border-bottom pb-3 border-light">
-                        <img src="${i.anh.startsWith('/') ? i.anh : '/' + i.anh}" class="rounded-3" style="width:64px;height:64px;object-fit:cover;">
-                        <div class="flex-grow-1 min-w-0">
-                            <div class="fw-bold text-truncate small">${i.ten}</div>
-                            <div class="text-muted tiny">Size: ${i.kichThuoc} | Màu: ${i.mauSac}</div>
-                            <div class="d-flex justify-content-between mt-1">
-                                <span class="small">${i.soLuong} x ${formPrice(i.gia)}</span>
-                                <span class="fw-bold text-primary small">${formPrice(i.gia * i.soLuong)}</span>
+                    box.innerHTML = cartData.map(i => {
+                        let imgSrc = i.anh || i.duongDanAnh;
+                        if (imgSrc && !imgSrc.startsWith('http') && !imgSrc.startsWith('/uploads/')) {
+                            imgSrc = '/uploads/san-pham/' + imgSrc;
+                        } else if (!imgSrc) {
+                            imgSrc = 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=120';
+                        }
+
+                        return `
+                        <div class="d-flex gap-3 mb-3 border-bottom pb-3 border-light">
+                            <img src="${imgSrc}" class="rounded-3" style="width:64px;height:64px;object-fit:cover;">
+                            <div class="flex-grow-1 min-w-0">
+                                <div class="fw-bold text-truncate small">${i.ten || i.tenSanPham}</div>
+                                <div class="text-muted tiny">Size: ${i.kichThuoc} | Màu: ${i.mauSac}</div>
+                                <div class="d-flex justify-content-between mt-1">
+                                    <span class="small">${i.soLuong} x ${formPrice(i.gia)}</span>
+                                    <span class="fw-bold text-primary small">${formPrice(i.gia * i.soLuong)}</span>
+                                </div>
                             </div>
-                        </div>
-                    </div>`).join('');
+                        </div>`;
+                    }).join('');
                 }
                 document.getElementById('itemCount').innerText = cartData.length;
                 calcTotal();
@@ -385,7 +403,7 @@
                         msg.innerHTML = `<span class="text-danger small">${d.message}</span>`;
                     }
                     calcTotal();
-                } catch (e) { msg.innerHTML = 'Lỗi kết nối'; }
+                } catch (e) { msg.innerHTML = ''; }
             }
 
             async function placeOrder() {
@@ -431,7 +449,7 @@
                         let fullCart = JSON.parse(localStorage.getItem('pk_cart') || '[]');
                         let remaining = fullCart.filter(item => !cartData.some(bought => bought.spctId == item.spctId));
                         localStorage.setItem('pk_cart', JSON.stringify(remaining));
-                        
+
                         localStorage.removeItem('pk_selected_items');
                         document.getElementById('checkoutWrap').style.display = 'none';
                         document.getElementById('successScreen').style.display = 'block';

@@ -5,10 +5,12 @@
 <body>
     <main class="py-5" style="background-color: #f8f9fa; min-height: 90vh;">
         <div class="container">
-            <!-- Breadcrumb -->
-            <!-- <div class="mb-4">
-            <h5 class="fw-bold"><i class="bi bi-person-plus"></i> Đăng ký / <span class="text-muted fw-normal">Thành viên mới</span></h5>
-        </div> -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none text-muted">Trang chủ</a></li>
+                    <li class="breadcrumb-item active fw-bold">Đăng ký</li>
+                </ol>
+            </nav>
 
             <form id="customerForm">
                 <div class="card shadow-sm border-0 rounded-4 p-4 p-md-5 bg-white">

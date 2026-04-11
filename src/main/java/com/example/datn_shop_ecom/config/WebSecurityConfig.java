@@ -46,16 +46,15 @@ public class WebSecurityConfig {
                     return corsConfiguration;
                 }))
                 .csrf(csrf -> csrf.disable())
+                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/**", "/api/admin/**").permitAll()
+                        .requestMatchers("/assets/**", "/uploads/**", "/css/**", "/js/**", "/images/**", "/vendor/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/api/admin/**", "/api/client/**", "/api/auth/**").permitAll()
+                        .requestMatchers("/admin/**", "/client/**").permitAll()
                         .requestMatchers("/", "/san-pham/**", "/ve-chung-toi/**", "/phieu-giam-gia/**", "/tra-cuu/**",
-                                "/dang-ky", "/dang-nhap", "/gio-hang/**", "/tai-khoan/**", "/thanh-toan/**",
-                                "/client/**", "/assets/**", "/uploads/**", "/css/**", "/js/**", "/images/**",
-                                "/vendor/**", "/favicon.ico", "/*.webp", "/*.png", "/*.jpg", "/*.jpeg").permitAll()
-                        .requestMatchers("/api/auth/**", "/api/client/**").permitAll()
+                                "/dang-ky", "/dang-nhap", "/gio-hang/**", "/tai-khoan/**", "/thanh-toan/**").permitAll()
                         .anyRequest().authenticated());
-
 
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 

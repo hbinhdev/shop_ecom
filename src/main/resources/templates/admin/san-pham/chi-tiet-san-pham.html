@@ -396,7 +396,7 @@
                                 <td class="text-end fw-bold text-danger"
                                     th:text="${v.giaBan != null ? #numbers.formatDecimal(v.giaBan, 1, 'POINT', 0, 'COMMA') + ' ₫' : '0 ₫'}">
                                     1,200,000 đ</td>
-                                <td class="text-center">
+                                <td class="text-center status-col">
                                     <span th:if="${v.trangThai == '1'}"
                                         class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Kinh
                                         doanh</span>
@@ -406,6 +406,11 @@
                                 </td>
                                 <td class="text-center pe-4">
                                     <div class="d-flex justify-content-center align-items-center gap-2">
+                                        <div class="form-check form-switch p-0 m-0">
+                                            <input class="form-check-input ms-0 custom-switch" type="checkbox"
+                                                th:checked="${v.trangThai == '1'}" th:data-id="${v.id}"
+                                                onchange="toggleVariantStatus(this)" style="cursor: pointer;">
+                                        </div>
                                         <button type="button" class="btn-icon rounded-circle shadow-xs"
                                             th:data-id="${v.id}" th:data-name="${v.tenSanPham}"
                                             th:data-color="${v.mauSac}" th:data-size="${v.kichThuoc}"
@@ -413,7 +418,6 @@
                                             onclick="openEditModal(this)" title="Sửa biến thể">
                                             <i class="bi bi-pencil-square"></i>
                                         </button>
-                                        
                                     </div>
                                 </td>
                             </tr>
@@ -611,17 +615,24 @@
                 $('#modalColor').text("Màu: " + el.data('color'));
                 $('#modalSize').text("Size: " + el.data('size'));
 
-                // Định dạng số trước khi đưa vào modal
-                const qtyVal = el.data('qty').toString();
-                const priceVal = el.data('price').toString();
+                // Làm tròn và định dạng ngay khi đưa vào modal
+                const qtyVal = Math.floor(parseFloat(el.data('qty')) || 0);
+                const priceVal = Math.floor(parseFloat(el.data('price')) || 0);
 
-                $('#editSoLuong').val(qtyVal);
-                $('#editGiaBan').val(priceVal);
+                const qtyInput = document.getElementById('editSoLuong');
+                const priceInput = document.getElementById('editGiaBan');
+                
+                qtyInput.value = qtyVal;
+                priceInput.value = priceVal;
 
-                // Kích hoạt format ngay sau khi nạp giá trị
+                // Sử dụng formatter nếu có để thêm dấu chấm
                 if (typeof applyGlobalFormatting === 'function') {
-                    applyGlobalFormatting(document.getElementById('editSoLuong'));
-                    applyGlobalFormatting(document.getElementById('editGiaBan'));
+                    applyGlobalFormatting(qtyInput);
+                    applyGlobalFormatting(priceInput);
+                } else {
+                    // Fallback formatting đơn giản
+                    qtyInput.value = new Intl.NumberFormat('vi-VN').format(qtyVal);
+                    priceInput.value = new Intl.NumberFormat('vi-VN').format(priceVal);
                 }
 
                 new bootstrap.Modal(document.getElementById('editVariantModal')).show();
@@ -661,6 +672,51 @@
                     .catch(err => {
                         Swal.fire('Lỗi', 'Đã xảy ra lỗi kết nối!', 'error');
                     });
+            }
+
+            function toggleVariantStatus(checkbox) {
+                const id = checkbox.getAttribute('data-id');
+                const isChecked = checkbox.checked;
+                
+                Swal.fire({
+                    title: 'Đang xử lý...',
+                    didOpen: () => Swal.showLoading(),
+                    allowOutsideClick: false
+                });
+
+                fetch(`/admin/san-pham/variant/toggle-status/${id}`, {
+                    method: 'POST'
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công',
+                            text: data.message,
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            // Cập nhật Badge trạng thái ở cột Trạng thái
+                            const row = checkbox.closest('tr');
+                            const statusCol = row.querySelector('.status-col');
+                            if (statusCol) {
+                                if (isChecked) {
+                                    statusCol.innerHTML = '<span class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Kinh doanh</span>';
+                                } else {
+                                    statusCol.innerHTML = '<span class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng bán</span>';
+                                }
+                            }
+                        });
+                    } else {
+                        checkbox.checked = !isChecked; // Revert
+                        Swal.fire('Lỗi', data.message || 'Không thể cập nhật trạng thái', 'error');
+                    }
+                })
+                .catch(err => {
+                    checkbox.checked = !isChecked; // Revert
+                    Swal.fire('Lỗi', 'Lỗi kết nối server', 'error');
+                });
             }
         </script>
     </main>

@@ -22,4 +22,5 @@ public interface HoaDonService {
     HoaDon findByMaHoaDon(String maHoaDon);
     List<HoaDon> findByKhachHangEmail(String email);
     String generateMaHoaDon();
+    HoaDon updateTrangThai(Long id, String status, String note, String user);
 }

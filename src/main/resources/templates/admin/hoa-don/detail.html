@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main_content}, ~{::title})}">
 
 <head>
@@ -314,7 +314,60 @@
             </div>
 
             
-            <div class="status-progress-container">
+            <div class="status-progress-container mb-4">
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i> <span th:text="${successMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> <span th:text="${errorMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-gear-wide-connected me-2 text-primary"></i>Thao tác đơn hàng</h5>
+                    <div class="d-flex gap-2">
+                        <!-- Nút cho trạng thái Chờ xác nhận -->
+                        <th:block th:if="${hd.trangThaiHoaDon == '1' or hd.trangThaiHoaDon == 'CHO_XAC_NHAN'}">
+                            <form th:action="@{/admin/hoa-don/update-status}" method="post" class="d-inline">
+                                <input type="hidden" name="id" th:value="${hd.id}">
+                                <input type="hidden" name="status" value="DA_XAC_NHAN">
+                                <button type="submit" class="btn btn-primary px-4 fw-bold rounded-pill shadow-sm">
+                                    <i class="bi bi-check-lg me-1"></i> Xác nhận đơn hàng
+                                </button>
+                            </form>
+                            <button type="button" class="btn btn-outline-danger px-4 fw-bold rounded-pill" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                                <i class="bi bi-x-lg me-1"></i> Hủy đơn
+                            </button>
+                        </th:block>
+
+                        <!-- Nút cho trạng thái Đã xác nhận -->
+                        <th:block th:if="${hd.trangThaiHoaDon == '2' or hd.trangThaiHoaDon == 'DA_XAC_NHAN'}">
+                            <form th:action="@{/admin/hoa-don/update-status}" method="post" class="d-inline">
+                                <input type="hidden" name="id" th:value="${hd.id}">
+                                <input type="hidden" name="status" value="DANG_GIAO">
+                                <button type="submit" class="btn btn-info text-white px-4 fw-bold rounded-pill shadow-sm">
+                                    <i class="bi bi-truck me-1"></i> Giao hàng
+                                </button>
+                            </form>
+                        </th:block>
+
+                        <!-- Nút cho trạng thái Đang giao -->
+                        <th:block th:if="${hd.trangThaiHoaDon == '3' or hd.trangThaiHoaDon == 'DANG_GIAO'}">
+                            <form th:action="@{/admin/hoa-don/update-status}" method="post" class="d-inline">
+                                <input type="hidden" name="id" th:value="${hd.id}">
+                                <input type="hidden" name="status" value="HOAN_THANH">
+                                <button type="submit" class="btn btn-success px-4 fw-bold rounded-pill shadow-sm">
+                                    <i class="bi bi-check-circle me-1"></i> Hoàn thành
+                                </button>
+                            </form>
+                        </th:block>
+
+                        <span th:if="${hd.trangThaiHoaDon == '5' or hd.trangThaiHoaDon == 'DA_HUY'}" class="badge bg-danger p-2 px-3 rounded-pill fw-bold">ĐƠN HÀNG ĐÃ HỦY</span>
+                        <span th:if="${hd.trangThaiHoaDon == '4' or hd.trangThaiHoaDon == 'HOAN_THANH'}" class="badge bg-success p-2 px-3 rounded-pill fw-bold">ĐƠN HÀNG HOÀN THÀNH</span>
+                    </div>
+                </div>
+
                 <div class="status-stepper">
                     
                     <div class="status-step"
@@ -556,7 +609,32 @@
                     </div>
                 </div>
             </div>
+            <!-- Modal Hủy Đơn -->
+        <div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content border-0 shadow">
+                    <div class="modal-header bg-danger text-white border-0 py-3">
+                        <h5 class="modal-title fw-bold" id="cancelModalLabel">Lý do hủy đơn hàng</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form th:action="@{/admin/hoa-don/update-status}" method="post">
+                        <input type="hidden" name="id" th:value="${hd.id}">
+                        <input type="hidden" name="status" value="DA_HUY">
+                        <div class="modal-body p-4">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small text-muted">Vui lòng nhập lý do hủy đơn hàng:</label>
+                                <textarea name="note" class="form-control rounded-3 border-secondary-subtle" rows="4" placeholder="Ví dụ: Khách hàng yêu cầu hủy, Hết hàng..." required></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0 p-3">
+                            <button type="button" class="btn btn-light px-4 rounded-pill" data-bs-modal="modal">Đóng</button>
+                            <button type="submit" class="btn btn-danger px-4 rounded-pill fw-bold">Xác nhận hủy</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
+    </div>
     </div>
     </div>
 
