@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
 
 <head>
@@ -42,19 +42,116 @@
                             <div class="avatar-upload rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto shadow-sm"
                                 style="width: 150px; height: 150px; border: 2px dashed #dee2e6; cursor: pointer;"
                                 onclick="document.getElementById('avatarInput').click()">
-                                <div id="uploadPlaceholder" th:classappend="*{anh != null} ? 'd-none' : ''"
+                                <div id="uploadPlaceholder" th:classappend="*{anh != null and anh != ''} ? 'd-none' : ''"
                                     class="text-center text-muted">
                                     <i class="bi bi-camera fs-2 d-block"></i>
                                     <span class="small">Đổi ảnh</span>
                                 </div>
-                                <img id="avatarPreview" th:src="*{anh != null} ? @{'/uploads/nhan-vien/' + *{anh}} : ''"
-                                    th:classappend="*{anh == null} ? 'd-none' : ''"
+                                <img id="avatarPreview" th:src="*{anh != null and anh != ''} ? @{'/uploads/nhan-vien/' + *{anh}} : ''"
+                                    th:classappend="*{anh == null or anh == ''} ? 'd-none' : ''"
                                     class="rounded-circle position-absolute top-0 start-0 w-100 h-100"
                                     style="object-fit: cover;">
                             </div>
-                            <input type="file" id="avatarInput" name="anhFile" class="d-none" accept="image null,
-                district:  null,
-                ward:  null
+                            <input type="file" id="avatarInput" name="anhFile" class="d-none" accept="image/*"
+                                onchange="previewImage(this)">
+                        </div>
+                        <p class="text-muted small mt-2 mb-0">PNG, JPG, JPEG - Tối đa 5MB</p>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Mã nhân viên</label>
+                            <input type="text" class="form-control rounded-3 py-2 px-3 border-1 bg-light"
+                                th:field="*{maNhanVien}" disabled>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Tên nhân viên <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control rounded-3 py-2 px-3 border-1 bg-white"
+                                th:field="*{tenDayDu}" required>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Số điện thoại <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control rounded-3 py-2 px-3 border-1 bg-white"
+                                th:field="*{soDienThoai}" pattern="0\d{9}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Email <span
+                                    class="text-danger">*</span></label>
+                            <input type="email" class="form-control rounded-3 py-2 px-3 border-1 bg-white"
+                                th:field="*{email}" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Tỉnh/Thành phố</label>
+                            <select class="form-select rounded-3 py-2 px-3 border-1 bg-white city-select"
+                                th:field="*{tinhThanhPho}">
+                                <option value="">-- Chọn Tỉnh/Thành --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Quận/Huyện</label>
+                            <select class="form-select rounded-3 py-2 px-3 border-1 bg-white district-select"
+                                th:field="*{quanHuyen}">
+                                <option value="">-- Chọn Quận/Huyện --</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Xã/Phường</label>
+                            <select class="form-select rounded-3 py-2 px-3 border-1 bg-white ward-select"
+                                th:field="*{xaPhuong}">
+                                <option value="">-- Chọn Xã/Phường --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Địa chỉ cụ thể</label>
+                            <input type="text" class="form-control rounded-3 py-2 px-3 border-1 bg-white"
+                                th:field="*{diaChi}">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Ngày sinh</label>
+                            <input type="date" class="form-control rounded-3 py-2 px-3 border-1 bg-white"
+                                th:field="*{ngaySinh}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Quyền hạn <span
+                                    class="text-danger">*</span></label>
+                            <select class="form-select rounded-3 py-2 px-3 border-1 bg-white" th:field="*{vaiTro}"
+                                required>
+                                <option value="">-- Chọn quyền hạn --</option>
+                                <option th:each="vt : ${vaiTros}" th:value="${vt.id}" th:text="${vt.ten}"></option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Giới tính</label>
+                            <select class="form-select rounded-3 py-2 px-3 border-1 bg-white" th:field="*{gioiTinh}">
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                                <option value="Khác">Khác</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Trạng thái</label>
+                            <select class="form-select rounded-3 py-2 px-3 border-1 bg-white" th:field="*{trangThai}">
+                                <option value="1">Đang làm việc</option>
+                                <option value="0">Nghỉ việc</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <script th:inline="javascript">
+            const initialValues = {
+                province: /*[[${nhanVien.tinhThanhPho}]]*/ null,
+                district: /*[[${nhanVien.quanHuyen}]]*/ null,
+                ward: /*[[${nhanVien.xaPhuong}]]*/ null
             };
 
             document.addEventListener('DOMContentLoaded', function() {
@@ -62,6 +159,20 @@
                     initAddressSelects('.city-select', '.district-select', '.ward-select', initialValues);
                 }
             });
+
+            function previewImage(input) {
+                const preview = document.getElementById('avatarPreview');
+                const placeholder = document.getElementById('uploadPlaceholder');
+                if (input.files && input.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        preview.src = e.target.result;
+                        preview.classList.remove('d-none');
+                        placeholder.classList.add('d-none');
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
         </script>
     </main>
 </body>

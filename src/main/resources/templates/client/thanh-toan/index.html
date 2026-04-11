@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
     th:replace="~{client/layout/main :: layout(~{::main}, 'Thanh toán - PeakSneaker')}">
 
@@ -82,10 +82,10 @@
 
                         <div class="d-flex justify-content-between align-items-center mb-4 py-3 border-top">
                             <span class="fw-bold fs-6">TỔNG CỘNG</span>
-                            <!-- <div class="text-end">
-                            <span id="labelTotal" class="fw-black fs-3 text-primary">0 ₫</span>
-                            <div class="text-muted tiny">Đã bao gồm VAT & Ship</div>
-                        </div> -->
+                            <div class="text-end">
+                                <span id="labelTotal" class="fw-bold fs-4 text-primary" style="color: #d47d32 !important;">0 ₫</span>
+                                <div class="text-muted tiny">Đã bao gồm phí Ship</div>
+                            </div>
                         </div>
 
                         <button id="btnPay" onclick="placeOrder()"
@@ -392,11 +392,11 @@
                 if (!code) { discAmt = 0; calcTotal(); return; }
                 let sub = cartData.reduce((s, i) => s + (i.gia * i.soLuong), 0);
                 try {
-                    const res = await fetch(`/api/client/vouchers/check?code=${code}&cartTotal=${sub}`);
+                    const res = await fetch(`/api/client/vouchers/check?code=${code}&cartTotal=${sub}&khId=${getUser()?.id || ''}`);
                     const d = await res.json();
                     if (d.success) {
                         voucherID = d.id;
-                        discAmt = (d.hinhThuc === 'Tiền mặt' ? d.giaTri : sub * (d.giaTri / 100));
+                        discAmt = (d.hinhThuc === 'VNĐ' ? d.giaTri : sub * (d.giaTri / 100));
                         msg.innerHTML = `<span class="text-success small"><i class="bi bi-check-circle"></i> Giảm ${formPrice(discAmt)}</span>`;
                     } else {
                         discAmt = 0;

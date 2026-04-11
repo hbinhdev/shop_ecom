@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
 
 <head>
@@ -63,7 +63,8 @@
                             <label class="form-label fw-bold small text-uppercase text-muted">Giá trị giảm</label>
                             <div class="input-group">
                                 <input type="text" class="form-control rounded-start-pill py-2 px-3 border-1 bg-light-subtle number-format"
-                                    th:id="giaTriGiam" th:name="giaTriGiam" th:value="${pgg.giaTriGiam}"
+                                    th:id="giaTriGiam" th:name="giaTriGiam" 
+                                    th:value="${pgg.giaTriGiam != null ? #numbers.formatInteger(pgg.giaTriGiam, 0) : '0'}"
                                     placeholder="0" required>
                                 <span class="input-group-text rounded-end-pill bg-white px-3 fw-bold text-muted small" id="discountUnit">VNĐ</span>
                             </div>
@@ -79,7 +80,8 @@
                             <label class="form-label fw-bold small text-uppercase text-muted">Hóa đơn tối thiểu</label>
                             <div class="input-group">
                                 <input type="text" class="form-control rounded-start-pill py-2 px-3 border-1 bg-light-subtle number-format"
-                                    th:id="giaTriToiThieu" th:name="giaTriToiThieu" th:value="${pgg.giaTriToiThieu}"
+                                    th:id="giaTriToiThieu" th:name="giaTriToiThieu" 
+                                    th:value="${pgg.giaTriToiThieu != null ? #numbers.formatInteger(pgg.giaTriToiThieu, 0) : '0'}"
                                     placeholder="0">
                                 <span class="input-group-text rounded-end-pill bg-white px-3 fw-bold text-muted small">VNĐ</span>
                             </div>

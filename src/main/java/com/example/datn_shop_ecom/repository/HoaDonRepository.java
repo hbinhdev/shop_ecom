@@ -13,4 +13,9 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
     Optional<HoaDon> findByMaHoaDon(String maHoaDon);
     List<HoaDon> findByKhachHangIdOrderByNgayTaoDesc(Long khachHangId);
     List<HoaDon> findByKhachHangEmailOrderByNgayTaoDesc(String email);
+    
+    boolean existsByKhachHangIdAndIdPhieuGiamGia(Long khachHangId, Long idPhieuGiamGia);
+
+    @org.springframework.data.jpa.repository.Query("SELECT h.idPhieuGiamGia FROM HoaDon h WHERE h.khachHang.id = :khId AND h.idPhieuGiamGia IS NOT NULL")
+    List<Long> findUsedVoucherIdsByKhachHangId(@org.springframework.data.repository.query.Param("khId") Long khId);
 }

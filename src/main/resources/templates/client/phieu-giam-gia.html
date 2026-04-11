@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{client/layout/main :: layout(~{::main}, ~{::title})}">
+
+<head>
+    <title>Phiếu giảm giá HOT - PeakSneaker</title>
+    <style>
+        .voucher-card {
+            border: 2px dashed #f0f0f0;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            background: #fff;
+        }
+
+        .voucher-card:hover {
+            border-color: #d47d32;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(212, 125, 50, 0.1);
+        }
+
+        .voucher-left {
+            background: linear-gradient(135deg, #d47d32 0%, #a65d21 100%);
+            color: white;
+            padding: 30px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            width: 140px;
+            position: relative;
+        }
+
+        .voucher-left::after,
+        .voucher-left::before {
+            content: '';
+            position: absolute;
+            right: -8px;
+            width: 16px;
+            height: 16px;
+            background: #f5f5f7;
+            border-radius: 50%;
+        }
+
+        .voucher-left::before {
+            top: -8px;
+        }
+
+        .voucher-left::after {
+            bottom: -8px;
+        }
+
+        .voucher-code {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+        }
+
+        .copy-btn {
+            border: 1px solid #d47d32;
+            color: #d47d32;
+            background: transparent;
+            border-radius: 50px;
+            padding: 5px 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: #d47d32;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <!-- Header -->
+        <section class="py-5" style="background: white;">
+            <div class="container text-center py-4">
+                <h1 class="display-5 fw-800 mb-3" style="font-family: 'Outfit';">Đặc quyền ưu đãi</h1>
+                <p class="text-muted mx-auto" style="max-width: 600px;">Lấy mã giảm giá để nhận được nhiều ưu đãi cực
+                    sốc từ PeakSneaker. Áp dụng cho nhiều dòng sản phẩm hot hit hiện nay.</p>
+            </div>
+        </section>
+
+        <!-- Voucher List -->
+        <div class="container py-5">
+            <div class="row g-4">
+                <!-- Loop through vouchers -->
+                <div th:each="v : ${vouchers}" class="col-lg-6 voucher-item" th:id="'v-' + ${v.id}">
+                    <div class="voucher-card d-flex h-100 shadow-sm border-0">
+                        <div class="voucher-left">
+                            <i class="bi bi-ticket-perforated fs-1 mb-2"></i>
+                            <div class="voucher-code" th:text="${v.maPhieu}">CODE123</div>
+                        </div>
+                        <div class="voucher-right flex-grow-1 p-4 d-flex flex-column justify-content-between">
+                            <div>
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h5 class="fw-bold mb-0" th:text="${v.tenPhieu}">Giảm giá mùa hè</h5>
+                                    <span class="badge bg-danger-subtle text-danger rounded-pill"
+                                        style="font-size: 0.7rem;"
+                                        th:text="${v.soLuong > 0 ? 'Còn ' + v.soLuong + ' lượt' : 'Hết lượt'}">Còn 10
+                                        lượt</span>
+                                </div>
+                                <p class="small text-muted mb-3"
+                                    th:text="${v.moTa ?: 'Không có mô tả cho mã giảm giá này.'}">Tận hưởng ưu đãi khi
+                                    mùa hè đến.</p>
+
+                                <div class="d-flex flex-wrap gap-2 mb-3">
+                                    <div class="small fw-semibold text-dark">
+                                        <i class="bi bi-tag-fill text-primary me-1"
+                                            style="color: #d47d32 !important;"></i>
+                                        Giảm: <span
+                                            th:text="${#numbers.formatDecimal(v.giaTriGiam, 1, 'POINT', 0, 'COMMA')}">100.000</span><span
+                                            th:text="${v.hinhThucGiam == '%' ? '%' : 'đ'}">đ</span>
+                                    </div>
+                                    <div class="small fw-semibold text-dark border-start ps-2">
+                                        <i class="bi bi-check-circle-fill text-success me-1"></i>
+                                        Đơn từ: <span
+                                            th:text="${#numbers.formatDecimal(v.giaTriToiThieu, 1, 'POINT', 0, 'COMMA')}">500.000</span>đ
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="small text-muted">
+                                    Hết hạn: <span
+                                        th:text="${#temporals.format(v.ngayKetThuc, 'dd/MM/yyyy')}">31/12/2026</span>
+                                </span>
+                                <button class="copy-btn" th:data-code="${v.maPhieu}"
+                                    onclick="copyToClipboard(this.getAttribute('data-code'))">Sao chép mã</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty state -->
+                <div th:if="${#lists.isEmpty(vouchers)}" class="col-12 text-center py-5">
+                    <div class="py-5">
+                        <i class="bi bi-ticket-detailed fs-1 text-muted opacity-25 d-block mb-3"></i>
+                        <p class="text-muted">Hiện tại chưa có mã giảm giá nào được phát hành.</p>
+                        <a href="/san-pham" class="btn btn-primary rounded-pill px-4">Xem sản phẩm mới</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- How to use -->
+
+
+        <script>
+            document.addEventListener('DOMContentLoaded', hideUsedVouchers);
+
+            async function hideUsedVouchers() {
+                const user = JSON.parse(localStorage.getItem('pk_user'));
+                if (!user || !user.id) return;
+
+                try {
+                    const res = await fetch(`/api/client/vouchers/used/${user.id}`);
+                    if (res.ok) {
+                        const usedIds = await res.json();
+                        usedIds.forEach(id => {
+                            const el = document.getElementById('v-' + id);
+                            if (el) el.style.display = 'none';
+                        });
+                        
+                        // Check if all are hidden
+                        const visible = document.querySelectorAll('.voucher-item:not([style*="display: none"])');
+                        if (visible.length === 0) {
+                             document.querySelector('.row.g-4').innerHTML = `
+                                <div class="col-12 text-center py-5">
+                                    <div class="py-5">
+                                        <i class="bi bi-ticket-detailed fs-1 text-muted opacity-25 d-block mb-3"></i>
+                                        <p class="text-muted">Bạn đã sử dụng hết các mã giảm giá hiện có.</p>
+                                        <a href="/san-pham" class="btn btn-dark rounded-pill px-4">Xem sản phẩm mới</a>
+                                    </div>
+                                </div>`;
+                        }
+                    }
+                } catch (e) { console.error("Filter fail", e); }
+            }
+
+            function copyToClipboard(text) {
+                navigator.clipboard.writeText(text).then(function () {
+                    alert('Đã sao chép mã: ' + text);
+                }, function (err) {
+                    console.error('Lỗi khi sao chép: ', err);
+                });
+            }
+        </script>
+    </main>
+</body>
+
+</html>
