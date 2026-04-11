@@ -101,6 +101,10 @@ public class ClientApiController {
         gioHangService.removeItem(khId, spctId);
         return ResponseEntity.ok(Map.of("success", true));
     }
+    private HoaDonRepository hoaDonRepository;
+
+    @Autowired
+    private ChiTietHoaDonRepository chiTietHoaDonRepository;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
@@ -122,6 +126,9 @@ public class ClientApiController {
         user.put("id", kh.getId());
         user.put("hoTen", kh.getTenDayDu());
         user.put("email", kh.getEmail());
+        user.put("soDienThoai", kh.getSoDienThoai());
+        user.put("gioiTinh", kh.getGioiTinh());
+        user.put("ngaySinh", kh.getNgaySinh() != null ? kh.getNgaySinh().toString() : null);
         user.put("token", token);
 
         resp.put("success", true);
@@ -258,6 +265,49 @@ public class ClientApiController {
 
             resp.put("success", true);
             resp.put("message", "Đăng ký thành công! Mật khẩu đã gửi vào email.");
+            return ResponseEntity.ok(resp);
+        } catch (Exception e) {
+            resp.put("success", false);
+            resp.put("message", e.getMessage());
+            return ResponseEntity.ok(resp);
+        }
+    }
+
+    @PutMapping("/profile/update")
+    public ResponseEntity<?> updateProfile(@RequestBody Map<String, Object> body) {
+        Map<String, Object> resp = new HashMap<>();
+        try {
+            Long id = Long.parseLong(body.get("id").toString());
+            Optional<KhachHang> opt = khachHangRepository.findById(id);
+            if (opt.isEmpty()) {
+                resp.put("success", false);
+                resp.put("message", "Không tìm thấy khách hàng");
+                return ResponseEntity.ok(resp);
+            }
+            KhachHang kh = opt.get();
+            kh.setTenDayDu((String) body.get("hoTen"));
+            kh.setSoDienThoai((String) body.get("soDienThoai"));
+            kh.setGioiTinh((String) body.get("gioiTinh"));
+            
+            String ngaySinhStr = (String) body.get("ngaySinh");
+            if (ngaySinhStr != null && !ngaySinhStr.isEmpty()) {
+                kh.setNgaySinh(LocalDate.parse(ngaySinhStr));
+            }
+            
+            khachHangRepository.save(kh);
+            
+            Map<String, Object> user = new HashMap<>();
+            user.put("id", kh.getId());
+            user.put("hoTen", kh.getTenDayDu());
+            user.put("email", kh.getEmail());
+            user.put("soDienThoai", kh.getSoDienThoai());
+            user.put("gioiTinh", kh.getGioiTinh());
+            user.put("ngaySinh", kh.getNgaySinh() != null ? kh.getNgaySinh().toString() : null);
+            user.put("token", body.get("token")); // retain token
+
+            resp.put("success", true);
+            resp.put("user", user);
+            resp.put("message", "Cập nhật thành công!");
             return ResponseEntity.ok(resp);
         } catch (Exception e) {
             resp.put("success", false);
@@ -418,5 +468,69 @@ public class ClientApiController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error");
         }
+    }
+
+    @GetMapping("/tra-cuu")
+    public ResponseEntity<?> traCuuDonHang(@RequestParam("maHoaDon") String maHoaDon) {
+        Map<String, Object> resp = new HashMap<>();
+        Optional<HoaDon> opt = hoaDonRepository.findByMaHoaDon(maHoaDon.trim());
+        
+        if (opt.isEmpty()) {
+            resp.put("success", false);
+            resp.put("message", "Không tìm thấy đơn hàng mã: " + maHoaDon);
+            return ResponseEntity.ok(resp);
+        }
+
+        HoaDon hd = opt.get();
+        Map<String, Object> hDon = new HashMap<>();
+        hDon.put("maHoaDon", hd.getMaHoaDon());
+        hDon.put("ngayDatHang", hd.getNgayDatHang() != null ? hd.getNgayDatHang() : hd.getNgayTao());
+        hDon.put("tenNguoiNhan", hd.getTenNguoiNhan());
+        hDon.put("soDienThoaiNguoiNhan", hd.getSoDienThoaiNguoiNhan());
+        
+        String dchi = "";
+        if (hd.getChiTietNguoiNhan() != null && !hd.getChiTietNguoiNhan().isEmpty()) dchi += hd.getChiTietNguoiNhan() + ", ";
+        if (hd.getXaPhuong() != null && !hd.getXaPhuong().isEmpty()) dchi += hd.getXaPhuong() + ", ";
+        if (hd.getQuanHuyen() != null && !hd.getQuanHuyen().isEmpty()) dchi += hd.getQuanHuyen() + ", ";
+        if (hd.getTinhThanhPho() != null && !hd.getTinhThanhPho().isEmpty()) dchi += hd.getTinhThanhPho();
+        if (dchi.endsWith(", ")) dchi = dchi.substring(0, dchi.length() - 2);
+        
+        hDon.put("diaChiGiao", dchi);
+        hDon.put("tongTien", hd.getTongTien());
+        hDon.put("tienVanChuyen", hd.getTienVanChuyen());
+        hDon.put("tongTienAfterGiam", hd.getTongTienAfterGiam());
+        hDon.put("ghiChu", hd.getMoTa());
+        hDon.put("trangThai", hd.getTrangThaiHoaDon());
+
+        List<ChiTietHoaDon> chiTiets = chiTietHoaDonRepository.findByHoaDonId(hd.getId());
+        List<Map<String, Object>> spList = new ArrayList<>();
+        
+        for (ChiTietHoaDon ct : chiTiets) {
+            Map<String, Object> spMap = new HashMap<>();
+            
+            if (ct.getSanPhamChiTiet() != null) {
+                if (ct.getSanPhamChiTiet().getSanPham() != null) {
+                    spMap.put("tenSanPham", ct.getSanPhamChiTiet().getSanPham().getTenSanPham());
+                } else {
+                    spMap.put("tenSanPham", "Sản phẩm không rõ");
+                }
+                spMap.put("duongDanAnh", ct.getSanPhamChiTiet().getDuongDanAnh());
+                spMap.put("mauSac", ct.getSanPhamChiTiet().getMauSac() != null ? ct.getSanPhamChiTiet().getMauSac().getTenMauSac() : "");
+                spMap.put("kichThuoc", ct.getSanPhamChiTiet().getKichThuoc() != null ? ct.getSanPhamChiTiet().getKichThuoc().getTenKichThuoc() : "");
+            } else {
+                spMap.put("tenSanPham", "Sản phẩm không rõ");
+            }
+            
+            spMap.put("soLuong", ct.getSoLuong());
+            spMap.put("gia", ct.getGia());
+            
+            spList.add(spMap);
+        }
+        
+        hDon.put("chiTietSanPham", spList);
+
+        resp.put("success", true);
+        resp.put("hoaDon", hDon);
+        return ResponseEntity.ok(resp);
     }
 }
