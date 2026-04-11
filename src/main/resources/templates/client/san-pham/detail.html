@@ -92,16 +92,21 @@
                             </div>
                         </div>
 
-                        <!-- Quantity & Action -->
-                        <div class="d-flex gap-3 mb-5 mt-4">
-                            <div class="qty-selector-detail">
-                                <button class="btn-qty" onclick="changeDetailQty(-1)">−</button>
-                                <input type="number" id="detailQty" value="1" min="1" class="qty-input-detail">
-                                <button class="btn-qty" onclick="changeDetailQty(1)">+</button>
+                        <div class="mb-5 mt-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="qty-selector-detail d-flex align-items-center border rounded-pill p-1 bg-light">
+                                    <button class="btn btn-sm btn-light rounded-circle fw-bold" style="width: 35px; height: 35px;" onclick="changeDetailQty(-1)">-</button>
+                                    <input type="number" id="detailQty" value="1" min="1" 
+                                           class="form-control form-control-sm text-center border-0 bg-transparent fw-bold" 
+                                           style="width: 50px; font-size: 1.1rem;" readonly>
+                                    <button class="btn btn-sm btn-light rounded-circle fw-bold" style="width: 35px; height: 35px;" onclick="changeDetailQty(1)">+</button>
+                                </div>
+                                <button class="btn btn-premium flex-grow-1 fs-5 py-3 shadow-sm" 
+                                        style="border-radius: 1.5rem; transition: all 0.3s ease; position: relative; z-index: 100;" 
+                                        onclick="handleAddToCart()">
+                                    <i class="bi bi-bag-plus-fill me-2"></i> THÊM VÀO GIỎ HÀNG
+                                </button>
                             </div>
-                            <button class="btn btn-premium flex-grow-1 fs-5 py-3" onclick="handleAddToCart()">
-                                <i class="bi bi-bag-plus-fill me-2"></i> THÊM VÀO GIỎ HÀNG
-                            </button>
                         </div>
 
                         <!-- Stock Info -->
@@ -129,9 +134,13 @@
                     <div class="tab-pane fade show active" id="desc">
                         <div class="row justify-content-center">
                             <div class="col-lg-10">
-                                <p class="text-muted lh-lg" style="font-size: 1.1rem; text-align: justify;"
-                                    th:text="${p.moTa != null ? p.moTa : 'Sản phẩm Sneaker cao cấp từ PeakSneaker với thiết kế hiện đại, bền bỉ.'}">
-                                    Mô tả dài...</p>
+                                <div class="text-muted lh-lg" style="font-size: 1.1rem; text-align: justify;"
+                                     th:if="${p.moTa != null and !p.moTa.isEmpty()}" th:utext="${p.moTa}">
+                                    Mô tả dài...
+                                </div>
+                                <div class="text-center py-4 text-muted opacity-50" th:if="${p.moTa == null or p.moTa.isEmpty()}">
+                                    <i class="bi bi-info-circle me-2"></i>Thông tin mô tả đang được cập nhật...
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -139,34 +148,26 @@
                         <div class="row g-4">
                             <div class="col-md-3">
                                 <div class="p-4 rounded-5 bg-light border-0 shadow-none text-center h-100">
-                                    <small class="text-muted d-block mb-2 text-uppercase fw-bold"
-                                        style="letter-spacing: 1px;">Thương hiệu</small>
-                                    <span class="fs-5 fw-bold text-dark"
-                                        th:text="${p.thuongHieu != null ? p.thuongHieu.tenThuongHieu : 'N/A'}">Peak</span>
+                                    <small class="text-muted d-block mb-2 text-uppercase fw-bold" style="letter-spacing: 1px;">Thương hiệu</small>
+                                    <span class="fs-5 fw-bold text-dark" th:text="${p.thuongHieu != null ? p.thuongHieu.tenThuongHieu : 'Đang cập nhật'}">Adidas</span>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="p-4 rounded-5 bg-light border-0 shadow-none text-center h-100">
-                                    <small class="text-muted d-block mb-2 text-uppercase fw-bold"
-                                        style="letter-spacing: 1px;">Chất liệu</small>
-                                    <span class="fs-5 fw-bold text-dark"
-                                        th:text="${p.chatLieu != null ? p.chatLieu.tenChatLieu : 'N/A'}">Da</span>
+                                    <small class="text-muted d-block mb-2 text-uppercase fw-bold" style="letter-spacing: 1px;">Chất liệu</small>
+                                    <span class="fs-5 fw-bold text-dark" th:text="${p.chatLieu != null ? p.chatLieu.tenChatLieu : 'Đang cập nhật'}">Vải Mesh</span>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="p-4 rounded-5 bg-light border-0 shadow-none text-center h-100">
-                                    <small class="text-muted d-block mb-2 text-uppercase fw-bold"
-                                        style="letter-spacing: 1px;">Kiểu dáng</small>
-                                    <span class="fs-5 fw-bold text-dark"
-                                        th:text="${p.kieuDang != null ? p.kieuDang.tenKieuDang : 'N/A'}">Thể thao</span>
+                                    <small class="text-muted d-block mb-2 text-uppercase fw-bold" style="letter-spacing: 1px;">Kiểu dáng</small>
+                                    <span class="fs-5 fw-bold text-dark" th:text="${p.kieuDang != null ? p.kieuDang.tenKieuDang : 'Đang cập nhật'}">Cổ thấp</span>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="p-4 rounded-5 bg-light border-0 shadow-none text-center h-100">
-                                    <small class="text-muted d-block mb-2 text-uppercase fw-bold"
-                                        style="letter-spacing: 1px;">Danh mục</small>
-                                    <span class="fs-5 fw-bold text-dark"
-                                        th:text="${p.danhMuc != null ? p.danhMuc.tenDanhMuc : 'N/A'}">Giày Nam</span>
+                                    <small class="text-muted d-block mb-2 text-uppercase fw-bold" style="letter-spacing: 1px;">Danh mục</small>
+                                    <span class="fs-5 fw-bold text-dark" th:text="${p.danhMuc != null ? p.danhMuc.tenDanhMuc : 'Đang cập nhật'}">Giày chạy bộ</span>
                                 </div>
                             </div>
                         </div>
@@ -204,162 +205,218 @@
                     </div>
                 </div>
             </section>
-        </div>
-    </main>
-    <style>
-        .related-img-wrapper {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            overflow: hidden;
-            border-radius: 12px;
-            background-color: #f8f9fa;
-        }
 
-        .related-img-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
+        <style>
+            .related-img-wrapper {
+                width: 100%;
+                aspect-ratio: 1 / 1;
+                overflow: hidden;
+                border-radius: 12px;
+                background-color: #f8f9fa;
+            }
 
-        .premium-card {
-            border-radius: 15px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            border: 1px solid #eee !important;
-        }
+            .related-img-wrapper img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.5s ease;
+            }
 
-        .product-title-small {
-            display: -webkit-box;
-            -webkit-line-clamp: 1;
-            line-clamp: 1;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            height: 1.5rem;
-            line-height: 1.5;
-            font-size: 0.9rem;
-        }
+            .premium-card {
+                border-radius: 15px;
+                overflow: hidden;
+                transition: all 0.3s ease;
+                border: 1px solid #eee !important;
+            }
 
-        .p-card-link:hover .premium-card {
-            transform: translateY(-5px);
-            border-color: #ff4d00 !important;
-        }
+            .product-title-small {
+                display: -webkit-box;
+                -webkit-line-clamp: 1;
+                line-clamp: 1;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                height: 1.5rem;
+                line-height: 1.5;
+                font-size: 0.9rem;
+            }
 
-        /* Qty selector */
-        .qty-selector-detail {
-            display: flex; align-items: center; background: #f8f9fa;
-            border-radius: 50px; border: 1.5px solid #eee; padding: 4px;
-        }
-        .btn-qty {
-            width: 44px; height: 44px; border-radius: 50%; border: none;
-            background: white; color: #333; font-weight: bold; font-size: 1.2rem;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s;
-        }
-        .btn-qty:hover { background: #d47d32; color: white; }
-        .qty-input-detail {
-            width: 50px; border: none; background: transparent; text-align: center;
-            font-weight: 700; font-size: 1.1rem; outline: none;
-        }
-        .qty-input-detail::-webkit-inner-spin-button { -webkit-appearance: none; }
+            .p-card-link:hover .premium-card {
+                transform: translateY(-5px);
+                border-color: #d47d32 !important;
+            }
 
-        /* Color/Size Active */
-        .glass-swatch { 
-            cursor: pointer; padding: 8px 16px; border-radius: 12px; border: 1.5px solid #eee;
-            font-size: 0.85rem; font-weight: 600; transition: all 0.2s; background: white;
-        }
-        .glass-swatch:hover { border-color: #d47d32; }
-        .glass-swatch.active { border-color: #d47d32; background: rgba(212,125,50,0.05); color: #d47d32; }
-        .glass-swatch.disabled { opacity: 0.4; cursor: not-allowed; text-decoration: line-through; }
-    </style>
+            /* Qty selector */
+            .qty-selector-detail {
+                display: flex; align-items: center; background: #f8f9fa;
+                border-radius: 50px; border: 1.5px solid #eee; padding: 4px;
+            }
+            .btn-qty {
+                width: 44px; height: 44px; border-radius: 50%; border: none;
+                background: white; color: #333; font-weight: bold; font-size: 1.2rem;
+                display: flex; align-items: center; justify-content: center;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s;
+            }
+            .btn-qty:hover { background: #d47d32; color: white; }
+            .qty-input-detail {
+                width: 50px; border: none; background: transparent; text-align: center;
+                font-weight: 700; font-size: 1.1rem; outline: none;
+            }
+            .qty-input-detail::-webkit-inner-spin-button { -webkit-appearance: none; }
 
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-        const variants = /*[[${variants}]]*/ [];
-        const product = /*[[${p}]]*/ {};
-        /*]]>*/
+            /* Color/Size Swatches */
+            .glass-swatch { 
+                cursor: pointer !important; padding: 10px 20px; border-radius: 12px; border: 2px solid #edeff2;
+                font-size: 0.9rem; font-weight: 600; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+                background: #fff; color: #4b5563; min-width: 60px; text-align: center;
+                position: relative; z-index: 5;
+            }
+            .glass-swatch:hover { border-color: #d47d32; color: #d47d32; transform: translateY(-2px); }
+            .glass-swatch.active { 
+                border-color: #d47d32; 
+                background: linear-gradient(135deg, rgba(212,125,50,0.1) 0%, rgba(235,152,78,0.1) 100%); 
+                color: #d47d32;
+                box-shadow: 0 4px 12px rgba(212, 125, 50, 0.15);
+            }
+            .glass-swatch.disabled { 
+                opacity: 0.3 !important; cursor: not-allowed !important; 
+                text-decoration: line-through; border-color: #f3f4f6 !important;
+                background: #f9fafb !important;
+            }
 
-        let selectedColor = null;
-        let selectedSize = null;
+            .btn-premium {
+                background: linear-gradient(90deg, #d47d32 0%, #eb984e 100%);
+                color: white;
+                border: none;
+                font-weight: 700;
+                letter-spacing: 0.5px;
+                box-shadow: 0 4px 15px rgba(212, 125, 50, 0.3);
+            }
+            .btn-premium:hover {
+                background: linear-gradient(90deg, #eb984e 0%, #d47d32 100%);
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 10px 20px rgba(212, 125, 50, 0.4);
+            }
+        </style>
 
-        document.querySelectorAll('[data-color]').forEach(el => {
-            el.addEventListener('click', () => {
-                document.querySelectorAll('[data-color]').forEach(x => x.classList.remove('active'));
-                el.classList.add('active');
-                selectedColor = el.getAttribute('data-color');
-                updateStockInfo();
-            });
-        });
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            window.variantsData = /*[[${variants}]]*/ [];
+            window.productData = /*[[${p}]]*/ {};
+            window.selectedColorId = null;
+            window.selectedSizeId = null;
 
-        document.querySelectorAll('[data-size]').forEach(el => {
-            el.addEventListener('click', () => {
-                document.querySelectorAll('[data-size]').forEach(x => x.classList.remove('active'));
-                el.classList.add('active');
-                selectedSize = el.getAttribute('data-size');
-                updateStockInfo();
-            });
-        });
+            window.selectColor = function(el, id) {
+                console.log("Chọn màu:", id);
+                document.querySelectorAll('.glass-swatch[data-color]').forEach(item => item.classList.remove('active'));
+                if (el) el.classList.add('active');
+                window.selectedColorId = String(id);
+                updateProductDisplay();
+            };
 
-        function changeDetailQty(delta) {
-            const input = document.getElementById('detailQty');
-            let val = parseInt(input.value) + delta;
-            input.value = Math.max(1, val);
-        }
+            window.selectSize = function(el, id) {
+                console.log("Chọn kích thước:", id);
+                document.querySelectorAll('.glass-swatch[data-size]').forEach(item => item.classList.remove('active'));
+                if (el) el.classList.add('active');
+                window.selectedSizeId = String(id);
+                updateProductDisplay();
+            };
 
-        function updateStockInfo() {
-            if (selectedColor && selectedSize) {
-                const match = variants.find(v => v.mauSac.id == selectedColor && v.kichThuoc.id == selectedSize);
+            function updateProductDisplay() {
+                if (!window.selectedColorId || !window.selectedSizeId) return;
+                const match = (window.variantsData || []).find(v => 
+                    v.mauSac && String(v.mauSac.id) === window.selectedColorId && 
+                    v.kichThuoc && String(v.kichThuoc.id) === window.selectedSizeId
+                );
                 const infoBox = document.getElementById('variantStockInfo');
                 const countBox = document.getElementById('stockCount');
+                const priceHeader = document.querySelector('h2.text-primary');
+                const mainImg = document.querySelector('.hover-zoom');
+
                 if (match) {
-                    infoBox.classList.remove('d-none');
-                    countBox.textContent = match.soTonKho;
-                } else {
+                    if (infoBox) infoBox.classList.remove('d-none');
+                    if (countBox) countBox.textContent = match.soTonKho;
+                    if (match.giaBan && priceHeader) {
+                        priceHeader.textContent = new Intl.NumberFormat('vi-VN').format(match.giaBan) + ' ₫';
+                    }
+                    if (match.duongDanAnh && mainImg) {
+                        mainImg.src = match.duongDanAnh.startsWith('http') ? match.duongDanAnh : '/uploads/san-pham/' + match.duongDanAnh;
+                    }
+                } else if (infoBox) {
                     infoBox.classList.add('d-none');
                 }
             }
-        }
 
-        async function handleAddToCart() {
-            if (!selectedColor || !selectedSize) {
-                alert('Vui lòng chọn Màu sắc và Kích thước!');
-                return;
-            }
+            window.handleAddToCart = function() {
+                if (!window.selectedColorId || !window.selectedSizeId) {
+                    alert("Bạn cần chọn đầy đủ Màu sắc và Kích thước!");
+                    return;
+                }
+                const match = (window.variantsData || []).find(v => 
+                    v.mauSac && String(v.mauSac.id) === window.selectedColorId && 
+                    v.kichThuoc && String(v.kichThuoc.id) === window.selectedSizeId
+                );
+                if (!match || match.soTonKho <= 0) {
+                    alert("Sản phẩm này hiện đang hết hàng!");
+                    return;
+                }
+                const qtyInput = document.getElementById('detailQty');
+                const qty = parseInt(qtyInput ? qtyInput.value : 1);
+                if (qty > match.soTonKho) {
+                    alert("Số lượng vượt quá tồn kho!");
+                    return;
+                }
 
-            const match = variants.find(v => v.mauSac.id == selectedColor && v.kichThuoc.id == selectedSize);
-            if (!match) {
-                alert('Biến thể này hiện không tồn tại hoặc đã hết hàng!');
-                return;
-            }
+                const cartItem = {
+                    spctId: match.id,
+                    ten: (window.productData || {}).tenSanPham,
+                    anh: match.duongDanAnh || (window.productData || {}).duongDanAnh,
+                    gia: match.giaBan,
+                    mauSac: match.mauSac.tenMauSac,
+                    kichThuoc: match.kichThuoc.tenKichThuoc,
+                    soLuong: qty
+                };
 
-            const qty = parseInt(document.getElementById('detailQty').value);
-            if (match.soTonKho < qty) {
-                alert('Số lượng trong kho không đủ (còn: ' + match.soTonKho + ')');
-                return;
-            }
-
-            // Gọi hàm addToCart global từ auth.js
-            const cartItem = {
-                spctId: match.id,
-                ten: product.tenSanPham,
-                anh: match.duongDanAnh || product.duongDanAnh,
-                gia: match.giaBan,
-                mauSac: match.mauSac.tenMauSac,
-                kichThuoc: match.kichThuoc.tenKichThuoc,
-                soLuong: qty
+                if (typeof window.addToCart === 'function' || typeof addToCart === 'function') {
+                    (window.addToCart || addToCart)(cartItem);
+                } else {
+                    alert("Hệ thống giỏ hàng chưa sẵn sàng!");
+                }
             };
 
-            addToCart(cartItem);
-        }
+            window.changeDetailQty = function(delta) {
+                const input = document.getElementById('detailQty');
+                if (input) {
+                    let val = parseInt(input.value) + delta;
+                    input.value = Math.max(1, Math.min(val, 99));
+                }
+            };
 
-        // Tự động chọn cái đầu tiên
-        document.addEventListener('DOMContentLoaded', () => {
-            const firstColor = document.querySelector('[data-color]');
-            const firstSize = document.querySelector('[data-size]');
-            if (firstColor) firstColor.click();
-            if (firstSize) firstSize.click();
-        });
-    </script>
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log("Detail page loaded");
+                document.querySelectorAll('.glass-swatch[data-color]').forEach(el => {
+                    const id = el.getAttribute('data-color');
+                    el.onclick = () => window.selectColor(el, id);
+                });
+                document.querySelectorAll('.glass-swatch[data-size]').forEach(el => {
+                    const id = el.getAttribute('data-size');
+                    el.onclick = () => window.selectSize(el, id);
+                });
+
+                const firstOk = (window.variantsData || []).find(v => v.soTonKho > 0) || (window.variantsData || [])[0];
+                if (firstOk) {
+                    try {
+                        const cBtn = document.querySelector(`.glass-swatch[data-color="${firstOk.mauSac.id}"]`);
+                        const sBtn = document.querySelector(`.glass-swatch[data-size="${firstOk.kichThuoc.id}"]`);
+                        if (cBtn) cBtn.click();
+                        if (sBtn) sBtn.click();
+                    } catch(e) {}
+                }
+            });
+            /*]]>*/
+        </script>
+    </div>
+</main>
 </body>
 
 </html>

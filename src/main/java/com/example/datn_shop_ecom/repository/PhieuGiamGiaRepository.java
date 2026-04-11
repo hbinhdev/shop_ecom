@@ -53,5 +53,7 @@ public interface PhieuGiamGiaRepository extends JpaRepository<PhieuGiamGia, Long
     void softDelete(@Param("id") Long id, @Param("now") LocalDateTime now);
 
     List<PhieuGiamGia> findAllByXoaMemFalse();
+
+    java.util.Optional<PhieuGiamGia> findByMaPhieuAndXoaMemFalse(String maPhieu);
 }
 

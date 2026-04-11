@@ -1,171 +1,198 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{client/layout/main :: layout(~{::main}, 'Đăng ký thành viên - PeakSneaker')}">
-<body>
-<main class="py-5" style="background-color: #f8f9fa; min-height: 90vh;">
-    <div class="container">
-        <!-- Breadcrumb -->
-        <div class="mb-4">
-            <h5 class="fw-bold"><i class="bi bi-person-plus"></i> Đăng ký / <span class="text-muted fw-normal">Thành viên mới</span></h5>
-        </div>
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{client/layout/main :: layout(~{::main}, 'Đăng ký thành viên - PeakSneaker')}">
 
-        <form id="customerForm">
-            <div class="card shadow-sm border-0 rounded-4 p-4 p-md-5 bg-white">
-                <!-- Header -->
-                <div class="d-flex justify-content-between align-items-center mb-5 border-bottom pb-4">
-                    <h4 class="fw-bold section-title mb-0 text-uppercase">THÔNG TIN ĐĂNG KÝ</h4>
-                    <div class="d-flex gap-2">
-                        <a th:href="@{/dang-nhap}" class="btn btn-light border rounded-pill px-4 py-2 d-flex align-items-center gap-2" style="border: 1.5px solid #ddd !important;">
-                            <i class="bi bi-arrow-left"></i> Đăng nhập
-                        </a>
-                        <button type="submit" class="btn btn-add-customer rounded-pill px-5 py-2 d-flex align-items-center gap-2 text-white border-0 shadow-sm" id="btnSubmit">
-                            <i class="bi bi-save"></i> Đăng ký ngay
+<body>
+    <main class="py-5" style="background-color: #f8f9fa; min-height: 90vh;">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <!-- <div class="mb-4">
+            <h5 class="fw-bold"><i class="bi bi-person-plus"></i> Đăng ký / <span class="text-muted fw-normal">Thành viên mới</span></h5>
+        </div> -->
+
+            <form id="customerForm">
+                <div class="card shadow-sm border-0 rounded-4 p-4 p-md-5 bg-white">
+                    <!-- Header -->
+                    <div class="d-flex justify-content-between align-items-center mb-5 border-bottom pb-4">
+                        <h4 class="fw-bold section-title mb-0 text-uppercase">THÔNG TIN ĐĂNG KÝ</h4>
+                        <div class="d-flex gap-2">
+                            <a th:href="@{/dang-nhap}"
+                                class="btn btn-light border rounded-pill px-4 py-2 d-flex align-items-center gap-2"
+                                style="border: 1.5px solid #ddd !important;">
+                                <i class="bi bi-arrow-left"></i> Đăng nhập
+                            </a>
+                            <button type="submit"
+                                class="btn btn-add-customer rounded-pill px-5 py-2 d-flex align-items-center gap-2 text-white border-0 shadow-sm"
+                                id="btnSubmit">
+                                <i class="bi bi-save"></i> Đăng ký ngay
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Thông tin cá nhân -->
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-muted small">HỌ VÀ TÊN <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control rounded-pill border-1 bg-light-subtle py-2.5 px-4"
+                                id="tenDayDu" placeholder="Nhập tên khách hàng" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-muted small">EMAIL <span
+                                    class="text-danger">*</span></label>
+                            <input type="email" class="form-control rounded-pill border-1 bg-light-subtle py-2.5 px-4"
+                                id="email" placeholder="example@gmail.com" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium text-muted small">SỐ ĐIỆN THOẠI <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control rounded-pill border-1 bg-light-subtle py-2.5 px-4"
+                                id="soDienThoai" placeholder="0123456789" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-medium text-muted small">GIỚI TÍNH</label>
+                            <select class="form-select rounded-pill border-1 bg-light-subtle py-2.5 px-4" id="gioiTinh">
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                                <option value="Khác">Khác</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-medium text-muted small">NGÀY SINH</label>
+                            <input type="date" class="form-control rounded-pill border-1 bg-light-subtle py-2.5 px-4"
+                                id="ngaySinh">
+                        </div>
+                    </div>
+
+                    <!-- <div class="alert alert-info border-0 rounded-4 mb-5 small">
+                        <i class="bi bi-info-circle me-2"></i> Mật khẩu đăng nhập sẽ được hệ thống gửi tự động qua Email
+                        sau khi bạn đăng ký thành công.
+                    </div> -->
+
+                    <hr class="my-4 text-muted opacity-25">
+
+                    <!-- Phần Địa chỉ -->
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="fw-bold mb-0">Địa chỉ (có thể thêm nhiều) <span class="text-danger">*</span></h5>
+                        <button type="button" class="btn btn-outline-dark rounded-pill px-3 py-1 btn-sm fw-bold"
+                            onclick="addAddress()">
+                            <i class="bi bi-plus-lg"></i> Thêm địa chỉ
                         </button>
                     </div>
-                </div>
 
-                <!-- Thông tin cá nhân -->
-                <div class="row g-4 mb-4">
-                    <div class="col-md-6">
-                        <label class="form-label fw-medium text-muted small">HỌ VÀ TÊN <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control rounded-pill border-1 bg-light-subtle py-2.5 px-4" id="tenDayDu" placeholder="Nhập tên khách hàng" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-medium text-muted small">EMAIL <span class="text-danger">*</span></label>
-                        <input type="email" class="form-control rounded-pill border-1 bg-light-subtle py-2.5 px-4" id="email" placeholder="example@gmail.com" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label fw-medium text-muted small">SỐ ĐIỆN THOẠI <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control rounded-pill border-1 bg-light-subtle py-2.5 px-4" id="soDienThoai" placeholder="0123456789" required>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label fw-medium text-muted small">GIỚI TÍNH</label>
-                        <select class="form-select rounded-pill border-1 bg-light-subtle py-2.5 px-4" id="gioiTinh">
-                            <option value="Nam">Nam</option>
-                            <option value="Nữ">Nữ</option>
-                            <option value="Khác">Khác</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label fw-medium text-muted small">NGÀY SINH</label>
-                        <input type="date" class="form-control rounded-pill border-1 bg-light-subtle py-2.5 px-4" id="ngaySinh">
-                    </div>
-                </div>
-
-                <div class="alert alert-info border-0 rounded-4 mb-5 small">
-                    <i class="bi bi-info-circle me-2"></i> Mật khẩu đăng nhập sẽ được hệ thống gửi tự động qua Email sau khi bạn đăng ký thành công.
-                </div>
-
-                <hr class="my-4 text-muted opacity-25">
-
-                <!-- Phần Địa chỉ -->
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="fw-bold mb-0">Địa chỉ (có thể thêm nhiều) <span class="text-danger">*</span></h5>
-                    <button type="button" class="btn btn-outline-dark rounded-pill px-3 py-1 btn-sm fw-bold" onclick="addAddress()">
-                        <i class="bi bi-plus-lg"></i> Thêm địa chỉ
-                    </button>
-                </div>
-
-                <div id="addressContainer">
-                    <div class="address-item card bg-light-subtle border-1 rounded-4 p-4 mb-3 position-relative">
-                        <div class="row g-3">
-                            <div class="col-12 d-flex justify-content-between align-items-center mb-2 border-bottom pb-2">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="defaultAddress" checked>
-                                    <label class="form-check-label ms-1 small fw-bold text-muted text-uppercase">Địa chỉ mặc định</label>
+                    <div id="addressContainer">
+                        <div class="address-item card bg-light-subtle border-1 rounded-4 p-4 mb-3 position-relative">
+                            <div class="row g-3">
+                                <div
+                                    class="col-12 d-flex justify-content-between align-items-center mb-2 border-bottom pb-2">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="defaultAddress" checked>
+                                        <label class="form-check-label ms-1 small fw-bold text-muted text-uppercase">Địa
+                                            chỉ mặc định</label>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-medium text-muted">Tên người nhận *</label>
-                                <input type="text" class="form-control form-control-sm rounded-4 border-1 bg-white py-2 px-3 addr-name" placeholder="Họ và tên người nhận" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-medium text-muted">Số nhà / Đường</label>
-                                <input type="text" class="form-control form-control-sm rounded-4 border-1 bg-white py-2 px-3 addr-detail" placeholder="Ví dụ: 12A Nguyễn Trãi">
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-medium text-muted">Tỉnh/Thành</label>
-                                <select class="form-select form-select-sm rounded-4 border-1 bg-white py-2 city-select" required>
-                                    <option value="">-- Chọn tỉnh/thành --</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-medium text-muted">Quận/Huyện</label>
-                                <select class="form-select form-select-sm rounded-4 border-1 bg-white py-2 district-select" required>
-                                    <option value="">-- Chọn quận/huyện --</option>
-                                </select>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small fw-medium text-muted">Phường/Xã</label>
-                                <select class="form-select form-select-sm rounded-4 border-1 bg-white py-2 ward-select" required>
-                                    <option value="">-- Chọn phường/xã --</option>
-                                </select>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-medium text-muted">Tên người nhận *</label>
+                                    <input type="text"
+                                        class="form-control form-control-sm rounded-4 border-1 bg-white py-2 px-3 addr-name"
+                                        placeholder="Họ và tên người nhận" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-medium text-muted">Số nhà / Đường</label>
+                                    <input type="text"
+                                        class="form-control form-control-sm rounded-4 border-1 bg-white py-2 px-3 addr-detail"
+                                        placeholder="Ví dụ: 12A Nguyễn Trãi">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-medium text-muted">Tỉnh/Thành</label>
+                                    <select
+                                        class="form-select form-select-sm rounded-4 border-1 bg-white py-2 city-select"
+                                        required>
+                                        <option value="">-- Chọn tỉnh/thành --</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-medium text-muted">Quận/Huyện</label>
+                                    <select
+                                        class="form-select form-select-sm rounded-4 border-1 bg-white py-2 district-select"
+                                        required>
+                                        <option value="">-- Chọn quận/huyện --</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-medium text-muted">Phường/Xã</label>
+                                    <select
+                                        class="form-select form-select-sm rounded-4 border-1 bg-white py-2 ward-select"
+                                        required>
+                                        <option value="">-- Chọn phường/xã --</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </form>
-    </div>
+            </form>
+        </div>
 
-    <!-- Script đặt cuối main để đảm bảo HTML nạp xong -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        // Định nghĩa hàm TRƯỚC khi gán sự kiện hoặc gọi từ HTML
-        const API_BASE = "/api/client";
+        <!-- Script đặt cuối main để đảm bảo HTML nạp xong -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            // Định nghĩa hàm TRƯỚC khi gán sự kiện hoặc gọi từ HTML
+            const API_BASE = "/api/client";
 
-        async function initCitySelect(selectEl) {
-            try {
-                const res = await fetch(API_BASE + "/provinces");
-                const data = await res.json();
-                selectEl.innerHTML = '<option value="">-- Chọn tỉnh/thành --</option>';
-                data.forEach(p => {
-                    const opt = new Option(p.name, p.name);
-                    opt.dataset.code = p.code;
-                    selectEl.add(opt);
-                });
+            async function initCitySelect(selectEl) {
+                try {
+                    const res = await fetch(API_BASE + "/provinces");
+                    const data = await res.json();
+                    selectEl.innerHTML = '<option value="">-- Chọn tỉnh/thành --</option>';
+                    data.forEach(p => {
+                        const opt = new Option(p.name, p.name);
+                        opt.dataset.code = p.code;
+                        selectEl.add(opt);
+                    });
 
-                selectEl.onchange = async function() {
-                    const item = this.closest('.address-item');
+                    selectEl.onchange = async function () {
+                        const item = this.closest('.address-item');
+                        const distSel = item.querySelector('.district-select');
+                        const wardSel = item.querySelector('.ward-select');
+                        const code = this.options[this.selectedIndex].dataset.code;
+
+                        distSel.innerHTML = '<option value="">Đang tải...</option>';
+                        wardSel.innerHTML = '<option value="">-- Chọn --</option>';
+
+                        if (code) {
+                            const distRes = await fetch(API_BASE + "/districts/" + code);
+                            const distData = await distRes.json();
+                            distSel.innerHTML = '<option value="">-- Chọn quận/huyện --</option>';
+                            distData.districts.forEach(d => {
+                                const opt = new Option(d.name, d.name);
+                                opt.dataset.code = d.code;
+                                distSel.add(opt);
+                            });
+                        }
+                    };
+
+                    const item = selectEl.closest('.address-item');
                     const distSel = item.querySelector('.district-select');
                     const wardSel = item.querySelector('.ward-select');
-                    const code = this.options[this.selectedIndex].dataset.code;
 
-                    distSel.innerHTML = '<option value="">Đang tải...</option>';
-                    wardSel.innerHTML = '<option value="">-- Chọn --</option>';
+                    distSel.onchange = async function () {
+                        const code = this.options[this.selectedIndex].dataset.code;
+                        wardSel.innerHTML = '<option value="">Đang tải...</option>';
+                        if (code) {
+                            const wardRes = await fetch(API_BASE + "/wards/" + code);
+                            const wardData = await wardRes.json();
+                            wardSel.innerHTML = '<option value="">-- Chọn xã/phường --</option>';
+                            wardData.wards.forEach(w => wardSel.add(new Option(w.name, w.name)));
+                        }
+                    };
 
-                    if(code) {
-                        const distRes = await fetch(API_BASE + "/districts/" + code);
-                        const distData = await distRes.json();
-                        distSel.innerHTML = '<option value="">-- Chọn quận/huyện --</option>';
-                        distData.districts.forEach(d => {
-                            const opt = new Option(d.name, d.name);
-                            opt.dataset.code = d.code;
-                            distSel.add(opt);
-                        });
-                    }
-                };
+                } catch (e) { console.error("API Load Error", e); }
+            }
 
-                const item = selectEl.closest('.address-item');
-                const distSel = item.querySelector('.district-select');
-                const wardSel = item.querySelector('.ward-select');
-
-                distSel.onchange = async function() {
-                    const code = this.options[this.selectedIndex].dataset.code;
-                    wardSel.innerHTML = '<option value="">Đang tải...</option>';
-                    if(code) {
-                        const wardRes = await fetch(API_BASE + "/wards/" + code);
-                        const wardData = await wardRes.json();
-                        wardSel.innerHTML = '<option value="">-- Chọn xã/phường --</option>';
-                        wardData.wards.forEach(w => wardSel.add(new Option(w.name, w.name)));
-                    }
-                };
-
-            } catch (e) { console.error("API Load Error", e); }
-        }
-
-        function addAddress() {
-            const container = document.getElementById('addressContainer');
-            const html = `
+            function addAddress() {
+                const container = document.getElementById('addressContainer');
+                const html = `
                 <div class="address-item card bg-light-subtle border-1 rounded-4 p-4 mb-3 position-relative shadow-none">
                     <button type="button" class="btn btn-sm btn-outline-danger rounded-pill position-absolute top-0 end-0 m-3" onclick="this.closest('.address-item').remove()">
                         <i class="bi bi-trash"></i> Xóa
@@ -199,71 +226,125 @@
                         </div>
                     </div>
                 </div>`;
-            container.insertAdjacentHTML('beforeend', html);
-            initCitySelect(container.lastElementChild.querySelector('.city-select'));
-        }
+                container.insertAdjacentHTML('beforeend', html);
+                initCitySelect(container.lastElementChild.querySelector('.city-select'));
+            }
 
-        // Đảm bảo Script được đăng ký vào phạm vi Window để HTML có thể gọi
-        window.addAddress = addAddress;
+            // Đảm bảo Script được đăng ký vào phạm vi Window để HTML có thể gọi
+            window.addAddress = addAddress;
 
-        document.getElementById('customerForm').onsubmit = async function(e) {
-            e.preventDefault();
-            const btn = document.getElementById('btnSubmit');
-            btn.disabled = true;
-            btn.innerHTML = 'Đang xử lý...';
+            document.getElementById('customerForm').onsubmit = async function (e) {
+                e.preventDefault();
+                const btn = document.getElementById('btnSubmit');
+                btn.disabled = true;
+                btn.innerHTML = 'Đang xử lý...';
 
-            const body = {
-                tenDayDu: document.getElementById('tenDayDu').value,
-                email: document.getElementById('email').value,
-                soDienThoai: document.getElementById('soDienThoai').value,
-                gioiTinh: document.getElementById('gioiTinh').value,
-                ngaySinh: document.getElementById('ngaySinh').value,
-                addresses: Array.from(document.querySelectorAll('.address-item')).map(item => ({
-                    tenNguoiNhan: item.querySelector('.addr-name').value,
-                    tinhThanhPho: item.querySelector('.city-select').value,
-                    quanHuyen: item.querySelector('.district-select').value,
-                    xaPhuong: item.querySelector('.ward-select').value,
-                    chiTiet: item.querySelector('.addr-detail').value
-                }))
-            };
+                const body = {
+                    tenDayDu: document.getElementById('tenDayDu').value,
+                    email: document.getElementById('email').value,
+                    soDienThoai: document.getElementById('soDienThoai').value,
+                    gioiTinh: document.getElementById('gioiTinh').value,
+                    ngaySinh: document.getElementById('ngaySinh').value,
+                    addresses: Array.from(document.querySelectorAll('.address-item')).map(item => ({
+                        tenNguoiNhan: item.querySelector('.addr-name').value,
+                        tinhThanhPho: item.querySelector('.city-select').value,
+                        quanHuyen: item.querySelector('.district-select').value,
+                        xaPhuong: item.querySelector('.ward-select').value,
+                        chiTiet: item.querySelector('.addr-detail').value
+                    }))
+                };
 
-            try {
-                const res = await fetch(API_BASE + '/register', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(body)
-                });
-                const data = await res.json();
-                if(data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Đăng ký thành công!',
-                        text: 'Vui lòng kiểm tra email để lấy mật khẩu đăng nhập.',
-                        confirmButtonColor: '#eb8f34'
-                    }).then(() => window.location.href = '/dang-nhap');
-                } else {
-                    Swal.fire('Lỗi', data.message, 'error');
+                try {
+                    const res = await fetch(API_BASE + '/register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body)
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Đăng ký thành công!',
+                            text: 'Vui lòng kiểm tra email để lấy mật khẩu đăng nhập.',
+                            confirmButtonColor: '#eb8f34'
+                        }).then(() => window.location.href = '/dang-nhap');
+                    } else {
+                        Swal.fire('Lỗi', data.message, 'error');
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="bi bi-save"></i> Đăng ký ngay';
+                    }
+                } catch (err) {
+                    Swal.fire('Lỗi', 'Không thể kết nối máy chủ', 'error');
                     btn.disabled = false;
                     btn.innerHTML = '<i class="bi bi-save"></i> Đăng ký ngay';
                 }
-            } catch (err) {
-                Swal.fire('Lỗi', 'Không thể kết nối máy chủ', 'error');
-                btn.disabled = false;
-                btn.innerHTML = '<i class="bi bi-save"></i> Đăng ký ngay';
+            };
+
+            // Kích hoạt nạp tỉnh thành cho hàng đầu tiên ngay khi nạp trang
+            document.addEventListener('DOMContentLoaded', () => {
+                initCitySelect(document.querySelector('.city-select'));
+            });
+        </script>
+
+        <style>
+            :root {
+                --premium-orange: #d47d32;
+                --premium-hover: #b56528;
             }
-        };
 
-        // Kích hoạt nạp tỉnh thành cho hàng đầu tiên ngay khi nạp trang
-        document.addEventListener('DOMContentLoaded', () => {
-            initCitySelect(document.querySelector('.city-select'));
-        });
-    </script>
-</main>
+            .btn-add-customer {
+                background: linear-gradient(135deg, var(--premium-orange) 0%, #eb984e 100%) !important;
+                border: none !important;
+                font-weight: 700 !important;
+                letter-spacing: 0.5px;
+                box-shadow: 0 4px 15px rgba(212, 125, 50, 0.3);
+                transition: all 0.3s ease !important;
+            }
 
-<style>
-    .btn-add-customer { background: linear-gradient(135deg, #d47d32 0%, #eb984e 100%) !important; border: none; font-weight: bold; }
-    .bg-light-subtle { background-color: #f8f9fa !important; }
-    .section-title { color: #2b2d42; }
-</style>
+            .btn-add-customer:hover:not(:disabled) {
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(212, 125, 50, 0.4);
+                filter: brightness(1.1);
+            }
+
+            .btn-add-customer:active:not(:disabled) {
+                transform: translateY(0);
+            }
+
+            .btn-add-customer:disabled {
+                opacity: 0.7;
+                cursor: not-allowed;
+            }
+
+            .bg-light-subtle {
+                background-color: #f8f9fa !important;
+            }
+
+            .section-title {
+                color: #2b2d42;
+                position: relative;
+                padding-left: 15px;
+            }
+
+            .section-title::before {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                width: 4px;
+                height: 100%;
+                background: var(--premium-orange);
+                border-radius: 2px;
+            }
+
+            .form-control:focus,
+            .form-select:focus {
+                border-color: var(--premium-orange) !important;
+                box-shadow: 0 0 0 0.25rem rgba(212, 125, 50, 0.1) !important;
+            }
+        </style>
+    </main>
 </body>
+
 </html>

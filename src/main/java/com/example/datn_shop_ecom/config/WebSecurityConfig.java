@@ -52,7 +52,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/", "/san-pham/**", "/ve-chung-toi/**", "/phieu-giam-gia/**", "/tra-cuu/**",
                                 "/dang-ky", "/dang-nhap", "/gio-hang/**", "/tai-khoan/**", "/thanh-toan/**",
                                 "/client/**", "/assets/**", "/uploads/**", "/css/**", "/js/**", "/images/**",
-                                "/vendor/**", "/favicon.ico").permitAll()
+                                "/vendor/**", "/favicon.ico", "/*.webp", "/*.png", "/*.jpg", "/*.jpeg").permitAll()
                         .requestMatchers("/api/auth/**", "/api/client/**").permitAll()
                         .anyRequest().authenticated());
 
