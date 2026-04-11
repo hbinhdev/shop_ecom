@@ -130,6 +130,7 @@ public class ClientController {
     @GetMapping("/phieu-giam-gia")
     public String vouchers(Model model) {
         model.addAttribute("pageTitle", "Phiếu giảm giá HOT - PeakSneaker");
+        model.addAttribute("vouchers", pggService.findAllByXoaMemFalse());
         return "client/phieu-giam-gia";
     }
 

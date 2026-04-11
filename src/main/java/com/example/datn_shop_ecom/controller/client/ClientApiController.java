@@ -145,7 +145,7 @@ public class ClientApiController {
     }
 
     @GetMapping("/vouchers/check")
-    public ResponseEntity<?> checkVoucher(@RequestParam String code, @RequestParam Double cartTotal) {
+    public ResponseEntity<?> checkVoucher(@RequestParam String code, @RequestParam Double cartTotal, @RequestParam(required = false) Long khId) {
         Map<String, Object> resp = new HashMap<>();
         Optional<PhieuGiamGia> opt = phieuGiamGiaRepository.findByMaPhieuAndXoaMemFalse(code);
 
@@ -179,12 +179,23 @@ public class ClientApiController {
             return ResponseEntity.ok(resp);
         }
 
+        if (khId != null && hoaDonRepository.existsByKhachHangIdAndIdPhieuGiamGia(khId, voucher.getId())) {
+            resp.put("success", false);
+            resp.put("message", "Bạn đã sử dụng mã giảm giá này cho đơn hàng khác rồi!");
+            return ResponseEntity.ok(resp);
+        }
+
         resp.put("success", true);
         resp.put("id", voucher.getId());
         resp.put("ma", voucher.getMaPhieu());
         resp.put("hinhThuc", voucher.getHinhThucGiam());
         resp.put("giaTri", voucher.getGiaTriGiam());
         return ResponseEntity.ok(resp);
+    }
+
+    @GetMapping("/vouchers/used/{khId}")
+    public ResponseEntity<?> getUsedVouchers(@PathVariable Long khId) {
+        return ResponseEntity.ok(hoaDonRepository.findUsedVoucherIdsByKhachHangId(khId));
     }
 
     @PostMapping("/validate-cart")
@@ -385,6 +396,29 @@ public class ClientApiController {
             hd.setTrangThaiHoaDon("CHO_XAC_NHAN");
             hd.setLoaiHoaDon("Giao hàng");
             hd.setIdPhieuGiamGia(voucherId);
+            
+            // Xử lý Voucher trước khi lưu hóa đơn
+            if (voucherId != null) {
+                // 1. Kiểm tra xem khách hàng đã dùng mã này chưa
+                if (hoaDonRepository.existsByKhachHangIdAndIdPhieuGiamGia(khId, voucherId)) {
+                    return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Bạn đã sử dụng mã giảm giá này cho đơn hàng trước đó rồi."));
+                }
+
+                Optional<PhieuGiamGia> vOpt = phieuGiamGiaRepository.findById(voucherId);
+                if (vOpt.isPresent()) {
+                    PhieuGiamGia v = vOpt.get();
+                    // 2. Kiểm tra số lượng lượt dùng
+                    if (v.getSoLuong() != null && v.getSoLuong() <= 0) {
+                        return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Mã giảm giá này đã hết lượt sử dụng."));
+                    }
+                    // 3. Giảm số lượng
+                    if (v.getSoLuong() != null) {
+                        v.setSoLuong(v.getSoLuong() - 1);
+                        phieuGiamGiaRepository.save(v);
+                    }
+                }
+            }
+
             HoaDon savedHd = hoaDonRepository.save(hd);
 
             for (Map<String, Object> item : items) {
