@@ -380,6 +380,17 @@ public class ClientApiController {
             Long voucherId = body.get("idPhieuGiamGia") != null ? Long.valueOf(body.get("idPhieuGiamGia").toString()) : null;
             List<Map<String, Object>> items = (List<Map<String, Object>>) body.get("cartItems");
 
+            // Calculate subtotal from items to ensure accuracy
+            java.math.BigDecimal subTotal = java.math.BigDecimal.ZERO;
+            for (Map<String, Object> item : items) {
+                Long spctId = Long.valueOf(item.get("spctId").toString());
+                int qty = Integer.parseInt(item.get("soLuong").toString());
+                SanPhamChiTiet spct = spctRepository.findById(spctId).orElse(null);
+                if (spct != null) {
+                    subTotal = subTotal.add(spct.getGiaBan().multiply(java.math.BigDecimal.valueOf(qty)));
+                }
+            }
+
             HoaDon hd = new HoaDon();
             hd.setMaHoaDon("HD-" + System.currentTimeMillis());
             hd.setKhachHang(khachHangRepository.findById(khId).orElse(null));
@@ -389,14 +400,16 @@ public class ClientApiController {
             hd.setQuanHuyen(qh);
             hd.setXaPhuong(xp);
             hd.setChiTietNguoiNhan(ct);
-            hd.setTongTien(java.math.BigDecimal.valueOf(tongTien));
+            hd.setTongTien(subTotal);
             hd.setTienVanChuyen(java.math.BigDecimal.valueOf(phiShip));
             hd.setNgayDatHang(java.time.LocalDateTime.now());
             hd.setNgayTao(java.time.LocalDateTime.now());
             hd.setTrangThaiHoaDon("CHO_XAC_NHAN");
             hd.setLoaiHoaDon("Giao hàng");
+            hd.setPhuongThucThanhToan("Thanh toán bằng tiền mặt");
             hd.setIdPhieuGiamGia(voucherId);
             
+            java.math.BigDecimal discountAmount = java.math.BigDecimal.ZERO;
             // Xử lý Voucher trước khi lưu hóa đơn
             if (voucherId != null) {
                 // 1. Kiểm tra xem khách hàng đã dùng mã này chưa
@@ -411,6 +424,15 @@ public class ClientApiController {
                     if (v.getSoLuong() != null && v.getSoLuong() <= 0) {
                         return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Mã giảm giá này đã hết lượt sử dụng."));
                     }
+                    
+                    // Tính toán mức giảm
+                    if ("VNĐ".equals(v.getHinhThucGiam())) {
+                        discountAmount = v.getGiaTriGiam();
+                    } else { // %
+                        discountAmount = subTotal.multiply(v.getGiaTriGiam()).divide(java.math.BigDecimal.valueOf(100));
+                    }
+                    if (discountAmount.compareTo(subTotal) > 0) discountAmount = subTotal;
+                    
                     // 3. Giảm số lượng
                     if (v.getSoLuong() != null) {
                         v.setSoLuong(v.getSoLuong() - 1);
@@ -418,6 +440,9 @@ public class ClientApiController {
                     }
                 }
             }
+            
+            hd.setTienPhieuGiamGia(discountAmount);
+            hd.setTongTienAfterGiam(subTotal.add(hd.getTienVanChuyen()).subtract(discountAmount));
 
             HoaDon savedHd = hoaDonRepository.save(hd);
 
@@ -448,7 +473,7 @@ public class ClientApiController {
                     String emailBody = "Xin chào " + savedHd.getTenNguoiNhan() + ",\n\n" +
                                  "Chúc mừng bạn đã đặt hàng thành công tại PeakSneaker!\n" +
                                  "Mã đơn hàng của bạn là: " + savedHd.getMaHoaDon() + "\n" +
-                                 "Tổng tiền thanh toán: " + String.format("%,.0f đ", savedHd.getTongTien()) + "\n\n" +
+                                 "Tổng tiền thanh toán: " + String.format("%,.0f đ", savedHd.getTongTienAfterGiam()) + "\n\n" +
                                  "Chúng tôi sẽ sớm liên hệ để xác nhận và giao hàng cho bạn.\n" +
                                  "Cảm ơn bạn đã tin tưởng và mua sắm tại PeakSneaker!";
                     emailService.sendEmail(kh.getEmail(), subject, emailBody);

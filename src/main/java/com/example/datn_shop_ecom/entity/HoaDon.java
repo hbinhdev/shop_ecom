@@ -28,13 +28,13 @@ public class HoaDon {
     @Column(name = "ma_hoa_don", nullable = false, length = 50)
     private String maHoaDon;
 
-    @Column(name = "loai_hoa_don")
+    @Column(name = "loai_hoa_don", columnDefinition = "NVARCHAR(100)")
     private String loaiHoaDon;
 
-    @Column(name = "hinh_thuc_hoa_don")
+    @Column(name = "hinh_thuc_hoa_don", columnDefinition = "NVARCHAR(100)")
     private String hinhThucHoaDon;
 
-    @Column(name = "phuong_thuc_thanh_toan")
+    @Column(name = "phuong_thuc_thanh_toan", columnDefinition = "NVARCHAR(100)")
     private String phuongThucThanhToan;
 
     @Column(name = "tong_tien")
@@ -62,25 +62,25 @@ public class HoaDon {
     @Column(name = "id_phieu_giam_gia")
     private Long idPhieuGiamGia;
 
-    @Column(name = "ten_nguoi_nhan")
+    @Column(name = "ten_nguoi_nhan", columnDefinition = "NVARCHAR(255)")
     private String tenNguoiNhan;
 
     @Column(name = "so_dien_thoai_nguoi_nhan", length = 15)
     private String soDienThoaiNguoiNhan;
 
-    @Column(name = "chi_tiet_nguoi_nhan", columnDefinition = "TEXT")
+    @Column(name = "chi_tiet_nguoi_nhan", columnDefinition = "NVARCHAR(MAX)")
     private String chiTietNguoiNhan;
 
-    @Column(name = "xa_phuong")
+    @Column(name = "xa_phuong", columnDefinition = "NVARCHAR(255)")
     private String xaPhuong;
 
-    @Column(name = "quan_huyen")
+    @Column(name = "quan_huyen", columnDefinition = "NVARCHAR(255)")
     private String quanHuyen;
 
-    @Column(name = "tinh_thanh_pho")
+    @Column(name = "tinh_thanh_pho", columnDefinition = "NVARCHAR(255)")
     private String tinhThanhPho;
 
-    @Column(name = "mo_ta", columnDefinition = "TEXT")
+    @Column(name = "mo_ta", columnDefinition = "NVARCHAR(MAX)")
     private String moTa;
 
     @Column(name = "nguoi_tao", length = 50)

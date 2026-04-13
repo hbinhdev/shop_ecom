@@ -99,8 +99,23 @@ public class HoaDonServiceImpl implements HoaDonService {
                 predicates.add(criteriaBuilder.like(root.get("maHoaDon"), "%" + maHoaDon + "%"));
             if (tenKhachHang != null && !tenKhachHang.isEmpty())
                 predicates.add(criteriaBuilder.like(root.get("khachHang").get("tenDayDu"), "%" + tenKhachHang + "%"));
-            if (trangThai != null)
-                predicates.add(criteriaBuilder.equal(root.get("trangThaiHoaDon"), trangThai.toString()));
+            if (trangThai != null) {
+                String statusStr = switch (trangThai) {
+                    case 1 -> "CHO_XAC_NHAN";
+                    case 2 -> "DA_XAC_NHAN";
+                    case 3 -> "DANG_GIAO";
+                    case 4 -> "DA_GIAO_HANG";
+                    case 5 -> "HOAN_THANH";
+                    case 6 -> "DA_HUY";
+                    case 7 -> "YEU_CAU_HUY";
+                    case 8 -> "CAN_HOAN_PHI";
+                    default -> trangThai.toString();
+                };
+                predicates.add(criteriaBuilder.or(
+                        criteriaBuilder.equal(root.get("trangThaiHoaDon"), statusStr),
+                        criteriaBuilder.equal(root.get("trangThaiHoaDon"), trangThai.toString())
+                ));
+            }
             if (loaiHoaDon != null) {
                 String loaiStr = loaiHoaDon == 1 ? "TAI_CUA_HANG" : (loaiHoaDon == 2 ? "GIAO_HANG" : loaiHoaDon.toString());
                 predicates.add(criteriaBuilder.or(
@@ -124,8 +139,23 @@ public class HoaDonServiceImpl implements HoaDonService {
                 predicates.add(criteriaBuilder.like(root.get("maHoaDon"), "%" + maHoaDon + "%"));
             if (tenKhachHang != null && !tenKhachHang.isEmpty())
                 predicates.add(criteriaBuilder.like(root.get("khachHang").get("tenDayDu"), "%" + tenKhachHang + "%"));
-            if (trangThai != null)
-                predicates.add(criteriaBuilder.equal(root.get("trangThaiHoaDon"), trangThai.toString()));
+            if (trangThai != null) {
+                String statusStr = switch (trangThai) {
+                    case 1 -> "CHO_XAC_NHAN";
+                    case 2 -> "DA_XAC_NHAN";
+                    case 3 -> "DANG_GIAO";
+                    case 4 -> "DA_GIAO_HANG";
+                    case 5 -> "HOAN_THANH";
+                    case 6 -> "DA_HUY";
+                    case 7 -> "YEU_CAU_HUY";
+                    case 8 -> "CAN_HOAN_PHI";
+                    default -> trangThai.toString();
+                };
+                predicates.add(criteriaBuilder.or(
+                        criteriaBuilder.equal(root.get("trangThaiHoaDon"), statusStr),
+                        criteriaBuilder.equal(root.get("trangThaiHoaDon"), trangThai.toString())
+                ));
+            }
             if (loaiHoaDon != null) {
                 String loaiStr = loaiHoaDon == 1 ? "TAI_CUA_HANG" : (loaiHoaDon == 2 ? "GIAO_HANG" : loaiHoaDon.toString());
                 predicates.add(criteriaBuilder.or(
