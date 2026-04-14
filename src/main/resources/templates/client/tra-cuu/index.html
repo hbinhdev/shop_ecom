@@ -102,6 +102,10 @@
                                                 <span class="text-muted">Phí ship:</span>
                                                 <span id="rPhiShip">—</span>
                                             </div>
+                                            <div class="d-flex justify-content-between small text-danger" id="rGiamGiaRow" style="display:none">
+                                                <span class="">Giảm giá:</span>
+                                                <span id="rGiamGia">—</span>
+                                            </div>
                                             <div class="d-flex justify-content-between fw-bold mt-1">
                                                 <span>Tổng:</span>
                                                 <span class="text-primary" id="rTongCong">—</span>
@@ -378,8 +382,15 @@
                 document.getElementById('rSoDienThoai').textContent = hd.soDienThoaiNguoiNhan || '—';
                 document.getElementById('rDiaChi').textContent = hd.diaChiGiao || '—';
                 document.getElementById('rTongTien').textContent = formatVND(hd.tongTien);
-                document.getElementById('rPhiShip').textContent = formatVND(hd.tienVanChuyen || 30000);
+                document.getElementById('rPhiShip').textContent = formatVND(hd.tienVanChuyen || 0);
                 document.getElementById('rTongCong').textContent = formatVND(hd.tongTienAfterGiam);
+
+                if (hd.tienPhieuGiamGia && hd.tienPhieuGiamGia > 0) {
+                    document.getElementById('rGiamGia').textContent = '-' + formatVND(hd.tienPhieuGiamGia);
+                    document.getElementById('rGiamGiaRow').style.display = 'flex';
+                } else {
+                    document.getElementById('rGiamGiaRow').style.display = 'none';
+                }
 
                 if (hd.ghiChu) {
                     document.getElementById('rGhiChu').textContent = hd.ghiChu;
@@ -423,9 +434,11 @@
                 }).join('');
 
                 // Products
-                document.getElementById('rProductList').innerHTML = (hd.chiTietSanPham || []).map(sp => `
+                document.getElementById('rProductList').innerHTML = (hd.chiTietSanPham || []).map(sp => {
+                    const imgSrc = sp.duongDanAnh ? (sp.duongDanAnh.startsWith('http') ? sp.duongDanAnh : '/uploads/san-pham/' + sp.duongDanAnh) : FALLBACK_IMG;
+                    return `
             <div class="product-row-tc">
-                <img src="${sp.duongDanAnh || FALLBACK_IMG}" alt="${sp.tenSanPham}" class="product-img-tc"
+                <img src="${imgSrc}" alt="${sp.tenSanPham}" class="product-img-tc"
                     onerror="this.src='${FALLBACK_IMG}'">
                 <div class="flex-grow-1">
                     <div class="fw-bold small">${sp.tenSanPham || '—'}</div>
@@ -436,7 +449,8 @@
                     <div class="fw-bold small text-primary">${formatVND(sp.gia * sp.soLuong)}</div>
                 </div>
             </div>
-        `).join('');
+        `;
+                }).join('');
             }
 
             /* ===== INIT: Auto search from URL param ===== */

@@ -47,15 +47,16 @@ public class HoaDonServiceImpl implements HoaDonService {
     @Transactional
     public HoaDon updateTrangThai(Long id, String status, String note, String user) {
         HoaDon hd = hoaDonRepository.findById(id).orElse(null);
-        if (hd == null) return null;
+        if (hd == null)
+            return null;
 
         String currentStatus = hd.getTrangThaiHoaDon();
-        
+
         // Logic trừ tồn kho khi xác nhận đơn hàng
         // Chú ý: "2" hoặc "DA_XAC_NHAN" là trạng thái xác nhận
-        if (("2".equals(status) || "DA_XAC_NHAN".equals(status)) && 
-            ("1".equals(currentStatus) || "CHO_XAC_NHAN".equals(currentStatus))) {
-            
+        if (("2".equals(status) || "DA_XAC_NHAN".equals(status)) &&
+                ("1".equals(currentStatus) || "CHO_XAC_NHAN".equals(currentStatus))) {
+
             List<ChiTietHoaDon> details = chiTietHoaDonRepository.findByHoaDonId(id);
             for (ChiTietHoaDon d : details) {
                 com.example.datn_shop_ecom.entity.SanPhamChiTiet spct = d.getSanPhamChiTiet();
@@ -74,25 +75,27 @@ public class HoaDonServiceImpl implements HoaDonService {
         // Lưu lịch sử
         com.example.datn_shop_ecom.entity.LichSuHoaDon history = new com.example.datn_shop_ecom.entity.LichSuHoaDon();
         history.setHoaDon(saved);
-        history.setMoTa(note != null ? note : "Cập nhật trạng thái đơn hàng");
+        history.setMoTa(note != null ? note : "Cập nhật trạng thái đơn hàngg");
         history.setNguoiTao(user);
         history.setNgayTao(LocalDateTime.now());
-        
+
         // Cố gắng tìm TrangThaiHoaDon entity tương ứng để set
         try {
             Long statusId = Long.parseLong(status);
             trangThaiHoaDonRepository.findById(statusId).ifPresent(history::setTrangThaiMoi);
         } catch (Exception e) {
-            // Nếu status không phải là số (là string CHO_XAC_NHAN), có thể tìm theo mã hoặc bỏ qua
+            // Nếu status không phải là số (là string CHO_XAC_NHAN), có thể tìm theo mã hoặc
+            // bỏ qua
         }
-        
+
         lichSuHoaDonRepository.save(history);
 
         return saved;
     }
 
     @Override
-    public List<HoaDon> findAllMatchingInvoices(String maHoaDon, String tenKhachHang, Integer trangThai, Integer loaiHoaDon, LocalDate ngayBatDau, LocalDate ngayKetThuc) {
+    public List<HoaDon> findAllMatchingInvoices(String maHoaDon, String tenKhachHang, Integer trangThai,
+            Integer loaiHoaDon, LocalDate ngayBatDau, LocalDate ngayKetThuc) {
         return hoaDonRepository.findAll((Specification<HoaDon>) (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (maHoaDon != null && !maHoaDon.isEmpty())
@@ -113,26 +116,27 @@ public class HoaDonServiceImpl implements HoaDonService {
                 };
                 predicates.add(criteriaBuilder.or(
                         criteriaBuilder.equal(root.get("trangThaiHoaDon"), statusStr),
-                        criteriaBuilder.equal(root.get("trangThaiHoaDon"), trangThai.toString())
-                ));
+                        criteriaBuilder.equal(root.get("trangThaiHoaDon"), trangThai.toString())));
             }
             if (loaiHoaDon != null) {
-                String loaiStr = loaiHoaDon == 1 ? "TAI_CUA_HANG" : (loaiHoaDon == 2 ? "GIAO_HANG" : loaiHoaDon.toString());
+                String loaiStr = loaiHoaDon == 1 ? "TAI_CUA_HANG"
+                        : (loaiHoaDon == 2 ? "GIAO_HANG" : loaiHoaDon.toString());
                 predicates.add(criteriaBuilder.or(
                         criteriaBuilder.equal(root.get("loaiHoaDon"), loaiStr),
-                        criteriaBuilder.equal(root.get("loaiHoaDon"), loaiHoaDon.toString())
-                ));
+                        criteriaBuilder.equal(root.get("loaiHoaDon"), loaiHoaDon.toString())));
             }
             if (ngayBatDau != null)
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("ngayTao"), ngayBatDau.atStartOfDay()));
             if (ngayKetThuc != null)
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("ngayTao"), ngayKetThuc.atTime(LocalTime.MAX)));
+                predicates
+                        .add(criteriaBuilder.lessThanOrEqualTo(root.get("ngayTao"), ngayKetThuc.atTime(LocalTime.MAX)));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         });
     }
 
     @Override
-    public Page<HoaDon> searchInvoices(String maHoaDon, String tenKhachHang, Integer trangThai, Integer loaiHoaDon, LocalDate ngayBatDau, LocalDate ngayKetThuc, Pageable pageable) {
+    public Page<HoaDon> searchInvoices(String maHoaDon, String tenKhachHang, Integer trangThai, Integer loaiHoaDon,
+            LocalDate ngayBatDau, LocalDate ngayKetThuc, Pageable pageable) {
         return hoaDonRepository.findAll((Specification<HoaDon>) (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
             if (maHoaDon != null && !maHoaDon.isEmpty())
@@ -153,20 +157,20 @@ public class HoaDonServiceImpl implements HoaDonService {
                 };
                 predicates.add(criteriaBuilder.or(
                         criteriaBuilder.equal(root.get("trangThaiHoaDon"), statusStr),
-                        criteriaBuilder.equal(root.get("trangThaiHoaDon"), trangThai.toString())
-                ));
+                        criteriaBuilder.equal(root.get("trangThaiHoaDon"), trangThai.toString())));
             }
             if (loaiHoaDon != null) {
-                String loaiStr = loaiHoaDon == 1 ? "TAI_CUA_HANG" : (loaiHoaDon == 2 ? "GIAO_HANG" : loaiHoaDon.toString());
+                String loaiStr = loaiHoaDon == 1 ? "TAI_CUA_HANG"
+                        : (loaiHoaDon == 2 ? "GIAO_HANG" : loaiHoaDon.toString());
                 predicates.add(criteriaBuilder.or(
-                    criteriaBuilder.equal(root.get("loaiHoaDon"), loaiStr),
-                    criteriaBuilder.equal(root.get("loaiHoaDon"), loaiHoaDon.toString())
-                ));
+                        criteriaBuilder.equal(root.get("loaiHoaDon"), loaiStr),
+                        criteriaBuilder.equal(root.get("loaiHoaDon"), loaiHoaDon.toString())));
             }
             if (ngayBatDau != null)
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("ngayTao"), ngayBatDau.atStartOfDay()));
             if (ngayKetThuc != null)
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("ngayTao"), ngayKetThuc.atTime(LocalTime.MAX)));
+                predicates
+                        .add(criteriaBuilder.lessThanOrEqualTo(root.get("ngayTao"), ngayKetThuc.atTime(LocalTime.MAX)));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         }, pageable);
     }
@@ -217,14 +221,17 @@ public class HoaDonServiceImpl implements HoaDonService {
             if (emailService != null && saved.getKhachHang() != null) {
                 String subject = "Dat hang thanh cong tai PeakSneaker - " + saved.getMaHoaDon();
                 String body = "Chao " + saved.getKhachHang().getTenDayDu() + "!\n\n" +
-                    "Don hang " + saved.getMaHoaDon() + " da duoc dat thanh cong.\n" +
-                    "Trang thai: Cho xac nhan\n" +
-                    "Tong tien: " + (saved.getTongTien() != null ? saved.getTongTien().toPlainString() : "0") + " VND\n" +
-                    "Dia chi giao: " + saved.getChiTietNguoiNhan() + ", " + saved.getXaPhuong() + ", " + saved.getQuanHuyen() + ", " + saved.getTinhThanhPho() + "\n\n" +
-                    "Cam on ban da tin tuong PeakSneaker!";
+                        "Don hang " + saved.getMaHoaDon() + " da duoc dat thanh cong.\n" +
+                        "Trang thai: Cho xac nhan\n" +
+                        "Tong tien: " + (saved.getTongTien() != null ? saved.getTongTien().toPlainString() : "0")
+                        + " VND\n" +
+                        "Dia chi giao: " + saved.getChiTietNguoiNhan() + ", " + saved.getXaPhuong() + ", "
+                        + saved.getQuanHuyen() + ", " + saved.getTinhThanhPho() + "\n\n" +
+                        "Cam on ban da tin tuong PeakSneaker!";
                 emailService.sendEmail(saved.getKhachHang().getEmail(), subject, body);
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
         return saved;
     }
 

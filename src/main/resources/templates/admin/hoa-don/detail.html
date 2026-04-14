@@ -561,18 +561,49 @@
                             <div class="header-icon-bg"><i class="bi bi-clock-history"></i></div>
                             Lịch sử thanh toán
                         </div>
-                        <div th:each="tt : ${listThanhToan}" class="payment-history-item">
-                            <div>
-                                <div class="fw-bold" style="font-size: 0.9rem;" th:text="${tt.phuongThucThanhToan}">
-                                </div>
-                                <small class="text-muted"
-                                    th:text="${#temporals.format(tt.ngayTao, 'HH:mm dd/MM/yyyy')}"></small>
+
+                        <!-- Thông báo khi đơn hàng đã hoàn thành -->
+                        <div th:if="${hd.trangThaiHoaDon == '4' or hd.trangThaiHoaDon == 'HOAN_THANH'}" 
+                             class="alert alert-success d-flex align-items-center justify-content-between mb-3 rounded-4 border-0 bg-success bg-opacity-10 text-success py-2">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-check-all fs-4 me-2"></i>
+                                <span class="fw-bold small">Đơn hàng đã được thanh toán</span>
                             </div>
-                            <div class="fw-bold" style="font-size: 0.9rem;"
-                                th:text="${#numbers.formatDecimal(tt.soTienGiaoDich, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                            <span class="fw-black" th:text="${#numbers.formatDecimal(hd.tongTienAfterGiam ?: 0, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+                        </div>
+
+                        <div th:each="tt : ${listThanhToan}" class="p-3 mb-3 border rounded-4 bg-light bg-opacity-50">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="bg-primary bg-opacity-10 p-2 rounded-circle text-primary">
+                                        <i class="bi bi-wallet2" style="font-size: 1.1rem;"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark" style="font-size: 0.9rem;" th:text="${tt.phuongThucThanhToan}"></div>
+                                        <div class="text-muted small" style="font-size: 0.75rem;">
+                                            #<span th:text="${tt.id}"></span> | <span th:text="${#temporals.format(tt.ngayTao, 'HH:mm dd/MM/yyyy')}"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-end">
+                                    <div class="fw-black text-primary" style="font-size: 1.1rem;"
+                                        th:text="${#numbers.formatDecimal(tt.soTienGiaoDich ?: 0, 0, 'COMMA', 0, 'POINT')} + ' đ'">
+                                    </div>
+                                    <div>
+                                        <span th:if="${tt.trangThai == 'THANH_CONG' or tt.trangThai == '1'}" class="badge bg-success rounded-pill" style="font-size: 0.65rem;">Thành công</span>
+                                        <span th:if="${tt.trangThai == 'CHO_XU_LY' or tt.trangThai == '0'}" class="badge bg-warning text-dark rounded-pill" style="font-size: 0.65rem;">Chờ xử lý</span>
+                                        <span th:if="${tt.trangThai == 'HUY' or tt.trangThai == '2'}" class="badge bg-danger rounded-pill" style="font-size: 0.65rem;">Đã hủy</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pt-2 border-top mt-2 d-flex justify-content-between align-items-center">
+                                <span class="small text-muted">
+                                    <i class="bi bi-person me-1"></i> <span th:text="${tt.nguoiTao ?: 'Hệ thống'}"></span>
+                                </span>
+                                <span th:if="${tt.moTa}" class="small text-muted fst-italic" th:text="${tt.moTa}"></span>
                             </div>
                         </div>
-                        <div th:if="${listThanhToan.isEmpty()}" class="text-center py-3 text-muted">
+                        <div th:if="${listThanhToan.isEmpty() and hd.trangThaiHoaDon != '4' and hd.trangThaiHoaDon != 'HOAN_THANH'}" class="text-center py-3 text-muted">
                             <i class="bi bi-info-circle me-1"></i> Chưa có giao dịch
                         </div>
                     </div>
@@ -597,9 +628,10 @@
                                 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                                     <div>
                                         <div class="fw-bold" style="font-size: 0.9rem;"
-                                            th:text="${ls.trangThaiMoi != null ? ls.trangThaiMoi.tenTrangThai : ls.moTa}">
+                                            th:text="${ls.trangThaiMoi != null ? ls.trangThaiMoi.tenTrangThai : (ls.moTa != null and (ls.moTa.contains('Cập nhật') or ls.moTa.contains('?')) ? 'Cập nhật trạng thái đơn hàng' : ls.moTa)}">
                                         </div>
-                                        <div style="font-size: 0.85rem; color: var(--text-muted);" th:text="${ls.moTa}">
+                                        <div style="font-size: 0.85rem; color: var(--text-muted);" 
+                                             th:text="${ls.moTa != null and (ls.moTa.contains('Cập nhật') or ls.moTa.contains('?')) ? 'Cập nhật trạng thái đơn hàng' : ls.moTa}">
                                         </div>
                                     </div>
                                     <div class="text-end">

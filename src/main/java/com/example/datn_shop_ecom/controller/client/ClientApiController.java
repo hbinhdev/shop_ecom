@@ -525,6 +525,7 @@ public class ClientApiController {
         hDon.put("diaChiGiao", dchi);
         hDon.put("tongTien", hd.getTongTien());
         hDon.put("tienVanChuyen", hd.getTienVanChuyen());
+        hDon.put("tienPhieuGiamGia", hd.getTienPhieuGiamGia());
         hDon.put("tongTienAfterGiam", hd.getTongTienAfterGiam());
         hDon.put("ghiChu", hd.getMoTa());
         hDon.put("trangThai", hd.getTrangThaiHoaDon());
@@ -539,7 +540,16 @@ public class ClientApiController {
                 } else {
                     spMap.put("tenSanPham", "Sản phẩm không rõ");
                 }
-                spMap.put("duongDanAnh", ct.getSanPhamChiTiet().getDuongDanAnh());
+                
+                String anh = ct.getSanPhamChiTiet().getDuongDanAnh();
+                // Nếu biến thể không có ảnh, lấy ảnh của sản phẩm chính làm dự phòng
+                if (anh == null || anh.trim().isEmpty()) {
+                    if (ct.getSanPhamChiTiet().getSanPham() != null) {
+                        anh = ct.getSanPhamChiTiet().getSanPham().getDuongDanAnh();
+                    }
+                }
+                spMap.put("duongDanAnh", anh);
+                
                 spMap.put("mauSac", ct.getSanPhamChiTiet().getMauSac() != null ? ct.getSanPhamChiTiet().getMauSac().getTenMauSac() : "");
                 spMap.put("kichThuoc", ct.getSanPhamChiTiet().getKichThuoc() != null ? ct.getSanPhamChiTiet().getKichThuoc().getTenKichThuoc() : "");
             } else {
