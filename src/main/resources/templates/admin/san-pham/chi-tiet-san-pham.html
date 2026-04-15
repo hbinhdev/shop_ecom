@@ -304,9 +304,7 @@
                                     <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
                                     <input type="text" name="search" th:value="${search}"
                                         class="form-control rounded-pill ps-5 py-2 border-1"
-<input type="text" name="keyword" th:value="${keyword}" 
-                                           class="form-control border-0 bg-transparent" 
-                                           placeholder="Mã CTSP hoặc tên sản phẩm..." onchange="submitForm(this)">
+                                        placeholder="Mã CTSP hoặc tên sản phẩm..." onchange="submitForm(this)">
                                 </div>
                             </div>
                             <div class="col-md-7 d-flex justify-content-end gap-2">
@@ -318,7 +316,6 @@
                                 <a th:href="${idSanPham != null ? '/admin/san-pham/bien-the?idSanPham=' + idSanPham : '/admin/san-pham/bien-the'}"
                                    class="btn btn-dark rounded-pill px-4 py-2 d-flex align-items-center gap-2 btn-reset-filter shadow-sm">
                                     <i class="bi bi-arrow-counterclockwise"></i> Làm mới
-                                </a>
                                 </a>
                                 <a th:href="@{/admin/san-pham/export-variants(search=${search}, idMauSac=${idMauSac}, idKichThuoc=${idKichThuoc}, minPrice=${minPrice}, maxPrice=${maxPrice}, trThai=${trThai})}"
                                     class="btn btn-light-outline rounded-pill px-4 py-2 d-flex align-items-center gap-2 shadow-sm">
@@ -513,11 +510,9 @@ th:text="${v.giaBan != null ? #numbers.formatInteger(v.giaBan, 3, 'POINT') + ' �
                             </tr>
                         </th:block>
                         <tr th:if="${#lists.isEmpty(listVariants)}">
-<td colspan="9" class="text-center py-5 text-muted">
+                            <td colspan="9" class="text-center py-5 text-muted">
                                 <i class="bi bi-inbox fs-1 d-block mb-3 text-muted-50"></i>
                                 <span class="fw-medium">Không tìm thấy biến thể sản phẩm nào phù hợp.</span>
-                            </td>
-                                Không tìm thấy biến thể sản phẩm nào phù hợp.
                             </td>
                         </tr>
                     </tbody>
@@ -579,18 +574,9 @@ th:text="${v.giaBan != null ? #numbers.formatInteger(v.giaBan, 3, 'POINT') + ' �
                             class="btn btn-add-customer rounded-pill px-5 shadow-sm text-white border-0"
                             onclick="saveVariantUpdate()">
                             <i class="bi bi-check-lg me-1"></i> XÁC NHẬN CẬP NHẬT
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-<div th:replace="~{admin/fragments/scripts :: common_scripts}"></div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script th:inline="javascript">
+                        </button><script th:inline="javascript">
     $(document).ready(function () {
-        // 1. Khởi tạo Select2 (Từ nhánh dev)
+        // 1. Khởi tạo Select2
         $('.select2-filter').select2({
             theme: 'bootstrap-5',
             placeholder: '-- Chọn sản phẩm --',
@@ -600,7 +586,7 @@ th:text="${v.giaBan != null ? #numbers.formatInteger(v.giaBan, 3, 'POINT') + ' �
             submitForm(this);
         });
 
-        // 2. Range Slider logic - Đồng bộ Slider và Input (Từ nhánh dev)
+        // 2. Range Slider logic
         const minRange = document.getElementById('minRangeInput');
         const maxRange = document.getElementById('maxRangeInput');
         const minInput = document.getElementById('minPriceDisplayInput');
@@ -609,256 +595,186 @@ th:text="${v.giaBan != null ? #numbers.formatInteger(v.giaBan, 3, 'POINT') + ' �
         const maxHidden = document.getElementById('maxPriceInput');
         const rangeFill = document.getElementById('rangeFill');
 
-        function syncAll(min, max, source) {
-            const maxLimit = 20000000;
-            const minPercent = (min / maxLimit) * 100;
-            const maxPercent = (max / maxLimit) * 100;
+        if (minRange && maxRange) {
+            function syncAll(min, max, source) {
+                const maxLimit = 20000000;
+                const minPercent = (min / maxLimit) * 100;
+                const maxPercent = (max / maxLimit) * 100;
 
-            if(rangeFill) {
-                rangeFill.style.left = minPercent + '%';
-                rangeFill.style.width = (maxPercent - minPercent) + '%';
+                if(rangeFill) {
+                    rangeFill.style.left = minPercent + '%';
+                    rangeFill.style.width = (maxPercent - minPercent) + '%';
+                }
+
+                if(minHidden) minHidden.value = min;
+                if(maxHidden) maxHidden.value = max;
+
+                if (source !== 'slider') {
+                    minRange.value = min;
+                    maxRange.value = max;
+                }
+                if (source !== 'input') {
+                    if(minInput) minInput.value = new Intl.NumberFormat('vi-VN').format(min);
+                    if(maxInput) maxInput.value = new Intl.NumberFormat('vi-VN').format(max);
+                }
             }
 
-            minHidden.value = min;
-            maxHidden.value = max;
-
-            if (source !== 'slider') {
-                minRange.value = min;
-                maxRange.value = max;
+            function updateFromSlider() {
+                let minVal = parseInt(minRange.value);
+                let maxVal = parseInt(maxRange.value);
+                if (minVal > maxVal) [minVal, maxVal] = [maxVal, minVal];
+                syncAll(minVal, maxVal, 'slider');
             }
-            if (source !== 'input') {
-                minInput.value = new Intl.NumberFormat('vi-VN').format(min);
-                maxInput.value = new Intl.NumberFormat('vi-VN').format(max);
+
+            function updateFromInput() {
+                let minVal = parseInt(minInput.value.replace(/\./g, '')) || 0;
+                let maxVal = parseInt(maxInput.value.replace(/\./g, '')) || 0;
+                if (minVal > maxVal) [minVal, maxVal] = [maxVal, minVal];
+                syncAll(minVal, maxVal, 'input');
             }
+
+            [minRange, maxRange].forEach(el => {
+                if(el) {
+                    el.addEventListener('input', updateFromSlider);
+                    el.addEventListener('change', () => submitForm(el));
+                }
+            });
+            
+            [minInput, maxInput].forEach(el => {
+                if(el) {
+                    el.addEventListener('input', updateFromInput);
+                    el.addEventListener('change', () => submitForm(el));
+                }
+            });
+
+            syncAll(minRange.value, maxRange.value, 'init');
         }
-
-        function updateFromSlider() {
-            let minVal = parseInt(minRange.value);
-            let maxVal = parseInt(maxRange.value);
-            if (minVal > maxVal) [minVal, maxVal] = [maxVal, minVal];
-            syncAll(minVal, maxVal, 'slider');
-        }
-
-        function updateFromInput() {
-            let minVal = parseInt(minInput.value.replace(/\./g, '')) || 0;
-            let maxVal = parseInt(maxInput.value.replace(/\./g, '')) || 0;
-            if (minVal > maxVal) [minVal, maxVal] = [maxVal, minVal];
-            syncAll(minVal, maxVal, 'input');
-        }
-
-        // Lắng nghe sự kiện (dev)
-        [minRange, maxRange].forEach(el => {
-            el.addEventListener('input', updateFromSlider);
-            el.addEventListener('change', () => submitForm(el));
-        });
-        [minInput, maxInput].forEach(el => {
-            el.addEventListener('input', updateFromInput);
-            el.addEventListener('change', () => submitForm(el));
-        });
-
-        // Khởi tạo layout ban đầu
-        syncAll(minRange.value, maxRange.value, 'init');
     });
 
-    // 3. Hàm Submit Form chung (Sử dụng cho tất cả bộ lọc)
     function submitForm(el) {
         const form = el.closest('form') || document.getElementById('mainFilterForm');
         if(form) form.submit();
     }
 
-    // 4. Bật/Tắt trạng thái (Giữ logic confirmToggle của feat)
     function confirmToggleVariant(checkbox) {
-        // Hàm confirmToggle này nằm trong common_scripts đã import ở trên
-        confirmToggle(checkbox, '/admin/san-pham/variant/toggle-status', 
-                      'Đã cập nhật trạng thái!', 'Lỗi khi cập nhật.');
+        const id = checkbox.getAttribute('data-id');
+        const isChecked = checkbox.checked;
+        
+        Swal.fire({
+            title: 'Đang xử lý...',
+            didOpen: () => Swal.showLoading(),
+            allowOutsideClick: false
+        });
+
+        fetch(`/admin/san-pham/variant/toggle-status/${id}`, {
+            method: 'POST',
+            headers: typeof getCsrfHeaders === 'function' ? getCsrfHeaders() : {}
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Thành công',
+                    text: data.message,
+                    timer: 1000,
+                    showConfirmButton: false
+                }).then(() => {
+                    const row = checkbox.closest('tr');
+                    const statusCol = row.querySelector('.status-col');
+                    if (statusCol) {
+                        statusCol.innerHTML = isChecked 
+                            ? '<span class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Kinh doanh</span>'
+                            : '<span class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng bán</span>';
+                    }
+                });
+            } else {
+                checkbox.checked = !isChecked;
+                Swal.fire('Lỗi', data.message, 'error');
+            }
+        })
+        .catch(err => {
+            checkbox.checked = !isChecked;
+            Swal.fire('Lỗi', 'Lỗi kết nối server', 'error');
+        });
     }
 
-    // 5. Xóa biến thể (Logic SweetAlert2 từ dev)
     function confirmDeleteVariant(btn) {
-        const id = $(btn).data('id');
+        const id = btn.getAttribute('data-id');
         Swal.fire({
             title: 'Xác nhận xóa?',
-            text: 'Dữ liệu biến thể này sẽ biến mất vĩnh viễn!',
+            text: 'Dữ liệu biến thể này sẽ bị xóa hoàn toàn khỏi hệ thống!',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#ff3c5f',
+            cancelButtonColor: '#ccc',
             confirmButtonText: 'Đồng ý xóa',
             cancelButtonText: 'Hủy'
         }).then((result) => {
             if (result.isConfirmed) {
-                fetch(`/api/admin/product-variant/variant/delete/${id}`, { method: 'DELETE' })
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.success) {
-                            Swal.fire('Thành công', data.message, 'success').then(() => location.reload());
-                        } else {
-                            Swal.fire('Lỗi', data.message || 'Không thể xóa', 'error');
-                        }
-                    });
-            }
-        });
-    }
-
-    // 6. Mở Modal chỉnh sửa (Dùng cho nút Sửa)
-    function openEditModal(btn) {
-        // Logic lấy dữ liệu từ dòng đưa vào modal (Bạn viết tiếp ở đây)
-        $('#editVariantModal').modal('show');
-    }
-</script>
-            function openEditModal(btn) {
-                const el = $(btn);
-                $('#editVariantId').val(el.data('id'));
-                $('#modalSpName').text(el.data('name'));
-                $('#modalColor').text("Màu: " + el.data('color'));
-                $('#modalSize').text("Size: " + el.data('size'));
-
-                // Làm tròn và định dạng ngay khi đưa vào modal
-                const qtyVal = Math.floor(parseFloat(el.data('qty')) || 0);
-                const priceVal = Math.floor(parseFloat(el.data('price')) || 0);
-
-                const qtyInput = document.getElementById('editSoLuong');
-                const priceInput = document.getElementById('editGiaBan');
-                
-                qtyInput.value = qtyVal;
-                priceInput.value = priceVal;
-
-                // Sử dụng formatter nếu có để thêm dấu chấm
-                if (typeof applyGlobalFormatting === 'function') {
-                    applyGlobalFormatting(qtyInput);
-                    applyGlobalFormatting(priceInput);
-                } else {
-                    // Fallback formatting đơn giản
-                    qtyInput.value = new Intl.NumberFormat('vi-VN').format(qtyVal);
-                    priceInput.value = new Intl.NumberFormat('vi-VN').format(priceVal);
-                }
-
-                new bootstrap.Modal(document.getElementById('editVariantModal')).show();
-            }
-
-            function saveVariantUpdate() {
-                const id = $('#editVariantId').val();
-// Sử dụng Regex để loại bỏ tất cả ký tự không phải là số (đảm bảo dữ liệu sạch 100%)
-const qty = $('#editSoLuong').val().replace(/[^\d]/g, '');
-const price = $('#editGiaBan').val().replace(/[^\d]/g, '');
-
-// Lưu ý: Nếu cần tính toán ngay trong JS, bạn nên ép kiểu về số
-// const qtyNum = parseInt(qty) || 0;
-// const priceNum = parseFloat(price) || 0;
-
-                if (!qty || !priceRaw) {
-                    Swal.fire('Chú ý', 'Vui lòng nhập đầy đủ thông tin!', 'warning');
-                    return;
-                }
-
-                Swal.fire({ title: 'Đang lưu...', didOpen: () => Swal.showLoading() });
-
-                fetch('/api/admin/product-variant/variant/save', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', ...getCsrfHeaders() },
-                    body: JSON.stringify({ id: id, soLuong: qty, giaBan: priceRaw })
-                })
-                .then(res => {
-                    if (res.ok) {
-                        Swal.fire('Thành công', 'Đã cập nhật biến thể sản phẩm!', 'success').then(() => location.reload());
-                    } else {
-                        Swal.fire('Lỗi', 'Không thể cập nhật biến thể. Vui lòng thử lại!', 'error');
-                    }
-                })
-                .catch(() => Swal.fire('Lỗi', 'Đã xảy ra lỗi kết nối!', 'error'));
-            }
-
-            function toggleVariantStatus(checkbox) {
-                const id = checkbox.getAttribute('data-id');
-                const isChecked = checkbox.checked;
-                
-                Swal.fire({
-// --- CHỨC NĂNG 1: BẬT/TẮT TRẠNG THÁI (Lấy từ dev + Bảo mật của feat) ---
-            function confirmToggleVariant(checkbox) {
-                const id = checkbox.getAttribute('data-id');
-                const isChecked = checkbox.checked;
-                
-                Swal.fire({
-                    title: 'Đang xử lý...',
-                    didOpen: () => Swal.showLoading(),
-                    allowOutsideClick: false
-                });
-
-                fetch(`/admin/san-pham/variant/toggle-status/${id}`, {
-                    method: 'POST',
+                fetch(`/api/admin/product-variant/variant/delete/${id}`, {
+                    method: 'DELETE',
                     headers: typeof getCsrfHeaders === 'function' ? getCsrfHeaders() : {}
                 })
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Thành công',
-                            text: data.message,
-                            timer: 1000,
-                            showConfirmButton: false
-                        }).then(() => {
-                            // Cập nhật giao diện mà không cần reload (UX cực tốt)
-                            const row = checkbox.closest('tr');
-                            const statusCol = row.querySelector('.status-col');
-                            if (statusCol) {
-                                statusCol.innerHTML = isChecked 
-                                    ? '<span class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Kinh doanh</span>'
-                                    : '<span class="badge rounded-pill bg-secondary-subtle text-secondary px-3 py-2 fw-medium border border-secondary-subtle">Ngừng kinh doanh</span>';
-                            }
-                        });
+                        Swal.fire('Thành công', data.message, 'success').then(() => location.reload());
                     } else {
-                        checkbox.checked = !isChecked; // Trả lại trạng thái cũ nếu lỗi
                         Swal.fire('Lỗi', data.message, 'error');
                     }
                 });
             }
+        });
+    }
 
-            // --- CHỨC NĂNG 2: XÓA BIẾN THỂ (Lấy từ feat) ---
-            function confirmDeleteVariant(btn) {
-                const id = btn.getAttribute('data-id');
-                Swal.fire({
-                    title: 'Xác nhận xóa?',
-                    text: 'Dữ liệu biến thể này sẽ bị xóa hoàn toàn khỏi hệ thống!',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#ff3c5f',
-                    cancelButtonColor: '#ccc',
-                    confirmButtonText: 'Đồng ý xóa',
-                    cancelButtonText: 'Hủy'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        fetch(`/api/admin/product-variant/variant/delete/${id}`, {
-                            method: 'DELETE',
-                            headers: typeof getCsrfHeaders === 'function' ? getCsrfHeaders() : {}
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data.success) {
-                                Swal.fire('Thành công', data.message, 'success').then(() => location.reload());
-                            } else {
-                                Swal.fire('Lỗi', data.message, 'error');
-                            }
-                        });
-                    }
-                });
+    function openEditModal(btn) {
+        const el = $(btn);
+        $('#editVariantId').val(el.data('id'));
+        $('#modalSpName').text(el.data('name'));
+        $('#modalColor').text("Màu: " + el.data('color'));
+        $('#modalSize').text("Size: " + el.data('size'));
+
+        const qtyVal = Math.floor(parseFloat(el.data('qty')) || 0);
+        const priceVal = Math.floor(parseFloat(el.data('price')) || 0);
+
+        const qtyInput = document.getElementById('editSoLuong');
+        const priceInput = document.getElementById('editGiaBan');
+        
+        qtyInput.value = new Intl.NumberFormat('vi-VN').format(qtyVal);
+        priceInput.value = new Intl.NumberFormat('vi-VN').format(priceVal);
+
+        new bootstrap.Modal(document.getElementById('editVariantModal')).show();
+    }
+
+    function saveVariantUpdate() {
+        const id = $('#editVariantId').val();
+        const qty = $('#editSoLuong').val().replace(/[^\d]/g, '');
+        const price = $('#editGiaBan').val().replace(/[^\d]/g, '');
+
+        if (!qty || !price) {
+            Swal.fire('Chú ý', 'Vui lòng nhập đầy đủ thông tin!', 'warning');
+            return;
+        }
+
+        Swal.fire({ title: 'Đang lưu...', didOpen: () => Swal.showLoading() });
+
+        fetch('/api/admin/product-variant/variant/save', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', ...(typeof getCsrfHeaders === 'function' ? getCsrfHeaders() : {}) },
+            body: JSON.stringify({ id: id, soLuong: qty, giaBan: price })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                Swal.fire('Thành công', 'Đã cập nhật biến thể sản phẩm!', 'success').then(() => location.reload());
+            } else {
+                Swal.fire('Lỗi', data.message || 'Không thể cập nhật biến thể.', 'error');
             }
-                                } else {
-                                    statusCol.innerHTML = '<span class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng bán</span>';
-                                }
-                            }
-                        });
-                    } else {
-                        checkbox.checked = !isChecked; // Revert
-                        Swal.fire('Lỗi', data.message || 'Không thể cập nhật trạng thái', 'error');
-                    }
-                })
-                .catch(err => {
-                    checkbox.checked = !isChecked; // Revert
-                    Swal.fire('Lỗi', 'Lỗi kết nối server', 'error');
-                });
-            }
-        </script>
+        })
+        .catch(() => Swal.fire('Lỗi', 'Đã xảy ra lỗi kết nối!', 'error'));
+    }
+</script>
     </main>
 </body>
-
 </html>

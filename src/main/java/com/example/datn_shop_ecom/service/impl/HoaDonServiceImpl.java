@@ -8,7 +8,6 @@ import com.example.datn_shop_ecom.repository.HoaDonRepository;
 import com.example.datn_shop_ecom.repository.NhanVienRepository;
 import com.example.datn_shop_ecom.repository.TrangThaiHoaDonRepository;
 import com.example.datn_shop_ecom.service.HoaDonService;
-import com.example.datn_shop_ecom.service.EmailService;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -42,16 +41,10 @@ public class HoaDonServiceImpl implements HoaDonService {
     private com.example.datn_shop_ecom.repository.SanPhamChiTietRepository spctRepository;
 
     @Autowired
-    private com.example.datn_shop_ecom.repository.TrangThaiHoaDonRepository trangThaiHoaDonRepository;
-
-    @Autowired
     private com.example.datn_shop_ecom.repository.LichSuHoaDonRepository lichSuHoaDonRepository;
 
     @Autowired
     private com.example.datn_shop_ecom.repository.LichSuThanhToanRepository lichSuThanhToanRepository;
-
-    @Autowired(required = false)
-    private EmailService emailService;
 
     @Override
     @Transactional
@@ -204,12 +197,7 @@ public class HoaDonServiceImpl implements HoaDonService {
     public HoaDon createPendingInvoice(String nhanVienEmail) {
         NhanVien nhanVien = nhanVienRepository.findByEmail(nhanVienEmail).orElse(null);
 
-        // Sinh mã hóa đơn: HD + 4 chữ số, đảm bảo không trùng
-        long nextId = hoaDonRepository.findMaxId() + 1;
-        String maHoaDon;
-        do {
-            maHoaDon = String.format("HD%04d", nextId++);
-        } while (hoaDonRepository.existsByMaHoaDon(maHoaDon));
+        String maHoaDon = generateMaHoaDon();
 
         // Lấy trạng thái "Chờ thanh toán", nếu chưa có thì tạo mới
         TrangThaiHoaDon trangThai = trangThaiHoaDonRepository
@@ -237,5 +225,41 @@ public class HoaDonServiceImpl implements HoaDonService {
     @Override
     public List<HoaDon> findAllPendingPOS() {
         return hoaDonRepository.findAllPendingPOS();
+    }
+
+    @Override
+    public HoaDon findByMaHoaDon(String maHoaDon) {
+        return hoaDonRepository.findByMaHoaDon(maHoaDon).orElse(null);
+    }
+
+    @Override
+    public List<HoaDon> findByKhachHangEmail(String email) {
+        return hoaDonRepository.findByKhachHangEmailOrderByNgayTaoDesc(email);
+    }
+
+    @Override
+    public String generateMaHoaDon() {
+        long nextId = hoaDonRepository.findMaxId() + 1;
+        String maHoaDon;
+        do {
+            maHoaDon = String.format("HD%04d", nextId++);
+        } while (hoaDonRepository.existsByMaHoaDon(maHoaDon));
+        return maHoaDon;
+    }
+
+    @Override
+    @Transactional
+    public HoaDon createHoaDonOnline(HoaDon hoaDon, List<ChiTietHoaDon> items) {
+        if (hoaDon.getMaHoaDon() == null) {
+            hoaDon.setMaHoaDon(generateMaHoaDon());
+        }
+        hoaDon.setNgayTao(LocalDateTime.now());
+        HoaDon saved = hoaDonRepository.save(hoaDon);
+        
+        for (ChiTietHoaDon item : items) {
+            item.setHoaDon(saved);
+            chiTietHoaDonRepository.save(item);
+        }
+        return saved;
     }
 }

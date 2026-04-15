@@ -65,12 +65,24 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+            .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
+            .cors(cors -> cors.configurationSource(request -> {
+                var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
+                corsConfiguration.setAllowedOrigins(java.util.List.of("*"));
+                corsConfiguration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                corsConfiguration.setAllowedHeaders(java.util.List.of("*"));
+                return corsConfiguration;
+            }))
             .authenticationProvider(authenticationProvider())
             .authorizeHttpRequests(auth -> auth
                 // Tài nguyên tĩnh & trang công khai
                 .requestMatchers(
-                    "/css/**", "/js/**", "/images/**", "/uploads/**",
-                    "/", "/index", "/san-pham/**", "/login", "/error"
+                    "/css/**", "/js/**", "/images/**", "/uploads/**", "/assets/**", "/vendor/**",
+                    "/client/**",
+                    "/", "/index", "/san-pham/**", "/admin/login", "/error", "/403", "/404",
+                    "/dang-nhap", "/dang-ky", "/ve-chung-toi", "/phieu-giam-gia", "/tra-cuu", 
+                    "/gio-hang", "/thanh-toan", "/tai-khoan",
+                    "/api/client/**", "/api/auth/**"
                 ).permitAll()
 
                 // Chỉ Admin: quản lý nhân viên, thống kê
@@ -85,8 +97,8 @@ public class SecurityConfig {
 
             // Cấu hình trang Login
             .formLogin(form -> form
-                .loginPage("/login")
-                .loginProcessingUrl("/login")
+                .loginPage("/admin/login")
+                .loginProcessingUrl("/admin/login")
                 .usernameParameter("email")
                 .passwordParameter("matKhau")
                 .successHandler(successHandler)
@@ -97,7 +109,7 @@ public class SecurityConfig {
             // Cấu hình Logout
             .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout")
+                .logoutSuccessUrl("/admin/login?logout")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .permitAll()
@@ -111,7 +123,7 @@ public class SecurityConfig {
             // Session Management - giới hạn 1 session / tài khoản
             .sessionManagement(session -> session
                 .maximumSessions(1)
-                .expiredUrl("/login?sessionExpired=true")
+                .expiredUrl("/admin/login?sessionExpired=true")
             );
 
         return http.build();

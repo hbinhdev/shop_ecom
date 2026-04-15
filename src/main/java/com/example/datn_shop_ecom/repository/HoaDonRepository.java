@@ -23,9 +23,9 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
     
     List<HoaDon> findByKhachHangEmailOrderByNgayTaoDesc(String email);
     
-    boolean existsByKhachHangIdAndIdPhieuGiamGia(Long khachHangId, Long idPhieuGiamGia);
+    boolean existsByKhachHangIdAndPhieuGiamGiaId(Long khachHangId, Long phieuGiamGiaId);
 
-    @Query("SELECT h.idPhieuGiamGia FROM HoaDon h WHERE h.khachHang.id = :khId AND h.idPhieuGiamGia IS NOT NULL")
+    @Query("SELECT h.phieuGiamGia.id FROM HoaDon h WHERE h.khachHang.id = :khId AND h.phieuGiamGia IS NOT NULL")
     List<Long> findUsedVoucherIdsByKhachHangId(@Param("khId") Long khId);
 
     // ── 2. POS & QUẢN LÝ (Gộp từ đoạn 1) ───────────────────────────────────────

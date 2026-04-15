@@ -1,0 +1,55 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.2)
+
+2026-04-15T21:02:35.574+07:00  INFO 11324 --- [  restartedMain] c.e.d.DatnShopEcomApplication            : Starting DatnShopEcomApplication using Java 21.0.10 with PID 11324 (D:\shop_ecom\target\classes started by ngvansinh in D:\shop_ecom)
+2026-04-15T21:02:35.580+07:00  INFO 11324 --- [  restartedMain] c.e.d.DatnShopEcomApplication            : No active profile set, falling back to 1 default profile: "default"
+2026-04-15T21:02:35.654+07:00  INFO 11324 --- [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-04-15T21:02:35.655+07:00  INFO 11324 --- [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-04-15T21:02:37.088+07:00  INFO 11324 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-04-15T21:02:37.321+07:00  INFO 11324 --- [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 224 ms. Found 24 JPA repository interfaces.
+2026-04-15T21:02:38.700+07:00  INFO 11324 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-04-15T21:02:38.722+07:00  INFO 11324 --- [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-04-15T21:02:38.723+07:00  INFO 11324 --- [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.18]
+2026-04-15T21:02:38.795+07:00  INFO 11324 --- [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-04-15T21:02:38.796+07:00  INFO 11324 --- [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3140 ms
+2026-04-15T21:02:39.317+07:00  INFO 11324 --- [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-04-15T21:02:39.457+07:00  INFO 11324 --- [  restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.1.Final
+2026-04-15T21:02:39.614+07:00  INFO 11324 --- [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-04-15T21:02:40.034+07:00  INFO 11324 --- [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-04-15T21:02:40.072+07:00  INFO 11324 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-04-15T21:02:40.760+07:00  INFO 11324 --- [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection ConnectionID:1 ClientConnectionId: 90251f6f-0817-4027-9cb0-211ba77b072c
+2026-04-15T21:02:40.769+07:00  INFO 11324 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-04-15T21:02:40.834+07:00  WARN 11324 --- [  restartedMain] org.hibernate.orm.deprecation            : HHH90000025: SQLServerDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-04-15T21:02:42.954+07:00  INFO 11324 --- [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-04-15T21:02:47.115+07:00  INFO 11324 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-04-15T21:02:47.625+07:00  INFO 11324 --- [  restartedMain] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-04-15T21:02:50.241+07:00  WARN 11324 --- [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-04-15T21:02:50.607+07:00  INFO 11324 --- [  restartedMain] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@5358adb4, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@50f0a18a, org.springframework.security.web.context.SecurityContextHolderFilter@5b3e6ee7, org.springframework.security.web.header.HeaderWriterFilter@24610656, org.springframework.web.filter.CorsFilter@64ea478e, org.springframework.security.web.csrf.CsrfFilter@5800fce2, org.springframework.security.web.authentication.logout.LogoutFilter@269992e7, org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter@2631a20, org.springframework.security.web.session.ConcurrentSessionFilter@18eb0959, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@7928edf, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@74caa78b, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@7ec2f329, org.springframework.security.web.session.SessionManagementFilter@7ffc5378, org.springframework.security.web.access.ExceptionTranslationFilter@55aa2b09, org.springframework.security.web.access.intercept.AuthorizationFilter@70b892c8]
+2026-04-15T21:02:51.064+07:00  WARN 11324 --- [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : Unable to start LiveReload server
+2026-04-15T21:02:51.084+07:00  WARN 11324 --- [  restartedMain] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-04-15T21:02:51.089+07:00  INFO 11324 --- [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-04-15T21:02:51.093+07:00  INFO 11324 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-04-15T21:02:51.099+07:00  INFO 11324 --- [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2026-04-15T21:02:51.112+07:00  INFO 11324 --- [  restartedMain] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-04-15T21:02:51.132+07:00 ERROR 11324 --- [  restartedMain] o.s.b.d.LoggingFailureAnalysisReporter   : 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 8080 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 8080 or configure this application to listen on another port.
+

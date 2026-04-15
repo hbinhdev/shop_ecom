@@ -70,6 +70,8 @@ window.logoutNav = function(event) {
     if (event) event.preventDefault();
     if (confirm('Bạn có chắc muốn đăng xuất?')) {
         localStorage.removeItem('pk_user');
+        localStorage.removeItem('pk_cart');
+        localStorage.removeItem('pk_selected_items');
         window.location.href = '/';
     }
 };
