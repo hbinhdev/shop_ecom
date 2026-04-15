@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{client/layout/main :: layout(~{::main}, 'Đăng nhập - PeakSneaker')}">
+<body>
+<main class="py-5" style="background-color: #f8f9fa; min-height: 80vh; display: flex; align-items: center;">
+    <div class="container">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none text-muted">Trang chủ</a></li>
+                <li class="breadcrumb-item active fw-bold">Đăng nhập</li>
+            </ol>
+        </nav>
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+                <div class="card shadow-sm border-0 rounded-4 p-4 p-md-5 bg-white">
+                    <div class="text-center mb-4">
+                        <h3 class="fw-bold text-uppercase" style="color: #2b2d42;">Đăng nhập</h3>
+                        <p class="text-muted small">Chào mừng bạn quay lại với PeakSneaker</p>
+                    </div>
+
+                    <!-- Sử dụng onsubmit trực tiếp để đảm bảo luôn chặn được reload trang -->
+                    <form id="loginForm" onsubmit="handleLogin(event)">
+                        <div class="mb-4">
+                            <label class="form-label fw-medium text-muted small">EMAIL ĐĂNG NHẬP</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light-subtle border-0 rounded-start-pill px-3"><i class="bi bi-envelope text-muted"></i></span>
+                                <input type="email" class="form-control border-0 bg-light-subtle rounded-end-pill py-2.5 px-3" id="email" placeholder="example@gmail.com" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label fw-medium text-muted small">MẬT KHẨU</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light-subtle border-0 rounded-start-pill px-3"><i class="bi bi-lock text-muted"></i></span>
+                                <input type="password" class="form-control border-0 bg-light-subtle rounded-end-pill py-2.5 px-3" id="password" placeholder="••••••••" required>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="rememberMe">
+                                <label class="form-check-label small" for="rememberMe">Ghi nhớ tôi</label>
+                            </div>
+                            <a href="#" class="text-decoration-none small text-primary">Quên mật khẩu?</a>
+                        </div>
+
+                        <button type="submit" class="btn btn-premium w-100 rounded-pill py-2.5 fw-bold text-white border-0 shadow-sm" id="loginBtn">
+                            ĐĂNG NHẬP NGAY
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-5">
+                        <p class="small text-muted mb-0">Chưa có tài khoản? <a th:href="@{/dang-ky}" class="fw-bold text-decoration-none" style="color: #d47d32;">Đăng ký thành viên</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Đưa Script vào ngay trong main để Layout kẹp nó vào đúng vị trí thực thi -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        async function handleLogin(e) {
+            e.preventDefault();
+            console.log("Login function triggered"); // Log kiểm tra
+            
+            const btn = document.getElementById('loginBtn');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Đang xử lý...';
+
+            try {
+                const response = await fetch('/api/client/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                console.log("Response from server:", data);
+
+                if (data.success) {
+                    localStorage.setItem('pk_user', JSON.stringify(data.user));
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công!',
+                        text: 'Đang đăng nhập vào hệ thống...',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        position: 'top-end',
+                        toast: true
+                    }).then(() => {
+                        window.location.href = '/';
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi đăng nhập',
+                        text: data.message || 'Email hoặc mật khẩu không chính xác!',
+                        confirmButtonColor: '#d47d32'
+                    });
+                    btn.disabled = false;
+                    btn.innerHTML = 'ĐĂNG NHẬP NGAY';
+                }
+            } catch (error) {
+                console.error("Login Fetch Error:", error);
+                Swal.fire('Thất bại', 'Không thể kết nối với máy chủ!', 'error');
+                btn.disabled = false;
+                btn.innerHTML = 'ĐĂNG NHẬP NGAY';
+            }
+        }
+        
+        // Đăng ký hàm ra global để chắc chắn HTML gọi được
+        window.handleLogin = handleLogin;
+    </script>
+</main>
+
+<style>
+    .btn-premium { background: linear-gradient(135deg, #d47d32 0%, #eb984e 100%) !important; color: white !important; }
+    .btn-premium:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(212,125,50,0.3); }
+    .bg-light-subtle { background-color: #f1f3f5 !important; }
+</style>
+</body>
+</html>

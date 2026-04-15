@@ -38,3 +38,4 @@ public class VaiTro {
     @Column(name = "xoa_mem")
     private Boolean xoaMem = false;
 }
+

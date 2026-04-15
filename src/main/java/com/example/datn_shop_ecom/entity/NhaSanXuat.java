@@ -18,3 +18,4 @@ public class NhaSanXuat {
     private LocalDateTime ngaySuaCuoi;
     private Boolean xoaMem;
 }
+

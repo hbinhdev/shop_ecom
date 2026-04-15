@@ -13,7 +13,16 @@ public interface SanPhamChiTietService {
         Long idThuongHieu, Long idDanhMuc,
         Pageable pageable
     );
+
     void toggleVariantStatus(Long id);
+
     SanPhamChiTiet findById(Long id);
-    java.io.ByteArrayInputStream exportToExcel(String search, Long idMauSac, Long idKichThuoc, java.math.BigDecimal minPrice, java.math.BigDecimal maxPrice, String trangThai);
-}
+
+    java.util.List<SanPhamChiTiet> findBySanPhamId(Long id);
+
+    java.io.ByteArrayInputStream exportToExcel(
+        String search, Long idMauSac, Long idKichThuoc, 
+        BigDecimal minPrice, BigDecimal maxPrice, 
+        String trangThai, Long idSanPham, 
+        Long idThuongHieu, Long idDanhMuc
+    );

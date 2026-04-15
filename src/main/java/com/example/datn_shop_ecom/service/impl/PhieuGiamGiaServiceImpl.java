@@ -41,7 +41,29 @@ public class PhieuGiamGiaServiceImpl implements PhieuGiamGiaService {
     @Override
     @Transactional
     public PhieuGiamGia savePGG(PhieuGiamGia pgg) {
-        System.out.println("SERVICE - DANG LUU PGG VOI LOAI: " + pgg.getLoai());
+        
+        if (pgg.getTenPhieu() == null || pgg.getTenPhieu().trim().isEmpty()) {
+            throw new RuntimeException("Tên phiếu giảm giá không được để trống");
+        }
+        if (pgg.getGiaTriGiam() == null || pgg.getGiaTriGiam().doubleValue() <= 0) {
+            throw new RuntimeException("Giá trị giảm phải lớn hơn 0");
+        }
+        if ("%".equals(pgg.getHinhThucGiam()) && pgg.getGiaTriGiam().doubleValue() > 100) {
+            throw new RuntimeException("Giảm giá theo % không được vượt quá 100%");
+        }
+        if (pgg.getNgayBatDau() != null && pgg.getNgayKetThuc() != null) {
+            if (pgg.getNgayKetThuc().isBefore(pgg.getNgayBatDau())) {
+                throw new RuntimeException("Ngày kết thúc phải sau ngày bắt đầu");
+            }
+        }
+        if (pgg.getSoLuong() != null && pgg.getSoLuong() < 0) {
+            throw new RuntimeException("Số lượng không được nhỏ hơn 0");
+        }
+        if (pgg.getGiaTriToiThieu() != null && pgg.getGiaTriToiThieu().doubleValue() < 0) {
+            throw new RuntimeException("Hóa đơn tối thiểu không được nhỏ hơn 0");
+        }
+
+        
         if (pgg.getId() != null) {
             PhieuGiamGia existing = pggRepo.findById(pgg.getId())
                     .orElseThrow(() -> new RuntimeException("Phiếu giảm giá không tồn tại"));
@@ -123,4 +145,10 @@ public class PhieuGiamGiaServiceImpl implements PhieuGiamGiaService {
                     pgg.getTrangThai() != null && pgg.getTrangThai() == 1 ? "Hoạt động" : "Ngừng hoạt động");
         });
     }
+
+    @Override
+    public List<PhieuGiamGia> findAllByXoaMemFalse() {
+        return pggRepo.findAllByXoaMemFalse();
+    }
 }
+

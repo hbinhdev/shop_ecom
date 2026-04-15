@@ -66,3 +66,4 @@ public class KhachHang {
     @OneToMany(mappedBy = "khachHang", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<DiaChi> danhSachDiaChi = new java.util.ArrayList<>();
 }
+

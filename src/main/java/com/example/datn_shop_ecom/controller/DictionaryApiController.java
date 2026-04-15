@@ -31,3 +31,4 @@ public class DictionaryApiController {
         return ResponseEntity.ok(result);
     }
 }
+

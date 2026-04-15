@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface KhachHangRepository extends JpaRepository<KhachHang, Long> {
-    @Query("SELECT k FROM KhachHang k " + // Removed LEFT JOIN FETCH for pagination compatibility
+    @Query("SELECT k FROM KhachHang k " + 
            "WHERE (:search IS NULL OR k.maKhachHang LIKE %:search% " +
            "OR k.tenDayDu LIKE %:search% " +
            "OR k.email LIKE %:search% OR k.soDienThoai LIKE %:search%) " +
@@ -35,6 +35,8 @@ public interface KhachHangRepository extends JpaRepository<KhachHang, Long> {
     Optional<KhachHang> findByMaKhachHang(String maKhachHang);
     Optional<KhachHang> findByEmail(String email);
     Optional<KhachHang> findBySoDienThoai(String soDienThoai);
+    boolean existsByEmail(String email);
+    boolean existsBySoDienThoai(String soDienThoai);
 
     // POS: tìm nhanh khách hàng theo tên / SĐT (chỉ lấy đang hoạt động)
     @Query("SELECT k FROM KhachHang k WHERE k.xoaMem = false " +
@@ -51,3 +53,4 @@ public interface KhachHangRepository extends JpaRepository<KhachHang, Long> {
     @org.springframework.data.jpa.repository.Query("UPDATE KhachHang k SET k.xoaMem = :xoaMem, k.ngaySuaCuoi = CURRENT_TIMESTAMP, k.nguoiSuaCuoi = 'Admin' WHERE k.id = :id")
     void updateStatus(@org.springframework.data.repository.query.Param("id") Long id, @org.springframework.data.repository.query.Param("xoaMem") Boolean xoaMem);
 }
+

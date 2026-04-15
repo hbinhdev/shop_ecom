@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.ByteArrayInputStream;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import com.example.datn_shop_ecom.entity.DiaChi;
 
 @Service
@@ -49,6 +50,36 @@ public class KhachHangServiceImpl implements KhachHangService {
     @Override
     @Transactional
     public KhachHang saveKhachHang(KhachHang khachHang) {
+        
+        if (khachHang.getTenDayDu() == null || khachHang.getTenDayDu().trim().isEmpty()) {
+            throw new RuntimeException("Họ tên không được để trống");
+        }
+        if (khachHang.getEmail() == null || !khachHang.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            throw new RuntimeException("Email không đúng định dạng");
+        }
+        if (khachHang.getSoDienThoai() == null || !khachHang.getSoDienThoai().matches("0\\d{9}")) {
+            throw new RuntimeException("Số điện thoại phải gồm 10 chữ số và bắt đầu bằng số 0");
+        }
+        if (khachHang.getNgaySinh() != null && khachHang.getNgaySinh().isAfter(java.time.LocalDate.now())) {
+            throw new RuntimeException("Ngày sinh không được ở tương lai");
+        }
+
+        
+        if (khachHangRepository.existsByEmail(khachHang.getEmail())) {
+            Optional<com.example.datn_shop_ecom.entity.KhachHang> existing = khachHangRepository.findByEmail(khachHang.getEmail());
+            if (existing.isPresent() && !existing.get().getId().equals(khachHang.getId())) {
+                throw new RuntimeException("Email đã tồn tại trong hệ thống!");
+            }
+        }
+
+        
+        if (khachHangRepository.existsBySoDienThoai(khachHang.getSoDienThoai())) {
+            Optional<com.example.datn_shop_ecom.entity.KhachHang> existing = khachHangRepository.findBySoDienThoai(khachHang.getSoDienThoai());
+            if (existing.isPresent() && !existing.get().getId().equals(khachHang.getId())) {
+                throw new RuntimeException("Số điện thoại đã tồn tại trong hệ thống!");
+            }
+        }
+
         if (khachHang.getId() != null) {
             KhachHang existing = khachHangRepository.findById(khachHang.getId())
                     .orElseThrow(() -> new RuntimeException("Khách hàng không tồn tại"));
@@ -85,7 +116,7 @@ public class KhachHangServiceImpl implements KhachHangService {
                 khachHang.setNgayTao(LocalDateTime.now());
             }
             khachHang.setXoaMem(false);
-            // === Tự động sinh mật khẩu (VD: 8 ký tự) ===
+            
             String password = generateRandomPassword(8);
             khachHang.setMatKhau(password);
 
@@ -113,7 +144,7 @@ public class KhachHangServiceImpl implements KhachHangService {
                         saved.getTenDayDu(), saved.getEmail(), password);
                 emailService.sendEmail(saved.getEmail(), subject, body);
             } catch (Exception e) {
-                System.err.println("Lỗi gửi mail: " + e.getMessage());
+                
             }
 
             return saved;
@@ -127,6 +158,59 @@ public class KhachHangServiceImpl implements KhachHangService {
         for (int i = 0; i < length; i++)
             sb.append(chars.charAt(rnd.nextInt(chars.length())));
         return sb.toString();
+    }
+
+    @Override
+    @Transactional
+    public KhachHang registerKhachHang(KhachHang khachHang) {
+        if (khachHang.getTenDayDu() == null || khachHang.getTenDayDu().trim().isEmpty())
+            throw new RuntimeException("Họ tên không được để trống");
+        if (khachHang.getEmail() == null || !khachHang.getEmail().matches("^[A-Za-z0-9+_.-]+@(.+)$"))
+            throw new RuntimeException("Email không đúng định dạng");
+        if (khachHang.getSoDienThoai() == null || !khachHang.getSoDienThoai().matches("0\\d{9}"))
+            throw new RuntimeException("Số điện thoại phải gồm 10 chữ số và bắt đầu bằng số 0");
+        
+        if (khachHangRepository.existsByEmail(khachHang.getEmail()))
+            throw new RuntimeException("Email đã tồn tại trong hệ thống!");
+        if (khachHangRepository.existsBySoDienThoai(khachHang.getSoDienThoai()))
+            throw new RuntimeException("Số điện thoại đã tồn tại trong hệ thống!");
+            
+        // Tự sinh mật khẩu ngẫu nhiên
+        String randomPwd = generateRandomPassword(8);
+        khachHang.setMatKhau(randomPwd);
+        
+        if (khachHang.getMaKhachHang() == null || khachHang.getMaKhachHang().isEmpty())
+            khachHang.setMaKhachHang(generateMaKhachHang());
+            
+        khachHang.setNgayTao(LocalDateTime.now());
+        khachHang.setXoaMem(false);
+        
+        if (khachHang.getDanhSachDiaChi() != null) {
+            khachHang.getDanhSachDiaChi().forEach(dc -> {
+                dc.setKhachHang(khachHang);
+                dc.setNgayTao(LocalDateTime.now());
+                if (dc.getDiaChiMacDinh() == null) dc.setDiaChiMacDinh(false);
+            });
+        }
+        
+        KhachHang saved = khachHangRepository.save(khachHang);
+        
+        // Gửi mật khẩu qua Email
+        try {
+            String subject = "Chào mừng bạn đến với PeakSneaker - Thông tin tài khoản";
+            String content = "Chào " + saved.getTenDayDu() + ",\n\n" +
+                             "Chúc mừng bạn đã đăng ký tài khoản thành công tại PeakSneaker.\n" +
+                             "Thông tin đăng nhập của bạn như sau:\n" +
+                             "- Email: " + saved.getEmail() + "\n" +
+                             "- Mật khẩu: " + randomPwd + "\n\n" +
+                             "Vui lòng sử dụng mật khẩu này để đăng nhập và bạn có thể đổi lại mật khẩu trong phần Tài khoản.\n" +
+                             "Trân trọng!";
+            emailService.sendEmail(saved.getEmail(), subject, content);
+        } catch (Exception e) {
+            System.err.println("Lỗi gửi mail: " + e.getMessage());
+        }
+        
+        return saved;
     }
 
     @Override
@@ -175,3 +259,4 @@ public class KhachHangServiceImpl implements KhachHangService {
         });
     }
 }
+

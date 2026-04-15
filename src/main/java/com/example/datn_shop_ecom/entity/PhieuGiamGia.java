@@ -31,7 +31,7 @@ public class PhieuGiamGia {
     private LocalDate ngayKetThuc;
 
     @Column(name = "hinh_thuc_giam", columnDefinition = "NVARCHAR(50)")
-    private String hinhThucGiam; // "%" or "VNĐ"
+    private String hinhThucGiam; 
 
     @Column(name = "gia_tri_giam")
     private BigDecimal giaTriGiam;
@@ -68,3 +68,4 @@ public class PhieuGiamGia {
     @Column(name = "mo_ta", columnDefinition = "NVARCHAR(MAX)")
     private String moTa;
 }
+

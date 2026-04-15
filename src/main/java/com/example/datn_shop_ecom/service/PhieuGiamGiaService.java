@@ -18,6 +18,7 @@ public interface PhieuGiamGiaService {
     void softDelete(Long id);
     
     String generateMaPGG();
-    
+    List<PhieuGiamGia> findAllByXoaMemFalse();
     ByteArrayInputStream exportToExcel(String search, LocalDate startDate, LocalDate endDate, Integer status);
 }
+

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{client/layout/main :: layout(~{::main}, ${pageTitle})}">
+
+<body>
+    <main class="py-5">
+        <div class="container">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none text-muted">Trang chủ</a>
+                    </li>
+                    <li class="breadcrumb-item active fw-bold">Cửa hàng</li>
+                </ol>
+            </nav>
+            <div class="row g-4">
+
+                <!-- SIDEBAR BỘ LỌC -->
+                <aside class="col-lg-3">
+                    <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 100px;">
+                        <h5 class="fw-bold mb-4 border-bottom pb-2 text-primary">BỘ LỌC</h5>
+
+                        <!-- Tìm kiếm -->
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-muted">TÌM KIẾM</label>
+                            <div class="input-group">
+                                <input type="text" id="searchInput"
+                                    class="form-control border-end-0 shadow-none border-secondary-subtle"
+                                    placeholder="Tìm giày..." th:value="${searchQuery}">
+                                <span class="input-group-text bg-white border-start-0 border-secondary-subtle"
+                                    onclick="applyFilters()" style="cursor:pointer;">
+                                    <i class="bi bi-search"></i>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Danh mục -->
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-muted text-uppercase text-primary">Danh
+                                mục</label>
+                            <div class="d-flex flex-column gap-2 mt-2">
+                                <div class="form-check" th:each="dm : ${danhMucs}">
+                                    <input class="form-check-input filter-category" type="radio" name="danhMuc"
+                                        th:value="${dm.id}" th:id="'cat' + ${dm.id}"
+                                        th:checked="${dm.id == selectedDanhMuc}">
+                                    <label class="form-check-label small" th:for="'cat' + ${dm.id}"
+                                        th:text="${dm.tenDanhMuc}">Danh mục</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Thương hiệu -->
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-muted text-uppercase text-primary">Thương
+                                hiệu</label>
+                            <div class="d-flex flex-column gap-2 mt-2">
+                                <div class="form-check" th:each="th : ${thuongHieus}">
+                                    <input class="form-check-input filter-brand" type="radio" name="thuongHieu"
+                                        th:value="${th.id}" th:id="'brand' + ${th.id}"
+                                        th:checked="${th.id == selectedThuongHieu}">
+                                    <label class="form-check-label small" th:for="'brand' + ${th.id}"
+                                        th:text="${th.tenThuongHieu}">Thương hiệu</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kiểu dáng -->
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-muted text-uppercase text-primary">Kiểu dáng</label>
+                            <div class="d-flex flex-column gap-2 mt-2">
+                                <div class="form-check" th:each="kd : ${kieuDangs}">
+                                    <input class="form-check-input filter-style" type="radio" name="kieuDang"
+                                        th:value="${kd.id}" th:id="'style' + ${kd.id}"
+                                        th:checked="${kd.id == selectedKieuDang}">
+                                    <label class="form-check-label small" th:for="'style' + ${kd.id}"
+                                        th:text="${kd.tenKieuDang}">Kiểu dáng</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chất liệu -->
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-muted text-uppercase text-primary">Chất liệu</label>
+                            <div class="d-flex flex-column gap-2 mt-2">
+                                <div class="form-check" th:each="cl : ${chatLieus}">
+                                    <input class="form-check-input filter-material" type="radio" name="chatLieu"
+                                        th:value="${cl.id}" th:id="'material' + ${cl.id}"
+                                        th:checked="${cl.id == selectedChatLieu}">
+                                    <label class="form-check-label small" th:for="'material' + ${cl.id}"
+                                        th:text="${cl.tenChatLieu}">Chất liệu</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Màu sắc -->
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-muted text-uppercase text-primary">Màu
+                                sắc</label>
+                            <div class="d-flex flex-wrap gap-2 mt-2">
+                                <div th:each="ms : ${mauSacs}" class="color-filter-option"
+                                    th:classappend="${ms.id == selectedMauSac} ? 'active' : ''" th:data-id="${ms.id}"
+                                    th:text="${ms.tenMauSac}"
+                                    th:style="|border-left: 5px solid ${ms.maMau != null ? ms.maMau : '#ddd'}; width: auto; padding: 5px 15px; cursor: pointer; border-radius: 8px; font-size: 0.85rem; border: 1px solid #eee; transition: all 0.2s;|">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kích cỡ -->
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-muted text-uppercase text-primary">Kích
+                                cỡ</label>
+                            <div class="d-flex flex-wrap gap-2 mt-2">
+                                <div th:each="kt : ${kichThuocs}" class="size-filter-item size-filter-option"
+                                    th:classappend="${kt.id == selectedKichThuoc} ? 'active' : ''" th:data-id="${kt.id}"
+                                    th:text="${kt.tenKichThuoc}" style="cursor: pointer;">
+                                </div>
+                            </div>
+                        </div>
+
+                        <button onclick="applyFilters()"
+                            class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow-sm mt-3">ÁP DỤNG</button>
+                        <a th:href="@{/san-pham}"
+                            class="btn btn-link w-100 text-decoration-none text-muted small mt-2">Xóa bộ lọc</a>
+                    </div>
+                </aside>
+
+                <!-- DANH SÁCH SẢN PHẨM -->
+                <div class="col-lg-9">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <span class="text-muted small">Hiển thị <span th:text="${products.size()}">0</span> sản
+                            phẩm</span>
+                        <select id="sortSelect" onchange="applyFilters()"
+                            class="form-select w-auto border-0 shadow-none small fw-bold">
+                            <option value="newest" th:selected="${selectedSort == 'newest'}">Mới nhất</option>
+                            <option value="price_asc" th:selected="${selectedSort == 'price_asc'}">Giá thấp đến cao
+                            </option>
+                            <option value="price_desc" th:selected="${selectedSort == 'price_desc'}">Giá cao đến thấp
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="row g-4">
+                        <div th:each="p : ${products}" class="col-6 col-md-4">
+                            <a th:href="@{'/san-pham/detail/' + ${p.id}}" class="text-decoration-none p-card-link">
+                                <div class="product-card h-100">
+                                    <div class="product-img-wrapper"
+                                        th:with="displayImg=${p.duongDanAnh != null ? p.duongDanAnh : (p.danhSachHinhAnh != null && !p.danhSachHinhAnh.isEmpty() ? p.danhSachHinhAnh[0].duongDan : (p.danhSachChiTiet != null && !p.danhSachChiTiet.isEmpty() && p.danhSachChiTiet[0].duongDanAnh != null ? p.danhSachChiTiet[0].duongDanAnh : null))}">
+                                        <img th:src="${displayImg != null ? (displayImg.startsWith('http') ? displayImg : '/uploads/san-pham/' + displayImg) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600'}"
+                                            th:alt="${p.tenSanPham}">
+                                    </div>
+                                    <div class="card-content">
+                                        <small class="text-muted mb-1 d-block"
+                                            th:text="${p.danhMuc != null ? p.danhMuc.tenDanhMuc : 'Sneaker'}">Sneaker</small>
+                                        <h6 class="fw-bold text-dark mb-1 product-title" th:text="${p.tenSanPham}">Tên
+                                            giày Sneaker</h6>
+                                        <div class="mt-auto">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <span class="fw-bold text-danger fs-6"
+                                                    th:text="${p.getKhoangGia()}">Giá</span>
+                                                <i class="bi bi-arrow-right-short text-danger fs-5"></i>
+                                            </div>
+                                            <div class="text-uppercase text-muted fw-bold"
+                                                style="font-size: 0.6rem; letter-spacing: 0.5px;">CHI TIẾT</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <style>
+            /*<![CDATA[*/
+            .product-card {
+                border-radius: 15px;
+                overflow: hidden;
+                transition: all 0.3s ease;
+                background: #fff;
+                display: flex;
+                flex-direction: column;
+                border: 1px solid #eee !important;
+            }
+
+            .product-img-wrapper {
+                width: 100%;
+                aspect-ratio: 1 / 1;
+                overflow: hidden;
+                background-color: #f8f9fa;
+            }
+
+            .product-img-wrapper img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.5s ease;
+            }
+
+            .product-card:hover .product-img-wrapper img {
+                transform: scale(1.05);
+            }
+
+            .p-card-link:hover .product-card {
+                transform: translateY(-5px);
+                border-color: #d47d32 !important;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+            }
+
+            .card-content {
+                padding: 1rem;
+                flex-grow: 1;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .product-title {
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                height: 2.6rem;
+                line-height: 1.3;
+                font-size: 0.95rem;
+            }
+
+            /* Filter Styles */
+            .color-filter-option:hover {
+                transform: scale(1.02);
+                border-color: #d47d32 !important;
+                background: #fff5ed !important;
+            }
+
+            .color-filter-option.active {
+                border-color: #d47d32 !important;
+                background: #fff5ed !important;
+                font-weight: bold;
+                color: #d47d32;
+            }
+
+            .size-filter-item {
+                width: 44px;
+                height: 38px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border: 1px solid #eee;
+                border-radius: 10px;
+                font-size: 0.85rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.2s;
+                background: #fff;
+            }
+
+            .size-filter-item:hover {
+                border-color: #d47d32;
+                background: #fff5ed;
+                color: #d47d32;
+            }
+
+            .size-filter-item.active {
+                background: #d47d32;
+                color: #fff;
+                border-color: #d47d32;
+            }
+
+            .filter-category:checked,
+            .filter-brand:checked,
+            .filter-style:checked,
+            .filter-material:checked,
+            .filter-checkbox:checked {
+                background-color: #d47d32 !important;
+                border-color: #d47d32 !important;
+            }
+
+            /*]]>*/
+        </style>
+
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            function applyFilters() {
+                const searchInput = document.getElementById('searchInput');
+                const sortSelect = document.getElementById('sortSelect');
+                let url = new URL(window.location.origin + window.location.pathname);
+
+                if (searchInput && searchInput.value.trim()) {
+                    url.searchParams.set('search', searchInput.value.trim());
+                }
+                if (sortSelect && sortSelect.value) {
+                    url.searchParams.set('sort', sortSelect.value);
+                }
+
+                const selectedCat = document.querySelector('.filter-category:checked');
+                if (selectedCat) url.searchParams.set('danhMuc', selectedCat.value);
+
+                const selectedBrand = document.querySelector('.filter-brand:checked');
+                if (selectedBrand) url.searchParams.set('thuongHieu', selectedBrand.value);
+
+                const selectedStyle = document.querySelector('.filter-style:checked');
+                if (selectedStyle) url.searchParams.set('kieuDang', selectedStyle.value);
+
+                const selectedMaterial = document.querySelector('.filter-material:checked');
+                if (selectedMaterial) url.searchParams.set('chatLieu', selectedMaterial.value);
+
+                const selectedColor = document.querySelector('.color-filter-option.active');
+                if (selectedColor) url.searchParams.set('mauSac', selectedColor.getAttribute('data-id'));
+
+                const selectedSize = document.querySelector('.size-filter-option.active');
+                if (selectedSize) url.searchParams.set('kichThuoc', selectedSize.getAttribute('data-id'));
+
+                window.location.href = url.toString();
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                // Radio toggle logic (click again to deselect)
+                document.querySelectorAll('.filter-category, .filter-brand, .filter-style, .filter-material').forEach(function (radio) {
+                    radio.addEventListener('click', function () {
+                        if (this.dataset.wasChecked === 'true') {
+                            this.checked = false;
+                            this.dataset.wasChecked = 'false';
+                            applyFilters();
+                        } else {
+                            document.querySelectorAll('input[name="' + this.name + '"]').forEach(r => r.dataset.wasChecked = 'false');
+                            this.dataset.wasChecked = 'true';
+                            applyFilters();
+                        }
+                    });
+                    if (radio.checked) radio.dataset.wasChecked = 'true';
+                });
+
+                // Color selection
+                document.querySelectorAll('.color-filter-option').forEach(opt => {
+                    opt.addEventListener('click', function () {
+                        const isActive = this.classList.contains('active');
+                        document.querySelectorAll('.color-filter-option').forEach(o => o.classList.remove('active'));
+                        if (!isActive) this.classList.add('active');
+                        applyFilters();
+                    });
+                });
+
+                // Size selection
+                document.querySelectorAll('.size-filter-option').forEach(opt => {
+                    opt.addEventListener('click', function () {
+                        const isActive = this.classList.contains('active');
+                        document.querySelectorAll('.size-filter-option').forEach(o => o.classList.remove('active'));
+                        if (!isActive) this.classList.add('active');
+                        applyFilters();
+                    });
+                });
+
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.addEventListener('keypress', function (e) {
+                        if (e.key === 'Enter') applyFilters();
+                    });
+                }
+            });
+            /*]]>*/
+        </script>
+    </main>
+</body>
+
+</html>

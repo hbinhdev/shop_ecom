@@ -19,3 +19,4 @@ public class ThuongHieu {
     private LocalDateTime ngaySuaCuoi;
     private Boolean xoaMem;
 }
+

@@ -60,4 +60,8 @@ public interface PhieuGiamGiaRepository extends JpaRepository<PhieuGiamGia, Long
            "AND (p.giaTriToiThieu IS NULL OR p.giaTriToiThieu <= :tongTien) " +
            "ORDER BY p.giaTriGiam DESC")
     List<PhieuGiamGia> findApplicableVouchers(@Param("tongTien") java.math.BigDecimal tongTien);
+    List<PhieuGiamGia> findAllByXoaMemFalse();
+
+    java.util.Optional<PhieuGiamGia> findByMaPhieuAndXoaMemFalse(String maPhieu);
 }
+

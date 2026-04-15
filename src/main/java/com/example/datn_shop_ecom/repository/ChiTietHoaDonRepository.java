@@ -52,3 +52,4 @@ public interface ChiTietHoaDonRepository extends JpaRepository<ChiTietHoaDon, Lo
     Long sumSoLuongBan(@Param("fromDate") LocalDateTime fromDate,
                         @Param("toDate") LocalDateTime toDate);
 }
+

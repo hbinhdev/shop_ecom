@@ -55,3 +55,4 @@ public class ChiTietHoaDon {
     @Column(name = "ngay_sua_cuoi")
     private LocalDateTime ngaySuaCuoi;
 }
+

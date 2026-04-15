@@ -10,11 +10,26 @@ import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecificationExecutor<HoaDon> {
 
-    // ── POS ─────────────────────────────────────────────────────────────────────
+    // ── 1. TRA CỨU CƠ BẢN & CLIENT-SIDE (Gộp từ đoạn 2) ────────────────────────
+    
+    Optional<HoaDon> findByMaHoaDon(String maHoaDon);
+    
+    List<HoaDon> findByKhachHangIdOrderByNgayTaoDesc(Long khachHangId);
+    
+    List<HoaDon> findByKhachHangEmailOrderByNgayTaoDesc(String email);
+    
+    boolean existsByKhachHangIdAndIdPhieuGiamGia(Long khachHangId, Long idPhieuGiamGia);
+
+    @Query("SELECT h.idPhieuGiamGia FROM HoaDon h WHERE h.khachHang.id = :khId AND h.idPhieuGiamGia IS NOT NULL")
+    List<Long> findUsedVoucherIdsByKhachHangId(@Param("khId") Long khId);
+
+    // ── 2. POS & QUẢN LÝ (Gộp từ đoạn 1) ───────────────────────────────────────
+
     @Query("SELECT h FROM HoaDon h WHERE h.trangThaiHoaDon = 'CHO_THANH_TOAN' AND h.loaiHoaDon = 'TAI_QUAY' ORDER BY h.ngayTao ASC")
     List<HoaDon> findAllPendingPOS();
 
@@ -23,7 +38,7 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
 
     boolean existsByMaHoaDon(String maHoaDon);
 
-    // ── Thống kê tổng hợp ────────────────────────────────────────────────────────
+    // ── 3. THỐNG KÊ TỔNG HỢP (Native Query cho Dashboard) ──────────────────────
 
     /** Tổng số đơn mọi trạng thái (trừ DA_HUY) trong kỳ */
     @Query(value = "SELECT COUNT(*) FROM hoa_don h " +
@@ -39,15 +54,14 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
     BigDecimal sumTongTien(@Param("fromDate") LocalDateTime fromDate,
                            @Param("toDate") LocalDateTime toDate);
 
-    /** Doanh thu thực tế (sau giảm giá) của đơn HOAN_THANH.
-     *  Dùng COALESCE(tong_tien_after_giam, tong_tien) để tính đúng cả đơn cũ chưa có trường after_giam */
+    /** Doanh thu thực tế (sau giảm giá) */
     @Query(value = "SELECT COALESCE(SUM(COALESCE(h.tong_tien_after_giam, h.tong_tien)), 0) FROM hoa_don h " +
                    "WHERE h.trang_thai_hoa_don = 'HOAN_THANH' " +
                    "AND h.ngay_tao >= :fromDate AND h.ngay_tao < :toDate", nativeQuery = true)
     BigDecimal sumDoanhThu(@Param("fromDate") LocalDateTime fromDate,
                            @Param("toDate") LocalDateTime toDate);
 
-    /** Doanh thu dự kiến: đơn đang xử lý (chưa hoàn thành, chưa hủy) */
+    /** Doanh thu dự kiến (đơn đang xử lý) */
     @Query(value = "SELECT COALESCE(SUM(COALESCE(h.tong_tien_after_giam, h.tong_tien)), 0) FROM hoa_don h " +
                    "WHERE h.trang_thai_hoa_don IN " +
                    "('CHO_THANH_TOAN','CHO_XAC_NHAN','DA_XAC_NHAN','DANG_GIAO') " +
@@ -55,16 +69,14 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
     BigDecimal sumDoanhThuDuKien(@Param("fromDate") LocalDateTime fromDate,
                                  @Param("toDate") LocalDateTime toDate);
 
-    /** Số đơn HOAN_THANH trong kỳ */
     @Query(value = "SELECT COUNT(*) FROM hoa_don h " +
                    "WHERE h.trang_thai_hoa_don = 'HOAN_THANH' " +
                    "AND h.ngay_tao >= :fromDate AND h.ngay_tao < :toDate", nativeQuery = true)
     Long countDonHoanThanh(@Param("fromDate") LocalDateTime fromDate,
                            @Param("toDate") LocalDateTime toDate);
 
-    // ── Biểu đồ trạng thái đơn hàng (donut) ─────────────────────────────────────
+    // ── 4. DỮ LIỆU BIỂU ĐỒ (Charts) ─────────────────────────────────────────────
 
-    /** Đếm số đơn theo từng trạng thái trong kỳ */
     @Query(value = "SELECT h.trang_thai_hoa_don, COUNT(*) AS so_don " +
                    "FROM hoa_don h " +
                    "WHERE h.ngay_tao >= :fromDate AND h.ngay_tao < :toDate " +
@@ -72,9 +84,6 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
     List<Object[]> countByTrangThai(@Param("fromDate") LocalDateTime fromDate,
                                     @Param("toDate") LocalDateTime toDate);
 
-    // ── Biểu đồ doanh thu theo thời gian ─────────────────────────────────────────
-
-    /** Doanh thu theo giờ trong ngày (dùng cho kỳ "Hôm nay") */
     @Query(value = "SELECT CAST(DATEPART(hour, h.ngay_tao) AS VARCHAR) + ':00' AS gio, " +
                    "COALESCE(SUM(COALESCE(h.tong_tien_after_giam, h.tong_tien)), 0) AS doanhThu, " +
                    "COUNT(*) AS soDon " +
@@ -86,7 +95,6 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
     List<Object[]> findDoanhThuTheoGio(@Param("fromDate") LocalDateTime fromDate,
                                        @Param("toDate") LocalDateTime toDate);
 
-    /** Doanh thu theo ngày (dùng cho kỳ "Tuần này" / "Tháng này") */
     @Query(value = "SELECT CONVERT(VARCHAR(10), h.ngay_tao, 120) AS ngay, " +
                    "COALESCE(SUM(COALESCE(h.tong_tien_after_giam, h.tong_tien)), 0) AS doanhThu, " +
                    "COUNT(*) AS soDon " +
@@ -98,7 +106,6 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
     List<Object[]> findDoanhThuTheoNgay(@Param("fromDate") LocalDateTime fromDate,
                                         @Param("toDate") LocalDateTime toDate);
 
-    /** Doanh thu theo tháng (dùng cho kỳ "Năm này") */
     @Query(value = "SELECT LEFT(CONVERT(VARCHAR(10), h.ngay_tao, 120), 7) AS thang, " +
                    "COALESCE(SUM(COALESCE(h.tong_tien_after_giam, h.tong_tien)), 0) AS doanhThu, " +
                    "COUNT(*) AS soDon " +

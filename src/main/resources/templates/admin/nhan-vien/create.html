@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
 
 <head>
@@ -29,7 +29,7 @@
                             </button>
                         </div>
                     </div>
-                    <!-- Scanner Button at Top Right of Card -->
+                    
                     <div class="text-end mb-2">
                         <button type="button" class="btn btn-outline-dark border-1 rounded-3 px-3 py-2 btn-sm shadow-sm"
                             onclick="startScanner()">
@@ -37,7 +37,7 @@
                         </button>
                     </div>
 
-                    <!-- Avatar Section -->
+                    
                     <div class="text-center mb-5 mt-n2">
                         <div class="position-relative d-inline-block">
                             <div class="avatar-upload rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto shadow-sm"
@@ -58,7 +58,7 @@
                     </div>
 
                     <div class="row g-4">
-                        <!-- Ten & SDT -->
+                        
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Tên nhân viên <span
                                     class="text-danger">*</span></label>
@@ -66,12 +66,14 @@
                                 th:field="*{tenDayDu}" placeholder="Nguyễn Văn A" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-bold small text-uppercase text-muted">Số điện thoại</label>
+                            <label class="form-label fw-bold small text-uppercase text-muted">Số điện thoại <span
+                                    class="text-danger">*</span></label>
                             <input type="text" class="form-control rounded-3 py-2 px-3 border-1 bg-white"
-                                th:field="*{soDienThoai}" placeholder="Nhập số điện thoại">
+                                th:field="*{soDienThoai}" placeholder="0123456789" pattern="0\d{9}"
+                                title="Số điện thoại phải gồm 10 chữ số và bắt đầu bằng số 0" required>
                         </div>
 
-                        <!-- Email & Tinh/Thanh -->
+                        
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Email <span
                                     class="text-danger">*</span></label>
@@ -86,7 +88,7 @@
                             </select>
                         </div>
 
-                        <!-- Quan/Huyen & Xa/Phuong -->
+                        
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Quận/Huyện</label>
                             <select class="form-select rounded-3 py-2 px-3 border-1 bg-white district-select"
@@ -102,7 +104,7 @@
                             </select>
                         </div>
 
-                        <!-- Dia chi & Ngay sinh -->
+                        
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Địa chỉ cụ thể</label>
                             <input type="text" class="form-control rounded-3 py-2 px-3 border-1 bg-white"
@@ -114,7 +116,7 @@
                                 th:field="*{ngaySinh}">
                         </div>
 
-                        <!-- Quyen han & Gioi tinh -->
+                        
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Quyền hạn <span
                                     class="text-danger">*</span></label>
@@ -139,7 +141,7 @@
         </form>
         </div>
 
-        <!-- Scanner Modal -->
+        
         <div class="modal fade" id="scannerModal" tabindex="-1">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
@@ -147,27 +149,35 @@
                         <h5 class="modal-title">Quét mã QR CCCD</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-                    <div class="modal-body">
-                        <ul class="nav nav-tabs mb-3" id="scannerTab" role="tablist">
+                    <div class="modal-body p-4">
+                        <div class="alert alert-info border-0 rounded-3 small mb-4">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Quét mã QR ở mặt sau thẻ CCCD gắn chip để tự động điền thông tin nhân viên.
+                        </div>
+
+                        <ul class="nav nav-tabs border-0 gap-2 mb-4" id="scannerTab" role="tablist">
                             <li class="nav-item">
-                                <button class="nav-link active" id="camera-tab" data-bs-toggle="tab"
-                                    data-bs-target="#camera-pane" type="button">Camera</button>
+                                <button class="nav-link active rounded-pill px-4 border shadow-sm" id="camera-tab"
+                                    data-bs-toggle="tab" data-bs-target="#camera-pane" type="button">Camera</button>
                             </li>
                             <li class="nav-item">
-                                <button class="nav-link" id="file-tab" data-bs-toggle="tab" data-bs-target="#file-pane"
-                                    type="button">Tải ảnh</button>
+                                <button class="nav-link rounded-pill px-4 border shadow-sm" id="file-tab"
+                                    data-bs-toggle="tab" data-bs-target="#file-pane" type="button">Tải ảnh</button>
                             </li>
+                            
                         </ul>
                         <div class="tab-content" id="scannerTabContent">
                             <div class="tab-pane fade show active" id="camera-pane">
-                                <div id="reader" style="width: 100%;"></div>
+                                <div id="reader" style="width: 100%;" class="rounded-3 overflow-hidden border"></div>
                             </div>
                             <div class="tab-pane fade" id="file-pane">
-                                <input type="file" id="qr-input-file" accept="image/*" class="form-control mb-3">
-                                <div id="reader-file" style="width: 100%; min-height: 200px;"
-                                    class="bg-light d-flex align-items-center justify-content-center border rounded">
-                                    <span class="text-muted">Xem trước ảnh...</span>
+                                <div class="upload-zone d-flex flex-column align-items-center justify-content-center cursor-pointer p-4 mb-3"
+                                    onclick="document.getElementById('qr-input-file').click()">
+                                    <i class="bi bi-cloud-upload fs-1 text-muted"></i>
+                                    <p class="text-muted mt-2">Nhấn để chọn ảnh mặt sau CCCD</p>
+                                    <input type="file" id="qr-input-file" accept="image/*" class="d-none">
                                 </div>
+                                <div id="reader-file" style="display: none;"></div>
                             </div>
                         </div>
                     </div>
@@ -175,9 +185,35 @@
             </div>
         </div>
 
-        <div th:replace="~{admin/fragments/scripts :: common_scripts}"></div>
         <script th:inline="javascript">
-            initAddressSelects('.city-select', '.district-select', '.ward-select');
+            document.addEventListener('DOMContentLoaded', function() {
+                if (typeof initAddressSelects === 'function') {
+                    initAddressSelects('.city-select', '.district-select', '.ward-select');
+                }
+
+                // Real-time validation for Email and Phone
+                const validateField = (selector, pattern) => {
+                    const el = document.querySelector(selector);
+                    if (!el) return;
+                    el.addEventListener('blur', function() {
+                        const isValid = pattern.test(this.value);
+                        if (!isValid && this.value !== "") {
+                            this.classList.add('is-invalid');
+                        } else {
+                            this.classList.remove('is-invalid');
+                        }
+                    });
+                    el.addEventListener('input', function() {
+                        if (this.classList.contains('is-invalid')) {
+                            const isValid = pattern.test(this.value);
+                            if (isValid) this.classList.remove('is-invalid');
+                        }
+                    });
+                };
+
+                validateField('input[name="soDienThoai"]', /^0\d{9}$/);
+                validateField('input[name="email"]', /^[^\s@]+@[^\s@]+\.[^\s@]+$/);
+            });
 
             function previewImage(input) {
                 const preview = document.getElementById('avatarPreview');
@@ -241,7 +277,12 @@
                 });
             }
 
-            // Dừng camera khi đóng modal hoàn toàn
+            function demoCCCD() {
+                const sampleQR = "012345678901|000000000|Nguyễn Văn Demo|01011995|Nam|Số 1, Đại Cồ Việt, Bách Khoa, Hai Bà Trưng, Hà Nội|01012022";
+                handleScanSuccess(sampleQR);
+            }
+
+            
             document.getElementById('scannerModal').addEventListener('hidden.bs.modal', function () {
                 if (html5QrCode && html5QrCode.isScanning) html5QrCode.stop();
             });

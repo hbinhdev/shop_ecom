@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{client/layout/main :: layout(~{::main}, 'Tài khoản của tôi - PeakSneaker')}">
+
+<body>
+    <main class="py-5" style="background-color: #f8f9fa; min-height: 90vh;">
+        <div class="container">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none text-muted">Trang chủ</a>
+                    </li>
+                    <li class="breadcrumb-item active fw-bold">Tài khoản</li>
+                </ol>
+            </nav>
+            <!-- Auth Check Banner -->
+            <div id="authRequired" class="text-center py-5 d-none">
+                <div class="display-1 mb-4">🔓</div>
+                <h3 class="fw-bold">Bạn chưa đăng nhập</h3>
+                <p class="text-muted mb-4">Vui lòng đăng nhập để xem và quản lý thông tin tài khoản của bạn.</p>
+                <a th:href="@{/dang-nhap}" class="btn btn-premium px-5 py-3 text-white fw-bold shadow-sm">
+                    ĐĂNG NHẬP NGAY
+                </a>
+            </div>
+
+            <!-- Account Dashboard -->
+            <div id="accountContent" class="d-none">
+                <div class="row g-4">
+                    <!-- Sidebar -->
+                    <div class="col-lg-4 col-xl-3">
+                        <div
+                            class="card border-0 shadow-sm rounded-4 p-4 mb-4 text-center overflow-hidden position-relative">
+                            <div class="position-absolute top-0 start-0 w-100 h-25"
+                                style="background: linear-gradient(135deg, #d47d32, #eb984e);"></div>
+                            <div class="mt-4 mb-3 position-relative z-1">
+                                <div class="avatar-large mx-auto shadow-sm" id="userInitial">A</div>
+                            </div>
+                            <h5 class="fw-bold mb-1" id="userNameDis">Họ và tên</h5>
+                            <p class="text-muted small mb-3" id="userEmailDis">email@example.com</p>
+                            <div class="d-grid">
+                                <button class="btn btn-outline-danger btn-sm rounded-pill" onclick="logoutAccount()">
+                                    <i class="bi bi-box-arrow-left me-1"></i> Đăng xuất
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                            <div class="list-group list-group-flush">
+                                <a href="javascript:void(0)"
+                                    class="list-group-item list-group-item-action py-3 border-0 active"
+                                    onclick="switchTab('profile', this)">
+                                    <i class="bi bi-person-circle me-3"></i> Thông tin cá nhân
+                                </a>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Content -->
+                    <div class="col-lg-8 col-xl-9">
+                        <!-- Tab: Profile -->
+                        <div id="tab-profile" class="tab-content-item">
+                            <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5">
+                                <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+                                    <h4 class="fw-bold mb-0">THÔNG TIN CÁ NHÂN</h4>
+                                    <button class="btn btn-outline-premium btn-sm rounded-pill px-3 fw-medium"
+                                        onclick="toggleEditProfile()">
+                                        <i class="bi bi-pencil-square me-1"></i> Chỉnh sửa
+                                    </button>
+                                </div>
+
+                                <!-- View Mode -->
+                                <div id="profileViewMode" class="row g-4">
+                                    <div class="col-md-6">
+                                        <label class="small fw-bold text-muted mb-2">HỌ VÀ TÊN</label>
+                                        <div class="bg-light p-3 rounded-4 fw-medium" id="valName">—</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="small fw-bold text-muted mb-2">ĐỊA CHỈ EMAIL</label>
+                                        <div class="bg-light p-3 rounded-4 fw-medium" id="valEmail">—</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="small fw-bold text-muted mb-2">SỐ ĐIỆN THOẠI</label>
+                                        <div class="bg-light p-3 rounded-4 fw-medium" id="valPhone">—</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="small fw-bold text-muted mb-2">GIỚI TÍNH</label>
+                                        <div class="bg-light p-3 rounded-4 fw-medium" id="valGender">—</div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="small fw-bold text-muted mb-2">NGÀY SINH</label>
+                                        <div class="bg-light p-3 rounded-4 fw-medium" id="valDob">—</div>
+                                    </div>
+                                </div>
+
+                                <!-- Edit Mode -->
+                                <form id="profileEditMode" class="d-none" onsubmit="handleUpdateProfile(event)">
+                                    <div class="row g-4 mb-4">
+                                        <div class="col-md-6">
+                                            <label class="small fw-bold text-muted mb-2">HỌ VÀ TÊN (*)</label>
+                                            <input type="text" class="form-control rounded-4 py-2 bg-light-subtle"
+                                                id="editName" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="small fw-bold text-muted mb-2">SỐ ĐIỆN THOẠI</label>
+                                            <input type="text" class="form-control rounded-4 py-2 bg-light-subtle"
+                                                id="editPhone">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="small fw-bold text-muted mb-2">GIỚI TÍNH</label>
+                                            <select class="form-select rounded-4 py-2 bg-light-subtle" id="editGender">
+                                                <option value="">Chọn giới tính</option>
+                                                <option value="Nam">Nam</option>
+                                                <option value="Nữ">Nữ</option>
+                                                <option value="Khác">Khác</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="small fw-bold text-muted mb-2">NGÀY SINH</label>
+                                            <input type="date" class="form-control rounded-4 py-2 bg-light-subtle"
+                                                id="editDob">
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <button type="button" class="btn btn-light rounded-pill px-4 fw-bold"
+                                            onclick="toggleEditProfile()">Hủy</button>
+                                        <button type="submit" class="btn btn-premium rounded-pill px-4 fw-bold"
+                                            id="btnSaveProfile">Lưu thay đổi</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Tab: Orders (Trình giữ chỗ) -->
+                        <div id="tab-orders" class="tab-content-item d-none">
+                            <div class="card border-0 shadow-sm rounded-4 p-4">
+                                <h4 class="fw-bold mb-4 border-bottom pb-3">LỊCH SỬ ĐƠN HÀNG</h4>
+                                <div class="text-center py-5">
+                                    <div class="display-3 text-muted mb-3 opacity-25"><i class="bi bi-cart-x"></i></div>
+                                    <p class="text-muted">Bạn chưa có đơn đặt hàng nào.</p>
+                                    <a th:href="@{/san-pham}" class="btn btn-premium btn-sm px-4 py-2 text-white">MUA
+                                        SẮM NGAY</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab: Addresses (Trình giữ chỗ) -->
+                        <div id="tab-addresses" class="tab-content-item d-none">
+                            <div class="card border-0 shadow-sm rounded-4 p-4">
+                                <h4 class="fw-bold mb-4 border-bottom pb-3">SỔ ĐỊA CHỈ</h4>
+                                <div id="addressList">
+                                    <!-- Địa chỉ sẽ được nạp vào đây -->
+                                    <p class="text-muted small">Đang tải địa chỉ...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .btn-premium {
+                background: linear-gradient(135deg, #d47d32 0%, #eb984e 100%) !important;
+                color: white !important;
+                border: none;
+                border-radius: 50px;
+                transition: all 0.3s;
+            }
+
+            .btn-premium:hover {
+                box-shadow: 0 4px 12px rgba(212, 125, 50, 0.3);
+                transform: translateY(-1px);
+            }
+
+            .btn-outline-premium {
+                border: 1px solid #d47d32;
+                color: #d47d32;
+                transition: all 0.3s;
+            }
+
+            .btn-outline-premium:hover {
+                background-color: #d47d32;
+                color: white;
+            }
+
+            .avatar-large {
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                background: white;
+                border: 4px solid white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 2.5rem;
+                font-weight: 800;
+                color: #d47d32;
+            }
+
+            .list-group-item {
+                font-weight: 500;
+                font-size: 0.95rem;
+                border-left: 4px solid transparent !important;
+            }
+
+            .list-group-item.active {
+                background-color: rgba(212, 125, 50, 0.05) !important;
+                color: #d47d32 !important;
+                border-left-color: #d47d32 !important;
+                font-weight: 700;
+            }
+
+            .bg-light {
+                background-color: #f8f9fa !important;
+                border: 1px solid #eee;
+            }
+
+            .bg-light-subtle {
+                background-color: #f1f3f5 !important;
+                border: 1px solid #dee2e6;
+            }
+        </style>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const userJson = localStorage.getItem('pk_user');
+                if (!userJson) {
+                    document.getElementById('authRequired').classList.remove('d-none');
+                    return;
+                }
+
+                const user = JSON.parse(userJson);
+                document.getElementById('accountContent').classList.remove('d-none');
+
+                // Render Sidebar
+                document.getElementById('userInitial').innerText = user.hoTen ? user.hoTen[0].toUpperCase() : 'A';
+                document.getElementById('userNameDis').innerText = user.hoTen || 'Thành viên';
+                document.getElementById('userEmailDis').innerText = user.email || '—';
+
+                // Render Profile data
+                renderProfileData(user);
+            });
+
+            function renderProfileData(user) {
+                document.getElementById('valName').innerText = user.hoTen || '—';
+                document.getElementById('valEmail').innerText = user.email || '—';
+                document.getElementById('valPhone').innerText = user.soDienThoai || '—';
+                document.getElementById('valGender').innerText = user.gioiTinh || '—';
+
+                let dobStr = '—';
+                if (user.ngaySinh) {
+                    const parts = user.ngaySinh.split('-');
+                    if (parts.length === 3) dobStr = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                }
+                document.getElementById('valDob').innerText = dobStr;
+            }
+
+            function switchTab(tabName, element) {
+                document.querySelectorAll('.list-group-item').forEach(el => el.classList.remove('active'));
+                element.classList.add('active');
+
+                document.querySelectorAll('.tab-content-item').forEach(el => el.classList.add('d-none'));
+                document.getElementById('tab-' + tabName).classList.remove('d-none');
+            }
+
+            function logoutAccount() {
+                if (confirm('Bạn có chắc chắn muốn đăng xuất không?')) {
+                    localStorage.removeItem('pk_user');
+                    window.location.href = '/';
+                }
+            }
+
+            function toggleEditProfile() {
+                const viewMode = document.getElementById('profileViewMode');
+                const editMode = document.getElementById('profileEditMode');
+
+                if (viewMode.classList.contains('d-none')) {
+                    viewMode.classList.remove('d-none');
+                    editMode.classList.add('d-none');
+                } else {
+                    const user = JSON.parse(localStorage.getItem('pk_user'));
+                    document.getElementById('editName').value = user.hoTen || '';
+                    document.getElementById('editPhone').value = user.soDienThoai || '';
+                    document.getElementById('editGender').value = user.gioiTinh || '';
+                    document.getElementById('editDob').value = user.ngaySinh || '';
+
+                    viewMode.classList.add('d-none');
+                    editMode.classList.remove('d-none');
+                }
+            }
+
+            async function handleUpdateProfile(e) {
+                e.preventDefault();
+                const btn = document.getElementById('btnSaveProfile');
+                btn.disabled = true;
+                btn.innerHTML = 'Đang lưu...';
+
+                const user = JSON.parse(localStorage.getItem('pk_user'));
+                const payload = {
+                    id: user.id,
+                    hoTen: document.getElementById('editName').value,
+                    soDienThoai: document.getElementById('editPhone').value,
+                    gioiTinh: document.getElementById('editGender').value,
+                    ngaySinh: document.getElementById('editDob').value,
+                    token: user.token
+                };
+
+                try {
+                    const response = await fetch('/api/client/profile/update', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await response.json();
+
+                    if (data.success) {
+                        localStorage.setItem('pk_user', JSON.stringify(data.user));
+                        Swal.fire({
+                            icon: 'success', title: 'Thành công', text: 'Đã cập nhật thông tin!', timer: 1500, showConfirmButton: false
+                        });
+                        renderProfileData(data.user);
+                        document.getElementById('userNameDis').innerText = data.user.hoTen;
+                        document.getElementById('userInitial').innerText = data.user.hoTen ? data.user.hoTen[0].toUpperCase() : 'A';
+                        toggleEditProfile();
+                    } else {
+                        Swal.fire('Lỗi', data.message || 'Có lỗi xảy ra', 'error');
+                    }
+                } catch (err) {
+                    Swal.fire('Lỗi', 'Lỗi kết nối mạng', 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = 'Lưu thay đổi';
+                }
+            }
+        </script>
+    </main>
+</body>
+
+</html>

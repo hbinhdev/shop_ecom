@@ -21,9 +21,9 @@
                 <li><a th:href="@{/admin/hoa-don}"><i class="bi bi-receipt"></i> Quản lý hóa đơn</a></li>
 
                 <li class="has-submenu">
-                    <a href="javascript:void(0)" class="dropdown-toggle" data-bs-toggle="collapse"
+                    <a href="javascript:void(0)" class="dropdown-toggle collapsed" data-bs-toggle="collapse"
                         data-bs-target="#submenuProduct" aria-expanded="false">
-                        <i class="bi bi-box-seam"></i> Quản lý sản phẩm <i class="bi bi-chevron-down ms-auto"></i>
+                        <i class="bi bi-box-seam"></i> Quản lý sản phẩm
                     </a>
                     <ul class="submenu collapse" id="submenuProduct">
                         <li><a th:href="@{/admin/san-pham}" class="ps-5">Danh sách sản phẩm</a></li>
@@ -36,11 +36,11 @@
 
                 <!-- Quản lý tài khoản -->
                 <li class="has-submenu">
-                    <a href="javascript:void(0)" class="dropdown-toggle" data-bs-toggle="collapse"
-                        data-bs-target="#submenuAccount" aria-expanded="true">
-                        <i class="bi bi-people"></i> Quản lý tài khoản
-                    </a>
-                    <ul class="submenu collapse show" id="submenuAccount">
+                  <a href="javascript:void(0)" class="dropdown-toggle collapsed" data-bs-toggle="collapse"
+   data-bs-target="#submenuAccount" aria-expanded="false">
+    <i class="bi bi-people"></i> Quản lý tài khoản
+</a>
+                    <ul class="submenu collapse" id="submenuAccount">
                         <li><a th:href="@{/admin/khach-hang}" class="ps-5">Khách hàng</a></li>
                         <!-- Chỉ Admin mới thấy menu Nhân viên -->
                         <li sec:authorize="hasRole('ADMIN')">

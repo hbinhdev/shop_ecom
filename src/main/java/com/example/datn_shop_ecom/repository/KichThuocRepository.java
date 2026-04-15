@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface KichThuocRepository extends JpaRepository<KichThuoc, Long> {
+    java.util.List<KichThuoc> findAllByXoaMemFalse();
 }
+

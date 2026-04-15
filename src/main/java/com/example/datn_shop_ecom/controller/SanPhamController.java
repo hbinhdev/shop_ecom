@@ -56,6 +56,7 @@ public class SanPhamController {
     @GetMapping("/bien-the")
     public String bienThe(
             @RequestParam(required = false, defaultValue = "") String search,
+            @RequestParam(required = false) Long idSanPham,
             @RequestParam(required = false) Long idMauSac,
             @RequestParam(required = false) Long idKichThuoc,
             @RequestParam(required = false) BigDecimal minPrice,
@@ -71,11 +72,14 @@ public class SanPhamController {
         Pageable pageable = PageRequest.of(page, 5, Sort.by("sanPham.ngaySuaCuoi").descending().and(Sort.by("sanPham.id").descending()).and(Sort.by("id").descending()));
         Page<SanPhamChiTiet> spctPage = spctService.filterVariantPage(search, idMauSac, idKichThuoc, minPrice, maxPrice, trThai, idSanPham, idThuongHieu, idDanhMuc, pageable);
         
-        // Thu thập toàn bộ ID biến thể của trang hiện tại để lấy ảnh hàng loạt (tránh lỗi N+1)
+        Pageable pageable = PageRequest.of(page, 10, Sort.by("sanPham.ngaySuaCuoi").descending().and(Sort.by("sanPham.id").descending()).and(Sort.by("id").descending()));
+        Page<SanPhamChiTiet> spctPage = spctService.filterVariantPage(search, idSanPham, idMauSac, idKichThuoc, minPrice, maxPrice, trThai, pageable);
+        
+        
         java.util.List<Long> variantIds = new java.util.ArrayList<>();
         if (spctPage != null) variantIds = spctPage.getContent().stream().map(v -> v.getId()).collect(java.util.stream.Collectors.toList());
         
-        // Mapped ảnh đầu tiên của mỗi biến thể
+        
         java.util.Map<Long, String> imgMap = new java.util.HashMap<>();
         if (!variantIds.isEmpty()) {
             java.util.List<HinhAnh> allImg = hinhAnhRepo.findBySanPhamChiTietIdIn(variantIds);
@@ -86,7 +90,7 @@ public class SanPhamController {
             }
         }
 
-        // Chuyển sang danh sách Map cực kỳ an toàn
+        
         java.util.List<java.util.Map<String, Object>> safeVariants = new java.util.ArrayList<>();
         if (spctPage != null) {
             for (SanPhamChiTiet v : spctPage.getContent()) {
@@ -101,16 +105,16 @@ public class SanPhamController {
                 vMap.put("giaBan", v.getGiaBan() != null ? v.getGiaBan() : java.math.BigDecimal.ZERO);
                 vMap.put("trangThai", v.getTrangThai());
                 
-                // --- Xử lý lấy ảnh theo từng màu (Biến thể) ---
-                String imgPath = v.getDuongDanAnh(); // Lấy ảnh trực tiếp từ field (nếu đã lưu)
+                
+                String imgPath = v.getDuongDanAnh(); 
                 if ((imgPath == null || imgPath.isEmpty()) && imgMap.containsKey(v.getId())) {
-                    imgPath = imgMap.get(v.getId()); // Lấy ảnh từ bảng HinhAnh (nếu có)
+                    imgPath = imgMap.get(v.getId()); 
                 }
                 if (imgPath == null || imgPath.isEmpty()) {
-                    imgPath = (v.getSanPham() != null) ? v.getSanPham().getDuongDanAnh() : null; // Fallback về ảnh sp cha
+                    imgPath = (v.getSanPham() != null) ? v.getSanPham().getDuongDanAnh() : null; 
                 }
                 vMap.put("duongDanAnh", imgPath);
-                // ----------------------------------------------
+                
                 
                 vMap.put("idSanPham", v.getSanPham() != null ? v.getSanPham().getId() : null);
                 safeVariants.add(vMap);
@@ -120,6 +124,7 @@ public class SanPhamController {
         model.addAttribute("listVariants", safeVariants);
         model.addAttribute("spPage", spctPage);
         model.addAttribute("search", search);
+        model.addAttribute("idSanPham", idSanPham);
         model.addAttribute("idMauSac", idMauSac);
         model.addAttribute("idKichThuoc", idKichThuoc);
         model.addAttribute("minPrice", minPrice);
@@ -141,6 +146,12 @@ public class SanPhamController {
         model.addAttribute("listThuongHieu", thuongHieuRepo.findAll());
         model.addAttribute("listDanhMuc", danhMucRepo.findAll());
 
+        
+        
+        model.addAttribute("mauSacs", mauSacRepo.findAll());
+        model.addAttribute("kichThuocs", kichThuocRepo.findAll());
+        model.addAttribute("sanPhams", sanPhamService.findAll()); 
+        
         return "admin/san-pham/chi-tiet-san-pham";
     }
 
@@ -168,7 +179,7 @@ public class SanPhamController {
         model.addAttribute("idChatLieu", idChatLieu);
         model.addAttribute("currentPage", page);
         
-        // Luôn nạp danh sách thuộc tính cho bộ lọc
+        
         model.addAttribute("listDanhMuc", danhMucRepo.findAll());
         model.addAttribute("listThuongHieu", thuongHieuRepo.findAll());
         model.addAttribute("listKieuDang", kieuDangRepo.findAll());
@@ -181,15 +192,18 @@ public class SanPhamController {
 
     @GetMapping("/create")
     public String create(Model model) {
+        model.addAttribute("title_focus", "Thiết lập sản phẩm & Biến thể");
+        model.addAttribute("hideLayout", false);
         return "admin/san-pham/create";
     }
 
     @GetMapping("/detail/{id}")
+    @org.springframework.transaction.annotation.Transactional
     public String detail(@PathVariable Long id, Model model) {
         SanPham sp = sanPhamService.findById(id);
         model.addAttribute("sp", sp);
         
-        // Nạp thêm danh mục để phục vụ "Thêm biến thể nhanh"
+        
         model.addAttribute("mauSacs", mauSacRepo.findAll());
         model.addAttribute("kichThuocs", kichThuocRepo.findAll());
         
@@ -197,11 +211,14 @@ public class SanPhamController {
     }
 
     @GetMapping("/edit/{id}")
+    @org.springframework.transaction.annotation.Transactional
     public String edit(@PathVariable Long id, Model model) {
         SanPham sp = sanPhamService.findById(id);
         model.addAttribute("sp", sp);
+        model.addAttribute("title_focus", "Chỉnh sửa sản phẩm: " + sp.getTenSanPham());
+        model.addAttribute("hideLayout", false);
         
-        // Tạo Map an toàn để truyền cho Javascript (Tránh lỗi tuần hoàn/Lazy loading)
+        
         java.util.Map<String, Object> spData = new java.util.HashMap<>();
         spData.put("id", sp.getId());
         spData.put("tenSanPham", sp.getTenSanPham());
@@ -213,7 +230,7 @@ public class SanPhamController {
         
         model.addAttribute("spData", spData);
         
-        // Nạp danh sách biến thể hiện tại
+        
         java.util.List<java.util.Map<String, Object>> variants = new java.util.ArrayList<>();
         if (sp.getDanhSachChiTiet() != null) {
             for (SanPhamChiTiet v : sp.getDanhSachChiTiet()) {
@@ -235,11 +252,11 @@ public class SanPhamController {
         }
         model.addAttribute("existingVariants", variants);
 
-        // Nạp ảnh theo màu sắc (Lấy từ danh sách HinhAnh của Sản phẩm)
+        
         java.util.Map<String, java.util.List<String>> imagesByColor = new java.util.HashMap<>();
         if (sp.getDanhSachHinhAnh() != null) {
             for (HinhAnh img : sp.getDanhSachHinhAnh()) {
-                // Nếu ảnh có liên kết với biến thể thì lấy màu từ biến thể đó
+                
                 if (img.getSanPhamChiTiet() != null && img.getSanPhamChiTiet().getMauSac() != null) {
                     String cid = img.getSanPhamChiTiet().getMauSac().getId().toString();
                     java.util.List<String> imgUrls = imagesByColor.computeIfAbsent(cid, k -> new java.util.ArrayList<>());
@@ -250,7 +267,7 @@ public class SanPhamController {
             }
         }
         
-        // Bổ sung thêm ảnh trực tiếp từ biến thể (nếu có và chưa có trong HinhAnh)
+        
         if (sp.getDanhSachChiTiet() != null) {
             for (SanPhamChiTiet v : sp.getDanhSachChiTiet()) {
                 if (v.getMauSac() != null && v.getDuongDanAnh() != null && !v.getDuongDanAnh().isEmpty()) {
@@ -337,13 +354,14 @@ public class SanPhamController {
     @GetMapping("/export-variants")
     public ResponseEntity<org.springframework.core.io.InputStreamResource> exportVariantsExcel(
             @RequestParam(required = false) String search,
+            @RequestParam(required = false) Long idSanPham,
             @RequestParam(required = false) Long idMauSac,
             @RequestParam(required = false) Long idKichThuoc,
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) String trThai) {
         
-        java.io.ByteArrayInputStream in = spctService.exportToExcel(search, idMauSac, idKichThuoc, minPrice, maxPrice, trThai);
+        java.io.ByteArrayInputStream in = spctService.exportToExcel(search, idSanPham, idMauSac, idKichThuoc, minPrice, maxPrice, trThai);
         org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=bien_the_san_pham.xlsx");
 
@@ -353,3 +371,4 @@ public class SanPhamController {
                 .body(new org.springframework.core.io.InputStreamResource(in));
     }
 }
+

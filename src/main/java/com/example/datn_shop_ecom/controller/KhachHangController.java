@@ -68,15 +68,16 @@ public class KhachHangController {
     }
 
     @PostMapping("/save")
-    public String save(@ModelAttribute("khachHang") KhachHang khachHang, RedirectAttributes redirectAttributes) {
+    public String save(@ModelAttribute("khachHang") KhachHang khachHang, RedirectAttributes redirectAttributes, Model model) {
         try {
             khachHangService.saveKhachHang(khachHang);
             String message = (khachHang.getId() == null) ? "Thêm khách hàng thành công!" : "Cập nhật khách hàng thành công!";
             redirectAttributes.addFlashAttribute("success", message);
             return "redirect:/admin/khach-hang";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Lỗi: " + e.getMessage());
-            return (khachHang.getId() == null) ? "redirect:/admin/khach-hang/create" : "redirect:/admin/khach-hang/edit/" + khachHang.getId();
+            model.addAttribute("khachHang", khachHang);
+            model.addAttribute("error", "Lỗi: " + e.getMessage());
+            return (khachHang.getId() == null) ? "admin/khach-hang/create" : "admin/khach-hang/edit";
         }
     }
 
@@ -113,3 +114,4 @@ public class KhachHangController {
                 .body(new InputStreamResource(in));
     }
 }
+

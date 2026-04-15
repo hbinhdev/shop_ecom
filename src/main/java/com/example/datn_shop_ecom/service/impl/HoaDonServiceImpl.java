@@ -3,10 +3,12 @@ package com.example.datn_shop_ecom.service.impl;
 import com.example.datn_shop_ecom.entity.HoaDon;
 import com.example.datn_shop_ecom.entity.NhanVien;
 import com.example.datn_shop_ecom.entity.TrangThaiHoaDon;
+import com.example.datn_shop_ecom.entity.ChiTietHoaDon;
 import com.example.datn_shop_ecom.repository.HoaDonRepository;
 import com.example.datn_shop_ecom.repository.NhanVienRepository;
 import com.example.datn_shop_ecom.repository.TrangThaiHoaDonRepository;
 import com.example.datn_shop_ecom.service.HoaDonService;
+import com.example.datn_shop_ecom.service.EmailService;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,29 +39,83 @@ public class HoaDonServiceImpl implements HoaDonService {
     private com.example.datn_shop_ecom.repository.ChiTietHoaDonRepository chiTietHoaDonRepository;
 
     @Autowired
+    private com.example.datn_shop_ecom.repository.SanPhamChiTietRepository spctRepository;
+
+    @Autowired
+    private com.example.datn_shop_ecom.repository.TrangThaiHoaDonRepository trangThaiHoaDonRepository;
+
+    @Autowired
     private com.example.datn_shop_ecom.repository.LichSuHoaDonRepository lichSuHoaDonRepository;
 
     @Autowired
     private com.example.datn_shop_ecom.repository.LichSuThanhToanRepository lichSuThanhToanRepository;
 
+    @Autowired(required = false)
+    private EmailService emailService;
+
     @Override
-    public List<HoaDon> findAllMatchingInvoices(String maHoaDon, String tenKhachHang, Integer trangThai, Integer loaiHoaDon, LocalDate ngayBatDau, LocalDate ngayKetThuc) {
+    @Transactional
+    public HoaDon updateTrangThai(Long id, String status, String note, String user) {
+        HoaDon hd = hoaDonRepository.findById(id).orElse(null);
+        if (hd == null)
+            return null;
+
+        String currentStatus = hd.getTrangThaiHoaDon();
+
+        // Logic trừ tồn kho khi xác nhận đơn hàng
+        // Chú ý: "2" hoặc "DA_XAC_NHAN" là trạng thái xác nhận
+        if (("2".equals(status) || "DA_XAC_NHAN".equals(status)) &&
+                ("1".equals(currentStatus) || "CHO_XAC_NHAN".equals(currentStatus))) {
+
+            List<ChiTietHoaDon> details = chiTietHoaDonRepository.findByHoaDonId(id);
+            for (ChiTietHoaDon d : details) {
+                com.example.datn_shop_ecom.entity.SanPhamChiTiet spct = d.getSanPhamChiTiet();
+                if (spct != null) {
+                    spct.setSoTonKho(spct.getSoTonKho() - d.getSoLuong());
+                    spctRepository.save(spct);
+                }
+            }
+        }
+
+        hd.setTrangThaiHoaDon(status);
+        hd.setNgaySuaCuoi(LocalDateTime.now());
+        hd.setNguoiSuaCuoi(user);
+        HoaDon saved = hoaDonRepository.save(hd);
+
+        // Lưu lịch sử
+        com.example.datn_shop_ecom.entity.LichSuHoaDon history = new com.example.datn_shop_ecom.entity.LichSuHoaDon();
+        history.setHoaDon(saved);
+        history.setMoTa(note != null ? note : "Cập nhật trạng thái đơn hàngg");
+        history.setNguoiTao(user);
+        history.setNgayTao(LocalDateTime.now());
+
+        // Cố gắng tìm TrangThaiHoaDon entity tương ứng để set
+        try {
+            Long statusId = Long.parseLong(status);
+            trangThaiHoaDonRepository.findById(statusId).ifPresent(history::setTrangThaiMoi);
+        } catch (Exception e) {
+            // Nếu status không phải là số (là string CHO_XAC_NHAN), có thể tìm theo mã hoặc
+            // bỏ qua
+        }
+
+        lichSuHoaDonRepository.save(history);
+
+        return saved;
+    }
+
+    @Override
+    public List<HoaDon> findAllMatchingInvoices(String maHoaDon, String tenKhachHang, Integer trangThai,
+            Integer loaiHoaDon, LocalDate ngayBatDau, LocalDate ngayKetThuc) {
         return hoaDonRepository.findAll((Specification<HoaDon>) (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-
-            if (maHoaDon != null && !maHoaDon.isEmpty()) {
+            if (maHoaDon != null && !maHoaDon.isEmpty())
                 predicates.add(criteriaBuilder.like(root.get("maHoaDon"), "%" + maHoaDon + "%"));
-            }
-
-            if (tenKhachHang != null && !tenKhachHang.isEmpty()) {
+            if (tenKhachHang != null && !tenKhachHang.isEmpty())
                 predicates.add(criteriaBuilder.like(root.get("khachHang").get("tenDayDu"), "%" + tenKhachHang + "%"));
-            }
-
             if (trangThai != null) {
                 List<String> statuses = mapTrangThai(trangThai);
                 predicates.add(root.get("trangThaiHoaDon").in(statuses));
             }
-
             if (loaiHoaDon != null) {
                 if (loaiHoaDon == 1) {
                     predicates.add(root.get("loaiHoaDon").in(List.of("1", "TAI_CUA_HANG", "TAI_QUAY")));
@@ -69,15 +125,11 @@ public class HoaDonServiceImpl implements HoaDonService {
                     predicates.add(criteriaBuilder.equal(root.get("loaiHoaDon"), loaiHoaDon.toString()));
                 }
             }
-
-            if (ngayBatDau != null) {
+            if (ngayBatDau != null)
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("ngayTao"), ngayBatDau.atStartOfDay()));
-            }
-
-            if (ngayKetThuc != null) {
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("ngayTao"), ngayKetThuc.atTime(LocalTime.MAX)));
-            }
-
+            if (ngayKetThuc != null)
+                predicates
+                        .add(criteriaBuilder.lessThanOrEqualTo(root.get("ngayTao"), ngayKetThuc.atTime(LocalTime.MAX)));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         });
     }
@@ -97,23 +149,18 @@ public class HoaDonServiceImpl implements HoaDonService {
     }
 
     @Override
-    public Page<HoaDon> searchInvoices(String maHoaDon, String tenKhachHang, Integer trangThai, Integer loaiHoaDon, LocalDate ngayBatDau, LocalDate ngayKetThuc, Pageable pageable) {
+    public Page<HoaDon> searchInvoices(String maHoaDon, String tenKhachHang, Integer trangThai, Integer loaiHoaDon,
+            LocalDate ngayBatDau, LocalDate ngayKetThuc, Pageable pageable) {
         return hoaDonRepository.findAll((Specification<HoaDon>) (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
-
-            if (maHoaDon != null && !maHoaDon.isEmpty()) {
+            if (maHoaDon != null && !maHoaDon.isEmpty())
                 predicates.add(criteriaBuilder.like(root.get("maHoaDon"), "%" + maHoaDon + "%"));
-            }
-
-            if (tenKhachHang != null && !tenKhachHang.isEmpty()) {
+            if (tenKhachHang != null && !tenKhachHang.isEmpty())
                 predicates.add(criteriaBuilder.like(root.get("khachHang").get("tenDayDu"), "%" + tenKhachHang + "%"));
-            }
-
             if (trangThai != null) {
                 List<String> statuses = mapTrangThai(trangThai);
                 predicates.add(root.get("trangThaiHoaDon").in(statuses));
             }
-
             if (loaiHoaDon != null) {
                 if (loaiHoaDon == 1) {
                     predicates.add(root.get("loaiHoaDon").in(List.of("1", "TAI_CUA_HANG", "TAI_QUAY")));
@@ -123,15 +170,11 @@ public class HoaDonServiceImpl implements HoaDonService {
                     predicates.add(criteriaBuilder.equal(root.get("loaiHoaDon"), loaiHoaDon.toString()));
                 }
             }
-
-            if (ngayBatDau != null) {
+            if (ngayBatDau != null)
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("ngayTao"), ngayBatDau.atStartOfDay()));
-            }
-
-            if (ngayKetThuc != null) {
-                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("ngayTao"), ngayKetThuc.atTime(LocalTime.MAX)));
-            }
-
+            if (ngayKetThuc != null)
+                predicates
+                        .add(criteriaBuilder.lessThanOrEqualTo(root.get("ngayTao"), ngayKetThuc.atTime(LocalTime.MAX)));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         }, pageable);
     }

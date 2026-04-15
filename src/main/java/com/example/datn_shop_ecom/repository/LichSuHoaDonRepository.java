@@ -7,3 +7,4 @@ import java.util.List;
 public interface LichSuHoaDonRepository extends JpaRepository<LichSuHoaDon, Long> {
     List<LichSuHoaDon> findByHoaDonIdOrderByNgayTaoDesc(Long hoaDonId);
 }
+

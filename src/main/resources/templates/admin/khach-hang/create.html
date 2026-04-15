@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
 
 <head>
@@ -8,7 +8,7 @@
 <body>
     <main>
         <div class="container-fluid p-0">
-            <!-- Breadcrumb -->
+            
             <div class="mb-4">
                 <h4 class="fw-bold section-title">Quản lý tài khoản / <span class="fw-bold">Quản lý khách hàng</span>
                 </h4>
@@ -43,9 +43,10 @@
                                 th:field="*{email}" placeholder="example@gmail.com" required>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-medium">Số điện thoại</label>
+                            <label class="form-label fw-medium">Số điện thoại <span class="text-danger">*</span></label>
                             <input type="text" class="form-control rounded-pill border-1 bg-light-subtle py-2 px-3"
-                                th:field="*{soDienThoai}" placeholder="0xxx...">
+                                th:field="*{soDienThoai}" placeholder="0123456789"
+                                pattern="0\d{9}" title="Số điện thoại phải gồm 10 chữ số và bắt đầu bằng số 0" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-medium">Giới tính</label>
@@ -141,7 +142,7 @@
         </div>
 
         <script th:inline="javascript">
-            let addressIndex = /*[[${khachHang.danhSachDiaChi.size()}]]*/ 1;
+            let addressIndex =  1;
 
             function addAddress() {
                 const container = document.getElementById('addressContainer');
@@ -190,6 +191,15 @@
                     </div>
                 `;
                 container.insertAdjacentHTML('beforeend', html);
+                
+                // Khởi tạo logic chọn địa chỉ cho hàng mới
+                if (typeof initAddressSelects === 'function') {
+                    const newItem = container.lastElementChild;
+                    const citySel = newItem.querySelector('.city-select');
+                    const distSel = newItem.querySelector('.district-select');
+                    const wardSel = newItem.querySelector('.ward-select');
+                    initAddressSelects(citySel, distSel, wardSel);
+                }
                 addressIndex++;
             }
 
@@ -203,7 +213,6 @@
             }
 
             function updateDefaultStatus(radio) {
-
                 document.querySelectorAll('.default-status-hidden').forEach(input => {
                     input.value = "false";
                 });
@@ -211,82 +220,35 @@
                 const hiddenInput = radio.closest('.form-check').querySelector('.default-status-hidden');
                 hiddenInput.value = "true";
             }
-
-
-            const PROVINCE_API = "https://provinces.open-api.vn/api/";
-
-            const fetchProvinces = async () => {
-                try {
-                    const response = await fetch(PROVINCE_API + "p/");
-                    const data = await response.json();
+            // Tự động load tỉnh thành cho địa chỉ mặc định khi vừa mở trang
+            document.addEventListener('DOMContentLoaded', function() {
+                if (typeof fetchProvinces === 'function') {
+                    // 1. Tải danh sách tỉnh thành cho TẤT CẢ các ô city-select hiện có
                     document.querySelectorAll('.city-select').forEach(select => {
-                        if (select.children.length <= 1) {
-                            renderOptions(select, data, "Chọn tỉnh/thành");
-                        }
+                        fetchProvinces(select);
                     });
-                } catch (error) {
-                    console.error("Lỗi khi tải tỉnh thành:", error);
-                }
-            };
+                    
+                    // 2. Thiết lập sự kiện change cho các hàng địa chỉ
+                    document.querySelectorAll('.address-item').forEach(item => {
+                        const cityEl = item.querySelector('.city-select');
+                        const distEl = item.querySelector('.district-select');
+                        const wardEl = item.querySelector('.ward-select');
+                        
+                        cityEl.addEventListener('change', async (e) => {
+                            const code = e.target.options[e.target.selectedIndex]?.dataset?.code;
+                            distEl.innerHTML = '<option value="">-- Chọn quận/huyện --</option>';
+                            wardEl.innerHTML = '<option value="">-- Chọn phường/xã --</option>';
+                            if (code && typeof loadDistricts === 'function') await loadDistricts(code, distEl);
+                        });
 
-            const renderOptions = (selectElement, data, label) => {
-                let html = `<option value="">-- ${label} --</option>`;
-                data.forEach(item => {
-                    html += `<option value="${item.name}" data-code="${item.code}">${item.name}</option>`;
-                });
-                selectElement.innerHTML = html;
-            };
-
-
-            document.addEventListener('change', async (e) => {
-                if (e.target.classList.contains('city-select')) {
-                    const citySelect = e.target;
-                    const row = citySelect.closest('.row');
-                    const districtSelect = row.querySelector('.district-select');
-                    const wardSelect = row.querySelector('.ward-select');
-                    const selectedOption = citySelect.options[citySelect.selectedIndex];
-                    const code = selectedOption.dataset.code;
-
-                    if (code) {
-                        try {
-                            const response = await fetch(`${PROVINCE_API}p/${code}?depth=2`);
-                            const data = await response.json();
-                            renderOptions(districtSelect, data.districts, "Chọn quận/huyện");
-                            wardSelect.innerHTML = '<option value="">-- Chọn phường/xã --</option>';
-                        } catch (error) {
-                            console.error("Lỗi khi tải quận huyện:", error);
-                        }
-                    }
-                }
-
-                if (e.target.classList.contains('district-select')) {
-                    const districtSelect = e.target;
-                    const row = districtSelect.closest('.row');
-                    const wardSelect = row.querySelector('.ward-select');
-                    const selectedOption = districtSelect.options[districtSelect.selectedIndex];
-                    const code = selectedOption.dataset.code;
-
-                    if (code) {
-                        try {
-                            const response = await fetch(`${PROVINCE_API}d/${code}?depth=2`);
-                            const data = await response.json();
-                            renderOptions(wardSelect, data.wards, "Chọn phường/xã");
-                        } catch (error) {
-                            console.error("Lỗi khi tải phường xã:", error);
-                        }
-                    }
+                        distEl.addEventListener('change', async (e) => {
+                            const code = e.target.options[e.target.selectedIndex]?.dataset?.code;
+                            wardEl.innerHTML = '<option value="">-- Chọn phường/xã --</option>';
+                            if (code && typeof loadWards === 'function') await loadWards(code, wardEl);
+                        });
+                    });
                 }
             });
-
-
-            document.addEventListener('DOMContentLoaded', fetchProvinces);
-
-
-            const originalAddAddress = addAddress;
-            addAddress = function () {
-                originalAddAddress();
-                fetchProvinces();
-            };
         </script>
     </main>
 </body>

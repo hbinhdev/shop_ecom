@@ -11,3 +11,4 @@ public interface VaiTroRepository extends JpaRepository<VaiTro, Long> {
     List<VaiTro> findAllByXoaMemFalse();
     Optional<VaiTro> findByMa(String ma);
 }
+

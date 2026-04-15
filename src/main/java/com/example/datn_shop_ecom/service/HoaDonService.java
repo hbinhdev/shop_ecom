@@ -21,4 +21,10 @@ public interface HoaDonService {
     // POS - Bán hàng tại quầy
     HoaDon createPendingInvoice(String nhanVienEmail);
     List<HoaDon> findAllPendingPOS();
+    // Client-side
+    HoaDon createHoaDonOnline(HoaDon hoaDon, List<ChiTietHoaDon> items);
+    HoaDon findByMaHoaDon(String maHoaDon);
+    List<HoaDon> findByKhachHangEmail(String email);
+    String generateMaHoaDon();
+    HoaDon updateTrangThai(Long id, String status, String note, String user);
 }

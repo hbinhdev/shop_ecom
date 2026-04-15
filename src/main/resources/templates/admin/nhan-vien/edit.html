@@ -14,7 +14,7 @@
 
             <form th:action="@{/admin/nhan-vien/save}" th:object="${nhanVien}" method="POST" id="employeeForm"
                 enctype="multipart/form-data">
-                <!-- Hidden fields for update -->
+                
                 <input type="hidden" th:field="*{id}">
                 <input type="hidden" th:field="*{maNhanVien}">
                 <input type="hidden" th:field="*{ngayTao}">
@@ -36,19 +36,19 @@
                             </button>
                         </div>
                     </div>
-                    <!-- Avatar Section -->
+                    
                     <div class="text-center mb-5 mt-2">
                         <div class="position-relative d-inline-block">
                             <div class="avatar-upload rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto shadow-sm"
                                 style="width: 150px; height: 150px; border: 2px dashed #dee2e6; cursor: pointer;"
                                 onclick="document.getElementById('avatarInput').click()">
-                                <div id="uploadPlaceholder" th:classappend="*{anh != null} ? 'd-none' : ''"
+                                <div id="uploadPlaceholder" th:classappend="*{anh != null and anh != ''} ? 'd-none' : ''"
                                     class="text-center text-muted">
                                     <i class="bi bi-camera fs-2 d-block"></i>
                                     <span class="small">Đổi ảnh</span>
                                 </div>
-                                <img id="avatarPreview" th:src="*{anh != null} ? @{'/uploads/nhan-vien/' + *{anh}} : ''"
-                                    th:classappend="*{anh == null} ? 'd-none' : ''"
+                                <img id="avatarPreview" th:src="*{anh != null and anh != ''} ? @{'/uploads/nhan-vien/' + *{anh}} : ''"
+                                    th:classappend="*{anh == null or anh == ''} ? 'd-none' : ''"
                                     class="rounded-circle position-absolute top-0 start-0 w-100 h-100"
                                     style="object-fit: cover;">
                             </div>
@@ -59,33 +59,31 @@
                     </div>
 
                     <div class="row g-4">
-                        <!-- Ma & Ten -->
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Mã nhân viên</label>
-                            <input type="text" class="form-control rounded-3 py-2 px-3 border-1 bg-light fw-bold"
+                            <input type="text" class="form-control rounded-3 py-2 px-3 border-1 bg-light"
                                 th:field="*{maNhanVien}" disabled>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Tên nhân viên <span
                                     class="text-danger">*</span></label>
                             <input type="text" class="form-control rounded-3 py-2 px-3 border-1 bg-white"
-                                th:field="*{tenDayDu}" placeholder="Nguyễn Đình Hải Anh" required>
+                                th:field="*{tenDayDu}" required>
                         </div>
-
-                        <!-- Email & SDT -->
+                        
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Số điện thoại <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" class="form-control rounded-3 py-2 px-3 border-1 bg-white"
+                                th:field="*{soDienThoai}" pattern="0\d{9}" required>
+                        </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Email <span
                                     class="text-danger">*</span></label>
                             <input type="email" class="form-control rounded-3 py-2 px-3 border-1 bg-white"
-                                th:field="*{email}" placeholder="Nhập địa chỉ email" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold small text-uppercase text-muted">Số điện thoại</label>
-                            <input type="text" class="form-control rounded-3 py-2 px-3 border-1 bg-white"
-                                th:field="*{soDienThoai}" placeholder="Nhập số điện thoại">
+                                th:field="*{email}" required>
                         </div>
 
-                        <!-- Tinh/Thanh & Quan/Huyen -->
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Tỉnh/Thành phố</label>
                             <select class="form-select rounded-3 py-2 px-3 border-1 bg-white city-select"
@@ -101,7 +99,6 @@
                             </select>
                         </div>
 
-                        <!-- Xa/Phuong & Dia chi -->
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Xã/Phường</label>
                             <select class="form-select rounded-3 py-2 px-3 border-1 bg-white ward-select"
@@ -112,15 +109,13 @@
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Địa chỉ cụ thể</label>
                             <input type="text" class="form-control rounded-3 py-2 px-3 border-1 bg-white"
-                                th:field="*{diaChi}" placeholder="Dương Đình">
+                                th:field="*{diaChi}">
                         </div>
 
-                        <!-- Ngay sinh & Quyen han -->
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Ngày sinh</label>
                             <input type="date" class="form-control rounded-3 py-2 px-3 border-1 bg-white"
-                                th:name="ngaySinh"
-                                th:value="*{ngaySinh != null ? #temporals.format(ngaySinh, 'yyyy-MM-dd') : ''}">
+                                th:field="*{ngaySinh}">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Quyền hạn <span
@@ -132,7 +127,6 @@
                             </select>
                         </div>
 
-                        <!-- Gioi tinh -->
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Giới tính</label>
                             <select class="form-select rounded-3 py-2 px-3 border-1 bg-white" th:field="*{gioiTinh}">
@@ -141,13 +135,31 @@
                                 <option value="Khác">Khác</option>
                             </select>
                         </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Trạng thái</label>
+                            <select class="form-select rounded-3 py-2 px-3 border-1 bg-white" th:field="*{trangThai}">
+                                <option value="1">Đang làm việc</option>
+                                <option value="0">Nghỉ việc</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </form>
         </div>
 
-        <div th:replace="~{admin/fragments/scripts :: common_scripts}"></div>
         <script th:inline="javascript">
+            const initialValues = {
+                province: /*[[${nhanVien.tinhThanhPho}]]*/ null,
+                district: /*[[${nhanVien.quanHuyen}]]*/ null,
+                ward: /*[[${nhanVien.xaPhuong}]]*/ null
+            };
+
+            document.addEventListener('DOMContentLoaded', function() {
+                if (typeof initAddressSelects === 'function') {
+                    initAddressSelects('.city-select', '.district-select', '.ward-select', initialValues);
+                }
+            });
+
             function previewImage(input) {
                 const preview = document.getElementById('avatarPreview');
                 const placeholder = document.getElementById('uploadPlaceholder');
@@ -156,21 +168,12 @@
                     reader.onload = function (e) {
                         preview.src = e.target.result;
                         preview.classList.remove('d-none');
-                        if (placeholder) placeholder.classList.add('d-none');
+                        placeholder.classList.add('d-none');
                     }
                     reader.readAsDataURL(input.files[0]);
                 }
             }
-
-            const initialValues = {
-                city: /*[[${nhanVien.tinhThanhPho}]]*/ null,
-                district: /*[[${nhanVien.quanHuyen}]]*/ null,
-                ward: /*[[${nhanVien.xaPhuong}]]*/ null
-            };
-
-            initAddressSelects('.city-select', '.district-select', '.ward-select', initialValues);
         </script>
-    </main>
     </main>
 </body>
 

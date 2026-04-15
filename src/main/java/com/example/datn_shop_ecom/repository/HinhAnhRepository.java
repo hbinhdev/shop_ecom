@@ -14,3 +14,4 @@ public interface HinhAnhRepository extends JpaRepository<HinhAnh, Long> {
     @org.springframework.transaction.annotation.Transactional
     void deleteBySanPhamChiTietId(Long sanPhamChiTietId);
 }
+

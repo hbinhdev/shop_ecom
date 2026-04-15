@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
 
 <head>
@@ -8,13 +8,13 @@
 <body>
     <main>
         <div class="container-fluid p-0">
-            <!-- Breadcrumb / Header Title -->
+            
             <div class="mb-4">
                 <h4 class="fw-bold section-title">Quản lý tài khoản / <span class="fw-bold section-title">Quản lý nhân
                         viên</span></h4>
             </div>
 
-            <!-- Filter Section -->
+            
             <form th:action="@{/admin/nhan-vien}" method="GET" id="filterForm">
                 <div class="card shadow-sm border-0 rounded-4 mb-4">
                     <div class="card-body p-4">
@@ -68,7 +68,7 @@
                 </div>
             </form>
 
-            <!-- Table Section -->
+            
             <div class="custom-table overflow-hidden shadow-sm rounded-4 bg-white">
                 <table class="table align-middle mb-0">
                     <thead class="bg-light text-muted small text-uppercase fw-bold">
@@ -90,7 +90,7 @@
                             <td class="ps-4 fw-medium text-muted"
                                 th:text="${stat.index + 1 + (nhanVienPage.number * nhanVienPage.size)}">1</td>
                             <td>
-                                <!-- Avatar or Initials -->
+                                
                                 <div class="avatar-container d-flex align-items-center justify-content-center bg-light rounded-3 shadow-sm overflow-hidden"
                                     style="width: 45px; height: 45px; border: 1px solid #dee2e6;">
                                     <img th:if="${nv.anh != null and nv.anh != ''}"
@@ -106,7 +106,12 @@
                                     Anh</div>
                             </td>
                             <td class="small text-muted" th:text="${nv.soDienThoai}">0986828507</td>
-                            <td class="small text-muted" th:text="${nv.email}">nv.a@gmail.com</td>
+                            <td>
+                                <div class="d-flex align-items-center gap-1">
+                                    <i class="bi bi-envelope text-muted" style="font-size: 0.75rem;"></i>
+                                    <span class="small text-muted" th:text="${nv.email}">nv.a@gmail.com</span>
+                                </div>
+                            </td>
                             <td class="small text-muted" style="max-width: 200px;">
                                 <div class="text-truncate"
                                     th:text="${(nv.diaChi ?: '') + (nv.xaPhuong != null ? ', ' + nv.xaPhuong : '') + (nv.quanHuyen != null ? ', ' + nv.quanHuyen : '') + (nv.tinhThanhPho != null ? ', ' + nv.tinhThanhPho : '')}">
@@ -146,7 +151,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <!-- Pagination Footer -->
+                
                 <div
                     th:replace="~{admin/fragments/pagination :: pagination(${nhanVienPage}, '/admin/nhan-vien', 
                     'search=' + (${search} ?: '') + '&idVaiTro=' + (${idVaiTro} ?: '') + '&trangThai=' + (${trangThai} ?: ''))}">
@@ -154,8 +159,7 @@
             </div>
         </div>
 
-        <!-- Status Toggle and Common Scripts -->
-        <div th:replace="~{admin/fragments/scripts :: common_scripts}"></div>
+        
         <script th:inline="javascript">
             async function confirmToggleStatus(checkbox) {
                 await confirmToggle(checkbox, '/admin/nhan-vien/toggle-status', 'Đã cập nhật trạng thái nhân viên!', 'Lỗi khi cập nhật trạng thái.');

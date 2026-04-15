@@ -12,8 +12,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
@@ -27,6 +29,20 @@ public class HoaDonController {
 
     @Autowired
     private ExcelService excelService;
+
+    @PostMapping("/update-status")
+    public String updateStatus(@RequestParam Long id, 
+                               @RequestParam String status, 
+                               @RequestParam(required = false) String note,
+                               RedirectAttributes redirectAttributes) {
+        try {
+            hoaDonService.updateTrangThai(id, status, note, "Admin");
+            redirectAttributes.addFlashAttribute("successMessage", "Cập nhật trạng thái thành công!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi: " + e.getMessage());
+        }
+        return "redirect:/admin/hoa-don/" + id;
+    }
 
     @GetMapping
     public String listInvoices(
@@ -106,3 +122,4 @@ public class HoaDonController {
         return "admin/hoa-don/detail";
     }
 }
+

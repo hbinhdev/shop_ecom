@@ -50,3 +50,4 @@ public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, 
     @Query("UPDATE SanPhamChiTiet s SET s.soTonKho = s.soTonKho + :sl WHERE s.id = :id")
     void restoreStock(@Param("id") Long id, @Param("sl") int soLuong);
 }
+

@@ -17,3 +17,4 @@ public class TrangThaiHoaDon {
     @Column(name = "mo_ta", columnDefinition = "NVARCHAR(255)")
     private String moTa;
 }
+

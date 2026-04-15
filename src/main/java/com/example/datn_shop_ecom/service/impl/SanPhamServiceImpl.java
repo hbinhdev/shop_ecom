@@ -51,7 +51,7 @@ public class SanPhamServiceImpl implements SanPhamService {
                 sanPham.setMaSanPham(String.format("SP%05d", count + 1));
             }
             sanPham.setNgayTao(LocalDateTime.now());
-            sanPham.setXoaMem(false); // false = Đang kinh doanh
+            sanPham.setXoaMem(false); 
             sanPham.setNguoiTao("Admin");
             return sanPhamRepo.save(sanPham);
         }
@@ -63,16 +63,26 @@ public class SanPhamServiceImpl implements SanPhamService {
     }
 
     @Override
+    public java.util.List<SanPham> findAll() {
+        return sanPhamRepo.findAll();
+    }
+
+    @Override
+    public java.util.List<SanPham> findAllByXoaMemFalse() {
+        return sanPhamRepo.findAllByXoaMemFalse();
+    }
+
+    @Override
     @Transactional
     public void toggleStatus(Long id) {
         SanPham sp = findById(id);
         boolean currentStatus = sp.getXoaMem() != null ? sp.getXoaMem() : false;
         boolean newStatus = !currentStatus;
         
-        // 1. Cập nhật trạng thái sản phẩm
+        
         sanPhamRepo.updateXoaMem(id, newStatus);
         
-        // 2. Logic đồng bộ trạng thái SPCT (Nếu xoaMem = true => Ngừng hoạt động ('0'), xoaMem = false => Hoạt động ('1'))
+        
         String newSpctStatus = newStatus ? "0" : "1";
         spctRepo.updateTrangThaiBySanPhamId(id, newSpctStatus);
     }
@@ -80,7 +90,7 @@ public class SanPhamServiceImpl implements SanPhamService {
     @Override
     public java.io.ByteArrayInputStream exportToExcel(String search, Boolean trangThai, Long idDanhMuc, Long idThuongHieu, Long idKieuDang, Long idChatLieu) {
         if (search != null && search.trim().isEmpty()) search = null;
-        // Sử dụng repo để lấy tất cả (không phân trang cho export)
+        
         java.util.List<SanPham> dataList = sanPhamRepo.findByFilters(search, trangThai, idDanhMuc, idThuongHieu, idKieuDang, idChatLieu, org.springframework.data.domain.Pageable.unpaged()).getContent();
         
         String[] columns = {"STT", "Mã sản phẩm", "Tên sản phẩm", "Ngày tạo", "Trạng thái"};
@@ -93,4 +103,22 @@ public class SanPhamServiceImpl implements SanPhamService {
             row.createCell(4).setCellValue(sp.getXoaMem() != null && sp.getXoaMem() ? "Ngừng kinh doanh" : "Đang kinh doanh");
         });
     }
+
+    @Override
+    public java.util.List<SanPham> findByClientFilters(String search, Long idDanhMuc, Long idThuongHieu, Long idKieuDang, Long idChatLieu, Long idMauSac, Long idKichThuoc, String sortStr) {
+        if (search != null && search.trim().isEmpty()) search = null;
+        org.springframework.data.domain.Sort sort = org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "id");
+        return sanPhamRepo.findByClientFilters(search, idDanhMuc, idThuongHieu, idKieuDang, idChatLieu, idMauSac, idKichThuoc, sort);
+    }
+
+    @Override
+    public java.util.List<SanPham> getTopBestSellers(int limit) {
+        return sanPhamRepo.findTopBestSellers(org.springframework.data.domain.PageRequest.of(0, limit));
+    }
+
+    @Override
+    public java.util.List<SanPham> getLatestProducts(int limit) {
+        return sanPhamRepo.findAllByXoaMemFalseOrderByIdDesc(org.springframework.data.domain.PageRequest.of(0, limit));
+    }
 }
+

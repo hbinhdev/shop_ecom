@@ -10,3 +10,4 @@ import java.util.Optional;
 public interface TrangThaiHoaDonRepository extends JpaRepository<TrangThaiHoaDon, Long> {
     Optional<TrangThaiHoaDon> findByTenTrangThai(String tenTrangThai);
 }
+

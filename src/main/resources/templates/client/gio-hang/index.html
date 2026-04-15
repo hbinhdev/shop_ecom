@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{client/layout/main :: layout(~{::main}, 'Giỏ hàng - PeakSneaker')}">
+
+<body>
+    <main class="py-5" style="background:#f8f9fa; min-height: 70vh;">
+        <div class="container">
+
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none text-muted">Trang chủ</a>
+                    </li>
+                    <li class="breadcrumb-item active fw-bold">Giỏ hàng</li>
+                </ol>
+            </nav>
+
+            <!-- EMPTY CART -->
+            <div id="emptyCart" class="text-center py-5 d-none">
+                <div style="font-size:5rem; color:#ddd; line-height:1;">🛒</div>
+                <h4 class="fw-bold mt-3 text-muted">Giỏ hàng trống</h4>
+                <p class="text-muted">Hãy thêm sản phẩm vào giỏ hàng để tiếp tục mua sắm!</p>
+                <a th:href="@{/san-pham}" class="btn btn-premium text-white px-5 py-3 mt-2">
+                    <i class="bi bi-bag-heart me-2"></i>Khám phá sản phẩm
+                </a>
+            </div>
+
+            <!-- CART CONTENT -->
+            <div id="cartContent" class="row g-4 d-none">
+                <!-- LEFT: Cart Items -->
+                <div class="col-lg-8">
+                    <div
+                        class="cart-header mb-3 d-flex justify-content-between align-items-center bg-white p-3 rounded-4 shadow-sm border">
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="checkbox" class="form-check-input border-2 ms-2" id="selectAll"
+                                onchange="toggleAll(this)">
+                            <label for="selectAll" class="fw-bold mb-0 cursor-pointer small">Chọn tất cả (<span
+                                    id="cartCount">0</span>)</label>
+                        </div>
+                        <button class="btn btn-sm btn-outline-danger rounded-pill px-3 border-0" onclick="clearCart()">
+                            <i class="bi bi-trash3 me-1"></i>Xóa tất cả
+                        </button>
+                    </div>
+
+                    <!-- Stock error alert -->
+                    <div id="stockError" class="alert alert-danger rounded-4 d-none mb-3">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <span id="stockErrorMsg"></span>
+                    </div>
+
+                    <div id="cartItemsContainer"></div>
+                </div>
+
+                <!-- RIGHT: Order Summary -->
+                <div class="col-lg-4">
+                    <div class="cart-summary-card">
+                        <h6 class="fw-bold mb-4">
+                            <i class="bi bi-receipt me-2 text-primary"></i>Tóm tắt đơn hàng
+                        </h6>
+
+                        <div class="d-flex justify-content-between mb-2 small">
+                            <span class="text-muted">Đã chọn (<span id="sumCount">0</span> món)</span>
+                            <span class="fw-medium" id="sumSubtotal">0 ₫</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2 small">
+                            <span class="text-muted">Phí vận chuyển</span>
+                            <span class="fw-medium text-success" id="sumShip">30.000 ₫</span>
+                        </div>
+                        <hr class="my-3">
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="fw-bold">Tổng cộng</span>
+                            <span class="fw-black fs-5 text-primary" id="sumTotal">0 ₫</span>
+                        </div>
+
+                        <!-- Voucher -->
+                        <!-- <div class="mb-4">
+                    <label class="form-label small fw-medium text-muted">Mã giảm giá</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control rounded-start-pill border-end-0"
+                            placeholder="Nhập mã voucher" id="voucherInput" style="border: 1.5px solid #e0e0e0;">
+                        <button class="btn btn-outline-primary rounded-end-pill border-start-0 border px-3"
+                            onclick="applyVoucher()" style="border: 1.5px solid #e0e0e0;">Áp dụng</button>
+                    </div>
+                </div> -->
+
+                        <!-- Checkout button -->
+                        <button class="btn btn-premium text-white w-100 py-3 fw-bold" onclick="proceedToCheckout()"
+                            id="checkoutBtn">
+                            <i class="bi bi-credit-card me-2"></i>TIẾN HÀNH THANH TOÁN
+                        </button>
+                        <a th:href="@{/san-pham}" class="btn btn-outline-secondary rounded-pill w-100 mt-2 py-2">
+                            <i class="bi bi-arrow-left me-1"></i>Tiếp tục mua sắm
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <style>
+            .cart-summary-card {
+                background: white;
+                border-radius: 24px;
+                padding: 1.8rem;
+                border: 1px solid #f0f0f0;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+                position: sticky;
+                top: 100px;
+            }
+
+            .cart-item-card {
+                background: white;
+                border-radius: 20px;
+                padding: 1.2rem 1.5rem;
+                border: 1px solid #f0f0f0;
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+                margin-bottom: 12px;
+                transition: all 0.2s;
+            }
+
+            .cart-item-card:hover {
+                border-color: rgba(212, 125, 50, 0.3);
+            }
+
+            .cart-item-img {
+                width: 80px;
+                height: 80px;
+                border-radius: 12px;
+                object-fit: cover;
+                border: 1px solid #eee;
+                flex-shrink: 0;
+            }
+
+            .qty-control {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                background: #f8f9fa;
+                border-radius: 50px;
+                padding: 4px 8px;
+            }
+
+            .qty-btn {
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                border: none;
+                background: white;
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 700;
+                transition: all 0.2s;
+                color: #333;
+            }
+
+            .qty-btn:hover {
+                background: #d47d32;
+                color: white;
+            }
+
+            .qty-value {
+                font-weight: 700;
+                min-width: 28px;
+                text-align: center;
+            }
+
+            .item-remove-btn {
+                color: #ccc;
+                font-size: 1.2rem;
+                cursor: pointer;
+                transition: color 0.2s;
+                background: none;
+                border: none;
+                padding: 4px;
+            }
+
+            .item-remove-btn:hover {
+                color: #e74c3c;
+            }
+        </style>
+
+        <script>
+            const SHIP_FEE = 30000;
+            const FALLBACK_IMG = 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=120';
+
+            /* ===== CART STORAGE ===== */
+            function getCart() {
+                try { return JSON.parse(localStorage.getItem('pk_cart') || '[]'); } catch { return []; }
+            }
+            function saveCart(cart) {
+                localStorage.setItem('pk_cart', JSON.stringify(cart));
+                if (typeof updateNavCartBadge === 'function') updateNavCartBadge();
+            }
+
+            /* ===== RENDER CART ===== */
+            function renderCart() {
+                const cart = getCart();
+                const empty = document.getElementById('emptyCart');
+                const content = document.getElementById('cartContent');
+
+                if (!empty || !content) return;
+
+                if (cart.length === 0) {
+                    empty.classList.remove('d-none');
+                    content.classList.add('d-none');
+                    return;
+                }
+                empty.classList.add('d-none');
+                content.classList.remove('d-none');
+
+                const container = document.getElementById('cartItemsContainer');
+                container.innerHTML = cart.map((item, idx) => {
+                    let imgSrc = item.anh || item.duongDanAnh;
+                    if (imgSrc && !imgSrc.startsWith('http')) {
+                        imgSrc = '/uploads/san-pham/' + imgSrc;
+                    } else if (!imgSrc) {
+                        imgSrc = FALLBACK_IMG;
+                    }
+
+                    return `
+                    <div class="cart-item-card" id="item-${idx}">
+                        <div class="d-flex align-items-center gap-3">
+                            <input type="checkbox" class="form-check-input border-2 item-check" data-idx="${idx}" onchange="updateSummary()">
+                            <img src="${imgSrc}" alt="${item.ten || item.tenSanPham}"
+                                class="cart-item-img"
+                                onerror="this.src='${FALLBACK_IMG}'">
+                            <div class="flex-grow-1">
+                                <div class="fw-bold mb-1" style="font-size:0.92rem;">${item.ten || item.tenSanPham}</div>
+                                <div class="small text-muted mb-2">
+                                    ${(item.mauSac || item.tenMauSac) ? `<span class="badge bg-light text-dark border me-1">${item.mauSac || item.tenMauSac}</span>` : ''}
+                                    ${(item.kichThuoc || item.tenKichThuoc) ? `<span class="badge bg-light text-dark border">${item.kichThuoc || item.tenKichThuoc}</span>` : ''}
+                                </div>
+                                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                    <div class="qty-control">
+                                        <button class="qty-btn" onclick="changeQty(${idx}, -1)">−</button>
+                                        <span class="qty-value">${item.soLuong}</span>
+                                        <button class="qty-btn" onclick="changeQty(${idx}, 1)">+</button>
+                                    </div>
+                                    <span class="fw-black text-primary">${formatVND((item.gia || item.giaBan) * item.soLuong)}</span>
+                                </div>
+                            </div>
+                            <button class="item-remove-btn" onclick="removeItem(${idx})" title="Xóa">
+                                <i class="bi bi-x-circle-fill"></i>
+                            </button>
+                        </div>
+                    </div>`;
+                }).join('');
+
+                const cartCountEl = document.getElementById('cartCount');
+                if (cartCountEl) cartCountEl.textContent = cart.length;
+
+                updateSummary();
+            }
+
+            window.toggleAll = (el) => {
+                document.querySelectorAll('.item-check').forEach(chk => chk.checked = el.checked);
+                updateSummary();
+            };
+
+            function updateSummary() {
+                const cart = getCart();
+                const checks = document.querySelectorAll('.item-check');
+                let subtotal = 0, count = 0;
+
+                checks.forEach(chk => {
+                    if (chk.checked) {
+                        const idx = chk.dataset.idx;
+                        const item = cart[idx];
+                        subtotal += (item.gia || item.giaBan) * item.soLuong;
+                        count += item.soLuong;
+                    }
+                });
+
+                const total = subtotal > 0 ? subtotal + SHIP_FEE : 0;
+
+                const sumCountEl = document.getElementById('sumCount');
+                const sumSubEl = document.getElementById('sumSubtotal');
+                const sumTotalEl = document.getElementById('sumTotal');
+                const checkoutBtn = document.getElementById('checkoutBtn');
+
+                if (sumCountEl) sumCountEl.textContent = count;
+                if (sumSubEl) sumSubEl.textContent = formatVND(subtotal);
+                if (sumTotalEl) sumTotalEl.textContent = formatVND(total);
+
+                if (checkoutBtn) checkoutBtn.disabled = (subtotal === 0);
+            }
+
+            function formatVND(n) {
+                return new Intl.NumberFormat('vi-VN').format(n) + ' ₫';
+            }
+
+            /* ===== CART ACTIONS ===== */
+            async function changeQty(idx, delta) {
+                const cart = getCart();
+                const item = cart[idx];
+                item.soLuong = Math.max(1, item.soLuong + delta);
+
+                // Nếu logged in, báo về server
+                const user = JSON.parse(localStorage.getItem('pk_user') || 'null');
+                if (user && user.id) {
+                    try {
+                        await fetch('/api/client/cart/add', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ khId: user.id, spctId: item.spctId || item.idSpct, soLuong: delta })
+                        });
+                    } catch (e) { console.error("Sync error", e); }
+                }
+
+                saveCart(cart);
+                renderCart();
+            }
+
+            async function removeItem(idx) {
+                const cart = getCart();
+                const item = cart[idx];
+
+                const user = JSON.parse(localStorage.getItem('pk_user') || 'null');
+                if (user && user.id) {
+                    try {
+                        await fetch('/api/client/cart/remove', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ khId: user.id, spctId: item.spctId })
+                        });
+                    } catch (e) { console.error("Remove error", e); }
+                }
+
+                cart.splice(idx, 1);
+                saveCart(cart);
+                renderCart();
+            }
+
+            function clearCart() {
+                if (confirm('Xóa tất cả sản phẩm khỏi giỏ hàng?')) {
+                    saveCart([]);
+                    renderCart();
+                }
+            }
+
+            function applyVoucher() {
+                alert('Tính năng voucher sẽ được áp dụng ở trang thanh toán.');
+            }
+
+            /* ===== CHECKOUT ===== */
+            async function proceedToCheckout() {
+                const cart = getCart();
+                const checks = document.querySelectorAll('.item-check');
+                const selectedItems = [];
+
+                checks.forEach(chk => {
+                    if (chk.checked) {
+                        selectedItems.push(cart[chk.dataset.idx]);
+                    }
+                });
+
+                if (selectedItems.length === 0) {
+                    alert('Vui lòng chọn ít nhất một sản phẩm để thanh toán!');
+                    return;
+                }
+
+                const btn = document.getElementById('checkoutBtn');
+                btn.disabled = true;
+                btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang kiểm tra...';
+
+                try {
+                    const payload = selectedItems.map(i => ({ spctId: i.spctId || i.idSpct, soLuong: i.soLuong }));
+                    const res = await fetch('/api/client/validate-cart', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    const data = await res.json();
+
+                    if (!data.success) {
+                        const errNames = data.errors.map(e =>
+                            `${e.tenSanPham} (yêu cầu: ${e.soLuongYeuCau}, còn: ${e.soTonKho})`
+                        ).join(', ');
+                        const errBox = document.getElementById('stockError');
+                        document.getElementById('stockErrorMsg').textContent = 'Vượt quá tồn kho: ' + errNames;
+                        errBox.classList.remove('d-none');
+                        errBox.scrollIntoView({ behavior: 'smooth' });
+                        return;
+                    }
+
+                    // Lưu riêng những món được chọn để thanh toán
+                    localStorage.setItem('pk_selected_items', JSON.stringify(selectedItems));
+                    window.location.href = '/thanh-toan';
+                } catch (e) {
+                    alert('Lỗi kết nối, vui lòng thử lại!');
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-credit-card me-2"></i>TIẾN HÀNH THANH TOÁN';
+                }
+            }
+
+            /* ===== INIT & SYNC WITH DB ===== */
+            async function initCartPage() {
+                const user = JSON.parse(localStorage.getItem('pk_user') || 'null');
+                if (user && user.id) {
+                    console.log("Fetching cart from DB for user:", user.id);
+                    try {
+                        const res = await fetch(`/api/client/cart/items/${user.id}`);
+                        const dbItems = await res.json();
+                        // Ghi đè vào localStorage để hiển thị bản mới nhất từ DB
+                        saveCart(dbItems);
+                    } catch (e) { console.error("Database cart fetch failed", e); }
+                }
+                renderCart();
+            }
+
+            document.addEventListener('DOMContentLoaded', initCartPage);
+        </script>
+    </main>
+</body>
+
+</html>

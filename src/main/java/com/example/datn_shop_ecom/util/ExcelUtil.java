@@ -20,7 +20,7 @@ public class ExcelUtil {
         try (Workbook workbook = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             Sheet sheet = workbook.createSheet(sheetName);
 
-            // Header Style
+            
             CellStyle headerStyle = workbook.createCellStyle();
             Font font = workbook.createFont();
             font.setBold(true);
@@ -30,7 +30,7 @@ public class ExcelUtil {
             headerStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
             headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
-            // Header Row
+            
             Row headerRow = sheet.createRow(0);
             for (int i = 0; i < columns.length; i++) {
                 Cell cell = headerRow.createCell(i);
@@ -38,14 +38,14 @@ public class ExcelUtil {
                 cell.setCellStyle(headerStyle);
             }
 
-            // Data Rows
+            
             int rowIndex = 1;
             for (T item : data) {
                 Row row = sheet.createRow(rowIndex++);
                 rowMapper.accept(row, item);
             }
 
-            // Auto-size columns
+            
             for (int i = 0; i < columns.length; i++) {
                 sheet.autoSizeColumn(i);
             }
@@ -57,3 +57,4 @@ public class ExcelUtil {
         }
     }
 }
+

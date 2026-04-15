@@ -5,6 +5,7 @@ import com.example.datn_shop_ecom.entity.NhanVien;
 import com.example.datn_shop_ecom.repository.KhachHangRepository;
 import com.example.datn_shop_ecom.repository.NhanVienRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;

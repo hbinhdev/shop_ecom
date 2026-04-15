@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout(content, title)">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">PeakSneaker</title>
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #d47d32;
+            --secondary-color: #2b2d42;
+            --accent-gradient: linear-gradient(135deg, #d47d32 0%, #a65d21 100%);
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --transition-smooth: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', 'Outfit', sans-serif;
+            background-color: #f5f5f7;
+            color: #2b2d42;
+        }
+
+        .navbar-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid #d47d32;
+            flex-shrink: 0;
+        }
+
+        .navbar-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .nav-avatar-initials {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d47d32, #a65d21);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .btn-premium {
+            background: linear-gradient(135deg, #d47d32 0%, #a65d21 100%);
+            border: none;
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+
+        .btn-premium:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(212, 125, 50, 0.35);
+        }
+
+        .scroll-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scroll-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+
+    <link rel="stylesheet" th:href="@{/client/css/style.css}">
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-client sticky-top">
+        <div class="container py-1">
+            <a class="navbar-brand" th:href="@{/}">
+                <img th:src="@{/assets/images/logo.png}" alt="Logo" height="100" class="logo-client-main">
+            </a>
+
+            <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navClient">
+                <i class="bi bi-list fs-2"></i>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navClient">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/}">Trang chủ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/san-pham}">Sản phẩm</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/ve-chung-toi}">Về chúng tôi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/phieu-giam-gia}">Phiếu giảm giá</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/tra-cuu}">Tra cứu đơn hàng</a>
+                    </li>
+                </ul>
+
+                <div class="d-flex align-items-center gap-3">
+
+                    <a th:href="@{/gio-hang}" class="btn btn-link text-dark text-decoration-none position-relative">
+                        <i class="bi bi-cart3 fs-5"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary"
+                            style="font-size: 0.6rem;" id="cartBadge">0</span>
+                    </a>
+                    <div id="authSection" class="d-flex align-items-center gap-2">
+                        <!-- Nút Đăng ký -->
+                        <a th:href="@{/dang-ky}"
+                            class="btn btn-outline-primary rounded-pill px-3 fw-bold d-none d-md-inline-flex"
+                            id="registerBtn" style="font-size:0.9rem; border:1.5px solid #d47d32; color:#d47d32;">
+                            Đăng ký
+                        </a>
+
+                        <!-- Khi chưa đăng nhập -->
+                        <a th:href="@{/dang-nhap}" class="btn btn-primary rounded-pill px-4 shadow-sm border-0"
+                            id="loginBtn">Đăng nhập</a>
+
+                        <!-- Khi đã đăng nhập -->
+                        <div class="dropdown d-none" id="userDropdown">
+                            <a href="#" class="d-flex align-items-center gap-2 text-decoration-none"
+                                data-bs-toggle="dropdown">
+                                <div class="navbar-avatar">
+                                    <div class="nav-avatar-initials" id="navAvatarInitials">A</div>
+                                </div>
+                                <span class="fw-bold small text-dark" id="navUserName">Tài khoản</span>
+                                <i class="bi bi-chevron-down small text-muted"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm rounded-4 mt-2"
+                                style="min-width:200px;">
+                                <li><a class="dropdown-item rounded-3 py-2" href="/tai-khoan"><i
+                                            class="bi bi-person me-2 text-primary"></i>Tài khoản của tôi</a></li>
+                                <li><a class="dropdown-item rounded-3 py-2" href="/tra-cuu"><i
+                                            class="bi bi-search me-2 text-primary"></i>Tra cứu đơn</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item rounded-3 py-2 text-danger" href="#"
+                                        onclick="logoutNav(event)"><i class="bi bi-box-arrow-left me-2"></i>Đăng
+                                        xuất</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <div th:replace="${content}"></div>
+
+
+    <footer class="bg-dark text-white py-5 mt-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-md-5">
+                    <div class="mb-4 text-center text-md-start">
+                        <img th:src="@{/assets/images/logo.png}" alt="Logo" height="150" class="mb-3">
+                    </div>
+                    <p class="text-white-50">Hệ thống phân phối giày Sneaker chính hãng hàng đầu Việt Nam. Chất lượng và
+                        sự hài lòng của khách hàng là ưu tiên hàng đầu.</p>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="fw-bold mb-4">LIÊN KẾT</h6>
+                    <ul class="list-unstyled small">
+                        <li class="mb-2"><a th:href="@{/}" class="text-decoration-none text-white-50">Trang chủ</a></li>
+                        <li class="mb-2"><a th:href="@{/san-pham}" class="text-decoration-none text-white-50">Sản phẩm</a></li>
+                        <li class="mb-2"><a th:href="@{/ve-chung-toi}" class="text-decoration-none text-white-50">Về chúng tôi</a></li>
+                        <li class="mb-2"><a th:href="@{/phieu-giam-gia}" class="text-decoration-none text-white-50">Phiếu giảm giá</a></li>
+                        <li class="mb-2"><a th:href="@{/tra-cuu}" class="text-decoration-none text-white-50">Tra cứu đơn hàng</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="fw-bold mb-4">LIÊN HỆ</h6>
+                    <ul class="list-unstyled small text-white-50">
+                        <li class="mb-2"><i class="bi bi-geo-alt me-2 text-primary"></i> 123 Đường Cầu Giấy, Hà Nội</li>
+                        <li class="mb-2"><i class="bi bi-telephone me-2 text-primary"></i> +84 123 456 789</li>
+                        <li class="mb-2"><i class="bi bi-envelope me-2 text-primary"></i> support@peaksneaker.com</li>
+                    </ul>
+                </div>
+
+            </div>
+            <hr class="my-4 border-secondary opacity-25">
+            <div class="text-center text-white-50 small">
+                © 2026 PeakSneaker. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+    <script th:src="@{/client/js/auth.js}"></script>
+</body>
+
+</html>

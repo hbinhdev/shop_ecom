@@ -13,7 +13,7 @@
             </div>
 
             <form th:action="@{/admin/phieu-giam-gia/save}" th:object="${pgg}" method="POST" id="pggForm">
-                <!-- Cac truong an de giu du lieu cu -->
+                
                 <input type="hidden" th:field="*{id}">
                 <input type="hidden" th:field="*{ngayTao}">
                 <input type="hidden" th:field="*{nguoiTao}">
@@ -34,7 +34,7 @@
                     </div>
 
                     <div class="row g-4">
-                        <!-- Ma Phieu -->
+                        
                         <div class="col-12">
                             <label class="form-label fw-bold small text-uppercase text-muted">Mã phiếu giảm giá <span
                                     class="text-danger">*</span></label>
@@ -42,14 +42,14 @@
                                 th:field="*{maPhieu}" readonly>
                         </div>
 
-                        <!-- Ten Phieu -->
+                        
                         <div class="col-12">
                             <label class="form-label fw-bold small text-uppercase text-muted">Tên giảm giá</label>
                             <input type="text" class="form-control rounded-pill py-2 px-3 border-1 bg-light-subtle"
                                 th:field="*{tenPhieu}" placeholder="Nhập tên phiếu giảm giá..." required>
                         </div>
 
-                        <!-- Hinh thuc & Gia tri -->
+                        
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted d-block">Hình thức
                                 giảm</label>
@@ -68,23 +68,34 @@
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Giá trị giảm</label>
-                            <input type="number" class="form-control rounded-pill py-2 px-3 border-1 bg-light-subtle"
-                                th:field="*{giaTriGiam}" min="0" required>
+                            <div class="input-group">
+                                <input type="text" class="form-control rounded-start-pill py-2 px-3 border-1 bg-light-subtle number-format"
+                                    th:id="giaTriGiam" th:name="giaTriGiam" 
+                                    th:value="${pgg.giaTriGiam != null ? #numbers.formatInteger(pgg.giaTriGiam, 0) : '0'}" 
+                                    placeholder="0" required>
+                                <span class="input-group-text rounded-end-pill bg-white px-3 fw-bold text-muted small" id="discountUnit">VNĐ</span>
+                            </div>
                         </div>
 
-                        <!-- So luong & Hoa don toi thieu -->
+                        
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Số lượng sử dụng</label>
-                            <input type="number" class="form-control rounded-pill py-2 px-3 border-1 bg-light-subtle"
-                                th:field="*{soLuong}" min="0" required>
+                            <input type="text" class="form-control rounded-pill py-2 px-3 border-1 bg-light-subtle number-format"
+                                th:id="soLuong" th:name="soLuong" th:value="${pgg.soLuong}" 
+                                placeholder="0" required>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Hóa đơn tối thiểu</label>
-                            <input type="number" class="form-control rounded-pill py-2 px-3 border-1 bg-light-subtle"
-                                th:field="*{giaTriToiThieu}" min="0">
+                            <div class="input-group">
+                                <input type="text" class="form-control rounded-start-pill py-2 px-3 border-1 bg-light-subtle number-format"
+                                    th:id="giaTriToiThieu" th:name="giaTriToiThieu" 
+                                    th:value="${pgg.giaTriToiThieu != null ? #numbers.formatInteger(pgg.giaTriToiThieu, 0) : '0'}" 
+                                    placeholder="0">
+                                <span class="input-group-text rounded-end-pill bg-white px-3 fw-bold text-muted small">VNĐ</span>
+                            </div>
                         </div>
 
-                        <!-- Ngay bat dau & Ngay ket thuc -->
+                        
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Ngày bắt đầu</label>
                             <input type="date" class="form-control rounded-pill py-2 px-3 border-1 bg-light-subtle"
@@ -100,7 +111,7 @@
                                 required>
                         </div>
 
-                        <!-- Loai phieu & Trang thai -->
+                        
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted d-block">Loại phiếu</label>
                             <div class="d-flex gap-4 py-2">
@@ -125,7 +136,7 @@
                             </select>
                         </div>
 
-                        <!-- Mo ta -->
+                        
                         <div class="col-12">
                             <label class="form-label fw-bold small text-uppercase text-muted">Mô tả phiếu giảm
                                 giá</label>
@@ -144,10 +155,54 @@
             </form>
         </div>
 
-        <div th:replace="~{admin/fragments/scripts :: common_scripts}"></div>
+        
         <script th:inline="javascript">
+            // Script cho hình thức giảm (Sao chép từ create.html)
+            document.querySelectorAll('input[name="hinhThucGiam"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const unit = this.value; // 'VNĐ' hoặc '%'
+                    const unitLabel = document.getElementById('discountUnit');
+                    if (unitLabel) unitLabel.innerText = unit;
+                    
+                    const inputGiam = document.getElementById('giaTriGiam');
+                    if (inputGiam) {
+                        if (unit === '%') {
+                            inputGiam.classList.remove('number-format');
+                            let val = inputGiam.value.replace(/\./g, "");
+                            if (parseInt(val) > 100) val = "100";
+                            inputGiam.value = val;
+                        } else {
+                            inputGiam.classList.add('number-format');
+                            if (typeof applyGlobalFormatting === 'function') {
+                                applyGlobalFormatting(inputGiam);
+                            }
+                        }
+                    }
+                });
+            });
+
+            document.getElementById('giaTriGiam').addEventListener('input', function() {
+                const isPercent = document.querySelector('input[name="hinhThucGiam"]:checked')?.value === '%';
+                if (isPercent) {
+                    let val = this.value.replace(/\D/g, "");
+                    if (parseInt(val) > 100) {
+                        this.value = "100";
+                    } else {
+                        this.value = val;
+                    }
+                }
+            });
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const checkedRadio = document.querySelector('input[name="hinhThucGiam"]:checked');
+                if (checkedRadio) {
+                    checkedRadio.dispatchEvent(new Event('change'));
+                }
+            });
+
             async function confirmSoftDelete() {
-                const id = /*[[${pgg.id}]]*/ null;
+                const id = [[${pgg.id}]]; // Fix missing ID
+                if (!id) return;
                 const result = await Swal.fire({
                     title: 'Xóa phiếu?', text: 'Dữ liệu sẽ được ẩn khỏi hệ thống.',
                     icon: 'warning', showCancelButton: true, confirmButtonText: 'Đồng ý', cancelButtonText: 'Hủy'

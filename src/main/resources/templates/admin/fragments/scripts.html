@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<!-- Common Scripts for Admin -->
+
 <div th:fragment="common_scripts">
-    <!-- SweetAlert2 -->
+    
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
-    <!-- HTML5-QRCODE for CCCD Scanning -->
+    
     <script src="https://unpkg.com/html5-qrcode"></script>
 
     <script th:inline="javascript">
@@ -22,6 +22,7 @@
         // === Common Status Toggle ===
         async function confirmToggle(checkbox, url, successMsg, errorMsg) {
             const id = checkbox.getAttribute('data-id'), isChecked = checkbox.checked;
+            
             const result = await Swal.fire({
                 title: 'Xác nhận?', text: isChecked ? "Bạn có muốn kích hoạt lại?" : "Bạn có muốn ngừng hoạt động?",
                 icon: 'question', showCancelButton: true, confirmButtonText: 'Đồng ý', cancelButtonText: 'Hủy',
@@ -42,13 +43,14 @@
             } else checkbox.checked = !isChecked;
         }
 
-        // === API TỈNH THÀNH (Reusable) ===
+        
         const PROVINCE_API = "https://provinces.open-api.vn/api/";
         async function fetchProvinces(citySelectSelector) {
             try {
                 const response = await fetch(PROVINCE_API + "p/");
                 const data = await response.json();
-                const citySelect = document.querySelector(citySelectSelector);
+                const citySelect = (typeof citySelectSelector === 'string') ? document.querySelector(citySelectSelector) : citySelectSelector;
+                if (!citySelect) return;
                 let html = `<option value="">-- Chọn tỉnh/thành --</option>`;
                 data.forEach(item => {
                     html += `<option value="${item.name}" data-code="${item.code}">${item.name}</option>`;
@@ -61,7 +63,8 @@
             try {
                 const response = await fetch(`${PROVINCE_API}p/${cityCode}?depth=2`);
                 const data = await response.json();
-                const districtSelect = document.querySelector(districtSelectSelector);
+                const districtSelect = (typeof districtSelectSelector === 'string') ? document.querySelector(districtSelectSelector) : districtSelectSelector;
+                if (!districtSelect) return;
                 let html = `<option value="">-- Chọn quận/huyện --</option>`;
                 data.districts.forEach(item => {
                     html += `<option value="${item.name}" data-code="${item.code}">${item.name}</option>`;
@@ -74,7 +77,8 @@
             try {
                 const response = await fetch(`${PROVINCE_API}d/${districtCode}?depth=2`);
                 const data = await response.json();
-                const wardSelect = document.querySelector(wardSelectSelector);
+                const wardSelect = (typeof wardSelectSelector === 'string') ? document.querySelector(wardSelectSelector) : wardSelectSelector;
+                if (!wardSelect) return;
                 let html = `<option value="">-- Chọn phường/xã --</option>`;
                 data.wards.forEach(item => {
                     html += `<option value="${item.name}" data-code="${item.code}">${item.name}</option>`;
@@ -84,9 +88,11 @@
         }
 
         async function initAddressSelects(citySel, distSel, wardSel, initialValues = {}) {
-            const cityEl = document.querySelector(citySel);
-            const distEl = document.querySelector(distSel);
-            const wardEl = document.querySelector(wardSel);
+            const cityEl = (typeof citySel === 'string') ? document.querySelector(citySel) : citySel;
+            const distEl = (typeof distSel === 'string') ? document.querySelector(distSel) : distSel;
+            const wardEl = (typeof wardSel === 'string') ? document.querySelector(wardSel) : wardSel;
+            
+            if (!cityEl || !distEl || !wardEl) return;
 
             cityEl.addEventListener('change', async (e) => {
                 const code = e.target.options[e.target.selectedIndex]?.dataset?.code;
@@ -123,9 +129,9 @@
             }
         }
 
-        // === CCCD QR Parser ===
+        
         function parseCCCD(qrString) {
-            // Format: CCCD_ID|Old_ID|FullName|DOB|Gender|Address|DateOfIssue
+            
             const parts = qrString.split('|');
             if (parts.length < 6) return null;
             return {
@@ -218,6 +224,227 @@
                 }
             }
         }
+        // === Dynamic Sidebar Highlight ===
+        function initSidebarHighlight() {
+            const currentPath = window.location.pathname;
+            const menuLinks = document.querySelectorAll('.sidebar-nav a');
+            
+            menuLinks.forEach(link => {
+                let href = link.getAttribute('href');
+                if (!href || href === '#' || href.startsWith('javascript')) return;
+                
+                // Xử lý path khớp (hoặc bắt đầu bằng path đó)
+                if (currentPath === href || (href !== '/admin' && href !== '/' && currentPath.startsWith(href))) {
+                    // Xóa active cũ
+                    document.querySelectorAll('.sidebar-nav li.active').forEach(el => el.classList.remove('active'));
+                    
+                    const li = link.closest('li');
+                    if (li) {
+                        li.classList.add('active');
+                        
+                        // Nếu nằm trong submenu thì mở submenu đó
+                        const parentSubmenu = li.closest('.submenu');
+                        if (parentSubmenu) {
+                            parentSubmenu.classList.add('show');
+                            const toggle = document.querySelector(`[data-bs-target="#${parentSubmenu.id}"]`);
+                            if (toggle) {
+                                toggle.setAttribute('aria-expanded', 'true');
+                                toggle.classList.remove('collapsed');
+                                // Highlight cả menu cha nếu cần
+                                toggle.closest('li')?.classList.add('active');
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // === Global Number Formatter ===
+        const formatString = (val) => {
+            if (!val) return "";
+            let num = val.toString().replace(/\D/g, "");
+            if (num === "") return "";
+            return num.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        };
+
+        function applyGlobalFormatting(input) {
+            try {
+                let cursorPosition = input.selectionStart;
+                let originalValue = input.value;
+                let formattedValue = formatString(originalValue);
+                
+                
+
+                if (originalValue === formattedValue) return;
+
+                input.value = formattedValue;
+                
+                let diff = (formattedValue.length - originalValue.length);
+                let newCursor = cursorPosition + diff;
+                input.setSelectionRange(newCursor, newCursor);
+            } catch (e) {
+                console.error("[NumberFormat Error]", e);
+                input.value = formatString(input.value);
+            }
+        }
+
+        function initNumberFormatter() {
+            
+            // Initial format for existing values
+            document.querySelectorAll('.number-format').forEach(input => {
+                if (input.value) {
+                    
+                    input.value = formatString(input.value);
+                }
+            });
+
+            // Global delegation for real-time typing
+            document.addEventListener('input', function(e) {
+                if (e.target && e.target.classList.contains('number-format')) {
+                    
+                    applyGlobalFormatting(e.target);
+                }
+            });
+
+            document.addEventListener('submit', function(e) {
+                if (e.target && e.target.tagName === 'FORM') {
+                    e.target.querySelectorAll('.number-format').forEach(input => {
+                        input.value = input.value.replace(/\./g, "");
+                    });
+                }
+            }, true);
+        }
+
+        function submitForm(el) {
+            const form = el.form || el.closest('form');
+            if (!form) return;
+            
+            // Xóa dấu chấm trước khi submit
+            form.querySelectorAll('.number-format').forEach(input => {
+                input.value = input.value.replace(/\./g, "");
+            });
+            form.submit();
+        }
+
+        // Bất kỳ khi nào script này nạp xong, nó sẽ tự kiểm tra và chạy ngay
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                initSidebarHighlight();
+                initNumberFormatter();
+            });
+        } else {
+            initSidebarHighlight();
+            initNumberFormatter();
+        }
+
+        // === Toast Configuration (Global) ===
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end', // Phía trên bên phải
+            showConfirmButton: false,
+            timer: 4000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer)
+                toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+        });
+
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            const successMsg = /*[[${successMsg}]]*/ null;
+            const errorMsg = /*[[${errorMsg}]]*/ null;
+            
+            if (successMsg) {
+                Toast.fire({ icon: 'success', title: successMsg });
+            }
+            if (errorMsg) {
+                Toast.fire({ 
+                    icon: 'error', 
+                    title: 'Lỗi dữ liệu',
+                    text: errorMsg,
+                    timer: 6000 
+                });
+                // Tự động highlight ô lỗi
+                highlightErrorFields(errorMsg);
+            }
+            
+        });
+
+        // Hàm tự động đánh dấu đỏ ô lỗi dựa trên nội dung thông báo
+        function highlightErrorFields(msg) {
+            const errorMap = [
+                { keyword: 'email', selector: 'input[name="email"], input[type="email"]', label: 'Email không hợp lệ hoặc đã tồn tại' },
+                { keyword: 'điện thoại', selector: 'input[name="soDienThoai"]', label: 'Số điện thoại không hợp lệ hoặc đã tồn tại' },
+                { keyword: 'tên', selector: 'input[name="tenDayDu"], input[name="tenSanPham"], input[name="tenPhieu"]', label: 'Vui lòng kiểm tra lại họ tên' },
+                { keyword: 'ngày sinh', selector: 'input[name="ngaySinh"]', label: 'Ngày sinh không hợp lệ (phải đủ 18 tuổi hoặc đúng định dạng)' },
+                { keyword: 'giá', selector: '.number-format', label: 'Giá trị phải lớn hơn 0' },
+                { keyword: 'số lượng', selector: 'input[name="soLuong"]', label: 'Số lượng không được để trống' }
+            ];
+
+            errorMap.forEach(item => {
+                if (msg.toLowerCase().includes(item.keyword)) {
+                    const el = document.querySelector(item.selector);
+                    if (el) {
+                        el.classList.add('is-invalid');
+                        el.classList.add('shake-horizontal'); // Thêm hiệu ứng rung
+                        
+                        // Xóa lỗi khi người dùng bắt đầu gõ lại
+                        el.addEventListener('input', function() {
+                            this.classList.remove('is-invalid');
+                            this.classList.remove('shake-horizontal');
+                        }, { once: true });
+                    }
+                }
+            });
+        }
+        
+        // --- Global Real-time Validation ---
+        function initRealTimeValidation() {
+            const configs = [
+                { name: 'soDienThoai', pattern: /^0\d{9}$/ },
+                { name: 'email', pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
+                { name: 'tenPhieu', pattern: /.{3,}/ },
+                { name: 'tenDayDu', pattern: /.{2,}/ }
+            ];
+
+            configs.forEach(config => {
+                document.querySelectorAll(`input[name="${config.name}"]`).forEach(el => {
+                    el.addEventListener('blur', function() {
+                        if (this.value !== "" && !config.pattern.test(this.value)) {
+                            this.classList.add('is-invalid');
+                        } else {
+                            this.classList.remove('is-invalid');
+                        }
+                    });
+                    el.addEventListener('input', function() {
+                        if (this.classList.contains('is-invalid') && config.pattern.test(this.value)) {
+                            this.classList.remove('is-invalid');
+                        }
+                    });
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', initRealTimeValidation);
     </script>
+    <style>
+        .is-invalid {
+            border-color: #dc3545 !important;
+            background-image: none !important;
+            box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+        }
+        .shake-horizontal {
+            animation: shake-horizontal 0.5s cubic-bezier(0.455, 0.03, 0.515, 0.955) both;
+        }
+        @keyframes shake-horizontal {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+            90% { transform: translateX(-2px); }
+        }
+    </style>
 </div>
 </html>
+

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{client/layout/main :: layout(~{::main}, ${pageTitle})}">
+
+<body>
+    <main class="py-5" style="background: radial-gradient(circle at top right, #fff5ed 0%, #ffffff 50%);">
+        <div class="container">
+            
+            <nav aria-label="breadcrumb" class="mb-5">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a th:href="@{/}"
+                            class="text-secondary text-decoration-none opacity-50">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/san-pham}"
+                            class="text-secondary text-decoration-none opacity-50">Sản phẩm</a></li>
+                    <li class="breadcrumb-item active fw-bold text-dark" aria-current="page" th:text="${p.tenSanPham}">
+                        Tên sản phẩm</li>
+                </ol>
+            </nav>
+
+            <div class="row g-5">
+                
+                <div class="col-lg-6">
+                    <div class="sticky-top" style="top: 100px; z-index: 10;">
+                        <div class="premium-card p-3 mb-4 bg-white shadow-lg overflow-hidden"
+                            style="border-radius: 3rem;"
+                            th:with="displayImg=${p.duongDanAnh != null ? p.duongDanAnh : (p.danhSachHinhAnh != null && !p.danhSachHinhAnh.isEmpty() ? p.danhSachHinhAnh[0].duongDan : (p.danhSachChiTiet != null && !p.danhSachChiTiet.isEmpty() && p.danhSachChiTiet[0].duongDanAnh != null ? p.danhSachChiTiet[0].duongDanAnh : null))}">
+                            <div class="p-4 bg-light rounded-5 text-center">
+                                <img th:src="${displayImg != null ? (displayImg.startsWith('http') ? displayImg : '/uploads/san-pham/' + displayImg) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800'}"
+                                    class="img-fluid hover-zoom"
+                                    style="max-height: 500px; transition: transform 0.5s ease;" alt="Main Image">
+                            </div>
+                        </div>
+                        <div class="d-flex gap-3 px-2">
+                            <div class="rounded-4 border-2 border border-primary p-1 bg-white shadow-sm"
+                                style="width: 80px; height: 80px;"
+                                th:with="displayImg=${p.duongDanAnh != null ? p.duongDanAnh : (p.danhSachHinhAnh != null && !p.danhSachHinhAnh.isEmpty() ? p.danhSachHinhAnh[0].duongDan : (p.danhSachChiTiet != null && !p.danhSachChiTiet.isEmpty() && p.danhSachChiTiet[0].duongDanAnh != null ? p.danhSachChiTiet[0].duongDanAnh : null))}">
+                                <img th:src="${displayImg != null ? (displayImg.startsWith('http') ? displayImg : '/uploads/san-pham/' + displayImg) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=800'}"
+                                    class="w-100 h-100 object-fit-cover rounded-3">
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="col-lg-6">
+                    <div class="ps-lg-5">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <span class="badge rounded-pill bg-primary bg-opacity-10 text-primary px-3 py-2 fw-bold"
+                                th:text="${p.danhMuc != null ? p.danhMuc.tenDanhMuc : 'SNEAKER'}">SNEAKER</span>
+                            <div class="vr"></div>
+                            <span class="text-muted small fw-medium">Mã: <span class="text-dark fw-bold"
+                                    th:text="${p.maSanPham}">SP-0804</span></span>
+                        </div>
+
+                        <h1 class="fw-extrabold text-dark mb-3"
+                            style="font-size: 3rem; letter-spacing: -1.5px; line-height: 1.1;"
+                            th:text="${p.tenSanPham}">Tên giày Sneaker</h1>
+
+                        <div class="d-flex align-items-center gap-4 mb-5">
+                            <h2 class="fw-bold text-primary mb-0" style="font-size: 2.2rem;"
+                                th:if="${not #lists.isEmpty(variants)}"
+                                th:text="${#numbers.formatDecimal(variants[0].giaBan, 0, 'COMMA', 0, 'POINT')} + ' ₫'">
+                                2.500.000 ₫
+                            </h2>
+                            <h2 class="fw-bold text-primary mb-0" th:if="${#lists.isEmpty(variants)}">Liên hệ</h2>
+                            <div
+                                class="badge bg-success bg-opacity-10 text-success px-3 py-2 rounded-pill small fw-bold">
+                                <i class="bi bi-check-circle-fill me-1"></i> CÒN HÀNG
+                            </div>
+                        </div>
+
+                        
+                        <div class="mb-5 p-4 premium-card bg-white">
+                            <div class="mb-4">
+                                <label class="fw-bold text-dark small text-uppercase mb-3 d-block"
+                                    style="letter-spacing: 1px;">Màu sắc hiện có</label>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <div th:each="c, iter : ${uniqueColors}" class="glass-swatch"
+                                        th:classappend="${iter.first} ? 'active' : ''" th:text="${c.tenMauSac}"
+                                        th:data-color="${c.id}">Màu sắc</div>
+                                </div>
+                            </div>
+
+                            <div class="mb-0">
+                                <label class="fw-bold text-dark small text-uppercase mb-3 d-block"
+                                    style="letter-spacing: 1px;">Kích thước (Size)</label>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <div th:each="s, iter : ${uniqueSizes}" class="glass-swatch"
+                                        th:classappend="${iter.first} ? 'active' : ''" th:text="${s.tenKichThuoc}"
+                                        th:data-size="${s.id}">Size</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-5 mt-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="qty-selector-detail d-flex align-items-center border rounded-pill p-1 bg-light">
+                                    <button class="btn btn-sm btn-light rounded-circle fw-bold" style="width: 35px; height: 35px;" onclick="changeDetailQty(-1)">-</button>
+                                    <input type="number" id="detailQty" value="1" min="1" 
+                                           class="form-control form-control-sm text-center border-0 bg-transparent fw-bold" 
+                                           style="width: 50px; font-size: 1.1rem;" readonly>
+                                    <button class="btn btn-sm btn-light rounded-circle fw-bold" style="width: 35px; height: 35px;" onclick="changeDetailQty(1)">+</button>
+                                </div>
+                                <button class="btn btn-premium flex-grow-1 fs-5 py-3 shadow-sm" 
+                                        style="border-radius: 1.5rem; transition: all 0.3s ease; position: relative; z-index: 100;" 
+                                        onclick="handleAddToCart()">
+                                    <i class="bi bi-bag-plus-fill me-2"></i> THÊM VÀO GIỎ HÀNG
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Stock Info -->
+                        <div id="variantStockInfo" class="mb-4 small text-muted d-none">
+                            Tồn kho: <span id="stockCount" class="fw-bold text-dark">0</span> sản phẩm
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="premium-card p-5 bg-white mt-5 border-0 shadow-sm" style="border-radius: 2.5rem;">
+                <ul class="nav nav-pills gap-3 mb-5 p-1 bg-light rounded-pill" style="width: fit-content;"
+                    id="pills-tab" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active rounded-pill px-5 py-2 fw-bold text-uppercase btn-premium"
+                            data-bs-toggle="pill" data-bs-target="#desc">Mô tả sản phẩm</button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link rounded-pill px-5 py-2 fw-bold text-uppercase btn-premium"
+                            data-bs-toggle="pill" data-bs-target="#specs">Thông số kỹ thuật</button>
+                    </li>
+                </ul>
+                <div class="tab-content pt-2" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="desc">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-10">
+                                <div class="text-muted lh-lg" style="font-size: 1.1rem; text-align: justify;"
+                                     th:if="${p.moTa != null and !p.moTa.isEmpty()}" th:utext="${p.moTa}">
+                                    Mô tả dài...
+                                </div>
+                                <div class="text-center py-4 text-muted opacity-50" th:if="${p.moTa == null or p.moTa.isEmpty()}">
+                                    <i class="bi bi-info-circle me-2"></i>Thông tin mô tả đang được cập nhật...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="specs">
+                        <div class="row g-4">
+                            <div class="col-md-3">
+                                <div class="p-4 rounded-5 bg-light border-0 shadow-none text-center h-100">
+                                    <small class="text-muted d-block mb-2 text-uppercase fw-bold" style="letter-spacing: 1px;">Thương hiệu</small>
+                                    <span class="fs-5 fw-bold text-dark" th:text="${p.thuongHieu != null ? p.thuongHieu.tenThuongHieu : 'Đang cập nhật'}">Adidas</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="p-4 rounded-5 bg-light border-0 shadow-none text-center h-100">
+                                    <small class="text-muted d-block mb-2 text-uppercase fw-bold" style="letter-spacing: 1px;">Chất liệu</small>
+                                    <span class="fs-5 fw-bold text-dark" th:text="${p.chatLieu != null ? p.chatLieu.tenChatLieu : 'Đang cập nhật'}">Vải Mesh</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="p-4 rounded-5 bg-light border-0 shadow-none text-center h-100">
+                                    <small class="text-muted d-block mb-2 text-uppercase fw-bold" style="letter-spacing: 1px;">Kiểu dáng</small>
+                                    <span class="fs-5 fw-bold text-dark" th:text="${p.kieuDang != null ? p.kieuDang.tenKieuDang : 'Đang cập nhật'}">Cổ thấp</span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="p-4 rounded-5 bg-light border-0 shadow-none text-center h-100">
+                                    <small class="text-muted d-block mb-2 text-uppercase fw-bold" style="letter-spacing: 1px;">Danh mục</small>
+                                    <span class="fs-5 fw-bold text-dark" th:text="${p.danhMuc != null ? p.danhMuc.tenDanhMuc : 'Đang cập nhật'}">Giày chạy bộ</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <section class="mt-5 pt-5">
+                <div class="d-flex justify-content-between align-items-end mb-5">
+                    <div>
+                        <h3 class="section-title-premium fs-2">GỢI Ý CHO BẠN</h3>
+                        <p class="text-muted mt-2 mb-0">Khám phá những mẫu giày tương tự có thể bạn sẽ thích.</p>
+                    </div>
+                    <a th:href="@{/san-pham}" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold small">XEM TẤT
+                        CẢ</a>
+                </div>
+                <div class="row g-4">
+                    <div th:each="rp : ${relatedProducts}" class="col-6 col-md-3">
+                        <a th:href="@{'/san-pham/detail/' + ${rp.id}}" class="text-decoration-none p-card-link">
+                            <div class="premium-card p-3 h-100 bg-white">
+                                <div class="related-img-wrapper mb-3"
+                                    th:with="rpImg=${rp.duongDanAnh != null ? rp.duongDanAnh : (rp.danhSachHinhAnh != null && !rp.danhSachHinhAnh.isEmpty() ? rp.danhSachHinhAnh[0].duongDan : (rp.danhSachChiTiet != null && !rp.danhSachChiTiet.isEmpty() && rp.danhSachChiTiet[0].duongDanAnh != null ? rp.danhSachChiTiet[0].duongDanAnh : null))}">
+                                    <img th:src="${rpImg != null ? (rpImg.startsWith('http') ? rpImg : '/uploads/san-pham/' + rpImg) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=600'}"
+                                        class="img-fluid" alt="Related Image">
+                                </div>
+                                <h6 class="fw-bold text-dark product-title-small px-1" th:text="${rp.tenSanPham}">Tên giày
+                                </h6>
+                                <div class="d-flex justify-content-between align-items-center mt-3 px-1">
+                                    <span class="text-danger fw-bold" th:text="${rp.getKhoangGia()}">Giá</span>
+                                    <i class="bi bi-arrow-up-right-circle-fill text-danger fs-4"></i>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+        <style>
+            .related-img-wrapper {
+                width: 100%;
+                aspect-ratio: 1 / 1;
+                overflow: hidden;
+                border-radius: 12px;
+                background-color: #f8f9fa;
+            }
+
+            .related-img-wrapper img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transition: transform 0.5s ease;
+            }
+
+            .premium-card {
+                border-radius: 15px;
+                overflow: hidden;
+                transition: all 0.3s ease;
+                border: 1px solid #eee !important;
+            }
+
+            .product-title-small {
+                display: -webkit-box;
+                -webkit-line-clamp: 1;
+                line-clamp: 1;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                height: 1.5rem;
+                line-height: 1.5;
+                font-size: 0.9rem;
+            }
+
+            .p-card-link:hover .premium-card {
+                transform: translateY(-5px);
+                border-color: #d47d32 !important;
+            }
+
+            /* Qty selector */
+            .qty-selector-detail {
+                display: flex; align-items: center; background: #f8f9fa;
+                border-radius: 50px; border: 1.5px solid #eee; padding: 4px;
+            }
+            .btn-qty {
+                width: 44px; height: 44px; border-radius: 50%; border: none;
+                background: white; color: #333; font-weight: bold; font-size: 1.2rem;
+                display: flex; align-items: center; justify-content: center;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: all 0.2s;
+            }
+            .btn-qty:hover { background: #d47d32; color: white; }
+            .qty-input-detail {
+                width: 50px; border: none; background: transparent; text-align: center;
+                font-weight: 700; font-size: 1.1rem; outline: none;
+            }
+            .qty-input-detail::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+            /* Color/Size Swatches */
+            .glass-swatch { 
+                cursor: pointer !important; padding: 10px 20px; border-radius: 12px; border: 2px solid #edeff2;
+                font-size: 0.9rem; font-weight: 600; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); 
+                background: #fff; color: #4b5563; min-width: 60px; text-align: center;
+                position: relative; z-index: 5;
+            }
+            .glass-swatch:hover { border-color: #d47d32; color: #d47d32; transform: translateY(-2px); }
+            .glass-swatch.active { 
+                border-color: #d47d32; 
+                background: linear-gradient(135deg, rgba(212,125,50,0.1) 0%, rgba(235,152,78,0.1) 100%); 
+                color: #d47d32;
+                box-shadow: 0 4px 12px rgba(212, 125, 50, 0.15);
+            }
+            .glass-swatch.disabled { 
+                opacity: 0.3 !important; cursor: not-allowed !important; 
+                text-decoration: line-through; border-color: #f3f4f6 !important;
+                background: #f9fafb !important;
+            }
+
+            .btn-premium {
+                background: linear-gradient(90deg, #d47d32 0%, #eb984e 100%);
+                color: white;
+                border: none;
+                font-weight: 700;
+                letter-spacing: 0.5px;
+                box-shadow: 0 4px 15px rgba(212, 125, 50, 0.3);
+            }
+            .btn-premium:hover {
+                background: linear-gradient(90deg, #eb984e 0%, #d47d32 100%);
+                color: white;
+                transform: translateY(-2px);
+                box-shadow: 0 10px 20px rgba(212, 125, 50, 0.4);
+            }
+        </style>
+
+        <script th:inline="javascript">
+            /*<![CDATA[*/
+            window.variantsData = /*[[${variants}]]*/ [];
+            window.productData = /*[[${p}]]*/ {};
+            window.selectedColorId = null;
+            window.selectedSizeId = null;
+
+            window.selectColor = function(el, id) {
+                console.log("Chọn màu:", id);
+                document.querySelectorAll('.glass-swatch[data-color]').forEach(item => item.classList.remove('active'));
+                if (el) el.classList.add('active');
+                window.selectedColorId = String(id);
+                updateProductDisplay();
+            };
+
+            window.selectSize = function(el, id) {
+                console.log("Chọn kích thước:", id);
+                document.querySelectorAll('.glass-swatch[data-size]').forEach(item => item.classList.remove('active'));
+                if (el) el.classList.add('active');
+                window.selectedSizeId = String(id);
+                updateProductDisplay();
+            };
+
+            function updateProductDisplay() {
+                if (!window.selectedColorId || !window.selectedSizeId) return;
+                const match = (window.variantsData || []).find(v => 
+                    v.mauSac && String(v.mauSac.id) === window.selectedColorId && 
+                    v.kichThuoc && String(v.kichThuoc.id) === window.selectedSizeId
+                );
+                const infoBox = document.getElementById('variantStockInfo');
+                const countBox = document.getElementById('stockCount');
+                const priceHeader = document.querySelector('h2.text-primary');
+                const mainImg = document.querySelector('.hover-zoom');
+
+                if (match) {
+                    if (infoBox) infoBox.classList.remove('d-none');
+                    if (countBox) countBox.textContent = match.soTonKho;
+                    if (match.giaBan && priceHeader) {
+                        priceHeader.textContent = new Intl.NumberFormat('vi-VN').format(match.giaBan) + ' ₫';
+                    }
+                    if (match.duongDanAnh && mainImg) {
+                        mainImg.src = match.duongDanAnh.startsWith('http') ? match.duongDanAnh : '/uploads/san-pham/' + match.duongDanAnh;
+                    }
+                } else if (infoBox) {
+                    infoBox.classList.add('d-none');
+                }
+            }
+
+            window.handleAddToCart = function() {
+                if (!window.selectedColorId || !window.selectedSizeId) {
+                    alert("Bạn cần chọn đầy đủ Màu sắc và Kích thước!");
+                    return;
+                }
+                const match = (window.variantsData || []).find(v => 
+                    v.mauSac && String(v.mauSac.id) === window.selectedColorId && 
+                    v.kichThuoc && String(v.kichThuoc.id) === window.selectedSizeId
+                );
+                if (!match || match.soTonKho <= 0) {
+                    alert("Sản phẩm này hiện đang hết hàng!");
+                    return;
+                }
+                const qtyInput = document.getElementById('detailQty');
+                const qty = parseInt(qtyInput ? qtyInput.value : 1);
+                if (qty > match.soTonKho) {
+                    alert("Số lượng vượt quá tồn kho!");
+                    return;
+                }
+
+                const cartItem = {
+                    spctId: match.id,
+                    ten: (window.productData || {}).tenSanPham,
+                    anh: match.duongDanAnh || (window.productData || {}).duongDanAnh,
+                    gia: match.giaBan,
+                    mauSac: match.mauSac.tenMauSac,
+                    kichThuoc: match.kichThuoc.tenKichThuoc,
+                    soLuong: qty
+                };
+
+                if (typeof window.addToCart === 'function' || typeof addToCart === 'function') {
+                    (window.addToCart || addToCart)(cartItem);
+                } else {
+                    alert("Hệ thống giỏ hàng chưa sẵn sàng!");
+                }
+            };
+
+            window.changeDetailQty = function(delta) {
+                const input = document.getElementById('detailQty');
+                if (input) {
+                    let val = parseInt(input.value) + delta;
+                    input.value = Math.max(1, Math.min(val, 99));
+                }
+            };
+
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log("Detail page loaded");
+                document.querySelectorAll('.glass-swatch[data-color]').forEach(el => {
+                    const id = el.getAttribute('data-color');
+                    el.onclick = () => window.selectColor(el, id);
+                });
+                document.querySelectorAll('.glass-swatch[data-size]').forEach(el => {
+                    const id = el.getAttribute('data-size');
+                    el.onclick = () => window.selectSize(el, id);
+                });
+
+                const firstOk = (window.variantsData || []).find(v => v.soTonKho > 0) || (window.variantsData || [])[0];
+                if (firstOk) {
+                    try {
+                        const cBtn = document.querySelector(`.glass-swatch[data-color="${firstOk.mauSac.id}"]`);
+                        const sBtn = document.querySelector(`.glass-swatch[data-size="${firstOk.kichThuoc.id}"]`);
+                        if (cBtn) cBtn.click();
+                        if (sBtn) sBtn.click();
+                    } catch(e) {}
+                }
+            });
+            /*]]>*/
+        </script>
+    </div>
+</main>
+</body>
+
+</html>
