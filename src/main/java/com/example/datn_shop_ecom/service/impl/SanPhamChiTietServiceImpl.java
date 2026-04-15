@@ -21,9 +21,11 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
 
     @Override
     public Page<SanPhamChiTiet> filterVariantPage(
-            String search, Long idMauSac, Long idKichThuoc, 
-            BigDecimal minPrice, BigDecimal maxPrice, 
-            String trangThai, Pageable pageable
+            String search, Long idMauSac, Long idKichThuoc,
+            BigDecimal minPrice, BigDecimal maxPrice,
+            String trangThai, Long idSanPham,
+            Long idThuongHieu, Long idDanhMuc,
+            Pageable pageable
     ) {
         return repository.findAll((root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
@@ -39,11 +41,12 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
 
             if (idMauSac != null) predicates.add(cb.equal(root.get("mauSac").get("id"), idMauSac));
             if (idKichThuoc != null) predicates.add(cb.equal(root.get("kichThuoc").get("id"), idKichThuoc));
-            
             if (minPrice != null) predicates.add(cb.greaterThanOrEqualTo(root.get("giaBan"), minPrice));
             if (maxPrice != null) predicates.add(cb.lessThanOrEqualTo(root.get("giaBan"), maxPrice));
-            
             if (trangThai != null && !trangThai.isEmpty()) predicates.add(cb.equal(root.get("trangThai"), trangThai));
+            if (idSanPham != null) predicates.add(cb.equal(root.get("sanPham").get("id"), idSanPham));
+            if (idThuongHieu != null) predicates.add(cb.equal(root.get("sanPham").get("thuongHieu").get("id"), idThuongHieu));
+            if (idDanhMuc != null) predicates.add(cb.equal(root.get("sanPham").get("danhMuc").get("id"), idDanhMuc));
 
             return cb.and(predicates.toArray(new Predicate[0]));
         }, pageable);

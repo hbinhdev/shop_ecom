@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/full-page :: layout(~{::main}, ~{::title})}">
 
 <head>
     <title>Thêm mới sản phẩm - PeakSneaker </title>
@@ -7,133 +7,57 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap"
         rel="stylesheet">
-    <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
-            --accent-color: #FF4B2B;
-        }
-
-        body {
-            background-color: #f4f7f6;
-            font-family: 'Outfit', sans-serif;
-            color: #333;
-        }
-
-        .section-title {
-            color: #1a1a1a;
-            letter-spacing: -0.01em;
-        }
-
-        /* Premium Components */
-        .card {
-            transition: all 0.3s ease;
-            border: none !important;
-        }
-
-        .form-control,
-        .form-select {
-            border-color: #e9ecef;
-            transition: all 0.2s;
-        }
-
-        .form-control:focus,
-        .form-select:focus {
-            border-color: #333;
-            box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.05);
-        }
-
-        .btn-add-customer {
-            background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
-            transition: all 0.3s;
-            color: white;
-            border: none;
-        }
-
-        .btn-add-customer:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            color: white;
-        }
-
-        .btn-light-outline {
-            background: #fff;
-            border: 1px solid #dee2e6;
-            color: #666;
-            transition: all 0.2s;
-        }
-
-        .btn-light-outline:hover {
-            background: #f8f9fa;
-            color: #333;
-            border-color: #adb5bd;
-        }
-
-        /* Variant & Image Styles */
-        .upload-zone {
-            border: 2px dashed #dee2e6 !important;
-            border-radius: 12px;
-            height: 160px;
-            transition: 0.3s;
-            background: #fbfbfb;
-        }
-
-        .upload-zone:hover {
-            border-color: #333 !important;
-            background: #fff;
-        }
-
-        .color-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            display: inline-block;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .tag-pill {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
-            border-radius: 8px;
-            padding: 4px 12px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.85rem;
-        }
-
-        /* Sticky Footer Animation */
-        .sticky-footer {
-            animation: slideUp 0.5s ease-out;
-            position: sticky;
-            bottom: 0;
-            z-index: 1000;
-            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.04) !important;
-        }
-
-        @keyframes slideUp {
-            from {
-                transform: translateY(100%);
-            }
-
-            to {
-                transform: translateY(0);
-            }
-        }
-
-        .image-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .cursor-pointer {
-            cursor: pointer;
-        }
-    </style>
 </head>
 
 <body>
     <main>
+        <style>
+            :root {
+                --orange-start: #d47d32;
+                --orange-end:   #eb984e;
+                --orange-grad:  linear-gradient(135deg, #d47d32 0%, #eb984e 100%);
+                --orange-shadow: rgba(212, 125, 50, 0.35);
+            }
+            body { background-color: #f4f7f6; font-family: 'Outfit', sans-serif; color: #333; }
+            .section-title { color: #2d3436; letter-spacing: -0.01em; }
+            .card { transition: all 0.3s ease; border: none !important; }
+            .form-control, .form-select { border-color: #e9ecef; transition: all 0.2s; }
+            .form-control:focus, .form-select:focus {
+                border-color: var(--orange-start);
+                box-shadow: 0 0 0 0.2rem rgba(212,125,50,0.18);
+            }
+            /* BUTTON CAM */
+            .btn-add-customer {
+                background: var(--orange-grad) !important;
+                color: #fff !important;
+                border: none !important;
+                font-weight: 600;
+                letter-spacing: 0.3px;
+                transition: all 0.25s ease;
+                box-shadow: 0 4px 14px var(--orange-shadow);
+            }
+            .btn-add-customer:hover, .btn-add-customer:focus {
+                background: linear-gradient(135deg,#c06a20 0%,#d47d32 100%) !important;
+                color: #fff !important;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px var(--orange-shadow);
+            }
+            .btn-add-customer:active { transform: translateY(0); box-shadow: 0 2px 8px var(--orange-shadow); }
+            /* BUTTON OUTLINE */
+            .btn-light-outline { background:#fff; border:1.5px solid #dee2e6; color:#555; transition:all 0.2s; }
+            .btn-light-outline:hover { background:#fff5eb; color:var(--orange-start); border-color:var(--orange-start); }
+            /* UPLOAD ZONE */
+            .upload-zone {
+                border: 2px dashed #dee2e6 !important;
+                border-radius: 12px; height: 160px; transition: 0.3s; background: #fbfbfb;
+                display: flex; flex-direction: column; align-items: center; justify-content: center;
+            }
+            .upload-zone:hover { border-color: var(--orange-start) !important; background: #fff8f2; }
+            .color-dot { width:12px; height:12px; border-radius:50%; display:inline-block; border:1px solid rgba(0,0,0,0.1); }
+            .tag-pill { background:#f8f9fa; border:1px solid #dee2e6; border-radius:8px; padding:4px 12px; display:inline-flex; align-items:center; gap:6px; font-size:0.85rem; }
+            .image-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:20px; }
+            .cursor-pointer { cursor:pointer; }
+        </style>
         <div class="container-fluid p-0">
             <!-- HEADER -->
             <div class="mb-4">
@@ -411,23 +335,108 @@
                         </div>`;
                     }).join('');
                 },
-                handleFiles(cid, files) {
-                    const div = document.getElementById(`placeholder-${cid}`);
-                    div.innerHTML = `<div class="preview-scroll d-flex gap-2 p-1 overflow-auto w-100" style="height:100%"></div>`;
-                    const container = div.querySelector('.preview-scroll');
-                    this.colorFiles[cid] = Array.from(files);
-                    this.colorFiles[cid].forEach(f => {
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            const img = document.createElement('img');
-                            img.src = e.target.result;
-                            img.style.width = '100px'; img.style.height = '100px'; img.style.objectFit = 'cover';
-                            img.className = 'rounded border';
-                            container.appendChild(img);
+                // Resize + center-crop ảnh về hình vuông cố định bằng Canvas
+                resizeImage(file, size = 500) {
+                    return new Promise((resolve) => {
+                        // Chỉ xử lý các định dạng ảnh phổ biến
+                        const supported = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/bmp'];
+                        if (!supported.includes(file.type)) { resolve(file); return; }
+
+                        const img = new Image();
+                        const objectUrl = URL.createObjectURL(file);
+                        img.onload = () => {
+                            URL.revokeObjectURL(objectUrl);
+                            const canvas = document.createElement('canvas');
+                            canvas.width = size;
+                            canvas.height = size;
+                            const ctx = canvas.getContext('2d');
+                            const minDim = Math.min(img.naturalWidth, img.naturalHeight);
+                            const sx = (img.naturalWidth  - minDim) / 2;
+                            const sy = (img.naturalHeight - minDim) / 2;
+                            ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, size, size);
+                            canvas.toBlob((blob) => {
+                                if (!blob) { resolve(file); return; } // canvas.toBlob thất bại → dùng file gốc
+                                const resized = new File([blob], file.name.replace(/\.[^.]+$/, '.jpg'), {
+                                    type: 'image/jpeg', lastModified: Date.now()
+                                });
+                                resolve(resized);
+                            }, 'image/jpeg', 0.88);
                         };
-                        reader.readAsDataURL(f);
+                        img.onerror = () => { URL.revokeObjectURL(objectUrl); resolve(file); };
+                        img.src = objectUrl;
                     });
                 },
+                async handleFiles(cid, files) {
+                    if (!files || files.length === 0) return;
+                    const resized = await Promise.all(Array.from(files).map(f => this.resizeImage(f)));
+                    if (!this.colorFiles[cid]) this.colorFiles[cid] = [];
+                    this.colorFiles[cid] = [...this.colorFiles[cid], ...resized];
+                    const inp = document.getElementById('input-' + cid);
+                    if (inp) inp.value = '';
+                    this.renderImagePreview(cid);
+                },
+                renderImagePreview(cid) {
+                    const div = document.getElementById('placeholder-' + cid);
+                    if (!div) return;
+                    while (div.firstChild) div.removeChild(div.firstChild);
+                    const allFiles = this.colorFiles[cid] || [];
+                    if (allFiles.length === 0) {
+                        const icon = document.createElement('i');
+                        icon.className = 'bi bi-cloud-arrow-up fs-2 text-muted';
+                        const txt = document.createElement('span');
+                        txt.className = 'text-muted small mt-1';
+                        txt.textContent = 'Tải ảnh lên';
+                        div.appendChild(icon);
+                        div.appendChild(txt);
+                        // Reset inline styles khi không còn ảnh
+                        div.style.flexWrap = '';
+                        div.style.justifyContent = '';
+                        div.style.alignItems = '';
+                        div.style.padding = '';
+                        div.style.overflowY = '';
+                        return;
+                    }
+                    div.style.flexWrap = 'wrap';
+                    div.style.justifyContent = 'flex-start';
+                    div.style.alignItems = 'flex-start';
+                    div.style.padding = '8px';
+                    div.style.overflowY = 'auto';
+                    allFiles.forEach((f, idx) => {
+                        const wrap = document.createElement('div');
+                        wrap.style.cssText = 'position:relative;width:76px;height:76px;flex-shrink:0;margin:3px;';
+
+                        const removeBtn = document.createElement('button');
+                        removeBtn.type = 'button';
+                        removeBtn.style.cssText = 'position:absolute;top:-5px;right:-5px;width:18px;height:18px;border-radius:50%;background:#e74c3c;border:none;color:#fff;font-size:11px;line-height:1;cursor:pointer;z-index:2;display:flex;align-items:center;justify-content:center;padding:0;';
+                        removeBtn.textContent = '×';
+                        removeBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            VariantApp.removeImg(cid, idx);
+                        });
+
+                        const imgEl = document.createElement('img');
+                        imgEl.style.cssText = 'width:76px;height:76px;object-fit:cover;border-radius:8px;border:1px solid #eee;display:block;background:#f5f5f5;';
+                        imgEl.alt = '';
+
+                        // Dùng objectURL thay vì FileReader — nhanh hơn, không cần base64
+                        const objUrl = URL.createObjectURL(f);
+                        imgEl.src = objUrl;
+                        imgEl.onload = () => URL.revokeObjectURL(objUrl);
+                        imgEl.onerror = () => { URL.revokeObjectURL(objUrl); imgEl.src = 'https://placehold.co/76x76?text=!'; };
+
+                        wrap.appendChild(imgEl);
+                        wrap.appendChild(removeBtn);
+                        div.appendChild(wrap);
+                    });
+                },
+                removeImg(cid, idx) {
+                    if (!this.colorFiles[cid]) return;
+                    this.colorFiles[cid].splice(idx, 1);
+                    this.renderImagePreview(cid);
+                },
+                fmtVND(val) { if (!val && val !== 0) return ''; return new Intl.NumberFormat('vi-VN').format(parseFloat(String(val).replace(/[^\d]/g,'')) || 0); },
+                parseVND(str) { return String(str).replace(/[^\d]/g,'') || '0'; },
+                onPriceInput(el) { const raw = String(el.value).replace(/[^\d]/g,''); el.value = raw ? new Intl.NumberFormat('vi-VN').format(parseInt(raw)) : ''; },
                 getN(k, i, p) { const it = this.dict[k].find(x => x.id == i); return it ? it[p] : 'N/A'; },
                 renderR() {
                     const cont = document.getElementById('variantGroupContainer'); cont.innerHTML = ''; const grp = {};
@@ -442,10 +451,14 @@
                             <td style="width: 150px">
                                 <input type="number" class="form-control form-control-sm border text-center rounded-pill" placeholder="SL" value="${v.q}" onchange="VariantApp.uv('${v.uid}', 'q', this.value)">
                             </td>
-                            <td style="width: 200px">
+                            <td style="width: 220px">
                                 <div class="input-group input-group-sm rounded-pill overflow-hidden border">
-                                    <span class="input-group-text bg-white border-0 py-0 small fw-bold text-muted">VNĐ</span>
-                                    <input type="number" class="form-control border-0 fw-bold text-danger text-end pe-3" placeholder="Giá" value="${v.p}" onchange="VariantApp.uv('${v.uid}', 'p', this.value)">
+                                    <span class="input-group-text bg-white border-0 py-0 small fw-bold text-muted">₫</span>
+                                    <input type="text" inputmode="numeric" class="form-control border-0 fw-bold text-danger text-end pe-3 price-input"
+                                           placeholder="0" value="${v.p ? VariantApp.fmtVND(v.p) : ''}"
+                                           data-uid="${v.uid}"
+                                           oninput="VariantApp.onPriceInput(this)"
+                                           onblur="VariantApp.uv(this.dataset.uid,'p',VariantApp.parseVND(this.value))">
                                 </div>
                             </td>
                             <td class="text-center">
@@ -475,12 +488,54 @@
                 uv(u, f, v) { const it = this.variants.find(x => x.uid === u); if (it) it[f] = v; },
                 rm(u) { this.variants = this.variants.filter(x => x.uid !== u); this.renderR(); },
                 async qF(cid) {
-                    const { value: r } = await Swal.fire({ title: 'Cấu hình nhanh nhóm', html: '<div class="text-start mb-2"><label class="small fw-bold">Số lượng</label><input id="q" class="form-control" type="number"></div><div class="text-start"><label class="small fw-bold">Giá bán</label><input id="p" class="form-control" type="number"></div>', preConfirm: () => [$('#q').val(), $('#p').val()] });
-                    if (r) { this.variants.forEach(v => { if (v.cId == cid) { v.q = r[0]; v.p = r[1]; } }); this.renderR(); }
+                    const { value: r } = await Swal.fire({
+                        title: 'Cấu hình nhanh nhóm',
+                        html: `<div class="text-start mb-3">
+                                 <label class="small fw-bold mb-1 d-block">Số lượng</label>
+                                 <input id="swal-q" class="form-control" type="number" min="0" placeholder="VD: 50">
+                               </div>
+                               <div class="text-start">
+                                 <label class="small fw-bold mb-1 d-block">Giá bán (₫)</label>
+                                 <input id="swal-p" class="form-control" type="number" min="0" placeholder="VD: 1500000">
+                               </div>`,
+                        didOpen: () => { document.getElementById('swal-q').focus(); },
+                        preConfirm: () => {
+                            const q = document.getElementById('swal-q').value;
+                            const p = document.getElementById('swal-p').value;
+                            return [q, p];
+                        }
+                    });
+                    if (r && (r[0] || r[1])) {
+                        this.variants.forEach(v => {
+                            if (v.cId == cid) { if (r[0]) v.q = r[0]; if (r[1]) v.p = r[1]; }
+                        });
+                        this.renderR();
+                    }
                 },
                 async quickFillAll() {
-                    const { value: r } = await Swal.fire({ title: 'Cấu hình toàn bộ', html: '<div class="text-start mb-2"><label class="small fw-bold">Số lượng chung</label><input id="qa" class="form-control" type="number"></div><div class="text-start"><label class="small fw-bold">Giá bán chung</label><input id="pa" class="form-control" type="number"></div>', preConfirm: () => [$('#qa').val(), $('#pa').val()] });
-                    if (r) { this.variants.forEach(v => { v.q = r[0]; v.p = r[1]; }); this.renderR(); }
+                    const { value: r } = await Swal.fire({
+                        title: 'Cấu hình toàn bộ',
+                        html: `<div class="text-start mb-3">
+                                 <label class="small fw-bold mb-1 d-block">Số lượng chung</label>
+                                 <input id="swal-qa" class="form-control" type="number" min="0" placeholder="VD: 50">
+                               </div>
+                               <div class="text-start">
+                                 <label class="small fw-bold mb-1 d-block">Giá bán chung (₫)</label>
+                                 <input id="swal-pa" class="form-control" type="number" min="0" placeholder="VD: 1500000">
+                               </div>`,
+                        didOpen: () => { document.getElementById('swal-qa').focus(); },
+                        preConfirm: () => {
+                            const q = document.getElementById('swal-qa').value;
+                            const p = document.getElementById('swal-pa').value;
+                            return [q, p];
+                        }
+                    });
+                    if (r && (r[0] || r[1])) {
+                        this.variants.forEach(v => {
+                            if (r[0]) v.q = r[0]; if (r[1]) v.p = r[1];
+                        });
+                        this.renderR();
+                    }
                 },
                 clearAll() { this.variants = []; this.renderR(); document.getElementById('variantSection').style.display = 'none'; document.getElementById('imageSection').style.display = 'none'; },
                 async submitData() {
@@ -495,13 +550,13 @@
                     const formData = new FormData();
                     formData.append('data', JSON.stringify({
                         sanPham: { tenSanPham: ten, moTa: $('#moTa').val(), idDanhMuc: idDanhMuc || null, idThuongHieu: idThuongHieu || null, idKieuDang: idKieuDang || null, idChatLieu: idChatLieu || null },
-                        bienThes: this.variants.map(v => ({ idMauSac: v.cId, idKichThuoc: v.sId, soLuong: v.q, giaBan: v.p }))
+                        bienThes: this.variants.map(v => ({ idMauSac: v.cId, idKichThuoc: v.sId, soLuong: v.q || 0, giaBan: v.p ? parseInt(String(v.p).replace(/[^\d]/g,'')) : 0 }))
                     }));
 
                     for (const [cid, files] of Object.entries(this.colorFiles)) { files.forEach(f => formData.append(`files_${cid}`, f)); }
 
                     Swal.fire({ title: 'Đang xử lý...', didOpen: () => Swal.showLoading() });
-                    const res = await fetch('/api/admin/product-variant/create-all-with-images', { method: 'POST', body: formData });
+                    const res = await fetch('/api/admin/product-variant/create-all-with-images', { method: 'POST', headers: getCsrfHeaders(), body: formData });
                     if (res.ok) Swal.fire('Thành công', 'Đã lưu sản phẩm!', 'success').then(() => window.location.href = '/admin/san-pham');
                     else Swal.fire('Lỗi', 'Không thể lưu sản phẩm. Vui lòng kiểm tra lại!', 'error');
                 }

@@ -51,4 +51,13 @@ public interface PhieuGiamGiaRepository extends JpaRepository<PhieuGiamGia, Long
     @Transactional
     @Query("UPDATE PhieuGiamGia p SET p.xoaMem = true, p.ngaySuaCuoi = :now WHERE p.id = :id")
     void softDelete(@Param("id") Long id, @Param("now") LocalDateTime now);
+
+    // POS: lấy phiếu giảm giá áp dụng được cho đơn hàng (còn hạn, còn số lượng, đủ giá trị tối thiểu)
+    @Query("SELECT p FROM PhieuGiamGia p WHERE p.xoaMem = false AND p.trangThai = 1 " +
+           "AND p.soLuong > 0 " +
+           "AND (p.ngayBatDau IS NULL OR p.ngayBatDau <= CURRENT_DATE) " +
+           "AND (p.ngayKetThuc IS NULL OR p.ngayKetThuc >= CURRENT_DATE) " +
+           "AND (p.giaTriToiThieu IS NULL OR p.giaTriToiThieu <= :tongTien) " +
+           "ORDER BY p.giaTriGiam DESC")
+    List<PhieuGiamGia> findApplicableVouchers(@Param("tongTien") java.math.BigDecimal tongTien);
 }

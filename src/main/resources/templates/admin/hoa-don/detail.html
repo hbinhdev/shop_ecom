@@ -178,8 +178,8 @@
             }
 
             .info-value {
-                font-weight: 700;
-                color: #000000;
+                font-weight: 400;
+                color: #2d3436;
                 font-size: 0.9rem;
             }
 
@@ -364,7 +364,10 @@
                                     </div>
                                     <div class="info-item">
                                         <span class="info-label">Số điện thoại:</span>
-                                        <span class="info-value" th:text="${hd.soDienThoaiNguoiNhan ?: 'N/A'}"></span>
+                                        <span class="info-value"
+                                            th:text="${hd.soDienThoaiNguoiNhan != null and !#strings.isEmpty(hd.soDienThoaiNguoiNhan)
+                                                ? hd.soDienThoaiNguoiNhan
+                                                : (hd.khachHang != null ? hd.khachHang.soDienThoai : 'N/A')}"></span>
                                     </div>
                                     <div class="info-item" style="border: none;">
                                         <span class="info-label">Email:</span>
@@ -384,12 +387,19 @@
                                     <div class="info-item">
                                         <span class="info-label">Loại đơn:</span>
                                         <span class="info-value"
-                                            th:text="${#strings.equals(hd.loaiHoaDon, '1') ? 'Tại quầy' : 'Giao hàng'}"></span>
+                                            th:text="${#strings.equals(hd.loaiHoaDon, 'TAI_QUAY') ? 'Tại quầy' : 'Giao hàng'}"></span>
                                     </div>
                                     <div class="info-item">
                                         <span class="info-label">Địa chỉ:</span>
                                         <span class="info-value"
-                                            th:text="${hd.chiTietNguoiNhan != null ? hd.chiTietNguoiNhan : 'Tại cửa hàng'}"></span>
+                                            th:if="${#strings.equals(hd.loaiHoaDon, 'TAI_QUAY')}"
+                                            th:text="'Tại cửa hàng'"></span>
+                                        <span class="info-value"
+                                            th:unless="${#strings.equals(hd.loaiHoaDon, 'TAI_QUAY')}"
+                                            th:text="${(hd.chiTietNguoiNhan != null ? hd.chiTietNguoiNhan + ', ' : '')
+                                                      + (hd.xaPhuong != null ? hd.xaPhuong + ', ' : '')
+                                                      + (hd.quanHuyen != null ? hd.quanHuyen + ', ' : '')
+                                                      + (hd.tinhThanhPho != null ? hd.tinhThanhPho : '')}"></span>
                                     </div>
                                     <div class="info-item">
                                         <span class="info-label">Phương thức:</span>

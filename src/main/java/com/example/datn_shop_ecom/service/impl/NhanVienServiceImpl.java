@@ -6,6 +6,7 @@ import com.example.datn_shop_ecom.service.EmailService;
 import com.example.datn_shop_ecom.service.NhanVienService;
 import com.example.datn_shop_ecom.util.ExcelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,9 @@ public class NhanVienServiceImpl implements NhanVienService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public List<NhanVien> filterNhanVien(String search, Long idVaiTro, Boolean xoaMem) {
@@ -97,9 +101,10 @@ public class NhanVienServiceImpl implements NhanVienService {
                 nhanVien.setNgayTao(LocalDateTime.now());
             }
             nhanVien.setXoaMem(false);
+            nhanVien.setTrangThai("Hoạt động");
 
             String password = generateRandomPassword(8);
-            nhanVien.setMatKhau(password);
+            nhanVien.setMatKhau(passwordEncoder.encode(password)); // mã hóa BCrypt trước khi lưu
             nhanVien.setNguoiTao("Admin");
 
             NhanVien saved = nhanVienRepository.save(nhanVien);

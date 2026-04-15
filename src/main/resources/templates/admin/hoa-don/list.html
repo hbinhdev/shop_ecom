@@ -437,6 +437,7 @@
                 </div>
                 
                 <form th:action="@{/admin/hoa-don}" method="get" id="filterForm">
+                    <input type="hidden" name="searched" value="true">
                     <div class="row g-4">
                         <div class="col-md-3">
                             <label class="filter-label">Mã hóa đơn</label>
@@ -469,8 +470,11 @@
                     </div>
 
                     <div class="btn-group-filter">
+                        <button type="submit" class="btn-search-main">
+                            <i class="bi bi-search"></i> Tìm kiếm
+                        </button>
                         <button type="button" onclick="window.location.href='/admin/hoa-don'" class="btn-dark-ghost">
-                            <i class="bi bi-arrow-clockwise"></i> Đặt lại bộ lọc
+                            <i class="bi bi-arrow-clockwise"></i> Đặt lại (hôm nay)
                         </button>
                         <button type="button" class="btn btn-light-outline px-4" onclick="exportToExcel()" style="border-radius: 10px; font-size: 0.85rem; font-weight: 600;">
                             <i class="bi bi-file-earmark-excel"></i> Xuất Excel
@@ -492,24 +496,18 @@
                 </div>
 
                 <div class="status-tab-container">
-                    <a th:href="@{/admin/hoa-don(trangThai='')}" class="status-pill"
-                        th:classappend="${trangThai == null or trangThai == ''} ? 'active'">Tất cả</a>
-                    <a th:href="@{/admin/hoa-don(trangThai='1')}" class="status-pill"
-                        th:classappend="${trangThai == 1} ? 'active'">Chờ xác nhận</a>
-                    <a th:href="@{/admin/hoa-don(trangThai='2')}" class="status-pill"
-                        th:classappend="${trangThai == 2} ? 'active'">Chờ giao hàng</a>
-                    <a th:href="@{/admin/hoa-don(trangThai='3')}" class="status-pill"
-                        th:classappend="${trangThai == 3} ? 'active'">Vận chuyển</a>
-                    <a th:href="@{/admin/hoa-don(trangThai='4')}" class="status-pill"
-                        th:classappend="${trangThai == 4} ? 'active'">Đã giao hàng</a>
-                    <a th:href="@{/admin/hoa-don(trangThai='5')}" class="status-pill"
-                        th:classappend="${trangThai == 5} ? 'active'">Hoàn thành</a>
-                    <a th:href="@{/admin/hoa-don(trangThai='6')}" class="status-pill"
-                        th:classappend="${trangThai == 6} ? 'active'">Đã hủy</a>
-                    <a th:href="@{/admin/hoa-don(trangThai='7')}" class="status-pill"
-                        th:classappend="${trangThai == 7} ? 'active'">Yêu cầu hủy</a>
-                    <a th:href="@{/admin/hoa-don(trangThai='8')}" class="status-pill"
-                        th:classappend="${trangThai == 8} ? 'active'">Cần hoàn phí</a>
+                    <a th:href="@{/admin/hoa-don(ngayBatDau=${ngayBatDau}, ngayKetThuc=${ngayKetThuc}, loaiHoaDon=${loaiHoaDon}, searched=true)}"
+                        class="status-pill" th:classappend="${trangThai == null} ? 'active'">Tất cả</a>
+                    <a th:href="@{/admin/hoa-don(trangThai='1', ngayBatDau=${ngayBatDau}, ngayKetThuc=${ngayKetThuc}, loaiHoaDon=${loaiHoaDon}, searched=true)}"
+                        class="status-pill" th:classappend="${trangThai == 1} ? 'active'">Chờ xác nhận</a>
+                    <a th:href="@{/admin/hoa-don(trangThai='2', ngayBatDau=${ngayBatDau}, ngayKetThuc=${ngayKetThuc}, loaiHoaDon=${loaiHoaDon}, searched=true)}"
+                        class="status-pill" th:classappend="${trangThai == 2} ? 'active'">Đã xác nhận</a>
+                    <a th:href="@{/admin/hoa-don(trangThai='3', ngayBatDau=${ngayBatDau}, ngayKetThuc=${ngayKetThuc}, loaiHoaDon=${loaiHoaDon}, searched=true)}"
+                        class="status-pill" th:classappend="${trangThai == 3} ? 'active'">Đang giao</a>
+                    <a th:href="@{/admin/hoa-don(trangThai='5', ngayBatDau=${ngayBatDau}, ngayKetThuc=${ngayKetThuc}, loaiHoaDon=${loaiHoaDon}, searched=true)}"
+                        class="status-pill" th:classappend="${trangThai == 5} ? 'active'">Hoàn thành</a>
+                    <a th:href="@{/admin/hoa-don(trangThai='6', ngayBatDau=${ngayBatDau}, ngayKetThuc=${ngayKetThuc}, loaiHoaDon=${loaiHoaDon}, searched=true)}"
+                        class="status-pill" th:classappend="${trangThai == 6} ? 'active'">Đã hủy</a>
                 </div>
 
                 <div class="table-responsive">
@@ -535,15 +533,17 @@
                                 <td th:text="${hd.nhanVien != null ? hd.nhanVien.tenDayDu : 'N/A'}"></td>
                                 <td th:text="${hd.khachHang != null ? hd.khachHang.tenDayDu : 'Khách lẻ'}"></td>
                                 <td th:text="${#temporals.format(hd.ngayTao, 'yyyy-MM-dd')}"></td>
-                                <td style="font-weight: 600;" th:text="${#numbers.formatDecimal(hd.tongTienAfterGiam, 0, 'COMMA', 0, 'POINT')} + 'đ'"></td>
+                                <td style="font-weight: 600;" th:text="${hd.tongTienAfterGiam != null ? #numbers.formatDecimal(hd.tongTienAfterGiam, 0, 'COMMA', 0, 'POINT') : '0'} + 'đ'"></td>
                                 <td>
-                                    <span th:if="${hd.loaiHoaDon == '1' or hd.loaiHoaDon == 'TAI_CUA_HANG'}" class="type-label">Tại quầy</span>
+                                    <span th:if="${hd.loaiHoaDon == '1' or hd.loaiHoaDon == 'TAI_CUA_HANG' or hd.loaiHoaDon == 'TAI_QUAY'}" class="type-label">Tại quầy</span>
                                     <span th:if="${hd.loaiHoaDon == '2' or hd.loaiHoaDon == 'GIAO_HANG'}" class="type-label delivery">Giao hàng</span>
                                 </td>
-                                <td th:text="${hd.soDienThoaiNguoiNhan != null ? hd.soDienThoaiNguoiNhan : '0000000000'}"></td>
+                                <td th:text="${hd.soDienThoaiNguoiNhan != null ? hd.soDienThoaiNguoiNhan : (hd.khachHang != null ? hd.khachHang.soDienThoai : 'N/A')}"></td>
                                 <td>
+                                    <span th:if="${hd.trangThaiHoaDon == 'CHO_THANH_TOAN'}" class="badge-custom badge-pending">Chờ thanh toán</span>
+                                    <span th:if="${hd.trangThaiHoaDon == 'DA_THANH_TOAN'}" class="badge-custom badge-complete">Đã thanh toán</span>
                                     <span th:if="${hd.trangThaiHoaDon == '1' or hd.trangThaiHoaDon == 'CHO_XAC_NHAN'}" class="badge-custom badge-pending">Chờ xác nhận</span>
-                                    <span th:if="${hd.trangThaiHoaDon == '2' or hd.trangThaiHoaDon == 'DA_XAC_NHAN'}" class="badge-custom badge-shipping">Xác nhận</span>
+                                    <span th:if="${hd.trangThaiHoaDon == '2' or hd.trangThaiHoaDon == 'DA_XAC_NHAN'}" class="badge-custom badge-shipping">Đã xác nhận</span>
                                     <span th:if="${hd.trangThaiHoaDon == '3' or hd.trangThaiHoaDon == 'DANG_GIAO'}" class="badge-custom badge-shipping">Đang giao</span>
                                     <span th:if="${hd.trangThaiHoaDon == '4' or hd.trangThaiHoaDon == 'HOAN_THANH'}" class="badge-custom badge-complete">Hoàn thành</span>
                                     <span th:if="${hd.trangThaiHoaDon == '5' or hd.trangThaiHoaDon == 'DA_HUY'}" class="badge-custom badge-cancel">Đã hủy</span>

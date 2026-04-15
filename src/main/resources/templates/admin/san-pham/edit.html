@@ -540,7 +540,7 @@
                     for (const [cid, files] of Object.entries(this.colorFiles)) { files.forEach(f => formData.append(`files_${cid}`, f)); }
 
                     Swal.fire({ title: 'Đang xử lý...', didOpen: () => Swal.showLoading() });
-                    const res = await fetch('/api/admin/product-variant/create-all-with-images', { method: 'POST', body: formData });
+                    const res = await fetch('/api/admin/product-variant/create-all-with-images', { method: 'POST', headers: getCsrfHeaders(), body: formData });
                     if (res.ok) Swal.fire('Thành công', 'Đã lưu sản phẩm!', 'success').then(() => window.location.href = '/admin/san-pham');
                     else Swal.fire('Lỗi', 'Không thể lưu. Vui lòng kiểm tra lại dữ liệu!', 'error');
                 }

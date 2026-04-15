@@ -14,7 +14,11 @@ public interface HoaDonService {
     Page<HoaDon> searchInvoices(String maHoaDon, String tenKhachHang, Integer trangThai, Integer loaiHoaDon, LocalDate ngayBatDau, LocalDate ngayKetThuc, Pageable pageable);
     List<HoaDon> findAllMatchingInvoices(String maHoaDon, String tenKhachHang, Integer trangThai, Integer loaiHoaDon, LocalDate ngayBatDau, LocalDate ngayKetThuc);
     HoaDon findById(Long id);
-    java.util.List<ChiTietHoaDon> findDetailByHoaDonId(Long hoaDonId);
-    java.util.List<LichSuHoaDon> findHistoryByHoaDonId(Long hoaDonId);
-    java.util.List<LichSuThanhToan> findPaymentHistoryByHoaDonId(Long hoaDonId);
+    List<ChiTietHoaDon> findDetailByHoaDonId(Long hoaDonId);
+    List<LichSuHoaDon> findHistoryByHoaDonId(Long hoaDonId);
+    List<LichSuThanhToan> findPaymentHistoryByHoaDonId(Long hoaDonId);
+
+    // POS - Bán hàng tại quầy
+    HoaDon createPendingInvoice(String nhanVienEmail);
+    List<HoaDon> findAllPendingPOS();
 }

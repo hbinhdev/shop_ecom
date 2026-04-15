@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +41,9 @@ public class ProductVariantApiController {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Value("${upload.path}")
+    private String uploadPath;
 
     @PostMapping(value = "/create-all-with-images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Transactional
@@ -76,7 +80,7 @@ public class ProductVariantApiController {
 
             // 3. Xử lý lưu File vật lý và Map Color -> FileNames
             Map<Long, List<String>> colorToImages = new HashMap<>();
-            String uploadDir = System.getProperty("user.dir") + "/src/main/resources/static/uploads/san-pham/";
+            String uploadDir = uploadPath + "san-pham/";
             Files.createDirectories(Paths.get(uploadDir));
 
             Iterator<String> paramNames = request.getFileNames();

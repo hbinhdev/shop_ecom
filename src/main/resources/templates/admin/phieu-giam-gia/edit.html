@@ -154,7 +154,7 @@
                 });
                 if (result.isConfirmed) {
                     try {
-                        const res = await fetch(`/admin/phieu-giam-gia/soft-delete/${id}`, { method: 'POST' });
+                        const res = await csrfPost(`/admin/phieu-giam-gia/soft-delete/${id}`);
                         if (res.ok) {
                             Swal.fire('Thành công!', 'Đã xóa phiếu giảm giá.', 'success').then(() => location.href = '/admin/phieu-giam-gia');
                         } else throw new Error();

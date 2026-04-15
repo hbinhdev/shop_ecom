@@ -11,6 +11,7 @@ public class ChatLieu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "ten_chat_lieu", columnDefinition = "NVARCHAR(255)")
     private String tenChatLieu;
     private String nguoiTao;
     private LocalDateTime ngayTao;

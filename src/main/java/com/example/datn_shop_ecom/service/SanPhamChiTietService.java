@@ -7,9 +7,11 @@ import java.math.BigDecimal;
 
 public interface SanPhamChiTietService {
     Page<SanPhamChiTiet> filterVariantPage(
-        String search, Long idMauSac, Long idKichThuoc, 
-        BigDecimal minPrice, BigDecimal maxPrice, 
-        String trangThai, Pageable pageable
+        String search, Long idMauSac, Long idKichThuoc,
+        BigDecimal minPrice, BigDecimal maxPrice,
+        String trangThai, Long idSanPham,
+        Long idThuongHieu, Long idDanhMuc,
+        Pageable pageable
     );
     void toggleVariantStatus(Long id);
     SanPhamChiTiet findById(Long id);

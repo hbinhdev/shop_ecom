@@ -35,6 +35,9 @@ public class ChiTietHoaDon {
     @Column(name = "so_luong")
     private Integer soLuong;
 
+    @Column(name = "thanh_tien")
+    private BigDecimal thanhTien;
+
     @Column(name = "mo_ta", columnDefinition = "TEXT")
     private String moTa;
 
@@ -48,4 +51,7 @@ public class ChiTietHoaDon {
 
     @Column(name = "nguoi_sua_cuoi", length = 50)
     private String nguoiSuaCuoi;
+
+    @Column(name = "ngay_sua_cuoi")
+    private LocalDateTime ngaySuaCuoi;
 }
