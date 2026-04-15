@@ -38,6 +38,13 @@ public class KhachHang {
     @Column(length = 255)
     private String matKhau;
 
+    @ManyToOne
+    @JoinColumn(name = "id_vai_tro")
+    private VaiTro vaiTro;
+
+    @Column(name = "trang_thai", columnDefinition = "NVARCHAR(50)")
+    private String trangThai;
+
     @Column(name = "ngay_tao")
     private LocalDateTime ngayTao;
 
@@ -52,6 +59,9 @@ public class KhachHang {
 
     @Column(name = "xoa_mem")
     private Boolean xoaMem = false;
+
+    @Column(name = "diem_tich_luy")
+    private Integer diemTichLuy = 0;
 
     @OneToMany(mappedBy = "khachHang", cascade = CascadeType.ALL, orphanRemoval = true)
     private java.util.List<DiaChi> danhSachDiaChi = new java.util.ArrayList<>();

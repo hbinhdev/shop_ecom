@@ -60,11 +60,17 @@ public class SanPhamController {
             @RequestParam(required = false) Long idMauSac,
             @RequestParam(required = false) Long idKichThuoc,
             @RequestParam(required = false) BigDecimal minPrice,
-            @RequestParam(required = false, defaultValue = "20000000") BigDecimal maxPrice,
+            @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false, defaultValue = "") String trThai,
+            @RequestParam(required = false) Long idSanPham,
+            @RequestParam(required = false) Long idThuongHieu,
+            @RequestParam(required = false) Long idDanhMuc,
             @RequestParam(defaultValue = "0") int page,
             Model model
     ) {
+        // Ưu tiên sản phẩm mới cập nhật lên ĐẦU và gom nhóm chúng lại
+        Pageable pageable = PageRequest.of(page, 5, Sort.by("sanPham.ngaySuaCuoi").descending().and(Sort.by("sanPham.id").descending()).and(Sort.by("id").descending()));
+        Page<SanPhamChiTiet> spctPage = spctService.filterVariantPage(search, idMauSac, idKichThuoc, minPrice, maxPrice, trThai, idSanPham, idThuongHieu, idDanhMuc, pageable);
         
         Pageable pageable = PageRequest.of(page, 10, Sort.by("sanPham.ngaySuaCuoi").descending().and(Sort.by("sanPham.id").descending()).and(Sort.by("id").descending()));
         Page<SanPhamChiTiet> spctPage = spctService.filterVariantPage(search, idSanPham, idMauSac, idKichThuoc, minPrice, maxPrice, trThai, pageable);
@@ -121,9 +127,25 @@ public class SanPhamController {
         model.addAttribute("idSanPham", idSanPham);
         model.addAttribute("idMauSac", idMauSac);
         model.addAttribute("idKichThuoc", idKichThuoc);
-        model.addAttribute("minPrice", minPrice != null ? minPrice : BigDecimal.ZERO);
+        model.addAttribute("minPrice", minPrice);
         model.addAttribute("maxPrice", maxPrice);
         model.addAttribute("trThai", trThai);
+        model.addAttribute("idSanPham", idSanPham);
+        model.addAttribute("idThuongHieu", idThuongHieu);
+        model.addAttribute("idDanhMuc", idDanhMuc);
+
+        // Tên sản phẩm đang lọc (nếu có)
+        if (idSanPham != null) {
+            com.example.datn_shop_ecom.entity.SanPham spLoc = sanPhamService.findById(idSanPham);
+            if (spLoc != null) model.addAttribute("tenSanPhamLoc", spLoc.getTenSanPham());
+        }
+
+        // Filter Data
+        model.addAttribute("mauSacs", mauSacRepo.findAll());
+        model.addAttribute("kichThuocs", kichThuocRepo.findAll());
+        model.addAttribute("listThuongHieu", thuongHieuRepo.findAll());
+        model.addAttribute("listDanhMuc", danhMucRepo.findAll());
+
         
         
         model.addAttribute("mauSacs", mauSacRepo.findAll());

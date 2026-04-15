@@ -59,8 +59,9 @@ public class HoaDon {
     @JoinColumn(name = "id_trang_thai_moi")
     private TrangThaiHoaDon trangThaiMoi;
 
-    @Column(name = "id_phieu_giam_gia")
-    private Long idPhieuGiamGia;
+    @ManyToOne
+    @JoinColumn(name = "id_phieu_giam_gia")
+    private PhieuGiamGia phieuGiamGia;
 
     @Column(name = "ten_nguoi_nhan", columnDefinition = "NVARCHAR(255)")
     private String tenNguoiNhan;
@@ -82,6 +83,15 @@ public class HoaDon {
 
     @Column(name = "mo_ta", columnDefinition = "NVARCHAR(MAX)")
     private String moTa;
+
+    @Column(name = "ngay_thanh_toan")
+    private LocalDateTime ngayThanhToan;
+
+    @Column(name = "tien_khach_dua")
+    private BigDecimal tienKhachDua;
+
+    @Column(name = "tien_thua_tra")
+    private BigDecimal tienThuaTra;
 
     @Column(name = "nguoi_tao", length = 50)
     private String nguoiTao;

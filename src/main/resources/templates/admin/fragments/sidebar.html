@@ -1,5 +1,6 @@
-﻿<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <body>
     <aside th:fragment="sidebar" class="sidebar">
@@ -8,10 +9,17 @@
         </div>
         <nav class="sidebar-nav">
             <ul>
-                <li><a href="#"><i class="bi bi-house-door"></i> Trang chủ</a></li>
-                <li><a href="#"><i class="bi bi-graph-up"></i> Thống kê</a></li>
-                <li><a href="#"><i class="bi bi-cart"></i> Bán hàng</a></li>
+                <li><a th:href="@{/admin/dashboard}"><i class="bi bi-house-door"></i> Trang chủ</a></li>
+
+                <!-- Thống kê: chỉ Admin -->
+                <li sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/admin/thong-ke}"><i class="bi bi-graph-up"></i> Thống kê</a>
+                </li>
+
+                <li><a th:href="@{/admin/ban-hang}"><i class="bi bi-shop"></i> Bán hàng tại quầy</a></li>
+
                 <li><a th:href="@{/admin/hoa-don}"><i class="bi bi-receipt"></i> Quản lý hóa đơn</a></li>
+
                 <li class="has-submenu">
                     <a href="javascript:void(0)" class="dropdown-toggle collapsed" data-bs-toggle="collapse"
                         data-bs-target="#submenuProduct" aria-expanded="false">
@@ -20,17 +28,24 @@
                     <ul class="submenu collapse" id="submenuProduct">
                         <li><a th:href="@{/admin/san-pham}" class="ps-5">Danh sách sản phẩm</a></li>
                         <li><a th:href="@{/admin/san-pham/bien-the}" class="ps-5">Biến thể sản phẩm</a></li>
+                        <li><a th:href="@{/admin/thuoc-tinh}" class="ps-5">Thuộc tính sản phẩm</a></li>
                     </ul>
                 </li>
+
                 <li><a th:href="@{/admin/phieu-giam-gia}"><i class="bi bi-tags"></i> Quản lý giảm giá</a></li>
+
+                <!-- Quản lý tài khoản -->
                 <li class="has-submenu">
-                    <a href="javascript:void(0)" class="dropdown-toggle collapsed" data-bs-toggle="collapse"
-                        data-bs-target="#submenuAccount" aria-expanded="false">
-                        <i class="bi bi-people"></i> Quản lý tài khoản</i>
-                    </a>
+                  <a href="javascript:void(0)" class="dropdown-toggle collapsed" data-bs-toggle="collapse"
+   data-bs-target="#submenuAccount" aria-expanded="false">
+    <i class="bi bi-people"></i> Quản lý tài khoản
+</a>
                     <ul class="submenu collapse" id="submenuAccount">
                         <li><a th:href="@{/admin/khach-hang}" class="ps-5">Khách hàng</a></li>
-                        <li><a th:href="@{/admin/nhan-vien}" class="ps-5">Nhân viên</a></li>
+                        <!-- Chỉ Admin mới thấy menu Nhân viên -->
+                        <li sec:authorize="hasRole('ADMIN')">
+                            <a th:href="@{/admin/nhan-vien}" class="ps-5">Nhân viên</a>
+                        </li>
                     </ul>
                 </li>
             </ul>

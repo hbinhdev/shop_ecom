@@ -3,16 +3,15 @@
 
 <head>
     <title>Danh sách chi tiết sản phẩm - PeakSneaker</title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <style>
-        
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    <main>
+        <style>
         :root {
-            --premium-orange: #ff7e5f;
-            --premium-red: #feb47b;
             --soft-red-bg: #fff0f3;
             --soft-red-text: #ff3c5f;
-            --dark-action: #34495e;
         }
 
         .form-label-pill {
@@ -178,12 +177,13 @@
         }
 
         .variant-img {
-            width: 32px;
-            height: 32px;
+            width: 44px;
+            height: 44px;
             object-fit: cover;
-            border-radius: 6px;
+            border-radius: 8px;
             background: #f5f5f5;
             flex-shrink: 0;
+            border: 1px solid #eee;
         }
 
         .badge-status {
@@ -193,71 +193,132 @@
             font-weight: 600;
         }
 
-        .status-active {
-            background: #fff0f3;
-            color: #ff3c5f;
-        }
-
-        .status-inactive {
-            background: #f8f9fa;
-            color: #999;
-        }
+        .status-active { background: #fff0f3; color: #ff3c5f; }
+        .status-inactive { background: #f8f9fa; color: #999; }
 
         .btn-view-circle {
-            width: 32px;
-            height: 32px;
+            width: 32px; height: 32px;
             border-radius: 50%;
             background: #f8f9fa;
             border: 1px solid #eee;
-            display: inline-flex;
+            display: inline-flex; align-items: center; justify-content: center;
+            color: #333; transition: all 0.2s;
+        }
+        .btn-view-circle:hover { background: #eee; }
+
+        .filter-banner {
+            background: linear-gradient(135deg, #fff5eb 0%, #fff 100%);
+            border: 1px solid #fddcb5;
+            border-radius: 12px;
+            padding: 14px 20px;
+            margin-bottom: 20px;
+            display: flex;
             align-items: center;
-            justify-content: center;
-            color: #333;
-            transition: all 0.2s;
+            justify-content: space-between;
+            gap: 12px;
         }
 
-        .btn-view-circle:hover {
+        /* Price range */
+        .price-range-track {
+            position: relative;
+            height: 6px;
             background: #eee;
+            border-radius: 3px;
+            margin: 8px 0;
         }
-    </style>
-</head>
-
-<body>
-    <main>
+        .price-range-fill {
+            position: absolute;
+            height: 100%;
+            background: linear-gradient(90deg, #d47d32, #eb984e);
+            border-radius: 3px;
+            pointer-events: none;
+        }
+        .price-range-wrap {
+            position: relative;
+            padding: 0;
+        }
+        .price-range-wrap input[type=range] {
+            position: absolute;
+            width: 100%;
+            height: 6px;
+            background: transparent;
+            -webkit-appearance: none;
+            pointer-events: none;
+            top: 0;
+        }
+        .price-range-wrap input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #d47d32;
+            cursor: pointer;
+            pointer-events: all;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+        }
+        .price-range-wrap input[type=range]::-moz-range-thumb {
+            width: 16px; height: 16px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #d47d32;
+            cursor: pointer;
+            pointer-events: all;
+        }
+        </style>
         <div class="container-fluid p-0">
             
             <div class="mb-4 d-flex justify-content-between align-items-center">
-                <h4 class="fw-bold section-title">Quản lý sản phẩm / <span class="fw-bold section-title">Danh sách chi
-                        tiết sản phẩm</span></h4>
+                <h4 class="fw-bold section-title">Quản lý sản phẩm / <span class="fw-bold section-title">Danh sách biến thể</span></h4>
                 <a th:href="@{/admin/san-pham}"
                     class="btn btn-add-customer rounded-pill px-4 text-white border-0 shadow-sm">
-                    <i class="bi bi-arrow-left me-1"></i> Quay lại
+                    <i class="bi bi-arrow-left me-1"></i> Quay lại SP
+                </a>
+            </div>
+
+            <!-- BANNER LỌC THEO SẢN PHẨM CỤ THỂ -->
+            <div th:if="${idSanPham != null}" class="filter-banner">
+                <div class="d-flex align-items-center gap-2">
+                    <i class="bi bi-funnel-fill text-warning fs-5"></i>
+                    <span class="fw-semibold" style="color:#2d3436;">Đang xem biến thể của sản phẩm:</span>
+                    <span class="fw-bold" style="color:#d47d32;" th:text="${tenSanPhamLoc ?: 'Sản phẩm #' + idSanPham}">Tên SP</span>
+                </div>
+                <a th:href="@{/admin/san-pham/bien-the}"
+                    class="btn btn-light-outline rounded-pill px-4 py-2 d-flex align-items-center gap-2 flex-shrink-0">
+                    <i class="bi bi-grid-3x3-gap"></i> Xem tất cả biến thể
                 </a>
             </div>
 
             
             <form th:action="@{/admin/san-pham/bien-the}" method="GET" id="mainFilterForm">
+                <!-- Preserve idSanPham when paginating / filtering -->
+                <input type="hidden" name="idSanPham" th:value="${idSanPham}">
+
                 <div class="card shadow-sm border-0 rounded-4 mb-4">
                     <div class="card-body p-4">
-                        <div class="row g-3 align-items-center mb-4">
+
+                        <!-- Row 1: Tìm kiếm + buttons -->
+                        <div class="row g-3 align-items-center mb-3">
                             <div class="col-md-5">
                                 <label class="form-label-pill">TÌM KIẾM CHUNG</label>
                                 <div class="search-box position-relative">
-                                    <i
-                                        class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
                                     <input type="text" name="search" th:value="${search}"
                                         class="form-control rounded-pill ps-5 py-2 border-1"
-                                        placeholder="Mã CTSP hoặc tên sản phẩm..." onchange="submitForm(this)">
+<input type="text" name="keyword" th:value="${keyword}" 
+                                           class="form-control border-0 bg-transparent" 
+                                           placeholder="Mã CTSP hoặc tên sản phẩm..." onchange="submitForm(this)">
                                 </div>
                             </div>
                             <div class="col-md-7 d-flex justify-content-end gap-2">
                                 <a th:if="${idSanPham != null}" th:href="@{/admin/san-pham/bien-the}"
-                                    class="btn btn-outline-primary rounded-pill px-4 py-2 d-flex align-items-center gap-2">
+                                   class="btn btn-outline-primary rounded-pill px-4 py-2 d-flex align-items-center gap-2">
                                     <i class="bi bi-eye"></i> Hiển thị đầy đủ
                                 </a>
-                                <a th:href="@{/admin/san-pham/bien-the}"
-                                    class="btn btn-dark rounded-pill px-4 py-2 d-flex align-items-center gap-2 btn-reset-filter shadow-sm">
+
+                                <a th:href="${idSanPham != null ? '/admin/san-pham/bien-the?idSanPham=' + idSanPham : '/admin/san-pham/bien-the'}"
+                                   class="btn btn-dark rounded-pill px-4 py-2 d-flex align-items-center gap-2 btn-reset-filter shadow-sm">
                                     <i class="bi bi-arrow-counterclockwise"></i> Làm mới
+                                </a>
                                 </a>
                                 <a th:href="@{/admin/san-pham/export-variants(search=${search}, idMauSac=${idMauSac}, idKichThuoc=${idKichThuoc}, minPrice=${minPrice}, maxPrice=${maxPrice}, trThai=${trThai})}"
                                     class="btn btn-light-outline rounded-pill px-4 py-2 d-flex align-items-center gap-2 shadow-sm">
@@ -266,23 +327,22 @@
                             </div>
                         </div>
 
-                        <div class="row g-3 align-items-end">
+<div class="row g-3 align-items-end mb-3">
                             <div class="col-md-2">
                                 <label class="form-label-pill">TRẠNG THÁI</label>
                                 <select name="trThai" class="form-select rounded-pill border-1 bg-light-subtle"
-                                    onchange="submitForm(this)">
+                                        onchange="submitForm(this)">
                                     <option value="">Tất cả</option>
                                     <option value="1" th:selected="${trThai == '1'}">Kinh doanh</option>
                                     <option value="0" th:selected="${trThai == '0'}">Ngừng bán</option>
                                 </select>
                             </div>
-                            <div class="col-md-2">
+<div class="col-md-2">
                                 <label class="form-label-pill">MÀU SẮC</label>
                                 <select name="idMauSac" class="form-select rounded-pill border-1 bg-light-subtle"
-                                    onchange="submitForm(this)">
+                                        onchange="submitForm(this)">
                                     <option value="">Tất cả</option>
-                                    <option th:each="m : ${mauSacs}" th:value="${m.id}" th:text="${m.tenMauSac}"
-                                        th:selected="${m.id == idMauSac}"></option>
+                                    <option th:each="m : ${mauSacs}" th:value="${m.id}" th:text="${m.tenMauSac}" th:selected="${m.id == idMauSac}"></option>
                                 </select>
                             </div>
                             <div class="col-md-2">
@@ -290,17 +350,36 @@
                                 <select name="idKichThuoc" class="form-select rounded-pill border-1 bg-light-subtle"
                                     onchange="submitForm(this)">
                                     <option value="">Tất cả</option>
-                                    <option th:each="k : ${kichThuocs}" th:value="${k.id}" th:text="${k.tenKichThuoc}"
-                                        th:selected="${k.id == idKichThuoc}"></option>
+                                    <option th:each="k : ${kichThuocs}" th:value="${k.id}" th:text="${k.tenKichThuoc}" th:selected="${k.id == idKichThuoc}"></option>
                                 </select>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label-pill mb-3">LỌC THEO KHOẢNG GIÁ (VNĐ)</label>
-                                <div class="d-flex align-items-center gap-3">
+                            <div class="col-md-3 d-flex align-items-center gap-2">
+                                <label class="form-label mb-0 text-nowrap fw-medium small">Thương hiệu:</label>
+                                <select name="idThuongHieu" class="form-select rounded-pill border-1 bg-light-subtle" onchange="this.form.submit()">
+                                    <option value="">Tất cả</option>
+                                    <option th:each="th : ${listThuongHieu}" th:value="${th.id}" th:text="${th.tenThuongHieu}" th:selected="${th.id == idThuongHieu}"></option>
+                                </select>
+                            </div>
+<div class="row g-3 align-items-end mb-3">
+                            <div class="col-md-3">
+                                <label class="form-label-pill">DANH MỤC</label>
+                                <select name="idDanhMuc" class="form-select rounded-pill border-1 bg-light-subtle" 
+                                        onchange="submitForm(this)">
+                                    <option value="">Tất cả danh mục</option>
+                                    <option th:each="dm : ${listDanhMuc}" 
+                                            th:value="${dm.id}" 
+                                            th:text="${dm.tenDanhMuc}" 
+                                            th:selected="${dm.id == idDanhMuc}"></option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-9">
+                                <label class="form-label-pill mb-2">KHOẢNG GIÁ (VNĐ)</label>
+                                <div class="d-flex align-items-center gap-2">
                                     <div class="position-relative price-input-compact">
                                         <input type="text" id="minPriceDisplayInput"
-                                            class="form-control rounded-pill py-2 border-1 number-format text-center ps-2 pe-4"
-                                            th:value="${#numbers.formatInteger(minPrice ?: 0, 0, 'POINT')}">
+                                               class="form-control rounded-pill py-2 border-1 number-format text-center ps-2 pe-4"
+                                               th:value="${#numbers.formatInteger(minPrice ?: 0, 0, 'POINT')}">
                                         <span class="position-absolute end-0 top-50 translate-middle-y me-2 small text-muted">đ</span>
                                     </div>
                                     
@@ -317,46 +396,53 @@
                                     
                                     <div class="position-relative price-input-compact">
                                         <input type="text" id="maxPriceDisplayInput"
-                                            class="form-control rounded-pill py-2 border-1 number-format text-center ps-2 pe-4"
-                                            th:value="${#numbers.formatInteger(maxPrice ?: 20000000, 0, 'POINT')}">
+                                               class="form-control rounded-pill py-2 border-1 number-format text-center ps-2 pe-4"
+                                               th:value="${#numbers.formatInteger(maxPrice ?: 20000000, 0, 'POINT')}">
                                         <span class="position-absolute end-0 top-50 translate-middle-y me-2 small text-muted">đ</span>
                                     </div>
+                                </div>
+                                
+                                <input type="hidden" name="minPrice" id="minPriceInput" th:value="${minPrice ?: 0}">
+                                <input type="hidden" name="maxPrice" id="maxPriceInput" th:value="${maxPrice ?: 20000000}">
+                            </div>
+                        </div>
                                 </div>
                                 <input type="hidden" name="minPrice" id="minPriceHidden" th:value="${minPrice ?: 0}">
                                 <input type="hidden" name="maxPrice" id="maxPriceHidden" th:value="${maxPrice ?: 20000000}">
                             </div>
                         </div>
+
                     </div>
                 </div>
             </form>
 
-            
+
             <div class="custom-table overflow-hidden shadow-sm rounded-4 bg-white">
                 <table class="table align-middle m-0" id="variantGroupTable">
                     <thead class="bg-light text-muted small text-uppercase">
                         <tr>
-                            <th class="ps-4 py-3" style="width: 50px;">STT</th>
+<th class="ps-4 py-3" style="width: 50px;">STT</th>
                             <th class="py-3 text-center" style="width: 70px;">Ảnh</th>
-                            <th class="py-3" style="width: 140px;">Mã CTSP</th>
-                            <th class="py-3">Tên sản phẩm & Phân loại</th>
+                            <th class="py-3" style="width: 130px;">Mã CTSP</th>
+                            <th class="py-3">Màu sắc</th>
+                            <th class="py-3" style="width: 90px;">Size</th>
                             <th class="py-3 text-center" style="width: 100px;">Tồn kho</th>
-                            <th class="py-3 text-end" style="width: 130px;">Giá bán</th>
+                            <th class="py-3 text-end" style="width: 140px;">Giá bán</th>
                             <th class="py-3 text-center" style="width: 130px;">Trạng thái</th>
                             <th class="text-center py-3 pe-4" style="width: 100px;">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
                         <th:block th:each="v, stat : ${listVariants}">
-                            
-                            <tr th:if="${stat.index == 0 || listVariants[stat.index - 1].idSanPham != v.idSanPham}"
+<tr th:if="${stat.index == 0 || listVariants[stat.index - 1].idSanPham != v.idSanPham}"
                                 class="bg-light-subtle border-top border-bottom">
-                                <td colspan="8" class="ps-4 py-2">
+                                <td colspan="9" class="ps-4 py-2">
                                     <div class="d-flex align-items-center gap-2">
-                                        <i class="bi bi-box-seam text-dark"></i>
-                                        <span class="fw-bold text-dark text-uppercase small"
-                                            th:text="${v.tenSanPham}">SẢN PHẨM</span>
+                                        <i class="bi bi-box-seam text-dark fs-5"></i>
+                                        <span class="fw-bold text-dark text-uppercase small">Sản phẩm:</span>
+                                        <span class="fw-bold text-primary text-uppercase" th:text="${v.tenSanPham}">Tên Sản Phẩm</span>
                                         <span class="badge bg-secondary-subtle text-muted fw-normal ms-2"
-                                            th:text="'Mã gốc: ' + ${v.maSanPham}">SP001</span>
+                                              th:text="'Mã: ' + ${v.maSanPham}">SP001</span>
                                     </div>
                                 </td>
                             </tr>
@@ -373,6 +459,8 @@
                                             onerror="this.src='https://placehold.co/100x100?text=None'">
                                     </div>
                                 </td>
+                                <td class="small text-muted font-monospace" th:text="${v.maSanPham}">SP001</td>
+                                <td class="small fw-semibold text-dark" th:text="${v.maSanPhamChiTiet}">CTSP001</td>
                                 <td>
                                     <span class="badge bg-dark-subtle text-dark font-monospace px-2 py-1"
                                         th:text="${v.maSanPhamChiTiet}">CTSP001</span>
@@ -394,37 +482,41 @@
                                         th:text="${v.soTonKho}">10</span>
                                 </td>
                                 <td class="text-end fw-bold text-danger"
-                                    th:text="${v.giaBan != null ? #numbers.formatDecimal(v.giaBan, 1, 'POINT', 0, 'COMMA') + ' ₫' : '0 ₫'}">
-                                    1,200,000 đ</td>
+th:text="${v.giaBan != null ? #numbers.formatInteger(v.giaBan, 3, 'POINT') + ' ₫' : '0 ₫'}">
+                                    1.200.000 ₫</td>
                                 <td class="text-center status-col">
                                     <span th:if="${v.trangThai == '1'}"
-                                        class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Kinh
-                                        doanh</span>
+                                        class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Kinh doanh</span>
                                     <span th:if="${v.trangThai == '0'}"
-                                        class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng
-                                        bán</span>
+                                        class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng bán</span>
                                 </td>
                                 <td class="text-center pe-4">
                                     <div class="d-flex justify-content-center align-items-center gap-2">
                                         <div class="form-check form-switch p-0 m-0">
-                                            <input class="form-check-input ms-0 custom-switch" type="checkbox"
-                                                th:checked="${v.trangThai == '1'}" th:data-id="${v.id}"
-                                                onchange="toggleVariantStatus(this)" style="cursor: pointer;">
+                                            <input class="form-check-input ms-0 custom-switch variant-status-toggle"
+                                                type="checkbox" th:checked="${v.trangThai == '1'}" th:data-id="${v.id}"
+                                                onchange="confirmToggleVariant(this)" style="cursor:pointer;">
                                         </div>
                                         <button type="button" class="btn-icon rounded-circle shadow-xs"
                                             th:data-id="${v.id}" th:data-name="${v.tenSanPham}"
                                             th:data-color="${v.mauSac}" th:data-size="${v.kichThuoc}"
                                             th:data-qty="${v.soTonKho}" th:data-price="${v.giaBan}"
-                                            onclick="openEditModal(this)" title="Sửa biến thể">
+                                            onclick="openEditModal(this)" title="Cập nhật">
                                             <i class="bi bi-pencil-square"></i>
+                                        </button>
+                                        <button type="button" class="btn-icon rounded-circle shadow-xs text-danger"
+                                            th:data-id="${v.id}" onclick="confirmDeleteVariant(this)" title="Xóa">
+                                            <i class="bi bi-trash3"></i>
                                         </button>
                                     </div>
                                 </td>
                             </tr>
                         </th:block>
                         <tr th:if="${#lists.isEmpty(listVariants)}">
-                            <td colspan="8" class="text-center py-5 text-muted">
-                                <i class="bi bi-inbox fs-2 d-block mb-2 text-muted-50"></i>
+<td colspan="9" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox fs-1 d-block mb-3 text-muted-50"></i>
+                                <span class="fw-medium">Không tìm thấy biến thể sản phẩm nào phù hợp.</span>
+                            </td>
                                 Không tìm thấy biến thể sản phẩm nào phù hợp.
                             </td>
                         </tr>
@@ -432,10 +524,19 @@
                 </table>
             </div>
 
-            
-            <div th:if="${spPage != null}" class="px-4 py-3 border-top bg-light-subtle">
-                <div
-                    th:replace="~{admin/fragments/pagination :: pagination(${spPage}, '/admin/san-pham/bien-the', 'search=' + (${search} ?: '') + '&idSanPham=' + (${idSanPham} ?: '') + '&idMauSac=' + (${idMauSac} ?: '') + '&idKichThuoc=' + (${idKichThuoc} ?: '') + '&trThai=' + (${trThai} ?: '') + '&minPrice=' + (${minPrice} ?: '') + '&maxPrice=' + (${maxPrice} ?: ''))}">
+<div th:if="${spPage != null}" class="px-4 py-3 border-top bg-light-subtle">
+                <div th:replace="~{admin/fragments/pagination :: pagination(${spPage}, '/admin/san-pham/bien-the',
+                    'search=' + (${search} ?: '') +
+                    '&idSanPham=' + (${idSanPham} ?: '') +
+                    '&idMauSac=' + (${idMauSac} ?: '') +
+                    '&idKichThuoc=' + (${idKichThuoc} ?: '') +
+                    '&trThai=' + (${trThai} ?: '') +
+                    '&idThuongHieu=' + (${idThuongHieu} ?: '') +
+                    '&idDanhMuc=' + (${idDanhMuc} ?: '') +
+                    '&minPrice=' + (${minPrice} ?: '0') +
+                    '&maxPrice=' + (${maxPrice} ?: '20000000'))}">
+                </div>
+            </div>
                 </div>
             </div>
         </div>
@@ -445,18 +546,15 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
                     <div class="modal-header border-0 bg-light p-4">
-                        <h5 class="fw-bold mb-0 text-uppercase small"><i class="bi bi-pencil-square me-2"></i>Cập nhật
-                            thông tin chi tiết</h5>
+                        <h5 class="fw-bold mb-0 text-uppercase small"><i class="bi bi-pencil-square me-2"></i>Cập nhật thông tin biến thể</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body p-4">
                         <div id="variantInfoPanel" class="mb-4 bg-light rounded-3 p-3">
                             <h6 id="modalSpName" class="fw-bold text-dark mb-2">Tên sản phẩm</h6>
                             <div class="d-flex gap-2">
-                                <span class="badge bg-white text-muted border px-3 rounded-pill"
-                                    id="modalColor">Màu</span>
-                                <span class="badge bg-white text-muted border px-3 rounded-pill"
-                                    id="modalSize">Size</span>
+                                <span class="badge bg-white text-muted border px-3 rounded-pill" id="modalColor">Màu</span>
+                                <span class="badge bg-white text-muted border px-3 rounded-pill" id="modalSize">Size</span>
                             </div>
                         </div>
                         <input type="hidden" id="editVariantId">
@@ -466,19 +564,17 @@
                                 id="editSoLuong" placeholder="Nhập số lượng...">
                         </div>
                         <div class="mb-4">
-                            <label class="form-label fw-bold small text-uppercase text-muted">Giá bán (VNĐ)</label>
+                            <label class="form-label fw-bold small text-uppercase text-muted">Giá bán (₫)</label>
                             <div class="input-group">
-                                <span
-                                    class="input-group-text bg-white border-end-0 rounded-pill-start ps-3 small fw-bold text-muted">VNĐ</span>
-                                <input type="text"
-                                    class="form-control border-start-0 rounded-pill-end pe-3 py-2 number-format"
-                                    id="editGiaBan" placeholder="Nhập giá bán...">
+<span class="input-group-text bg-white border-end-0 rounded-pill-start ps-3 small fw-bold text-muted">₫</span>
+<input type="text" inputmode="numeric" 
+       class="form-control border-start-0 rounded-pill-end pe-3 py-2 number-format"
+       id="editGiaBan" placeholder="VD: 1.500.000">
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer border-0 p-4 pt-0">
-                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Hủy
-                            bỏ</button>
+                        <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Hủy bỏ</button>
                         <button type="button"
                             class="btn btn-add-customer rounded-pill px-5 shadow-sm text-white border-0"
                             onclick="saveVariantUpdate()">
@@ -489,125 +585,126 @@
             </div>
         </div>
 
-        
-        <script th:inline="javascript">
-            $(document).ready(function () {
-                // Khởi tạo Select2 cho bộ lọc sản phẩm
-                $('.select2-filter').select2({
-                    theme: 'bootstrap-5',
-                    placeholder: '-- Chọn sản phẩm --',
-                    allowClear: true,
-                    width: '100%'
-                }).on('change', function () {
-                    submitForm(this);
-                });
+<div th:replace="~{admin/fragments/scripts :: common_scripts}"></div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-                // Range Slider script - Professional implementation
-                const minRange = document.getElementById('minRangeInput');
-                const maxRange = document.getElementById('maxRangeInput');
-                const minInput = document.getElementById('minPriceDisplayInput');
-                const maxInput = document.getElementById('maxPriceDisplayInput');
-                const minHidden = document.getElementById('minPriceHidden');
-                const maxHidden = document.getElementById('maxPriceHidden');
-                const rangeFill = document.getElementById('rangeFill');
+<script th:inline="javascript">
+    $(document).ready(function () {
+        // 1. Khởi tạo Select2 (Từ nhánh dev)
+        $('.select2-filter').select2({
+            theme: 'bootstrap-5',
+            placeholder: '-- Chọn sản phẩm --',
+            allowClear: true,
+            width: '100%'
+        }).on('change', function () {
+            submitForm(this);
+        });
 
-                function formatCurrency(val) {
-                    return new Intl.NumberFormat('vi-VN').format(val);
-                }
+        // 2. Range Slider logic - Đồng bộ Slider và Input (Từ nhánh dev)
+        const minRange = document.getElementById('minRangeInput');
+        const maxRange = document.getElementById('maxRangeInput');
+        const minInput = document.getElementById('minPriceDisplayInput');
+        const maxInput = document.getElementById('maxPriceDisplayInput');
+        const minHidden = document.getElementById('minPriceInput');
+        const maxHidden = document.getElementById('maxPriceInput');
+        const rangeFill = document.getElementById('rangeFill');
 
-                function parseCurrency(val) {
-                    return parseInt(val.replace(/\./g, '')) || 0;
-                }
+        function syncAll(min, max, source) {
+            const maxLimit = 20000000;
+            const minPercent = (min / maxLimit) * 100;
+            const maxPercent = (max / maxLimit) * 100;
 
-                function updateFromSlider() {
-                    let minVal = parseInt(minRange.value);
-                    let maxVal = parseInt(maxRange.value);
-
-                    if (minVal > maxVal - 500000) {
-                        if (this === minRange) minRange.value = maxVal - 500000;
-                        else maxRange.value = minVal + 500000;
-                    }
-
-                    syncAll(minRange.value, maxRange.value, 'slider');
-                }
-
-                function updateFromInput() {
-                    let minVal = parseCurrency(minInput.value);
-                    let maxVal = parseCurrency(maxInput.value);
-
-                    // Clamp values
-                    if (minVal < 0) minVal = 0;
-                    if (maxVal > 20000000) maxVal = 20000000;
-                    if (minVal > maxVal) {
-                        if (this === minInput) minVal = maxVal;
-                        else maxVal = minVal;
-                    }
-
-                    syncAll(minVal, maxVal, 'input');
-                }
-
-                function syncAll(min, max, source) {
-                    const minPercent = (min / minRange.max) * 100;
-                    const maxPercent = (max / maxRange.max) * 100;
-
-                    rangeFill.style.left = minPercent + '%';
-                    rangeFill.style.width = (maxPercent - minPercent) + '%';
-
-                    minHidden.value = min;
-                    maxHidden.value = max;
-
-                    if (source !== 'slider') {
-                        minRange.value = min;
-                        maxRange.value = max;
-                    }
-                    
-                    if (source !== 'input') {
-                        minInput.value = formatCurrency(min);
-                        maxInput.value = formatCurrency(max);
-                    }
-                }
-
-                minRange.addEventListener('input', updateFromSlider);
-                maxRange.addEventListener('input', updateFromSlider);
-                minInput.addEventListener('input', updateFromInput);
-                maxInput.addEventListener('input', updateFromInput);
-
-                // Auto submit on change
-                minRange.addEventListener('change', () => submitForm(minRange));
-                maxRange.addEventListener('change', () => submitForm(maxRange));
-                minInput.addEventListener('change', () => submitForm(minInput));
-                maxInput.addEventListener('change', () => submitForm(maxInput));
-
-                // Initialize range layout
-                syncAll(minRange.value, maxRange.value, 'init');
-            });
-
-            function confirmDeleteVariant(btn) {
-                const id = $(btn).data('id');
-                Swal.fire({
-                    title: 'Xác nhận xóa?',
-                    text: 'Dữ liệu biến thể này sẽ bị xóa hoàn toàn khỏi hệ thống!',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#ff3c5f',
-                    cancelButtonColor: '#ccc',
-                    confirmButtonText: 'Đồng ý xóa',
-                    cancelButtonText: 'Hủy'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        fetch(`/api/admin/product-variant/variant/delete/${id}`, { method: 'DELETE' })
-                            .then(res => res.json())
-                            .then(data => {
-                                if (data.success) {
-                                    Swal.fire('Thành công', data.message, 'success').then(() => location.reload());
-                                } else {
-                                    Swal.fire('Lỗi', data.message || 'Không thể xóa biến thể', 'error');
-                                }
-                            });
-                    }
-                });
+            if(rangeFill) {
+                rangeFill.style.left = minPercent + '%';
+                rangeFill.style.width = (maxPercent - minPercent) + '%';
             }
 
+            minHidden.value = min;
+            maxHidden.value = max;
+
+            if (source !== 'slider') {
+                minRange.value = min;
+                maxRange.value = max;
+            }
+            if (source !== 'input') {
+                minInput.value = new Intl.NumberFormat('vi-VN').format(min);
+                maxInput.value = new Intl.NumberFormat('vi-VN').format(max);
+            }
+        }
+
+        function updateFromSlider() {
+            let minVal = parseInt(minRange.value);
+            let maxVal = parseInt(maxRange.value);
+            if (minVal > maxVal) [minVal, maxVal] = [maxVal, minVal];
+            syncAll(minVal, maxVal, 'slider');
+        }
+
+        function updateFromInput() {
+            let minVal = parseInt(minInput.value.replace(/\./g, '')) || 0;
+            let maxVal = parseInt(maxInput.value.replace(/\./g, '')) || 0;
+            if (minVal > maxVal) [minVal, maxVal] = [maxVal, minVal];
+            syncAll(minVal, maxVal, 'input');
+        }
+
+        // Lắng nghe sự kiện (dev)
+        [minRange, maxRange].forEach(el => {
+            el.addEventListener('input', updateFromSlider);
+            el.addEventListener('change', () => submitForm(el));
+        });
+        [minInput, maxInput].forEach(el => {
+            el.addEventListener('input', updateFromInput);
+            el.addEventListener('change', () => submitForm(el));
+        });
+
+        // Khởi tạo layout ban đầu
+        syncAll(minRange.value, maxRange.value, 'init');
+    });
+
+    // 3. Hàm Submit Form chung (Sử dụng cho tất cả bộ lọc)
+    function submitForm(el) {
+        const form = el.closest('form') || document.getElementById('mainFilterForm');
+        if(form) form.submit();
+    }
+
+    // 4. Bật/Tắt trạng thái (Giữ logic confirmToggle của feat)
+    function confirmToggleVariant(checkbox) {
+        // Hàm confirmToggle này nằm trong common_scripts đã import ở trên
+        confirmToggle(checkbox, '/admin/san-pham/variant/toggle-status', 
+                      'Đã cập nhật trạng thái!', 'Lỗi khi cập nhật.');
+    }
+
+    // 5. Xóa biến thể (Logic SweetAlert2 từ dev)
+    function confirmDeleteVariant(btn) {
+        const id = $(btn).data('id');
+        Swal.fire({
+            title: 'Xác nhận xóa?',
+            text: 'Dữ liệu biến thể này sẽ biến mất vĩnh viễn!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ff3c5f',
+            confirmButtonText: 'Đồng ý xóa',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch(`/api/admin/product-variant/variant/delete/${id}`, { method: 'DELETE' })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire('Thành công', data.message, 'success').then(() => location.reload());
+                        } else {
+                            Swal.fire('Lỗi', data.message || 'Không thể xóa', 'error');
+                        }
+                    });
+            }
+        });
+    }
+
+    // 6. Mở Modal chỉnh sửa (Dùng cho nút Sửa)
+    function openEditModal(btn) {
+        // Logic lấy dữ liệu từ dòng đưa vào modal (Bạn viết tiếp ở đây)
+        $('#editVariantModal').modal('show');
+    }
+</script>
             function openEditModal(btn) {
                 const el = $(btn);
                 $('#editVariantId').val(el.data('id'));
@@ -640,41 +737,43 @@
 
             function saveVariantUpdate() {
                 const id = $('#editVariantId').val();
-                let qty = $('#editSoLuong').val().replace(/\./g, "");
-                let price = $('#editGiaBan').val().replace(/\./g, "");
+// Sử dụng Regex để loại bỏ tất cả ký tự không phải là số (đảm bảo dữ liệu sạch 100%)
+const qty = $('#editSoLuong').val().replace(/[^\d]/g, '');
+const price = $('#editGiaBan').val().replace(/[^\d]/g, '');
 
-                if (!qty || !price) {
+// Lưu ý: Nếu cần tính toán ngay trong JS, bạn nên ép kiểu về số
+// const qtyNum = parseInt(qty) || 0;
+// const priceNum = parseFloat(price) || 0;
+
+                if (!qty || !priceRaw) {
                     Swal.fire('Chú ý', 'Vui lòng nhập đầy đủ thông tin!', 'warning');
                     return;
                 }
 
-                Swal.fire({
-                    title: 'Đang lưu...',
-                    didOpen: () => Swal.showLoading()
-                });
+                Swal.fire({ title: 'Đang lưu...', didOpen: () => Swal.showLoading() });
 
                 fetch('/api/admin/product-variant/variant/save', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        id: id,
-                        soLuong: qty,
-                        giaBan: price
-                    })
+                    headers: { 'Content-Type': 'application/json', ...getCsrfHeaders() },
+                    body: JSON.stringify({ id: id, soLuong: qty, giaBan: priceRaw })
                 })
-                    .then(res => {
-                        if (res.ok) {
-                            Swal.fire('Thành công', 'Đã cập nhật biến thể sản phẩm!', 'success').then(() => location.reload());
-                        } else {
-                            Swal.fire('Lỗi', 'Không thể cập nhật biến thể. Vui lòng thử lại!', 'error');
-                        }
-                    })
-                    .catch(err => {
-                        Swal.fire('Lỗi', 'Đã xảy ra lỗi kết nối!', 'error');
-                    });
+                .then(res => {
+                    if (res.ok) {
+                        Swal.fire('Thành công', 'Đã cập nhật biến thể sản phẩm!', 'success').then(() => location.reload());
+                    } else {
+                        Swal.fire('Lỗi', 'Không thể cập nhật biến thể. Vui lòng thử lại!', 'error');
+                    }
+                })
+                .catch(() => Swal.fire('Lỗi', 'Đã xảy ra lỗi kết nối!', 'error'));
             }
 
             function toggleVariantStatus(checkbox) {
+                const id = checkbox.getAttribute('data-id');
+                const isChecked = checkbox.checked;
+                
+                Swal.fire({
+// --- CHỨC NĂNG 1: BẬT/TẮT TRẠNG THÁI (Lấy từ dev + Bảo mật của feat) ---
+            function confirmToggleVariant(checkbox) {
                 const id = checkbox.getAttribute('data-id');
                 const isChecked = checkbox.checked;
                 
@@ -685,7 +784,8 @@
                 });
 
                 fetch(`/admin/san-pham/variant/toggle-status/${id}`, {
-                    method: 'POST'
+                    method: 'POST',
+                    headers: typeof getCsrfHeaders === 'function' ? getCsrfHeaders() : {}
                 })
                 .then(res => res.json())
                 .then(data => {
@@ -694,15 +794,54 @@
                             icon: 'success',
                             title: 'Thành công',
                             text: data.message,
-                            timer: 1500,
+                            timer: 1000,
                             showConfirmButton: false
                         }).then(() => {
-                            // Cập nhật Badge trạng thái ở cột Trạng thái
+                            // Cập nhật giao diện mà không cần reload (UX cực tốt)
                             const row = checkbox.closest('tr');
                             const statusCol = row.querySelector('.status-col');
                             if (statusCol) {
-                                if (isChecked) {
-                                    statusCol.innerHTML = '<span class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Kinh doanh</span>';
+                                statusCol.innerHTML = isChecked 
+                                    ? '<span class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Kinh doanh</span>'
+                                    : '<span class="badge rounded-pill bg-secondary-subtle text-secondary px-3 py-2 fw-medium border border-secondary-subtle">Ngừng kinh doanh</span>';
+                            }
+                        });
+                    } else {
+                        checkbox.checked = !isChecked; // Trả lại trạng thái cũ nếu lỗi
+                        Swal.fire('Lỗi', data.message, 'error');
+                    }
+                });
+            }
+
+            // --- CHỨC NĂNG 2: XÓA BIẾN THỂ (Lấy từ feat) ---
+            function confirmDeleteVariant(btn) {
+                const id = btn.getAttribute('data-id');
+                Swal.fire({
+                    title: 'Xác nhận xóa?',
+                    text: 'Dữ liệu biến thể này sẽ bị xóa hoàn toàn khỏi hệ thống!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ff3c5f',
+                    cancelButtonColor: '#ccc',
+                    confirmButtonText: 'Đồng ý xóa',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/api/admin/product-variant/variant/delete/${id}`, {
+                            method: 'DELETE',
+                            headers: typeof getCsrfHeaders === 'function' ? getCsrfHeaders() : {}
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire('Thành công', data.message, 'success').then(() => location.reload());
+                            } else {
+                                Swal.fire('Lỗi', data.message, 'error');
+                            }
+                        });
+                    }
+                });
+            }
                                 } else {
                                     statusCol.innerHTML = '<span class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng bán</span>';
                                 }

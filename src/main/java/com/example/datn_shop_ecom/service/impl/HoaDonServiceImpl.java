@@ -1,8 +1,12 @@
 package com.example.datn_shop_ecom.service.impl;
 
 import com.example.datn_shop_ecom.entity.HoaDon;
+import com.example.datn_shop_ecom.entity.NhanVien;
+import com.example.datn_shop_ecom.entity.TrangThaiHoaDon;
 import com.example.datn_shop_ecom.entity.ChiTietHoaDon;
 import com.example.datn_shop_ecom.repository.HoaDonRepository;
+import com.example.datn_shop_ecom.repository.NhanVienRepository;
+import com.example.datn_shop_ecom.repository.TrangThaiHoaDonRepository;
 import com.example.datn_shop_ecom.service.HoaDonService;
 import com.example.datn_shop_ecom.service.EmailService;
 import jakarta.persistence.criteria.Predicate;
@@ -24,6 +28,12 @@ public class HoaDonServiceImpl implements HoaDonService {
 
     @Autowired
     private HoaDonRepository hoaDonRepository;
+
+    @Autowired
+    private NhanVienRepository nhanVienRepository;
+
+    @Autowired
+    private TrangThaiHoaDonRepository trangThaiHoaDonRepository;
 
     @Autowired
     private com.example.datn_shop_ecom.repository.ChiTietHoaDonRepository chiTietHoaDonRepository;
@@ -103,27 +113,17 @@ public class HoaDonServiceImpl implements HoaDonService {
             if (tenKhachHang != null && !tenKhachHang.isEmpty())
                 predicates.add(criteriaBuilder.like(root.get("khachHang").get("tenDayDu"), "%" + tenKhachHang + "%"));
             if (trangThai != null) {
-                String statusStr = switch (trangThai) {
-                    case 1 -> "CHO_XAC_NHAN";
-                    case 2 -> "DA_XAC_NHAN";
-                    case 3 -> "DANG_GIAO";
-                    case 4 -> "DA_GIAO_HANG";
-                    case 5 -> "HOAN_THANH";
-                    case 6 -> "DA_HUY";
-                    case 7 -> "YEU_CAU_HUY";
-                    case 8 -> "CAN_HOAN_PHI";
-                    default -> trangThai.toString();
-                };
-                predicates.add(criteriaBuilder.or(
-                        criteriaBuilder.equal(root.get("trangThaiHoaDon"), statusStr),
-                        criteriaBuilder.equal(root.get("trangThaiHoaDon"), trangThai.toString())));
+                List<String> statuses = mapTrangThai(trangThai);
+                predicates.add(root.get("trangThaiHoaDon").in(statuses));
             }
             if (loaiHoaDon != null) {
-                String loaiStr = loaiHoaDon == 1 ? "TAI_CUA_HANG"
-                        : (loaiHoaDon == 2 ? "GIAO_HANG" : loaiHoaDon.toString());
-                predicates.add(criteriaBuilder.or(
-                        criteriaBuilder.equal(root.get("loaiHoaDon"), loaiStr),
-                        criteriaBuilder.equal(root.get("loaiHoaDon"), loaiHoaDon.toString())));
+                if (loaiHoaDon == 1) {
+                    predicates.add(root.get("loaiHoaDon").in(List.of("1", "TAI_CUA_HANG", "TAI_QUAY")));
+                } else if (loaiHoaDon == 2) {
+                    predicates.add(root.get("loaiHoaDon").in(List.of("2", "GIAO_HANG")));
+                } else {
+                    predicates.add(criteriaBuilder.equal(root.get("loaiHoaDon"), loaiHoaDon.toString()));
+                }
             }
             if (ngayBatDau != null)
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("ngayTao"), ngayBatDau.atStartOfDay()));
@@ -132,6 +132,20 @@ public class HoaDonServiceImpl implements HoaDonService {
                         .add(criteriaBuilder.lessThanOrEqualTo(root.get("ngayTao"), ngayKetThuc.atTime(LocalTime.MAX)));
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         });
+    }
+
+    /** Map số tab → danh sách giá trị trangThaiHoaDon tương ứng (cả số và string) */
+    private static List<String> mapTrangThai(Integer trangThai) {
+        if (trangThai == null) return List.of();
+        return switch (trangThai) {
+            case 1  -> List.of("1", "CHO_XAC_NHAN");
+            case 2  -> List.of("2", "DA_XAC_NHAN");
+            case 3  -> List.of("3", "DANG_GIAO");
+            case 4  -> List.of("4");
+            case 5  -> List.of("4", "HOAN_THANH");
+            case 6  -> List.of("5", "DA_HUY");
+            default -> List.of(trangThai.toString());
+        };
     }
 
     @Override
@@ -144,27 +158,17 @@ public class HoaDonServiceImpl implements HoaDonService {
             if (tenKhachHang != null && !tenKhachHang.isEmpty())
                 predicates.add(criteriaBuilder.like(root.get("khachHang").get("tenDayDu"), "%" + tenKhachHang + "%"));
             if (trangThai != null) {
-                String statusStr = switch (trangThai) {
-                    case 1 -> "CHO_XAC_NHAN";
-                    case 2 -> "DA_XAC_NHAN";
-                    case 3 -> "DANG_GIAO";
-                    case 4 -> "DA_GIAO_HANG";
-                    case 5 -> "HOAN_THANH";
-                    case 6 -> "DA_HUY";
-                    case 7 -> "YEU_CAU_HUY";
-                    case 8 -> "CAN_HOAN_PHI";
-                    default -> trangThai.toString();
-                };
-                predicates.add(criteriaBuilder.or(
-                        criteriaBuilder.equal(root.get("trangThaiHoaDon"), statusStr),
-                        criteriaBuilder.equal(root.get("trangThaiHoaDon"), trangThai.toString())));
+                List<String> statuses = mapTrangThai(trangThai);
+                predicates.add(root.get("trangThaiHoaDon").in(statuses));
             }
             if (loaiHoaDon != null) {
-                String loaiStr = loaiHoaDon == 1 ? "TAI_CUA_HANG"
-                        : (loaiHoaDon == 2 ? "GIAO_HANG" : loaiHoaDon.toString());
-                predicates.add(criteriaBuilder.or(
-                        criteriaBuilder.equal(root.get("loaiHoaDon"), loaiStr),
-                        criteriaBuilder.equal(root.get("loaiHoaDon"), loaiHoaDon.toString())));
+                if (loaiHoaDon == 1) {
+                    predicates.add(root.get("loaiHoaDon").in(List.of("1", "TAI_CUA_HANG", "TAI_QUAY")));
+                } else if (loaiHoaDon == 2) {
+                    predicates.add(root.get("loaiHoaDon").in(List.of("2", "GIAO_HANG")));
+                } else {
+                    predicates.add(criteriaBuilder.equal(root.get("loaiHoaDon"), loaiHoaDon.toString()));
+                }
             }
             if (ngayBatDau != null)
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("ngayTao"), ngayBatDau.atStartOfDay()));
@@ -195,59 +199,43 @@ public class HoaDonServiceImpl implements HoaDonService {
         return lichSuThanhToanRepository.findByHoaDonIdOrderByNgayTaoDesc(hoaDonId);
     }
 
-    // ===== CLIENT-SIDE METHODS =====
-
     @Override
     @Transactional
-    public HoaDon createHoaDonOnline(HoaDon hoaDon, List<ChiTietHoaDon> items) {
-        if (hoaDon.getMaHoaDon() == null || hoaDon.getMaHoaDon().isEmpty()) {
-            hoaDon.setMaHoaDon(generateMaHoaDon());
-        }
-        hoaDon.setNgayTao(LocalDateTime.now());
-        hoaDon.setNgayDatHang(LocalDateTime.now());
-        hoaDon.setTrangThaiHoaDon("CHO_XAC_NHAN");
-        hoaDon.setLoaiHoaDon("GIAO_HANG");
-        hoaDon.setPhuongThucThanhToan("TIEN_MAT");
-        HoaDon saved = hoaDonRepository.save(hoaDon);
-        if (items != null) {
-            for (ChiTietHoaDon item : items) {
-                item.setHoaDon(saved);
-                item.setNgayTao(LocalDateTime.now());
-                chiTietHoaDonRepository.save(item);
-            }
-        }
-        // Send confirmation email
-        try {
-            if (emailService != null && saved.getKhachHang() != null) {
-                String subject = "Dat hang thanh cong tai PeakSneaker - " + saved.getMaHoaDon();
-                String body = "Chao " + saved.getKhachHang().getTenDayDu() + "!\n\n" +
-                        "Don hang " + saved.getMaHoaDon() + " da duoc dat thanh cong.\n" +
-                        "Trang thai: Cho xac nhan\n" +
-                        "Tong tien: " + (saved.getTongTien() != null ? saved.getTongTien().toPlainString() : "0")
-                        + " VND\n" +
-                        "Dia chi giao: " + saved.getChiTietNguoiNhan() + ", " + saved.getXaPhuong() + ", "
-                        + saved.getQuanHuyen() + ", " + saved.getTinhThanhPho() + "\n\n" +
-                        "Cam on ban da tin tuong PeakSneaker!";
-                emailService.sendEmail(saved.getKhachHang().getEmail(), subject, body);
-            }
-        } catch (Exception ignored) {
-        }
-        return saved;
+    public HoaDon createPendingInvoice(String nhanVienEmail) {
+        NhanVien nhanVien = nhanVienRepository.findByEmail(nhanVienEmail).orElse(null);
+
+        // Sinh mã hóa đơn: HD + 4 chữ số, đảm bảo không trùng
+        long nextId = hoaDonRepository.findMaxId() + 1;
+        String maHoaDon;
+        do {
+            maHoaDon = String.format("HD%04d", nextId++);
+        } while (hoaDonRepository.existsByMaHoaDon(maHoaDon));
+
+        // Lấy trạng thái "Chờ thanh toán", nếu chưa có thì tạo mới
+        TrangThaiHoaDon trangThai = trangThaiHoaDonRepository
+                .findByTenTrangThai("Chờ thanh toán")
+                .orElseGet(() -> trangThaiHoaDonRepository.save(
+                        TrangThaiHoaDon.builder()
+                                .tenTrangThai("Chờ thanh toán")
+                                .moTa("Hóa đơn tại quầy đang chờ thanh toán")
+                                .build()
+                ));
+
+        HoaDon hoaDon = HoaDon.builder()
+                .maHoaDon(maHoaDon)
+                .loaiHoaDon("TAI_QUAY")
+                .trangThaiHoaDon("CHO_THANH_TOAN")
+                .trangThaiMoi(trangThai)
+                .nhanVien(nhanVien)
+                .ngayTao(LocalDateTime.now())
+                .nguoiTao(nhanVienEmail)
+                .build();
+
+        return hoaDonRepository.save(hoaDon);
     }
 
     @Override
-    public HoaDon findByMaHoaDon(String maHoaDon) {
-        return hoaDonRepository.findByMaHoaDon(maHoaDon).orElse(null);
-    }
-
-    @Override
-    public List<HoaDon> findByKhachHangEmail(String email) {
-        return hoaDonRepository.findByKhachHangEmailOrderByNgayTaoDesc(email);
-    }
-
-    @Override
-    public String generateMaHoaDon() {
-        long count = hoaDonRepository.count();
-        return String.format("HD%08d", count + 1);
+    public List<HoaDon> findAllPendingPOS() {
+        return hoaDonRepository.findAllPendingPOS();
     }
 }

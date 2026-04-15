@@ -457,6 +457,7 @@
                 </div>
 
                 <form th:action="@{/admin/hoa-don}" method="get" id="filterForm">
+                    <input type="hidden" name="searched" value="true">
                     <div class="row g-4">
                         <input type="hidden" name="trangThai" id="trangStatusHidden" th:value="${trangThai}">
                         <div class="col-md-3">
@@ -490,8 +491,11 @@
                     </div>
 
                     <div class="btn-group-filter">
+                        <button type="submit" class="btn-search-main">
+                            <i class="bi bi-search"></i> Tìm kiếm
+                        </button>
                         <button type="button" onclick="window.location.href='/admin/hoa-don'" class="btn-dark-ghost">
-                            <i class="bi bi-arrow-clockwise"></i> Đặt lại bộ lọc
+                            <i class="bi bi-arrow-clockwise"></i> Đặt lại (hôm nay)
                         </button>
                         <button type="button" class="btn btn-light-outline px-4" onclick="exportToExcel()"
                             style="border-radius: 10px; font-size: 0.85rem; font-weight: 600;">
@@ -550,50 +554,48 @@
                                 <th>Hành động</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr th:each="hd, iter : ${hoaDonPage.content}">
-                                <td th:text="${iter.count + (hoaDonPage.number * hoaDonPage.size)}"></td>
-                                <td style="font-weight: 600;" th:text="${hd.maHoaDon}"></td>
-                                <td th:text="${hd.nhanVien != null ? hd.nhanVien.tenDayDu : 'Hệ thống'}"></td>
-                                <td th:text="${hd.khachHang != null ? hd.khachHang.tenDayDu : 'Khách lẻ'}"></td>
-                                <td th:text="${#temporals.format(hd.ngayTao, 'yyyy-MM-dd')}"></td>
-                                <td style="font-weight: 600;"
-                                    th:text="${#numbers.formatDecimal(hd.tongTienAfterGiam ?: hd.tongTien ?: 0, 0, 'COMMA', 0, 'POINT')} + 'đ'">
-                                </td>
-                                <td>
-                                    <span th:if="${hd.loaiHoaDon == '1' or hd.loaiHoaDon == 'TAI_CUA_HANG' or hd.loaiHoaDon == 'Tại quầy'}"
-                                        class="type-label">Tại quầy</span>
-                                    <span th:if="${hd.loaiHoaDon == '2' or hd.loaiHoaDon == 'GIAO_HANG' or hd.loaiHoaDon == 'Giao hàng'}"
-                                        class="type-label delivery">Giao hàng</span>
-                                </td>
-                                <td
-                                    th:text="${hd.soDienThoaiNguoiNhan != null ? hd.soDienThoaiNguoiNhan : '0000000000'}">
-                                </td>
-                                <td>
-                                    <span th:if="${hd.trangThaiHoaDon == '1' or hd.trangThaiHoaDon == 'CHO_XAC_NHAN'}"
-                                        class="badge-custom badge-pending">Chờ xác nhận</span>
-                                    <span th:if="${hd.trangThaiHoaDon == '2' or hd.trangThaiHoaDon == 'DA_XAC_NHAN'}"
-                                        class="badge-custom badge-shipping">Chờ giao hàng</span>
-                                    <span th:if="${hd.trangThaiHoaDon == '3' or hd.trangThaiHoaDon == 'DANG_GIAO'}"
-                                        class="badge-custom badge-shipping">Vận chuyển</span>
-                                    <span th:if="${hd.trangThaiHoaDon == '4' or hd.trangThaiHoaDon == 'DA_GIAO_HANG'}"
-                                        class="badge-custom badge-shipping">Đã giao hàng</span>
-                                    <span th:if="${hd.trangThaiHoaDon == '5' or hd.trangThaiHoaDon == 'HOAN_THANH'}"
-                                        class="badge-custom badge-complete">Hoàn thành</span>
-                                    <span th:if="${hd.trangThaiHoaDon == '6' or hd.trangThaiHoaDon == 'DA_HUY'}"
-                                        class="badge-custom badge-cancel">Đã hủy</span>
-                                    <span th:if="${hd.trangThaiHoaDon == '7' or hd.trangThaiHoaDon == 'YEU_CAU_HUY'}"
-                                        class="badge-custom badge-warning">Yêu cầu hủy</span>
-                                    <span th:if="${hd.trangThaiHoaDon == '8' or hd.trangThaiHoaDon == 'CAN_HOAN_PHI'}"
-                                        class="badge-custom badge-info">Cần hoàn phí</span>
-                                </td>
-                                <td>
-                                    <a th:href="@{/admin/hoa-don/{id}(id=${hd.id})}" class="action-btn-view">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
+                     <tbody>
+    <tr th:each="hd, iter : ${hoaDonPage.content}">
+        <td th:text="${iter.count + (hoaDonPage.number * hoaDonPage.size)}"></td>
+        <td style="font-weight: 600;" th:text="${hd.maHoaDon}"></td>
+        <td th:text="${hd.nhanVien != null ? hd.nhanVien.tenDayDu : 'Hệ thống'}"></td>
+        <td th:text="${hd.khachHang != null ? hd.khachHang.tenDayDu : 'Khách lẻ'}"></td>
+        <td th:text="${#temporals.format(hd.ngayTao, 'yyyy-MM-dd')}"></td>
+
+        <td style="font-weight: 600;" 
+            th:text="${#numbers.formatDecimal(hd.tongTienAfterGiam ?: hd.tongTien ?: 0, 0, 'COMMA', 0, 'POINT')} + 'đ'">
+        </td>
+
+        <td>
+            <span th:if="${hd.loaiHoaDon == '1' or hd.loaiHoaDon == 'TAI_CUA_HANG' or hd.loaiHoaDon == 'TAI_QUAY' or hd.loaiHoaDon == 'Tại quầy'}" 
+                  class="type-label">Tại quầy</span>
+            <span th:if="${hd.loaiHoaDon == '2' or hd.loaiHoaDon == 'GIAO_HANG' or hd.loaiHoaDon == 'Giao hàng'}" 
+                  class="type-label delivery">Giao hàng</span>
+        </td>
+
+        <td th:text="${hd.soDienThoaiNguoiNhan != null ? hd.soDienThoaiNguoiNhan : (hd.khachHang != null ? hd.khachHang.soDienThoai : 'N/A')}"></td>
+
+        <td>
+            <span th:if="${hd.trangThaiHoaDon == 'CHO_THANH_TOAN'}" class="badge-custom badge-pending">Chờ thanh toán</span>
+            <span th:if="${hd.trangThaiHoaDon == 'DA_THANH_TOAN'}" class="badge-custom badge-complete">Đã thanh toán</span>
+
+            <span th:if="${hd.trangThaiHoaDon == '1' or hd.trangThaiHoaDon == 'CHO_XAC_NHAN'}" class="badge-custom badge-pending">Chờ xác nhận</span>
+            <span th:if="${hd.trangThaiHoaDon == '2' or hd.trangThaiHoaDon == 'DA_XAC_NHAN'}" class="badge-custom badge-shipping">Đã xác nhận</span>
+            <span th:if="${hd.trangThaiHoaDon == '3' or hd.trangThaiHoaDon == 'DANG_GIAO'}" class="badge-custom badge-shipping">Đang giao</span>
+            <span th:if="${hd.trangThaiHoaDon == '4' or hd.trangThaiHoaDon == 'DA_GIAO_HANG'}" class="badge-custom badge-shipping">Đã giao hàng</span>
+            <span th:if="${hd.trangThaiHoaDon == '5' or hd.trangThaiHoaDon == 'HOAN_THANH'}" class="badge-custom badge-complete">Hoàn thành</span>
+            <span th:if="${hd.trangThaiHoaDon == '6' or hd.trangThaiHoaDon == 'DA_HUY'}" class="badge-custom badge-cancel">Đã hủy</span>
+            <span th:if="${hd.trangThaiHoaDon == '7' or hd.trangThaiHoaDon == 'YEU_CAU_HUY'}" class="badge-custom badge-warning">Yêu cầu hủy</span>
+            <span th:if="${hd.trangThaiHoaDon == '8' or hd.trangThaiHoaDon == 'CAN_HOAN_PHI'}" class="badge-custom badge-info">Cần hoàn phí</span>
+        </td>
+
+        <td>
+            <a th:href="@{/admin/hoa-don/{id}(id=${hd.id})}" class="action-btn-view">
+                <i class="bi bi-eye"></i>
+            </a>
+        </td>
+    </tr>
+</tbody>
                     </table>
                 </div>
 

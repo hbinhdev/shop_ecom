@@ -75,7 +75,6 @@
                             <th class="ps-4 py-3">STT</th>
                             <th class="py-3">Mã phiếu</th>
                             <th class="py-3">Tên phiếu</th>
-                            <th class="py-3">Loại</th>
                             <th class="py-3 text-center">Số lượng</th>
                             <th class="py-3">Bắt đầu</th>
                             <th class="py-3">Kết thúc</th>
@@ -90,14 +89,6 @@
                             <td class="small fw-semibold text-dark" th:text="${pgg.maPhieu}">PGG00001</td>
                             <td>
                                 <div class="fw-semibold text-dark mb-0 lh-sm" th:text="${pgg.tenPhieu}">Tên phiếu</div>
-                            </td>
-                            <td>
-                                <span th:if="${pgg.loai == 1}"
-                                    class="badge rounded-pill bg-info-subtle text-info px-3 py-2 fw-medium border border-info-subtle">Cá
-                                    nhân</span>
-                                <span th:if="${pgg.loai != 1}"
-                                    class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Công
-                                    khai</span>
                             </td>
                             <td class="text-center fw-medium" th:text="${pgg.soLuong}">100</td>
                             <td class="small text-muted" th:text="${#temporals.format(pgg.ngayBatDau, 'dd/MM/yyyy')}">
@@ -127,7 +118,7 @@
                             </td>
                         </tr>
                         <tr th:if="${#lists.isEmpty(listPGG)}">
-                            <td colspan="9" class="text-center py-5 text-muted">
+                            <td colspan="8" class="text-center py-5 text-muted">
                                 <i class="bi bi-inbox fs-2 d-block mb-2"></i>
                                 Không tìm thấy phiếu giảm giá phù hợp.
                             </td>

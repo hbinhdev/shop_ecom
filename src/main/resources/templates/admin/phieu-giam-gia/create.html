@@ -98,17 +98,8 @@
                                 th:field="*{ngayKetThuc}" required>
                         </div>
 
-                        <div class="col-12">
-                            <label class="form-label fw-bold small text-uppercase text-muted d-block">Loại phiếu</label>
-                            <div class="d-flex gap-4 py-2">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" th:field="*{loai}" value="0"
-                                        id="radioPublic" required>
-                                    <label class="form-check-label" for="radioPublic">Công khai</label>
-                                </div>
-                                
-                            </div>
-                        </div>
+                        <!-- Loại phiếu mặc định là Công khai -->
+                        <input type="hidden" th:field="*{loai}" value="0">
 
                         <div class="col-12">
                             <label class="form-label fw-bold small text-uppercase text-muted">Mô tả phiếu giảm

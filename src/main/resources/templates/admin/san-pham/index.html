@@ -120,6 +120,10 @@
                                             onchange="confirmToggleProduct(this)"
                                             style="cursor: pointer;">
                                     </div>
+                                    <a th:href="@{/admin/san-pham/bien-the(idSanPham=${sp.id})}"
+                                        class="btn-icon rounded-circle shadow-xs" title="Xem biến thể sản phẩm">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
                                     <a th:href="@{/admin/san-pham/edit/{id}(id=${sp.id})}"
                                        class="btn-icon rounded-circle shadow-xs text-primary" title="Sửa sản phẩm">
                                         <i class="bi bi-pencil"></i>

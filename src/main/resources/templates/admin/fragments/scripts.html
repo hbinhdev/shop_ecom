@@ -9,6 +9,16 @@
     <script src="https://unpkg.com/html5-qrcode"></script>
 
     <script th:inline="javascript">
+        // === CSRF-aware fetch helper (dùng cho mọi POST/PUT/DELETE) ===
+        function getCsrfHeaders(extra = {}) {
+            const token = document.querySelector('meta[name="_csrf"]')?.content;
+            const header = document.querySelector('meta[name="_csrf_header"]')?.content;
+            return (token && header) ? { [header]: token, ...extra } : { ...extra };
+        }
+        async function csrfPost(url) {
+            return fetch(url, { method: 'POST', headers: getCsrfHeaders() });
+        }
+
         // === Common Status Toggle ===
         async function confirmToggle(checkbox, url, successMsg, errorMsg) {
             const id = checkbox.getAttribute('data-id'), isChecked = checkbox.checked;
@@ -20,8 +30,8 @@
             });
             if (result.isConfirmed) {
                 try {
-                    const res = await fetch(`${url}/${id}`, { method: 'POST' });
-                    
+                    const res = await csrfPost(`${url}/${id}`);
+                    console.log(`[Toggle Debug] Phản hồi Server: ${res.status} ${res.statusText}`);
                     if (res.ok) {
                         Swal.fire('Thành công!', successMsg || 'Cập nhật thành công.', 'success').then(() => location.reload());
                     } else throw new Error();

@@ -38,6 +38,16 @@ public interface KhachHangRepository extends JpaRepository<KhachHang, Long> {
     boolean existsByEmail(String email);
     boolean existsBySoDienThoai(String soDienThoai);
 
+    // POS: tìm nhanh khách hàng theo tên / SĐT (chỉ lấy đang hoạt động)
+    @Query("SELECT k FROM KhachHang k WHERE k.xoaMem = false " +
+           "AND (:kw IS NULL OR :kw = '' OR " +
+           "  LOWER(k.tenDayDu)    LIKE LOWER(CONCAT('%',:kw,'%')) OR " +
+           "  k.soDienThoai        LIKE CONCAT('%',:kw,'%'))")
+    java.util.List<KhachHang> searchForPOS(@Param("kw") String keyword,
+                                           org.springframework.data.domain.Pageable pageable);
+
+    boolean existsBySoDienThoai(String soDienThoai);
+
     @org.springframework.data.jpa.repository.Modifying(clearAutomatically = true, flushAutomatically = true)
     @org.springframework.transaction.annotation.Transactional
     @org.springframework.data.jpa.repository.Query("UPDATE KhachHang k SET k.xoaMem = :xoaMem, k.ngaySuaCuoi = CURRENT_TIMESTAMP, k.nguoiSuaCuoi = 'Admin' WHERE k.id = :id")
