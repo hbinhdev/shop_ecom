@@ -210,7 +210,7 @@
                     this.modal.show();
                 },
                 async toggleStatus(id, checkbox) {
-                    const res = await fetch(`/api/admin/product-variant/variant/toggle-status/${id}`, { method: 'POST' });
+                    const res = await csrfPost(`/api/admin/product-variant/variant/toggle-status/${id}`);
                     if (res.ok) {
                         Swal.fire({ icon: 'success', title: 'Thành công', text: 'Đã cập nhật trạng thái biến thể!', timer: 800, showConfirmButton: false })
                             .then(() => window.location.reload());

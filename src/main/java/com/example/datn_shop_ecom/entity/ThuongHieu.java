@@ -11,6 +11,7 @@ public class ThuongHieu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "ten_thuong_hieu", columnDefinition = "NVARCHAR(255)")
     private String tenThuongHieu;
     private String nguoiTao;
     private LocalDateTime ngayTao;

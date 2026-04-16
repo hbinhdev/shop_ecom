@@ -7,9 +7,9 @@
             
             <nav aria-label="breadcrumb" class="mb-5">
                 <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a th:href="@{/}"
+                    <li class="breadcrumb-item"><a th:href="@{/client}"
                             class="text-secondary text-decoration-none opacity-50">Trang chủ</a></li>
-                    <li class="breadcrumb-item"><a th:href="@{/san-pham}"
+                    <li class="breadcrumb-item"><a th:href="@{/client/san-pham}"
                             class="text-secondary text-decoration-none opacity-50">Sản phẩm</a></li>
                     <li class="breadcrumb-item active fw-bold text-dark" aria-current="page" th:text="${p.tenSanPham}">
                         Tên sản phẩm</li>
@@ -182,7 +182,7 @@
                         <h3 class="section-title-premium fs-2">GỢI Ý CHO BẠN</h3>
                         <p class="text-muted mt-2 mb-0">Khám phá những mẫu giày tương tự có thể bạn sẽ thích.</p>
                     </div>
-                    <a th:href="@{/san-pham}" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold small">XEM TẤT
+                    <a th:href="@{/client/san-pham}" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-bold small">XEM TẤT
                         CẢ</a>
                 </div>
                 <div class="row g-4">

@@ -17,6 +17,10 @@ public interface HoaDonService {
     List<ChiTietHoaDon> findDetailByHoaDonId(Long hoaDonId);
     List<LichSuHoaDon> findHistoryByHoaDonId(Long hoaDonId);
     List<LichSuThanhToan> findPaymentHistoryByHoaDonId(Long hoaDonId);
+
+    // POS - Bán hàng tại quầy
+    HoaDon createPendingInvoice(String nhanVienEmail);
+    List<HoaDon> findAllPendingPOS();
     // Client-side
     HoaDon createHoaDonOnline(HoaDon hoaDon, List<ChiTietHoaDon> items);
     HoaDon findByMaHoaDon(String maHoaDon);

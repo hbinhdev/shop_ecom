@@ -52,9 +52,18 @@ public class HoaDonController {
             @RequestParam(required = false) Integer loaiHoaDon,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ngayBatDau,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ngayKetThuc,
+            @RequestParam(required = false, defaultValue = "false") boolean searched,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "5") int size,
             Model model) {
+
+        // Nếu không có bất kỳ bộ lọc nào và chưa tìm kiếm, mặc định lọc hóa đơn ngày hôm nay
+        boolean noFilter = maHoaDon == null && tenKhachHang == null && trangThai == null
+                && loaiHoaDon == null && ngayBatDau == null && ngayKetThuc == null && !searched;
+        if (noFilter) {
+            ngayBatDau = LocalDate.now();
+            ngayKetThuc = LocalDate.now();
+        }
 
         Page<HoaDon> hoaDonPage = hoaDonService.searchInvoices(
                 maHoaDon, tenKhachHang, trangThai, loaiHoaDon, ngayBatDau, ngayKetThuc,

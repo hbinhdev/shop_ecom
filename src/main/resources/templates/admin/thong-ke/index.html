@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{admin/layout/main :: layout(~{::content}, ~{::title})}">
+
+<th:block th:fragment="title">
+    <title>Thống kê - PeakSneaker Admin</title>
+</th:block>
+
+<th:block th:fragment="content">
+
+<style>
+    :root {
+        --green-primary: #2e7d32;
+        --green-light:   #e8f5e9;
+        --green-hover:   #1b5e20;
+        --blue-stat:     #1565c0;
+        --orange-stat:   #e65100;
+        --page-bg:       #f5f5f5;
+    }
+
+    .tk-page-bg {
+        background: var(--page-bg);
+        margin: -30px -40px;
+        padding: 28px 40px 40px;
+        min-height: 100vh;
+    }
+
+    .tk-container { max-width: 1400px; }
+
+    /* ── Header ── */
+    .tk-page-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #111;
+        letter-spacing: -.3px;
+        margin-bottom: 8px;
+    }
+    .tk-date-badge {
+        display: inline-block;
+        background: var(--green-primary);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 500;
+        border-radius: 20px;
+        padding: 4px 14px;
+    }
+
+    /* ── Filter bar ── */
+    .tk-filter-card {
+        background: #fff;
+        border: 1px solid #e8e8e8;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.05);
+        padding: 18px 24px;
+        margin-bottom: 20px;
+    }
+    .tk-filter-hint { color: #888; font-style: italic; font-size: 13.5px; }
+    .tk-select {
+        border: 1px solid #d1d5db; border-radius: 8px;
+        padding: 7px 14px; font-size: 14px;
+        background: #fff; color: #333; min-width: 150px;
+        cursor: pointer; outline: none; transition: border-color .2s;
+    }
+    .tk-select:focus { border-color: var(--green-primary); }
+    .tk-btn-solid {
+        background: var(--green-primary); color: #fff;
+        border: 1.5px solid var(--green-primary); border-radius: 8px;
+        padding: 7px 18px; font-size: 13.5px; font-weight: 500;
+        cursor: pointer; transition: background .2s;
+        text-decoration: none; display: inline-block;
+    }
+    .tk-btn-solid:hover, .tk-btn-solid.active {
+        background: var(--green-hover); border-color: var(--green-hover); color: #fff;
+    }
+    .tk-btn-outline {
+        background: #fff; color: var(--green-primary);
+        border: 1.5px solid var(--green-primary); border-radius: 8px;
+        padding: 7px 18px; font-size: 13.5px; font-weight: 500;
+        cursor: pointer; transition: background .2s, color .2s;
+        text-decoration: none; display: inline-block;
+    }
+    .tk-btn-outline:hover, .tk-btn-outline.active {
+        background: var(--green-primary); color: #fff;
+    }
+
+    /* ── Summary stats ── */
+    .tk-summary-card {
+        background: #fff; border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.06);
+        border: 1px solid #efefef; margin-bottom: 20px;
+    }
+    .tk-stat-col { padding: 24px 28px; flex: 1; position: relative; }
+    .tk-stat-col + .tk-stat-col::before {
+        content: ''; position: absolute; left: 0; top: 18px; bottom: 18px;
+        width: 1px; background: #ebebeb;
+    }
+    .tk-stat-label {
+        font-size: 12px; color: #888; font-weight: 500;
+        text-transform: uppercase; letter-spacing: .4px; margin-bottom: 8px;
+    }
+    .tk-stat-value { font-size: 32px; font-weight: 700; line-height: 1; }
+    .tk-stat-value.black  { color: #111; }
+    .tk-stat-value.green  { color: var(--green-primary); font-size: 26px; }
+    .tk-stat-value.blue   { color: var(--blue-stat);     font-size: 26px; }
+    .tk-stat-value.orange { color: var(--orange-stat);   font-size: 26px; }
+
+    /* ── Period cards ── */
+    .tk-period-card {
+        background: #fff; border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,.06); border: 1px solid #efefef;
+        border-left: 4px solid #ddd; padding: 20px 22px;
+        cursor: pointer; height: 100%;
+        transition: box-shadow .2s, border-left-color .2s;
+    }
+    .tk-period-card:hover   { box-shadow: 0 4px 16px rgba(0,0,0,.10); }
+    .tk-period-card.active-period {
+        border-left-color: var(--green-primary); background: #f9fffe;
+    }
+    .tk-period-title { font-size: 11px; font-weight: 600; color: #888;
+        text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+    .tk-period-revenue { font-size: 17px; font-weight: 700; color: #111; margin-bottom: 5px; }
+    .tk-period-sub { font-size: 12px; color: #aaa; }
+
+    /* ── Cards (charts / tables) ── */
+    .tk-card {
+        background: #fff; border-radius: 14px;
+        box-shadow: 0 2px 10px rgba(0,0,0,.06);
+        border: 1px solid #efefef; padding: 24px; height: 100%;
+    }
+    .tk-card-title { font-size: 15px; font-weight: 700; color: #222; margin-bottom: 18px; }
+    .tk-card-subtitle { font-size: 12px; color: #999; font-style: italic; margin-top: 2px; margin-bottom: 14px; }
+
+    /* ── Detail table ── */
+    .tk-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    .tk-table thead tr { border-bottom: 2px solid #f0f0f0; }
+    .tk-table thead th {
+        font-weight: 700; color: #333; padding: 10px 14px;
+        background: none; border: none; font-size: 13px; text-align: left;
+    }
+    .tk-table tbody tr { border-bottom: 1px solid #f4f4f4; transition: background .15s; }
+    .tk-table tbody tr:last-child { border-bottom: none; }
+    .tk-table tbody tr:hover { background: #fafafa; }
+    .tk-table tbody td { padding: 12px 14px; color: #444; border: none; }
+    .tk-table td.text-right, .tk-table th.text-right { text-align: right; }
+    .tk-growth-neg  { color: #e53935; font-weight: 600; }
+    .tk-growth-pos  { color: var(--green-primary); font-weight: 600; }
+    .tk-growth-zero { color: var(--green-primary); font-weight: 600; }
+    .tk-growth-na   { color: #bbb; }
+
+    /* ── Top products table ── */
+    .tk-top-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .tk-top-table thead th {
+        font-weight: 600; color: #999; padding: 8px 10px;
+        border-bottom: 1px solid #f0f0f0; text-align: left;
+        font-size: 12px; text-transform: uppercase; letter-spacing: .3px;
+    }
+    .tk-top-table tbody tr { border-bottom: 1px solid #f6f6f6; transition: background .15s; }
+    .tk-top-table tbody tr:last-child { border-bottom: none; }
+    .tk-top-table tbody tr:hover { background: #fafafa; }
+    .tk-top-table tbody td { padding: 10px; color: #444; vertical-align: middle; }
+    .tk-price-green { color: var(--green-primary); font-weight: 600; }
+    .tk-rank {
+        display: inline-flex; width: 24px; height: 24px; border-radius: 50%;
+        background: var(--green-light); color: var(--green-primary);
+        font-size: 11px; font-weight: 700; align-items: center; justify-content: center;
+    }
+
+    /* ── Donut legend ── */
+    .donut-legend { display: flex; flex-direction: column; gap: 9px; justify-content: center; }
+    .donut-legend-item { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: #555; }
+    .donut-legend-dot  { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
+
+    .chart-legend-dot { display: inline-block; width: 12px; height: 12px; border-radius: 2px; margin-right: 6px; }
+
+    /* ── Responsive ── */
+    @media (max-width: 1199px) {
+        .tk-charts-row > div, .tk-bottom-row > div { width: 100% !important; }
+    }
+    @media (max-width: 767px) {
+        .tk-page-bg { margin: -30px -20px; padding: 20px 20px 40px; }
+        .tk-page-title { font-size: 22px; }
+        .tk-stat-col + .tk-stat-col::before { display: none; }
+        .tk-stat-col { border-bottom: 1px solid #efefef; }
+        .tk-summary-card .d-flex { flex-direction: column; }
+        .tk-stat-value { font-size: 22px !important; }
+        .tk-filter-card .d-flex { flex-direction: column; gap: 12px !important; }
+    }
+</style>
+
+<div class="tk-page-bg">
+<div class="tk-container">
+
+    <!-- ── HEADER ── -->
+    <div class="mb-4">
+        <h1 class="tk-page-title">BÁO CÁO THỐNG KÊ KINH DOANH</h1>
+        <span class="tk-date-badge"
+              th:text="'Đang hiển thị dữ liệu của ' + ${tk.periodDisplay}">
+            Đang hiển thị dữ liệu của HÔM NAY
+        </span>
+    </div>
+
+    <!-- ── FILTER BAR ── -->
+    <div class="tk-filter-card">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+            <p class="tk-filter-hint mb-0">
+                Lựa chọn khoảng thời gian để xem thống kê doanh thu và đơn hàng
+            </p>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <select class="tk-select" id="periodSelect" onchange="changePeriod(this.value)"
+                        th:attr="data-current=${tk.selectedPeriod}">
+                    <option value="today"  th:selected="${tk.selectedPeriod == 'today'}">Hôm nay</option>
+                    <option value="week"   th:selected="${tk.selectedPeriod == 'week'}">Tuần này</option>
+                    <option value="month"  th:selected="${tk.selectedPeriod == 'month'}">Tháng này</option>
+                    <option value="year"   th:selected="${tk.selectedPeriod == 'year'}">Năm này</option>
+                </select>
+                <button class="tk-btn-solid active" id="btnLine" onclick="switchChartType('line')">
+                    <i class="bi bi-graph-up me-1"></i>Biểu đồ đường
+                </button>
+                <button class="tk-btn-outline" id="btnBar" onclick="switchChartType('bar')">
+                    <i class="bi bi-bar-chart-fill me-1"></i>Biểu đồ cột
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SUMMARY STATS ── -->
+    <div class="tk-summary-card">
+        <div class="d-flex flex-wrap">
+            <div class="tk-stat-col">
+                <div class="tk-stat-label">Tổng số đơn hàng</div>
+                <div class="tk-stat-value black" th:text="${tk.tongSoDon}">0</div>
+            </div>
+            <div class="tk-stat-col">
+                <div class="tk-stat-label">Tổng doanh thu</div>
+                <div class="tk-stat-value green"
+                     th:text="${#numbers.formatDecimal(tk.tongDoanhThu, 0, 'POINT', 0, 'COMMA') + ' đ'}">0 đ</div>
+            </div>
+            <div class="tk-stat-col">
+                <div class="tk-stat-label">Doanh thu thực tế</div>
+                <div class="tk-stat-value blue"
+                     th:text="${#numbers.formatDecimal(tk.doanhThuThucTe, 0, 'POINT', 0, 'COMMA') + ' đ'}">0 đ</div>
+            </div>
+            <div class="tk-stat-col">
+                <div class="tk-stat-label">Doanh thu dự kiến</div>
+                <div class="tk-stat-value orange"
+                     th:text="${#numbers.formatDecimal(tk.doanhThuDuKien, 0, 'POINT', 0, 'COMMA') + ' đ'}">0 đ</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── PERIOD CARDS ── -->
+    <div class="row g-3 mb-4">
+        <!-- Hôm nay -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="tk-period-card"
+                 th:classappend="${tk.selectedPeriod == 'today'} ? 'active-period'"
+                 onclick="changePeriod('today')">
+                <div class="tk-period-title">Hôm nay</div>
+                <div class="tk-period-revenue"
+                     th:text="${#numbers.formatDecimal(tk.today.doanhThu, 0, 'POINT', 0, 'COMMA') + ' đ'}">0 đ</div>
+                <div class="tk-period-sub"
+                     th:text="'Sản phẩm: ' + ${tk.today.soSanPham} + ' | Đơn hàng: ' + ${tk.today.soDon}">SP: 0 | ĐH: 0</div>
+            </div>
+        </div>
+        <!-- Tuần này -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="tk-period-card"
+                 th:classappend="${tk.selectedPeriod == 'week'} ? 'active-period'"
+                 onclick="changePeriod('week')">
+                <div class="tk-period-title">Tuần này</div>
+                <div class="tk-period-revenue"
+                     th:text="${#numbers.formatDecimal(tk.week.doanhThu, 0, 'POINT', 0, 'COMMA') + ' đ'}">0 đ</div>
+                <div class="tk-period-sub"
+                     th:text="'Sản phẩm: ' + ${tk.week.soSanPham} + ' | Đơn hàng: ' + ${tk.week.soDon}">SP: 0 | ĐH: 0</div>
+            </div>
+        </div>
+        <!-- Tháng này -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="tk-period-card"
+                 th:classappend="${tk.selectedPeriod == 'month'} ? 'active-period'"
+                 onclick="changePeriod('month')">
+                <div class="tk-period-title">Tháng này</div>
+                <div class="tk-period-revenue"
+                     th:text="${#numbers.formatDecimal(tk.month.doanhThu, 0, 'POINT', 0, 'COMMA') + ' đ'}">0 đ</div>
+                <div class="tk-period-sub"
+                     th:text="'Sản phẩm: ' + ${tk.month.soSanPham} + ' | Đơn hàng: ' + ${tk.month.soDon}">SP: 0 | ĐH: 0</div>
+            </div>
+        </div>
+        <!-- Năm này -->
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="tk-period-card"
+                 th:classappend="${tk.selectedPeriod == 'year'} ? 'active-period'"
+                 onclick="changePeriod('year')">
+                <div class="tk-period-title">Năm này</div>
+                <div class="tk-period-revenue"
+                     th:text="${#numbers.formatDecimal(tk.year.doanhThu, 0, 'POINT', 0, 'COMMA') + ' đ'}">0 đ</div>
+                <div class="tk-period-sub"
+                     th:text="'Sản phẩm: ' + ${tk.year.soSanPham} + ' | Đơn hàng: ' + ${tk.year.soDon}">SP: 0 | ĐH: 0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── CHARTS ROW ── -->
+    <div class="row g-3 mb-4 tk-charts-row">
+
+        <!-- LEFT: biểu đồ doanh thu -->
+        <div class="col-12 col-xl-8">
+            <div class="tk-card">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div class="tk-card-title mb-0">Biểu đồ doanh thu theo thời gian</div>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="chart-legend-dot" style="background:var(--green-primary);"></span>
+                        <span style="font-size:12.5px;color:#666;">Doanh thu</span>
+                    </div>
+                </div>
+                <div style="position:relative;height:300px;">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: donut trạng thái -->
+        <div class="col-12 col-xl-4">
+            <div class="tk-card">
+                <div class="tk-card-title">Phân bố trạng thái đơn hàng</div>
+                <div class="d-flex align-items-center gap-3">
+                    <div style="position:relative;width:160px;height:160px;flex-shrink:0;">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                    <!-- Legend động từ server -->
+                    <div class="donut-legend flex-grow-1" id="donutLegend">
+                        <!-- Được render bằng JS sau khi nhận statusLabels/Colors từ server -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── BOTTOM ROW ── -->
+    <div class="row g-3 tk-bottom-row">
+
+        <!-- LEFT: bảng chi tiết -->
+        <div class="col-12 col-xl-8">
+            <div class="tk-card">
+                <div class="tk-card-title">Bảng thống kê chi tiết theo thời gian</div>
+                <div class="table-responsive">
+                    <table class="tk-table">
+                        <thead>
+                            <tr>
+                                <th>Thời gian</th>
+                                <th class="text-right">Doanh thu</th>
+                                <th class="text-right">Số đơn</th>
+                                <th class="text-right">Giá trị TB/đơn</th>
+                                <th class="text-right">Tăng trưởng (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="row : ${tk.chiTiet}">
+                                <td><strong th:text="${row.label}">—</strong></td>
+                                <td class="text-right"
+                                    th:text="${#numbers.formatDecimal(row.doanhThu, 0, 'POINT', 0, 'COMMA') + ' đ'}">0 đ</td>
+                                <td class="text-right" th:text="${row.soDon}">0</td>
+                                <td class="text-right"
+                                    th:text="${row.soDon > 0 ? #numbers.formatDecimal(row.giaTrungBinh, 0, 'POINT', 0, 'COMMA') + ' đ' : '—'}">—</td>
+                                <td class="text-right">
+                                    <!-- Không có kỳ trước -->
+                                    <span th:if="${row.tangTruong == null}" class="tk-growth-na">—</span>
+                                    <!-- Tăng -->
+                                    <span th:if="${row.tangTruong != null and row.tangTruong.signum() > 0}"
+                                          class="tk-growth-pos"
+                                          th:text="${'+' + #numbers.formatDecimal(row.tangTruong, 1, 'COMMA', 2, 'POINT') + '%'}">+0%</span>
+                                    <!-- Giảm -->
+                                    <span th:if="${row.tangTruong != null and row.tangTruong.signum() < 0}"
+                                          class="tk-growth-neg"
+                                          th:text="${#numbers.formatDecimal(row.tangTruong, 1, 'COMMA', 2, 'POINT') + '%'}">-0%</span>
+                                    <!-- Bằng 0 -->
+                                    <span th:if="${row.tangTruong != null and row.tangTruong.signum() == 0}"
+                                          class="tk-growth-zero">0,00%</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: top sản phẩm -->
+        <div class="col-12 col-xl-4">
+            <div class="tk-card">
+                <div class="tk-card-title mb-1">Top sản phẩm bán chạy trong 30 ngày gần nhất</div>
+                <p class="tk-card-subtitle"
+                   th:text="${'(Từ ' + #temporals.format(tk.topFrom,'yyyy-MM-dd') + ' đến ' + #temporals.format(tk.topTo,'yyyy-MM-dd') + ')'}">
+                    (Từ ... đến ...)
+                </p>
+
+                <div th:if="${#lists.isEmpty(tk.topSanPham)}"
+                     class="text-center text-muted py-4">
+                    <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                    Không có dữ liệu trong 30 ngày gần nhất.
+                </div>
+
+                <div th:if="${!#lists.isEmpty(tk.topSanPham)}" class="table-responsive">
+                    <table class="tk-top-table">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Tên sản phẩm</th>
+                                <th class="text-right">Giá</th>
+                                <th class="text-right">SL bán</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="sp, idx : ${tk.topSanPham}">
+                                <td><span class="tk-rank" th:text="${idx.count}">1</span></td>
+                                <td>
+                                    <div th:text="${sp.tenSanPham}" class="fw-semibold" style="font-size:12.5px;"></div>
+                                    <div style="font-size:11px;color:#aaa;">
+                                        <span th:text="${sp.tenMauSac}"></span>
+                                        <span th:if="${sp.tenKichThuoc != null and !sp.tenKichThuoc.isEmpty()}"
+                                              th:text="${' · ' + sp.tenKichThuoc}"></span>
+                                    </div>
+                                </td>
+                                <td class="text-right tk-price-green"
+                                    th:text="${#numbers.formatDecimal(sp.giaBan, 0, 'POINT', 0, 'COMMA') + ' đ'}">0 đ</td>
+                                <td class="text-right fw-bold" th:text="${sp.soLuongBan}">0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- end bottom row -->
+
+</div><!-- end tk-container -->
+</div><!-- end tk-page-bg -->
+
+<!-- ── SCRIPTS ── -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script th:inline="javascript">
+/*<![CDATA[*/
+// Dữ liệu từ server (Thymeleaf inline)
+const SERVER_LABELS   = JSON.parse([[${tk.chartLabelsJson}]]);
+const SERVER_REVENUE  = JSON.parse([[${tk.chartDoanhThuJson}]]);
+const STATUS_LABELS   = JSON.parse([[${tk.statusLabelsJson}]]);
+const STATUS_DATA     = JSON.parse([[${tk.statusDataJson}]]);
+const STATUS_COLORS   = JSON.parse([[${tk.statusColorsJson}]]);
+const SELECTED_PERIOD = [[${tk.selectedPeriod}]];
+
+// ── Biểu đồ doanh thu ────────────────────────────────────────────────────────
+let revenueChart;
+let currentChartType = 'line';
+
+function buildRevenueChart(labels, revenues, type) {
+    const ctx = document.getElementById('revenueChart').getContext('2d');
+    if (revenueChart) revenueChart.destroy();
+    const isLine = type === 'line';
+    revenueChart = new Chart(ctx, {
+        type: type,
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Doanh thu',
+                data: revenues,
+                borderColor:     '#2e7d32',
+                backgroundColor: isLine ? 'rgba(46,125,50,0.10)' : 'rgba(46,125,50,0.75)',
+                borderWidth:  isLine ? 2.5 : 0,
+                tension:      0.4,
+                fill:         isLine,
+                pointBackgroundColor: '#2e7d32',
+                pointRadius:      isLine ? 5 : 0,
+                pointHoverRadius: isLine ? 7 : 0,
+                borderRadius: isLine ? 0 : 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: c => ' ' + new Intl.NumberFormat('vi-VN').format(c.parsed.y) + ' đ'
+                    },
+                    backgroundColor: '#fff', titleColor: '#333',
+                    bodyColor: '#2e7d32', borderColor: '#e0e0e0', borderWidth: 1, padding: 10
+                }
+            },
+            scales: {
+                x: { grid: { display: false }, ticks: { font: { size: 12 }, color: '#999' } },
+                y: {
+                    min: 0,
+                    grid: { color: 'rgba(0,0,0,0.05)' },
+                    ticks: {
+                        color: '#999', font: { size: 11 },
+                        callback: v => {
+                            if (v >= 1000000) return (v/1e6).toLocaleString('vi-VN',{maximumFractionDigits:1})+'M';
+                            if (v >= 1000)    return (v/1000).toFixed(0)+'K';
+                            return v;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// ── Donut trạng thái ─────────────────────────────────────────────────────────
+(function buildStatusChart() {
+    const ctx = document.getElementById('statusChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: STATUS_LABELS,
+            datasets: [{
+                data: STATUS_DATA,
+                backgroundColor: STATUS_COLORS,
+                borderWidth: 2, borderColor: '#fff', hoverOffset: 6
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false, cutout: '62%',
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: { label: c => ' ' + c.label + ': ' + c.parsed + ' đơn' },
+                    backgroundColor: '#fff', titleColor: '#333',
+                    bodyColor: '#555', borderColor: '#e0e0e0', borderWidth: 1
+                }
+            }
+        }
+    });
+
+    // Render legend động
+    const legend = document.getElementById('donutLegend');
+    STATUS_LABELS.forEach((lbl, i) => {
+        const item = document.createElement('div');
+        item.className = 'donut-legend-item';
+        item.innerHTML = `<div class="donut-legend-dot" style="background:${STATUS_COLORS[i]};"></div><span>${lbl}</span>`;
+        legend.appendChild(item);
+    });
+})();
+
+// ── Điều hướng kỳ ────────────────────────────────────────────────────────────
+function changePeriod(period) {
+    window.location.href = '/admin/thong-ke?period=' + period;
+}
+
+// ── Chuyển loại biểu đồ (không reload trang, dùng dữ liệu đã có) ─────────────
+function switchChartType(type) {
+    currentChartType = type;
+    if (type === 'line') {
+        document.getElementById('btnLine').className = 'tk-btn-solid active';
+        document.getElementById('btnBar').className  = 'tk-btn-outline';
+    } else {
+        document.getElementById('btnLine').className = 'tk-btn-solid';
+        document.getElementById('btnBar').className  = 'tk-btn-outline active';
+    }
+    buildRevenueChart(SERVER_LABELS, SERVER_REVENUE, type);
+}
+
+// ── Khởi tạo ─────────────────────────────────────────────────────────────────
+buildRevenueChart(SERVER_LABELS, SERVER_REVENUE, 'line');
+/*]]>*/
+</script>
+
+</th:block>
+</html>

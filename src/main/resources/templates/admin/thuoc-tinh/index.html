@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
+
+<head>
+    <title>Quản lý thuộc tính sản phẩm - PeakSneaker</title>
+    <style>
+        .attr-tab-nav .nav-link {
+            font-weight: 500;
+            font-size: 0.88rem;
+            color: #636e72;
+            border-radius: 10px 10px 0 0;
+            padding: 10px 18px;
+            border: none;
+            border-bottom: 2px solid transparent;
+        }
+        .attr-tab-nav .nav-link.active {
+            color: #d47d32;
+            background: #fff;
+            border-bottom: 2px solid #d47d32;
+            font-weight: 600;
+        }
+        .attr-tab-nav .nav-link:hover:not(.active) {
+            background: #f8f9fa;
+        }
+        .attr-badge-active {
+            background: #fff0e6;
+            color: #d47d32;
+            border: 1px solid #fddcb5;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+        .attr-badge-inactive {
+            background: #f8f9fa;
+            color: #aaa;
+            border: 1px solid #eee;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 500;
+        }
+        .add-attr-bar {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 16px;
+        }
+        .attr-row:hover { background: #fffbf7; }
+        .inline-edit-input {
+            border: 1px solid #d47d32 !important;
+            border-radius: 6px !important;
+            padding: 4px 10px !important;
+            font-size: 0.88rem !important;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div class="container-fluid p-0">
+            <!-- Header -->
+            <div class="mb-4">
+                <h4 class="fw-bold section-title">Quản lý sản phẩm / <span class="fw-bold">Thuộc tính sản phẩm</span></h4>
+                <p class="text-muted small mb-0">Quản lý các thuộc tính dùng để tạo biến thể sản phẩm.</p>
+            </div>
+
+            <!-- Tabs -->
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden bg-white">
+                <div class="px-4 pt-3 border-bottom">
+                    <ul class="nav attr-tab-nav" id="attrTabs" role="tablist">
+                        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-mau-sac">🎨 Màu sắc <span class="badge bg-secondary-subtle text-muted ms-1" th:text="${#lists.size(listMauSac)}">0</span></button></li>
+                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-kich-thuoc">📐 Kích thước <span class="badge bg-secondary-subtle text-muted ms-1" th:text="${#lists.size(listKichThuoc)}">0</span></button></li>
+                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-danh-muc">📂 Danh mục <span class="badge bg-secondary-subtle text-muted ms-1" th:text="${#lists.size(listDanhMuc)}">0</span></button></li>
+                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-thuong-hieu">🏷️ Thương hiệu <span class="badge bg-secondary-subtle text-muted ms-1" th:text="${#lists.size(listThuongHieu)}">0</span></button></li>
+                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-kieu-dang">👟 Kiểu dáng <span class="badge bg-secondary-subtle text-muted ms-1" th:text="${#lists.size(listKieuDang)}">0</span></button></li>
+                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-chat-lieu">🧵 Chất liệu <span class="badge bg-secondary-subtle text-muted ms-1" th:text="${#lists.size(listChatLieu)}">0</span></button></li>
+                    </ul>
+                </div>
+
+                <div class="tab-content p-4">
+
+                    <!-- ===== MÀU SẮC ===== -->
+                    <div class="tab-pane fade show active" id="tab-mau-sac">
+                        <div class="add-attr-bar d-flex gap-2 align-items-center">
+                            <input type="text" id="inp-mau-sac" class="form-control rounded-pill border-1" placeholder="Nhập tên màu sắc mới... (VD: Đỏ tươi, Xanh navy)" style="max-width:350px;">
+                            <button class="btn btn-add-customer rounded-pill px-4 text-white border-0"
+                                onclick="addAttr('mau-sac', 'inp-mau-sac')">
+                                <i class="bi bi-plus-lg me-1"></i> Thêm
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead class="bg-light text-muted small text-uppercase fw-bold">
+                                    <tr>
+                                        <th class="ps-3 py-3" style="width:60px">STT</th>
+                                        <th class="py-3">Tên màu sắc</th>
+                                        <th class="py-3 text-center" style="width:140px">Trạng thái</th>
+                                        <th class="py-3 text-center" style="width:140px">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody-mau-sac">
+                                    <tr th:each="m, stat : ${listMauSac}" class="attr-row border-bottom">
+                                        <td class="ps-3 text-muted small" th:text="${stat.count}">1</td>
+                                        <td>
+                                            <span class="fw-medium attr-label" th:text="${m.tenMauSac}">Đỏ</span>
+                                            <input type="text" class="form-control form-control-sm inline-edit-input d-none attr-edit-input" th:value="${m.tenMauSac}">
+                                        </td>
+                                        <td class="text-center">
+                                            <span th:if="${m.xoaMem == false || m.xoaMem == null}" class="attr-badge-active">Hoạt động</span>
+                                            <span th:if="${m.xoaMem == true}" class="attr-badge-inactive">Ngừng</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <button class="btn btn-sm btn-icon rounded-circle" title="Sửa tên"
+                                                    onclick="toggleEdit(this)" th:data-id="${m.id}" data-type="mau-sac">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-icon rounded-circle" title="Đổi trạng thái"
+                                                    onclick="toggleStatus(this)" th:data-id="${m.id}" data-type="mau-sac">
+                                                    <i class="bi bi-arrow-repeat"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(listMauSac)}">
+                                        <td colspan="4" class="text-center py-4 text-muted"><i class="bi bi-inbox me-2"></i>Chưa có dữ liệu</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ===== KÍCH THƯỚC ===== -->
+                    <div class="tab-pane fade" id="tab-kich-thuoc">
+                        <div class="add-attr-bar d-flex gap-2 align-items-center">
+                            <input type="text" id="inp-kich-thuoc" class="form-control rounded-pill border-1" placeholder="Nhập kích thước mới... (VD: 39, 40, 41)" style="max-width:350px;">
+                            <button class="btn btn-add-customer rounded-pill px-4 text-white border-0"
+                                onclick="addAttr('kich-thuoc', 'inp-kich-thuoc')">
+                                <i class="bi bi-plus-lg me-1"></i> Thêm
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead class="bg-light text-muted small text-uppercase fw-bold">
+                                    <tr>
+                                        <th class="ps-3 py-3" style="width:60px">STT</th>
+                                        <th class="py-3">Kích thước</th>
+                                        <th class="py-3 text-center" style="width:140px">Trạng thái</th>
+                                        <th class="py-3 text-center" style="width:140px">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="k, stat : ${listKichThuoc}" class="attr-row border-bottom">
+                                        <td class="ps-3 text-muted small" th:text="${stat.count}">1</td>
+                                        <td>
+                                            <span class="fw-medium attr-label" th:text="${k.tenKichThuoc}">40</span>
+                                            <input type="text" class="form-control form-control-sm inline-edit-input d-none attr-edit-input" th:value="${k.tenKichThuoc}">
+                                        </td>
+                                        <td class="text-center">
+                                            <span th:if="${k.xoaMem == false || k.xoaMem == null}" class="attr-badge-active">Hoạt động</span>
+                                            <span th:if="${k.xoaMem == true}" class="attr-badge-inactive">Ngừng</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <button class="btn btn-sm btn-icon rounded-circle" title="Sửa"
+                                                    onclick="toggleEdit(this)" th:data-id="${k.id}" data-type="kich-thuoc">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-icon rounded-circle" title="Đổi trạng thái"
+                                                    onclick="toggleStatus(this)" th:data-id="${k.id}" data-type="kich-thuoc">
+                                                    <i class="bi bi-arrow-repeat"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(listKichThuoc)}">
+                                        <td colspan="4" class="text-center py-4 text-muted"><i class="bi bi-inbox me-2"></i>Chưa có dữ liệu</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ===== DANH MỤC ===== -->
+                    <div class="tab-pane fade" id="tab-danh-muc">
+                        <div class="add-attr-bar d-flex gap-2 align-items-center">
+                            <input type="text" id="inp-danh-muc" class="form-control rounded-pill border-1" placeholder="Nhập tên danh mục mới... (VD: Giày thể thao, Giày chạy bộ)" style="max-width:400px;">
+                            <button class="btn btn-add-customer rounded-pill px-4 text-white border-0"
+                                onclick="addAttr('danh-muc', 'inp-danh-muc')">
+                                <i class="bi bi-plus-lg me-1"></i> Thêm
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead class="bg-light text-muted small text-uppercase fw-bold">
+                                    <tr>
+                                        <th class="ps-3 py-3" style="width:60px">STT</th>
+                                        <th class="py-3">Tên danh mục</th>
+                                        <th class="py-3 text-center" style="width:140px">Trạng thái</th>
+                                        <th class="py-3 text-center" style="width:140px">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="d, stat : ${listDanhMuc}" class="attr-row border-bottom">
+                                        <td class="ps-3 text-muted small" th:text="${stat.count}">1</td>
+                                        <td>
+                                            <span class="fw-medium attr-label" th:text="${d.tenDanhMuc}">Danh mục</span>
+                                            <input type="text" class="form-control form-control-sm inline-edit-input d-none attr-edit-input" th:value="${d.tenDanhMuc}">
+                                        </td>
+                                        <td class="text-center">
+                                            <span th:if="${d.xoaMem == false || d.xoaMem == null}" class="attr-badge-active">Hoạt động</span>
+                                            <span th:if="${d.xoaMem == true}" class="attr-badge-inactive">Ngừng</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <button class="btn btn-sm btn-icon rounded-circle" onclick="toggleEdit(this)" th:data-id="${d.id}" data-type="danh-muc"><i class="bi bi-pencil-square"></i></button>
+                                                <button class="btn btn-sm btn-icon rounded-circle" onclick="toggleStatus(this)" th:data-id="${d.id}" data-type="danh-muc"><i class="bi bi-arrow-repeat"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(listDanhMuc)}">
+                                        <td colspan="4" class="text-center py-4 text-muted"><i class="bi bi-inbox me-2"></i>Chưa có dữ liệu</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ===== THƯƠNG HIỆU ===== -->
+                    <div class="tab-pane fade" id="tab-thuong-hieu">
+                        <div class="add-attr-bar d-flex gap-2 align-items-center">
+                            <input type="text" id="inp-thuong-hieu" class="form-control rounded-pill border-1" placeholder="Nhập tên thương hiệu... (VD: Nike, Adidas, Puma)" style="max-width:350px;">
+                            <button class="btn btn-add-customer rounded-pill px-4 text-white border-0"
+                                onclick="addAttr('thuong-hieu', 'inp-thuong-hieu')">
+                                <i class="bi bi-plus-lg me-1"></i> Thêm
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead class="bg-light text-muted small text-uppercase fw-bold">
+                                    <tr>
+                                        <th class="ps-3 py-3" style="width:60px">STT</th>
+                                        <th class="py-3">Tên thương hiệu</th>
+                                        <th class="py-3 text-center" style="width:140px">Trạng thái</th>
+                                        <th class="py-3 text-center" style="width:140px">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="t, stat : ${listThuongHieu}" class="attr-row border-bottom">
+                                        <td class="ps-3 text-muted small" th:text="${stat.count}">1</td>
+                                        <td>
+                                            <span class="fw-medium attr-label" th:text="${t.tenThuongHieu}">Nike</span>
+                                            <input type="text" class="form-control form-control-sm inline-edit-input d-none attr-edit-input" th:value="${t.tenThuongHieu}">
+                                        </td>
+                                        <td class="text-center">
+                                            <span th:if="${t.xoaMem == false || t.xoaMem == null}" class="attr-badge-active">Hoạt động</span>
+                                            <span th:if="${t.xoaMem == true}" class="attr-badge-inactive">Ngừng</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <button class="btn btn-sm btn-icon rounded-circle" onclick="toggleEdit(this)" th:data-id="${t.id}" data-type="thuong-hieu"><i class="bi bi-pencil-square"></i></button>
+                                                <button class="btn btn-sm btn-icon rounded-circle" onclick="toggleStatus(this)" th:data-id="${t.id}" data-type="thuong-hieu"><i class="bi bi-arrow-repeat"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(listThuongHieu)}">
+                                        <td colspan="4" class="text-center py-4 text-muted"><i class="bi bi-inbox me-2"></i>Chưa có dữ liệu</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ===== KIỂU DÁNG ===== -->
+                    <div class="tab-pane fade" id="tab-kieu-dang">
+                        <div class="add-attr-bar d-flex gap-2 align-items-center">
+                            <input type="text" id="inp-kieu-dang" class="form-control rounded-pill border-1" placeholder="Nhập kiểu dáng... (VD: Cổ cao, Cổ thấp, Slip-on)" style="max-width:350px;">
+                            <button class="btn btn-add-customer rounded-pill px-4 text-white border-0"
+                                onclick="addAttr('kieu-dang', 'inp-kieu-dang')">
+                                <i class="bi bi-plus-lg me-1"></i> Thêm
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead class="bg-light text-muted small text-uppercase fw-bold">
+                                    <tr>
+                                        <th class="ps-3 py-3" style="width:60px">STT</th>
+                                        <th class="py-3">Kiểu dáng</th>
+                                        <th class="py-3 text-center" style="width:140px">Trạng thái</th>
+                                        <th class="py-3 text-center" style="width:140px">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="k, stat : ${listKieuDang}" class="attr-row border-bottom">
+                                        <td class="ps-3 text-muted small" th:text="${stat.count}">1</td>
+                                        <td>
+                                            <span class="fw-medium attr-label" th:text="${k.tenKieuDang}">Cổ cao</span>
+                                            <input type="text" class="form-control form-control-sm inline-edit-input d-none attr-edit-input" th:value="${k.tenKieuDang}">
+                                        </td>
+                                        <td class="text-center">
+                                            <span th:if="${k.xoaMem == false || k.xoaMem == null}" class="attr-badge-active">Hoạt động</span>
+                                            <span th:if="${k.xoaMem == true}" class="attr-badge-inactive">Ngừng</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <button class="btn btn-sm btn-icon rounded-circle" onclick="toggleEdit(this)" th:data-id="${k.id}" data-type="kieu-dang"><i class="bi bi-pencil-square"></i></button>
+                                                <button class="btn btn-sm btn-icon rounded-circle" onclick="toggleStatus(this)" th:data-id="${k.id}" data-type="kieu-dang"><i class="bi bi-arrow-repeat"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(listKieuDang)}">
+                                        <td colspan="4" class="text-center py-4 text-muted"><i class="bi bi-inbox me-2"></i>Chưa có dữ liệu</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ===== CHẤT LIỆU ===== -->
+                    <div class="tab-pane fade" id="tab-chat-lieu">
+                        <div class="add-attr-bar d-flex gap-2 align-items-center">
+                            <input type="text" id="inp-chat-lieu" class="form-control rounded-pill border-1" placeholder="Nhập chất liệu... (VD: Da thật, Canvas, Vải lưới)" style="max-width:350px;">
+                            <button class="btn btn-add-customer rounded-pill px-4 text-white border-0"
+                                onclick="addAttr('chat-lieu', 'inp-chat-lieu')">
+                                <i class="bi bi-plus-lg me-1"></i> Thêm
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0">
+                                <thead class="bg-light text-muted small text-uppercase fw-bold">
+                                    <tr>
+                                        <th class="ps-3 py-3" style="width:60px">STT</th>
+                                        <th class="py-3">Chất liệu</th>
+                                        <th class="py-3 text-center" style="width:140px">Trạng thái</th>
+                                        <th class="py-3 text-center" style="width:140px">Thao tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="c, stat : ${listChatLieu}" class="attr-row border-bottom">
+                                        <td class="ps-3 text-muted small" th:text="${stat.count}">1</td>
+                                        <td>
+                                            <span class="fw-medium attr-label" th:text="${c.tenChatLieu}">Da thật</span>
+                                            <input type="text" class="form-control form-control-sm inline-edit-input d-none attr-edit-input" th:value="${c.tenChatLieu}">
+                                        </td>
+                                        <td class="text-center">
+                                            <span th:if="${c.xoaMem == false || c.xoaMem == null}" class="attr-badge-active">Hoạt động</span>
+                                            <span th:if="${c.xoaMem == true}" class="attr-badge-inactive">Ngừng</span>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <button class="btn btn-sm btn-icon rounded-circle" onclick="toggleEdit(this)" th:data-id="${c.id}" data-type="chat-lieu"><i class="bi bi-pencil-square"></i></button>
+                                                <button class="btn btn-sm btn-icon rounded-circle" onclick="toggleStatus(this)" th:data-id="${c.id}" data-type="chat-lieu"><i class="bi bi-arrow-repeat"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(listChatLieu)}">
+                                        <td colspan="4" class="text-center py-4 text-muted"><i class="bi bi-inbox me-2"></i>Chưa có dữ liệu</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div><!-- end tab-content -->
+            </div><!-- end card -->
+        </div>
+
+        <div th:replace="~{admin/fragments/scripts :: common_scripts}"></div>
+        <script>
+            // Thêm thuộc tính mới
+            async function addAttr(type, inputId) {
+                const inp = document.getElementById(inputId);
+                const ten = inp.value.trim();
+                if (!ten) { inp.focus(); inp.classList.add('is-invalid'); setTimeout(() => inp.classList.remove('is-invalid'), 1500); return; }
+
+                const params = new URLSearchParams({ ten });
+                const res = await fetch(`/admin/thuoc-tinh/${type}/add`, { method: 'POST', headers: getCsrfHeaders(), body: params });
+                const data = await res.json();
+                if (data.success) {
+                    inp.value = '';
+                    Swal.fire({ icon: 'success', title: 'Đã thêm!', text: data.message, timer: 1200, showConfirmButton: false })
+                        .then(() => location.reload());
+                } else {
+                    Swal.fire('Lỗi', data.message || 'Không thể thêm!', 'error');
+                }
+            }
+
+            // Cho phép nhấn Enter để thêm
+            document.querySelectorAll('[id^="inp-"]').forEach(inp => {
+                inp.addEventListener('keydown', e => {
+                    if (e.key === 'Enter') {
+                        const type = inp.id.replace('inp-', '');
+                        addAttr(type, inp.id);
+                    }
+                });
+            });
+
+            // Đổi trạng thái
+            async function toggleStatus(btn) {
+                const id = btn.dataset.id;
+                const type = btn.dataset.type;
+                const res = await csrfPost(`/admin/thuoc-tinh/${type}/toggle/${id}`);
+                const data = await res.json();
+                if (data.success) location.reload();
+                else Swal.fire('Lỗi', 'Không thể cập nhật trạng thái!', 'error');
+            }
+
+            // Inline edit (sửa tên)
+            function toggleEdit(btn) {
+                const row = btn.closest('tr');
+                const label = row.querySelector('.attr-label');
+                const input = row.querySelector('.attr-edit-input');
+                const isEditing = !input.classList.contains('d-none');
+
+                if (isEditing) {
+                    // Đang sửa → Save
+                    const newVal = input.value.trim();
+                    if (!newVal) return;
+                    const id = btn.dataset.id;
+                    const type = btn.dataset.type;
+                    const params = new URLSearchParams({ ten: newVal });
+                    fetch(`/admin/thuoc-tinh/${type}/update/${id}`, {
+                        method: 'PUT',
+                        headers: getCsrfHeaders(),
+                        body: params
+                    })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.success) {
+                                label.textContent = newVal;
+                                label.classList.remove('d-none');
+                                input.classList.add('d-none');
+                                btn.querySelector('i').className = 'bi bi-pencil-square';
+                                btn.title = 'Sửa';
+                            } else Swal.fire('Lỗi', 'Không thể cập nhật!', 'error');
+                        });
+                } else {
+                    // Chưa sửa → Mở edit
+                    label.classList.add('d-none');
+                    input.classList.remove('d-none');
+                    input.focus();
+                    input.select();
+                    btn.querySelector('i').className = 'bi bi-check-lg text-success';
+                    btn.title = 'Lưu';
+                    // Enter để save
+                    input.onkeydown = (e) => { if (e.key === 'Enter') toggleEdit(btn); };
+                }
+            }
+        </script>
+    </main>
+</body>
+
+</html>

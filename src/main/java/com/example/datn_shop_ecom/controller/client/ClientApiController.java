@@ -179,7 +179,7 @@ public class ClientApiController {
             return ResponseEntity.ok(resp);
         }
 
-        if (khId != null && hoaDonRepository.existsByKhachHangIdAndIdPhieuGiamGia(khId, voucher.getId())) {
+        if (khId != null && hoaDonRepository.existsByKhachHangIdAndPhieuGiamGiaId(khId, voucher.getId())) {
             resp.put("success", false);
             resp.put("message", "Bạn đã sử dụng mã giảm giá này cho đơn hàng khác rồi!");
             return ResponseEntity.ok(resp);
@@ -368,6 +368,8 @@ public class ClientApiController {
     @SuppressWarnings("unchecked")
     public ResponseEntity<?> checkout(@RequestBody Map<String, Object> body) {
         try {
+            if (body.get("khachHangId") == null) return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Thiếu ID khách hàng"));
+            
             Long khId = Long.valueOf(body.get("khachHangId").toString());
             String ten = (String) body.get("tenNguoiNhan");
             String sdt = (String) body.get("soDienThoai");
@@ -375,9 +377,8 @@ public class ClientApiController {
             String qh = (String) body.get("quanHuyen");
             String xp = (String) body.get("xaPhuong");
             String ct = (String) body.get("chiTiet");
-            Double tongTien = Double.valueOf(body.get("tongTien").toString());
-            Double phiShip = Double.valueOf(body.get("phiShip").toString());
-            Long voucherId = body.get("idPhieuGiamGia") != null ? Long.valueOf(body.get("idPhieuGiamGia").toString()) : null;
+            Double phiShip = body.get("phiShip") != null ? Double.valueOf(body.get("phiShip").toString()) : 0.0;
+            Long voucherId = body.get("idPhieuGiamGia") != null && !body.get("idPhieuGiamGia").toString().isEmpty() ? Long.valueOf(body.get("idPhieuGiamGia").toString()) : null;
             List<Map<String, Object>> items = (List<Map<String, Object>>) body.get("cartItems");
 
             // Calculate subtotal from items to ensure accuracy
@@ -407,19 +408,20 @@ public class ClientApiController {
             hd.setTrangThaiHoaDon("CHO_XAC_NHAN");
             hd.setLoaiHoaDon("Giao hàng");
             hd.setPhuongThucThanhToan("Thanh toán bằng tiền mặt");
-            hd.setIdPhieuGiamGia(voucherId);
             
             java.math.BigDecimal discountAmount = java.math.BigDecimal.ZERO;
             // Xử lý Voucher trước khi lưu hóa đơn
             if (voucherId != null) {
                 // 1. Kiểm tra xem khách hàng đã dùng mã này chưa
-                if (hoaDonRepository.existsByKhachHangIdAndIdPhieuGiamGia(khId, voucherId)) {
+                if (hoaDonRepository.existsByKhachHangIdAndPhieuGiamGiaId(khId, voucherId)) {
                     return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Bạn đã sử dụng mã giảm giá này cho đơn hàng trước đó rồi."));
                 }
 
                 Optional<PhieuGiamGia> vOpt = phieuGiamGiaRepository.findById(voucherId);
                 if (vOpt.isPresent()) {
                     PhieuGiamGia v = vOpt.get();
+                    hd.setPhieuGiamGia(v); // Gán thực thể voucher vào hóa đơn
+
                     // 2. Kiểm tra số lượng lượt dùng
                     if (v.getSoLuong() != null && v.getSoLuong() <= 0) {
                         return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Mã giảm giá này đã hết lượt sử dụng."));
