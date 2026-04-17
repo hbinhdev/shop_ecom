@@ -1,0 +1,114 @@
+[33mcommit 0fab917aaf6f09a1f3b2f707c90e7f6f19f7efb8[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: ngvansinh <hungbinh@gmail.com>
+Date:   Fri Apr 17 10:47:40 2026 +0700
+
+    fix ui
+
+[1mdiff --git a/.idea/dataSources.local.xml b/.idea/dataSources.local.xml[m
+[1mindex 368469b..dd02ee4 100644[m
+[1m--- a/.idea/dataSources.local.xml[m
+[1m+++ b/.idea/dataSources.local.xml[m
+[36m@@ -1,6 +1,6 @@[m
+ <?xml version="1.0" encoding="UTF-8"?>[m
+ <project version="4">[m
+[31m-  <component name="dataSourceStorageLocal" created-in="IU-243.26574.91">[m
+[32m+[m[32m  <component name="dataSourceStorageLocal" created-in="IU-253.32098.37">[m
+     <data-source name="peak_sneaker_2@localhost" uuid="d407099b-4ffa-44ac-9dfb-b9292da78dd6">[m
+       <database-info product="Microsoft SQL Server" version="16.00.1000" jdbc-version="4.3" driver-name="Microsoft JDBC Driver 13.2 for SQL Server" driver-version="13.2.1.0" dbms="MSSQL" exact-version="16.0.1000" exact-driver-version="13.2">[m
+         <extra-name-characters>$#@</extra-name-characters>[m
+[1mdiff --git a/.idea/dataSources/d407099b-4ffa-44ac-9dfb-b9292da78dd6.xml b/.idea/dataSources/d407099b-4ffa-44ac-9dfb-b9292da78dd6.xml[m
+[1mindex 578dba3..fdc7964 100644[m
+[1m--- a/.idea/dataSources/d407099b-4ffa-44ac-9dfb-b9292da78dd6.xml[m
+[1m+++ b/.idea/dataSources/d407099b-4ffa-44ac-9dfb-b9292da78dd6.xml[m
+[36m@@ -1,6 +1,6 @@[m
+ <?xml version="1.0" encoding="UTF-8"?>[m
+ <dataSource name="peak_sneaker_2@localhost">[m
+[31m-  <database-model serializer="dbm" dbms="MSSQL" family-id="MSSQL" format-version="4.53">[m
+[32m+[m[32m  <database-model serializer="dbm" dbms="MSSQL" family-id="MSSQL" format-version="4.54">[m
+     <root id="1">[m
+       <Grants>2|||2|connect|G[m
+ 3|||2|connect|G[m
+[1mdiff --git a/src/main/java/com/example/datn_shop_ecom/controller/SanPhamController.java b/src/main/java/com/example/datn_shop_ecom/controller/SanPhamController.java[m
+[1mindex c307441..0486d97 100644[m
+[1m--- a/src/main/java/com/example/datn_shop_ecom/controller/SanPhamController.java[m
+[1m+++ b/src/main/java/com/example/datn_shop_ecom/controller/SanPhamController.java[m
+[36m@@ -353,8 +353,20 @@[m [mpublic class SanPhamController {[m
+             @RequestParam(required = false) BigDecimal maxPrice,[m
+             @RequestParam(required = false) String trThai) {[m
+         [m
+[31m-        java.io.ByteArrayInputStream in = spctService.exportToExcel(search, idSanPham, idMauSac, idKichThuoc, minPrice, maxPrice, trThai);[m
+[32m+[m[32m//        java.io.ByteArrayInputStream in = spctService.exportToExcel(search, idSanPham, idMauSac, idKichThuoc, minPrice, maxPrice, trThai);[m
+[32m+[m[32m        java.io.ByteArrayInputStream in = spctService.exportToExcel([m
+[32m+[m[32m                search,      // 1[m
+[32m+[m[32m                idMauSac,    // 2[m
+[32m+[m[32m                idKichThuoc, // 3[m
+[32m+[m[32m                minPrice,    // 4[m
+[32m+[m[32m                maxPrice,    // 5[m
+[32m+[m[32m                trThai,      // 6[m
+[32m+[m[32m                idSanPham,   // 7[m
+[32m+[m[32m                null,        // 8 (idThuongHieu - nếu không có thì để null)[m
+[32m+[m[32m                null         // 9 (idDanhMuc - nếu không có thì để null)[m
+[32m+[m[32m        );[m
+         org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();[m
+[32m+[m
+         headers.add("Content-Disposition", "attachment; filename=bien_the_san_pham.xlsx");[m
+ [m
+         return ResponseEntity.ok()[m
+[1mdiff --git a/src/main/java/com/example/datn_shop_ecom/repository/KhachHangRepository.java b/src/main/java/com/example/datn_shop_ecom/repository/KhachHangRepository.java[m
+[1mindex 3fbdcfd..f9b842a 100644[m
+[1m--- a/src/main/java/com/example/datn_shop_ecom/repository/KhachHangRepository.java[m
+[1m+++ b/src/main/java/com/example/datn_shop_ecom/repository/KhachHangRepository.java[m
+[36m@@ -10,47 +10,52 @@[m [mimport java.util.Optional;[m
+ [m
+ @Repository[m
+ public interface KhachHangRepository extends JpaRepository<KhachHang, Long> {[m
+[31m-    @Query("SELECT k FROM KhachHang k " + [m
+[31m-           "WHERE (:search IS NULL OR k.maKhachHang LIKE %:search% " +[m
+[31m-           "OR k.tenDayDu LIKE %:search% " +[m
+[31m-           "OR k.email LIKE %:search% OR k.soDienThoai LIKE %:search%) " +[m
+[31m-           "AND (:gioiTinh IS NULL OR k.gioiTinh = :gioiTinh) " +[m
+[31m-           "AND (:xoaMem IS NULL OR k.xoaMem = :xoaMem)")[m
+[31m-    org.springframework.data.domain.Page<KhachHang> findByFiltersPage(@Param("search") String search, [m
+[31m-                                                                    @Param("gioiTinh") String gioiTinh, [m
+[31m-                                                                    @Param("xoaMem") Boolean xoaMem,[m
+[31m-                                                                    org.springframework.data.domain.Pageable pageable);[m
+[31m-[m
+[31m-    @Query("SELECT k FROM KhachHang k LEFT JOIN FETCH k.danhSachDiaChi " +[m
+[31m-           "WHERE (:search IS NULL OR k.maKhachHang LIKE %:search% " +[m
+[31m-           "OR k.tenDayDu LIKE %:search% " +[m
+[31m-           "OR k.email LIKE %:search% OR k.soDienThoai LIKE %:search%) " +[m
+[31m-           "AND (:gioiTinh IS NULL OR k.gioiTinh = :gioiTinh) " +[m
+[31m-           "AND (:xoaMem IS NULL OR k.xoaMem = :xoaMem)")[m
+[31m-    java.util.List<KhachHang> findByFilters(@org.springframework.data.repository.query.Param("search") String search, [m
+[31m-                                            @org.springframework.data.repository.query.Param("gioiTinh") String gioiTinh, [m
+[31m-                                            @org.springframework.data.repository.query.Param("xoaMem") Boolean xoaMem);[m
+[31m-[m
+[31m-    java.util.List<KhachHang> findAllByXoaMemFalse();[m
+[31m-    Optional<KhachHang> findByMaKhachHang(String maKhachHang);[m
+[31m-    Optional<KhachHang> findByEmail(String email);[m
+[31m-    Optional<KhachHang> findBySoDienThoai(String soDienThoai);[m
+[31m-    boolean existsByEmail(String email);[m
+[31m-    boolean existsBySoDienThoai(String soDienThoai);[m
+[31m-[m
+[31m-    // POS: tìm nhanh khách hàng theo tên / SĐT (chỉ lấy đang hoạt động)[m
+[31m-    @Query("SELECT k FROM KhachHang k WHERE k.xoaMem = false " +[m
+[31m-           "AND (:kw IS NULL OR :kw = '' OR " +[m
+[31m-           "  LOWER(k.tenDayDu)    LIKE LOWER(CONCAT('%',:kw,'%')) OR " +[m
+[31m-           "  k.soDienThoai        LIKE CONCAT('%',:kw,'%'))")[m
+[31m-    java.util.List<KhachHang> searchForPOS(@Param("kw") String keyword,[m
+[31m-                                           org.springframework.data.domain.Pageable pageable);[m
+[31m-[m
+[31m-    boolean existsBySoDienThoai(String soDienThoai);[m
+[31m-[m
+[31m-    @org.springframework.data.jpa.repository.Modifying(clearAutomatically = true, flushAutomatically = true)[m
+[31m-    @org.springframework.transaction.annotation.Transactional[m
+[31m-    @org.springframework.data.jpa.repository.Query("UPDATE KhachHang k SET k.xoaMem = :xoaMem, k.ngaySuaCuoi = CURRENT_TIMESTAMP, k.nguoiSuaCuoi = 'Admin' WHERE k.id = :id")[m
+[31m-    void updateStatus(@org.springframework.data.repository.query.Param("id") Long id, @org.springframework.data.repository.query.Param("xoaMem") Boolean xoaMem);[m
+[32m+[m[32m       @Query("SELECT k FROM KhachHang k " +[m
+[32m+[m[32m                     "WHERE (:search IS NULL OR k.maKhachHang LIKE %:search% " +[m
+[32m+[m[32m                     "OR k.tenDayDu LIKE %:search% " +[m
+[32m+[m[32m                     "OR k.email LIKE %:search% OR k.soDienThoai LIKE %:search%) " +[m
+[32m+[m[32m                     "AND (:gioiTinh IS NULL OR k.gioiTinh = :gioiTinh) " +[m
+[32m+[m[32m                     "AND (:xoaMem IS NULL OR k.xoaMem = :xoaMem)")[m
+[32m+[m[32m       org.springframework.data.domain.Page<KhachHang> findByFiltersPage(@Param("search") String search,[m
+[32m+[m[32m                     @Param("gioiTinh") String gioiTinh
