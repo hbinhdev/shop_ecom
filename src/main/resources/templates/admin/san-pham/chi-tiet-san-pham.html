@@ -418,15 +418,15 @@
                 <table class="table align-middle m-0" id="variantGroupTable">
                     <thead class="bg-light text-muted small text-uppercase">
                         <tr>
-<th class="ps-4 py-3" style="width: 50px;">STT</th>
-                            <th class="py-3 text-center" style="width: 70px;">Ảnh</th>
-                            <th class="py-3" style="width: 130px;">Mã CTSP</th>
-                            <th class="py-3">Màu sắc</th>
-                            <th class="py-3" style="width: 90px;">Size</th>
+                            <th class="ps-4 py-3" style="width: 60px;">STT</th>
+                            <th class="py-3 text-center" style="width: 80px;">Ảnh</th>
+                            <th class="py-3" style="width: 140px;">Mã CTSP</th>
+                            <th class="py-3 text-center" style="width: 120px;">Màu sắc</th>
+                            <th class="py-3 text-center" style="width: 100px;">Size</th>
                             <th class="py-3 text-center" style="width: 100px;">Tồn kho</th>
-                            <th class="py-3 text-end" style="width: 140px;">Giá bán</th>
-                            <th class="py-3 text-center" style="width: 130px;">Trạng thái</th>
-                            <th class="text-center py-3 pe-4" style="width: 100px;">Thao tác</th>
+                            <th class="py-3 text-end" style="width: 160px;">Giá bán</th>
+                            <th class="py-3 text-center" style="width: 140px;">Trạng thái</th>
+                            <th class="text-center py-3 pe-4" style="width: 130px;">Thao tác</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -450,28 +450,18 @@
                                 </td>
                                 <td class="text-center">
                                     <div class="variant-img-wrapper rounded border overflow-hidden shadow-xs mx-auto"
-                                        style="width: 48px; height: 48px; background: #f8f9fa;">
+                                        style="width: 44px; height: 44px; background: #f8f9fa;">
                                         <img th:src="${v.duongDanAnh != null ? '/uploads/san-pham/' + v.duongDanAnh : 'https://placehold.co/100x100?text=SP'}"
                                             class="w-100 h-100 object-fit-cover" alt="SP"
                                             onerror="this.src='https://placehold.co/100x100?text=None'">
                                     </div>
                                 </td>
-                                <td class="small text-muted font-monospace" th:text="${v.maSanPham}">SP001</td>
-                                <td class="small fw-semibold text-dark" th:text="${v.maSanPhamChiTiet}">CTSP001</td>
-                                <td>
-                                    <span class="badge bg-dark-subtle text-dark font-monospace px-2 py-1"
-                                        th:text="${v.maSanPhamChiTiet}">CTSP001</span>
+                                <td class="small font-monospace text-primary fw-bold" th:text="${v.maSanPhamChiTiet}">CTSP001</td>
+                                <td class="text-center">
+                                    <span class="badge bg-light text-dark border px-2 py-1" th:text="${v.mauSac}">Màu</span>
                                 </td>
-                                <td>
-                                    <div class="d-flex flex-column">
-                                        <span class="fw-medium text-dark" th:text="${v.tenSanPham}">Tên SP</span>
-                                        <div class="d-flex gap-2 mt-1">
-                                            <span class="badge bg-light text-dark border fw-normal"
-                                                th:text="'Màu: ' + ${v.mauSac}">Đỏ</span>
-                                            <span class="badge bg-light text-dark border fw-normal"
-                                                th:text="'Size: ' + ${v.kichThuoc}">42</span>
-                                        </div>
-                                    </div>
+                                <td class="text-center">
+                                    <span class="badge bg-light text-dark border px-2 py-1" th:text="${v.kichThuoc}">Size</span>
                                 </td>
                                 <td class="text-center">
                                     <span class="fw-bold fs-6"
@@ -479,7 +469,7 @@
                                         th:text="${v.soTonKho}">10</span>
                                 </td>
                                 <td class="text-end fw-bold text-danger"
-th:text="${v.giaBan != null ? #numbers.formatInteger(v.giaBan, 3, 'POINT') + ' ₫' : '0 ₫'}">
+                                    th:text="${v.giaBan != null ? #numbers.formatInteger(v.giaBan, 3, 'POINT') + ' ₫' : '0 ₫'}">
                                     1.200.000 ₫</td>
                                 <td class="text-center status-col">
                                     <span th:if="${v.trangThai == '1'}"
