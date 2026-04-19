@@ -14,9 +14,9 @@
             <div class="row g-4">
 
                 <!-- SIDEBAR BỘ LỌC -->
-                <aside class="col-lg-3">
-                    <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top" style="top: 100px;">
-                        <h5 class="fw-bold mb-4 border-bottom pb-2 text-primary">BỘ LỌC</h5>
+                <aside class="col-lg-2">
+                    <div class="card border-0 shadow-sm rounded-4 p-3 sticky-top" style="top: 100px;">
+                        <h5 class="fw-bold mb-3 border-bottom pb-2 text-primary" style="font-size: 1.1rem;">BỘ LỌC</h5>
 
                         <!-- Tìm kiếm -->
                         <div class="mb-4">
@@ -123,7 +123,7 @@
                 </aside>
 
                 <!-- DANH SÁCH SẢN PHẨM -->
-                <div class="col-lg-9">
+                <div class="col-lg-10">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <span class="text-muted small">Hiển thị <span th:text="${products.size()}">0</span> sản
                             phẩm</span>
@@ -137,8 +137,8 @@
                         </select>
                     </div>
 
-                    <div class="row g-4">
-                        <div th:each="p : ${products}" class="col-6 col-md-4">
+                    <div class="row g-3">
+                        <div th:each="p : ${products}" class="col-6 col-md-4 col-lg-2">
                             <a th:href="@{'/san-pham/detail/' + ${p.id}}" class="text-decoration-none p-card-link">
                                 <div class="product-card h-100">
                                     <div class="product-img-wrapper"

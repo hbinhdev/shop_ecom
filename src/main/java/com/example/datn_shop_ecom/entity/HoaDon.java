@@ -69,6 +69,9 @@ public class HoaDon {
     @Column(name = "so_dien_thoai_nguoi_nhan", length = 15)
     private String soDienThoaiNguoiNhan;
 
+    @Column(name = "email_nguoi_nhan", length = 255)
+    private String emailNguoiNhan;
+
     @Column(name = "chi_tiet_nguoi_nhan", columnDefinition = "NVARCHAR(MAX)")
     private String chiTietNguoiNhan;
 

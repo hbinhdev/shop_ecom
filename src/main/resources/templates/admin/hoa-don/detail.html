@@ -434,9 +434,9 @@
                                                 : (hd.khachHang != null ? hd.khachHang.soDienThoai : 'N/A')}"></span>
                                     </div>
                                     <div class="info-item" style="border: none;">
-                                        <span class="info-label">Email:</span>
+                                        <span class="info-label">Email nhận:</span>
                                         <span class="info-value"
-                                            th:text="${hd.khachHang != null ? hd.khachHang.email : 'N/A'}"></span>
+                                            th:text="${hd.emailNguoiNhan != null ? hd.emailNguoiNhan : (hd.khachHang != null ? hd.khachHang.email : 'N/A')}"></span>
                                     </div>
                                 </div>
                             </div>
@@ -492,6 +492,7 @@
                                     <thead>
                                         <tr>
                                             <th>STT</th>
+                                            <th>Ảnh</th>
                                             <th>Sản phẩm</th>
                                             <th>Phân loại</th>
                                             <th class="text-center">Số lượng</th>
@@ -502,6 +503,11 @@
                                     <tbody>
                                         <tr th:each="ct, iter : ${listChiTiet}">
                                             <td th:text="${iter.count}"></td>
+                                            <td>
+                                                <img th:with="displayImg=${ct.sanPhamChiTiet.duongDanAnh != null ? ct.sanPhamChiTiet.duongDanAnh : (ct.sanPhamChiTiet.sanPham != null ? ct.sanPhamChiTiet.sanPham.duongDanAnh : null)}"
+                                                     th:src="${displayImg != null ? (displayImg.startsWith('http') ? displayImg : '/uploads/san-pham/' + displayImg) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=60'}" 
+                                                     class="rounded-3" style="width: 50px; height: 50px; object-fit: cover; border: 1px solid #eee;">
+                                            </td>
                                             <td>
                                                 <div class="fw-bold" th:text="${ct.sanPhamChiTiet.sanPham.tenSanPham}">
                                                 </div>

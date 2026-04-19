@@ -4,10 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="_csrf" th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <th:block th:if="${title != null}" th:replace="${title}"></th:block>
     <title th:if="${title == null}">Bagi Store - Admin</title>
+
+    <!-- CSRF Meta Tags (Only render if CSRF is enabled) -->
+    <meta th:if="${_csrf != null}" name="_csrf" th:content="${_csrf.token}" />
+    <meta th:if="${_csrf != null}" name="_csrf_header" th:content="${_csrf.headerName}" />
 
     <!-- Favicon -->
     <link rel="icon" th:href="@{/assets/images/logo.png}" type="image/png">
@@ -435,6 +437,25 @@
 
 
     <div th:replace="~{admin/fragments/scripts :: common_scripts}"></div>
+    
+    <script th:inline="javascript">
+        // Tự động đồng bộ Token vào localStorage cho các yêu cầu API
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const res = await fetch('/api/client/auth/get-token');
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data.token) {
+                        localStorage.setItem('adminToken', data.token);
+                        localStorage.setItem('token', data.token); // Đồng bộ cả key 'token' nếu cần
+                        console.log("--- [SYSTEM] Đã đồng bộ Token vào LocalStorage ---");
+                    }
+                }
+            } catch (e) {
+                console.error("Lỗi đồng bộ Token:", e);
+            }
+        });
+    </script>
 </body>
 
 </html>

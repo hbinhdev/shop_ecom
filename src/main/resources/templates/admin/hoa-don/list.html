@@ -576,17 +576,17 @@
         <td th:text="${hd.soDienThoaiNguoiNhan != null ? hd.soDienThoaiNguoiNhan : (hd.khachHang != null ? hd.khachHang.soDienThoai : 'N/A')}"></td>
 
         <td>
-            <span th:if="${hd.trangThaiHoaDon == 'CHO_THANH_TOAN'}" class="badge-custom badge-pending">Chờ thanh toán</span>
-            <span th:if="${hd.trangThaiHoaDon == 'DA_THANH_TOAN'}" class="badge-custom badge-complete">Đã thanh toán</span>
+            <span th:if="${hd.trangThaiHoaDon == 'CHO_THANH_TOAN'}" class="badge-custom badge-pending"><i class="bi bi-wallet2 me-1"></i>Chờ thanh toán</span>
+            <span th:if="${hd.trangThaiHoaDon == 'DA_THANH_TOAN'}" class="badge-custom badge-complete"><i class="bi bi-cash-coin me-1"></i>Đã thanh toán</span>
 
-            <span th:if="${hd.trangThaiHoaDon == '1' or hd.trangThaiHoaDon == 'CHO_XAC_NHAN'}" class="badge-custom badge-pending">Chờ xác nhận</span>
-            <span th:if="${hd.trangThaiHoaDon == '2' or hd.trangThaiHoaDon == 'DA_XAC_NHAN'}" class="badge-custom badge-shipping">Đã xác nhận</span>
-            <span th:if="${hd.trangThaiHoaDon == '3' or hd.trangThaiHoaDon == 'DANG_GIAO'}" class="badge-custom badge-shipping">Đang giao</span>
-            <span th:if="${hd.trangThaiHoaDon == '4' or hd.trangThaiHoaDon == 'DA_GIAO_HANG'}" class="badge-custom badge-shipping">Đã giao hàng</span>
-            <span th:if="${hd.trangThaiHoaDon == '5' or hd.trangThaiHoaDon == 'HOAN_THANH'}" class="badge-custom badge-complete">Hoàn thành</span>
-            <span th:if="${hd.trangThaiHoaDon == '6' or hd.trangThaiHoaDon == 'DA_HUY'}" class="badge-custom badge-cancel">Đã hủy</span>
-            <span th:if="${hd.trangThaiHoaDon == '7' or hd.trangThaiHoaDon == 'YEU_CAU_HUY'}" class="badge-custom badge-warning">Yêu cầu hủy</span>
-            <span th:if="${hd.trangThaiHoaDon == '8' or hd.trangThaiHoaDon == 'CAN_HOAN_PHI'}" class="badge-custom badge-info">Cần hoàn phí</span>
+            <span th:if="${hd.trangThaiHoaDon == '1' or hd.trangThaiHoaDon == 'CHO_XAC_NHAN'}" class="badge-custom badge-pending"><i class="bi bi-clock-history me-1"></i>Chờ xác nhận</span>
+            <span th:if="${hd.trangThaiHoaDon == '2' or hd.trangThaiHoaDon == 'DA_XAC_NHAN'}" class="badge-custom badge-shipping"><i class="bi bi-check2-all me-1"></i>Đã xác nhận</span>
+            <span th:if="${hd.trangThaiHoaDon == '3' or hd.trangThaiHoaDon == 'DANG_GIAO'}" class="badge-custom badge-shipping"><i class="bi bi-truck me-1"></i>Đang giao</span>
+            <span th:if="${hd.trangThaiHoaDon == '4' or hd.trangThaiHoaDon == 'DA_GIAO_HANG'}" class="badge-custom badge-shipping"><i class="bi bi-box-seam me-1"></i>Đã giao hàng</span>
+            <span th:if="${hd.trangThaiHoaDon == '5' or hd.trangThaiHoaDon == 'HOAN_THANH'}" class="badge-custom badge-complete"><i class="bi bi-check-circle-fill me-1"></i>Hoàn thành</span>
+            <span th:if="${hd.trangThaiHoaDon == '6' or hd.trangThaiHoaDon == 'DA_HUY'}" class="badge-custom badge-cancel"><i class="bi bi-x-circle me-1"></i>Đã hủy</span>
+            <span th:if="${hd.trangThaiHoaDon == '7' or hd.trangThaiHoaDon == 'YEU_CAU_HUY'}" class="badge-custom badge-warning"><i class="bi bi-exclamation-triangle me-1"></i>Yêu cầu hủy</span>
+            <span th:if="${hd.trangThaiHoaDon == '8' or hd.trangThaiHoaDon == 'CAN_HOAN_PHI'}" class="badge-custom badge-info"><i class="bi bi-arrow-return-left me-1"></i>Cần hoàn phí</span>
         </td>
 
         <td>

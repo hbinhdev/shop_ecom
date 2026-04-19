@@ -20,6 +20,11 @@ public class JwtTokenProvider {
 
     public String generateToken(Authentication authentication) {
         String username = authentication.getName();
+        // Lấy danh sách các quyền (roles) để lưu vào Token
+        java.util.List<String> roles = authentication.getAuthorities().stream()
+                .map(org.springframework.security.core.GrantedAuthority::getAuthority)
+                .toList();
+
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + appProperties.getJwtExpirationMs());
 
@@ -27,10 +32,22 @@ public class JwtTokenProvider {
 
         return Jwts.builder()
                 .setSubject(username)
+                .claim("roles", roles) // Lưu danh sách roles vào claim
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
+    }
+
+    public java.util.List<String> getRolesFromJWT(String token) {
+        SecretKey key = Keys.hmacShaKeyFor(appProperties.getJwtSecret().getBytes());
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return (java.util.List<String>) claims.get("roles");
     }
 
     public String getUsernameFromJWT(String token) {

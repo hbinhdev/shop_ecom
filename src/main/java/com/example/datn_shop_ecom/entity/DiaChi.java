@@ -19,6 +19,7 @@ public class DiaChi {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "khach_hang_id", nullable = false)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private KhachHang khachHang;
 
     @Column(name = "ten_nguoi_nhan", columnDefinition = "NVARCHAR(255)")

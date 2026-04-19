@@ -397,18 +397,17 @@
                     document.getElementById('rGhiChuRow').style.display = '';
                 }
 
-                // Status tag
                 const statusMap = {
-                    'CHO_XAC_NHAN': { cls: 'status-cho', icon: 'bi-clock', label: 'Chờ xác nhận' },
-                    'DA_XAC_NHAN': { cls: 'status-xac-nhan', icon: 'bi-check-circle', label: 'Đã xác nhận' },
+                    'CHO_XAC_NHAN': { cls: 'status-cho', icon: 'bi-clock-history', label: 'Chờ xác nhận' },
+                    'DA_XAC_NHAN': { cls: 'status-xac-nhan', icon: 'bi-check2-all', label: 'Đã xác nhận' },
                     'DANG_GIAO': { cls: 'status-giao', icon: 'bi-truck', label: 'Đang giao hàng' },
-                    'DA_GIAO': { cls: 'status-done', icon: 'bi-bag-check-fill', label: 'Giao thành công' },
-                    'HOAN_THANH': { cls: 'status-done', icon: 'bi-check2-circle', label: 'Hoàn thành' },
+                    'DA_GIAO_HANG': { cls: 'status-done', icon: 'bi-box-seam', label: 'Đã giao hàng' },
+                    'HOAN_THANH': { cls: 'status-done', icon: 'bi-check-circle-fill', label: 'Hoàn thành' },
                     'DA_HUY': { cls: 'status-huy', icon: 'bi-x-circle', label: 'Đã hủy' },
                 };
                 const st = statusMap[hd.trangThai] || { cls: 'status-cho', icon: 'bi-hourglass', label: hd.trangThai || '—' };
                 document.getElementById('rTrangThaiTag').className = 'status-tag ' + st.cls;
-                document.getElementById('rTrangThaiTag').innerHTML = `<i class="bi ${st.icon}"></i>${st.label}`;
+                document.getElementById('rTrangThaiTag').innerHTML = `<i class="bi ${st.icon} me-1"></i>${st.label}`;
 
                 // Timeline
                 const steps = [

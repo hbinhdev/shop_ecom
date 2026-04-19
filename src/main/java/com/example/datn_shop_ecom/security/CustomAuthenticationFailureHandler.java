@@ -33,6 +33,13 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         }
 
         String encoded = URLEncoder.encode(errorMessage, StandardCharsets.UTF_8);
-        response.sendRedirect("/login?error=" + encoded);
+        
+        // Kiểm tra xem là đăng nhập từ Admin hay Client để quay về đúng trang
+        String requestUri = request.getRequestURI();
+        if (requestUri.contains("/admin/login")) {
+            response.sendRedirect("/admin/login?error=" + encoded);
+        } else {
+            response.sendRedirect("/dang-nhap?error=" + encoded);
+        }
     }
 }
