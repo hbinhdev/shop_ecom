@@ -100,16 +100,20 @@ public class SecurityConfig {
             )
             .exceptionHandling(ex -> ex
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
-                    response.sendRedirect("/403");
+                    org.springframework.security.core.Authentication auth = 
+                        org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+                    
+                    // Nếu là Khách hàng lạc vào Admin, xóa Session và bắt Login lại
+                    if (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
+                        new org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler().logout(request, response, auth);
+                        response.sendRedirect("/admin/login?error=unauthorized_client");
+                    } else {
+                        response.sendRedirect("/403");
+                    }
                 })
             );
 
         return http.build();
-    }
-
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter();
     }
 
     // 2. Cấu hình bảo mật cho trang CLIENT
@@ -147,15 +151,15 @@ public class SecurityConfig {
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/dang-nhap?logout")
-                .deleteCookies("JSESSIONID", "client_token")
+                .deleteCookies("JSESSIONID")
                 .invalidateHttpSession(true)
                 .permitAll()
             )
             .sessionManagement(session -> session
-                .sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS)
-            )
-            .addFilterBefore(jwtAuthenticationFilter(), org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class);
+                .maximumSessions(1)
+                .expiredUrl("/dang-nhap?sessionExpired=true")
+            );
 
         return http.build();
     }
-}
+}
