@@ -284,6 +284,7 @@
 
             function createAddressHtml(a, i) {
                 const isDefault = a.diaChiMacDinh || i === 0;
+                const user = getUser();
                 
                 // Hàm chuẩn hóa để so sánh tên địa danh
                 const normalize = (str) => {
@@ -310,19 +311,23 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="label-co">Tên người nhận *</label>
-                            <input type="text" class="form-control rounded-pill co-input addr-name" value="${a.tenNguoiNhan || ''}" placeholder="Họ và tên">
+                            <input type="text" class="form-control rounded-pill co-input addr-name" 
+                                   value="${a.tenNguoiNhan || user?.hoTen || ''}" placeholder="Họ và tên">
                         </div>
                         <div class="col-md-6">
                             <label class="label-co">Số điện thoại *</label>
-                            <input type="text" class="form-control rounded-pill co-input addr-sdt" value="${a.soDienThoaiNguoiNhan || ''}" placeholder="0123...">
+                            <input type="text" class="form-control rounded-pill co-input addr-sdt" 
+                                   value="${a.soDienThoaiNguoiNhan || user?.soDienThoai || ''}" placeholder="0123...">
                         </div>
                         <div class="col-12">
-                            <label class="label-co">Sổ địa chỉ Email (Để nhận thông báo đơn hàng)</label>
-                            <input type="email" class="form-control rounded-pill co-input addr-email" value="${getUser()?.email || ''}" placeholder="email@example.com">
+                            <label class="label-co">Email nhận thông báo (Lấy từ tài khoản)</label>
+                            <input type="email" class="form-control rounded-pill co-input addr-email" 
+                                   value="${user?.email || ''}" placeholder="email@example.com">
                         </div>
                         <div class="col-12">
                             <label class="label-co">Số nhà / Đường *</label>
-                            <input type="text" class="form-control rounded-pill co-input addr-detail" value="${a.chiTiet || ''}" placeholder="Địa chỉ chi tiết">
+                            <input type="text" class="form-control rounded-pill co-input addr-detail" 
+                                   value="${a.chiTiet || ''}" placeholder="Địa chỉ chi tiết">
                         </div>
                         <div class="col-md-4">
                             <label class="label-co">Tỉnh/Thành *</label>
