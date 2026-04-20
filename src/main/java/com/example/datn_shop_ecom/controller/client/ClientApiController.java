@@ -382,7 +382,9 @@ public class ClientApiController {
             List<ChiTietHoaDon> details = chiTietHoaDonRepository.findByHoaDonId(h.getId());
             if (!details.isEmpty()) {
                 m.put("firstItemName", details.get(0).getSanPhamChiTiet().getSanPham().getTenSanPham());
-                m.put("firstItemImage", details.get(0).getSanPhamChiTiet().getDuongDanAnh());
+                String img = details.get(0).getSanPhamChiTiet().getDuongDanAnh();
+                if (img == null || img.isEmpty()) img = details.get(0).getSanPhamChiTiet().getSanPham().getDuongDanAnh();
+                m.put("firstItemImage", img);
                 m.put("totalItems", details.stream().mapToInt(ChiTietHoaDon::getSoLuong).sum());
                 m.put("otherItemsCount", details.size() - 1);
             }
@@ -408,7 +410,10 @@ public class ClientApiController {
             m.put("tenSanPham", ct.getSanPhamChiTiet().getSanPham().getTenSanPham());
             m.put("mauSac", ct.getSanPhamChiTiet().getMauSac().getTenMauSac());
             m.put("kichThuoc", ct.getSanPhamChiTiet().getKichThuoc().getTenKichThuoc());
-            m.put("soLuong", ct.getSoLuong()); m.put("gia", ct.getGia()); m.put("anh", ct.getSanPhamChiTiet().getDuongDanAnh());
+            m.put("soLuong", ct.getSoLuong()); m.put("gia", ct.getGia()); 
+            String img = ct.getSanPhamChiTiet().getDuongDanAnh();
+            if (img == null || img.isEmpty()) img = ct.getSanPhamChiTiet().getSanPham().getDuongDanAnh();
+            m.put("anh", img);
             return m;
         }).toList());
         return ResponseEntity.ok(resp);
@@ -419,11 +424,40 @@ public class ClientApiController {
         String cleanMa = maHoaDon.replace(": #", "").replace("#", "").trim();
         Optional<HoaDon> opt = hoaDonRepository.findByMaHoaDon(cleanMa);
         if (opt.isEmpty()) return ResponseEntity.ok(Map.of("success", false, "message", "Không tìm thấy hóa đơn"));
+        
         HoaDon hd = opt.get();
         Map<String, Object> hdMap = new HashMap<>();
-        hdMap.put("maHoaDon", hd.getMaHoaDon()); hdMap.put("tenNguoiNhan", hd.getTenNguoiNhan());
-        hdMap.put("tongTienAfterGiam", hd.getTongTienAfterGiam()); hdMap.put("trangThai", hd.getTrangThaiHoaDon());
-        hdMap.put("chiTietSanPham", chiTietHoaDonRepository.findByHoaDonId(hd.getId()).stream().map(ct -> Map.of("tenSanPham", ct.getSanPhamChiTiet().getSanPham().getTenSanPham(), "soLuong", ct.getSoLuong(), "gia", ct.getGia())).toList());
+        hdMap.put("id", hd.getId());
+        hdMap.put("maHoaDon", hd.getMaHoaDon());
+        hdMap.put("ngayDatHang", hd.getNgayDatHang() != null ? hd.getNgayDatHang() : hd.getNgayTao());
+        hdMap.put("tenNguoiNhan", hd.getTenNguoiNhan());
+        hdMap.put("soDienThoaiNguoiNhan", hd.getSoDienThoaiNguoiNhan());
+        hdMap.put("emailNguoiNhan", hd.getEmailNguoiNhan());
+        hdMap.put("diaChiGiao", String.format("%s, %s, %s, %s", hd.getChiTietNguoiNhan(), hd.getXaPhuong(), hd.getQuanHuyen(), hd.getTinhThanhPho()));
+        hdMap.put("tongTien", hd.getTongTien());
+        hdMap.put("phiShip", hd.getTienVanChuyen());
+        hdMap.put("tienVanChuyen", hd.getTienVanChuyen());
+        hdMap.put("tienPhieuGiamGia", hd.getTienPhieuGiamGia());
+        hdMap.put("tongTienAfterGiam", hd.getTongTienAfterGiam());
+        hdMap.put("trangThai", hd.getTrangThaiHoaDon());
+        hdMap.put("phuongThucThanhToan", hd.getPhuongThucThanhToan());
+        hdMap.put("ghiChu", hd.getMoTa());
+        
+        List<Map<String, Object>> items = chiTietHoaDonRepository.findByHoaDonId(hd.getId()).stream().map(ct -> {
+            Map<String, Object> m = new HashMap<>();
+            m.put("tenSanPham", ct.getSanPhamChiTiet().getSanPham().getTenSanPham());
+            m.put("mauSac", ct.getSanPhamChiTiet().getMauSac().getTenMauSac());
+            m.put("kichThuoc", ct.getSanPhamChiTiet().getKichThuoc().getTenKichThuoc());
+            m.put("soLuong", ct.getSoLuong());
+            m.put("gia", ct.getGia());
+            String img = ct.getSanPhamChiTiet().getDuongDanAnh();
+            if (img == null || img.isEmpty()) img = ct.getSanPhamChiTiet().getSanPham().getDuongDanAnh();
+            m.put("duongDanAnh", img);
+            m.put("thanhTien", ct.getThanhTien());
+            return m;
+        }).toList();
+        hdMap.put("chiTietSanPham", items);
+        
         return ResponseEntity.ok(Map.of("success", true, "hoaDon", hdMap));
     }
 
