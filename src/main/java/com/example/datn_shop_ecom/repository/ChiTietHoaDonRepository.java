@@ -39,7 +39,7 @@ public interface ChiTietHoaDonRepository extends JpaRepository<ChiTietHoaDon, Lo
                    "AND hd.ngay_tao >= :fromDate AND hd.ngay_tao < :toDate " +
                    "GROUP BY spct.id, sp.ten_san_pham, ms.ten_mau_sac, kt.ten_kich_thuoc, " +
                    "spct.ma_san_pham_chi_tiet, spct.duong_dan_anh " +
-                   "ORDER BY SUM(ct.so_luong) DESC", nativeQuery = true)
+                   "ORDER BY soLuongBan DESC", nativeQuery = true)
     List<Object[]> findTopSanPhamBanChay(@Param("fromDate") LocalDateTime fromDate,
                                           @Param("toDate") LocalDateTime toDate);
 
