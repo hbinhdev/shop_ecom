@@ -182,9 +182,10 @@
                 }
 
                 // Load tỉnh thành sẵn
-                const resP = await fetch('/api/client/provinces');
-                provinces = await resP.json();
-                console.log("DEBUG: Danh sách tỉnh thành nạp được:", provinces);
+                try {
+                    const resP = await fetch('/api/client/provinces');
+                    if (resP.ok) provinces = await resP.json();
+                } catch (e) { console.error("DEBUG: Lỗi nạp tỉnh thành:", e); }
 
                 // Load sản phẩm
                 try {
@@ -198,18 +199,15 @@
 
                 // Load địa chỉ từ DB
                 try {
-                    console.log("DEBUG: Đang gọi API lấy Profile cho User ID:", user.id);
                     const rProfile = await fetch(`/api/client/profile/${user.id}`);
                     if (rProfile.ok) {
                         const freshUser = await rProfile.json();
-                        console.log("DEBUG: Dữ liệu Profile nhận được:", freshUser);
-                        console.log("DEBUG: Danh sách địa chỉ:", freshUser.danhSachDiaChi);
                         renderAddressInputs(freshUser.danhSachDiaChi || []);
                     } else {
-                        console.error("DEBUG: API Profile trả về lỗi:", rProfile.status);
+                        renderAddressInputs([]); 
                     }
                 } catch (e) { 
-                    console.error("DEBUG: Lỗi fetch Profile:", e);
+                    renderAddressInputs([]); 
                 }
 
                 // Auto apply best voucher
@@ -286,6 +284,15 @@
 
             function createAddressHtml(a, i) {
                 const isDefault = a.diaChiMacDinh || i === 0;
+                
+                // Hàm chuẩn hóa để so sánh tên địa danh
+                const normalize = (str) => {
+                    if (!str) return "";
+                    return str.toLowerCase()
+                        .replace(/^(tỉnh|thành phố|thành phố trực thuộc trung ương|huyện|quận|thị xã|phường|xã|thị trấn)\s+/g, "")
+                        .trim();
+                };
+
                 return `
                 <div class="addr-item card rounded-4 p-4 mb-4 ${isDefault ? 'selected' : ''}" id="addr-block-${i}">
                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -321,7 +328,10 @@
                             <label class="label-co">Tỉnh/Thành *</label>
                             <select class="form-select rounded-pill co-input addr-city" onchange="citySelectChange(${i})">
                                 <option value="">-- Chọn --</option>
-                                ${provinces.map(p => `<option value="${p.code}" ${p.name === a.tinhThanhPho ? 'selected' : ''}>${p.name}</option>`).join('')}
+                                ${provinces.map(p => {
+                                    const isSel = normalize(p.name) === normalize(a.tinhThanhPho);
+                                    return `<option value="${p.code}" ${isSel ? 'selected' : ''}>${p.name}</option>`;
+                                }).join('')}
                             </select>
                         </div>
                         <div class="col-md-4">
@@ -375,21 +385,33 @@
                 const distSel = block.querySelector('.addr-dist');
                 const wardSel = block.querySelector('.addr-ward');
 
+                const normalize = (str) => {
+                    if (!str) return "";
+                    return str.toLowerCase()
+                        .replace(/^(tỉnh|thành phố|thành phố trực thuộc trung ương|huyện|quận|thị xã|phường|xã|thị trấn)\s+/g, "")
+                        .trim();
+                };
+
                 if (citySel.value) {
                     const resD = await fetch(`/api/client/districts/${citySel.value}`);
                     const dataD = await resD.json();
                     distSel.innerHTML = '<option value="">-- Chọn --</option>' +
-                        dataD.districts.map(d => `<option value="${d.code}" ${d.name === distSel.dataset.saved ? 'selected' : ''}>${d.name}</option>`).join('');
+                        dataD.districts.map(d => {
+                            const isSD = normalize(d.name) === normalize(distSel.dataset.saved);
+                            return `<option value="${d.code}" ${isSD ? 'selected' : ''}>${d.name}</option>`;
+                        }).join('');
 
                     if (distSel.value) {
                         const resW = await fetch(`/api/client/wards/${distSel.value}`);
                         const dataW = await resW.json();
                         wardSel.innerHTML = '<option value="">-- Chọn --</option>' +
-                            dataW.wards.map(w => `<option value="${w.name}" ${w.name === wardSel.dataset.saved ? 'selected' : ''}>${w.name}</option>`).join('');
+                            dataW.wards.map(w => {
+                                const isSW = normalize(w.name) === normalize(wardSel.dataset.saved);
+                                return `<option value="${w.name}" ${isSW ? 'selected' : ''}>${w.name}</option>`;
+                            }).join('');
                         
-                        // Nếu là địa chỉ được chọn mặc định lúc đầu, tính phí luôn
                         if (block.classList.contains('selected')) {
-                            updateShippingFee(citySel.options[citySel.selectedIndex]?.text, distSel.options[distSel.selectedIndex]?.text);
+                            updateShippingFee(citySel.options[citySel.selectedIndex]?.text, distSel.options[distSel.selectedIndex]?.text, wardSel.value);
                         }
                     }
                 }

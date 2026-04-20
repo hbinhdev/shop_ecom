@@ -32,18 +32,36 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
+    // --- PROVIDER CHO ADMIN ---
     @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
+    public DaoAuthenticationProvider adminProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
+        // Ép buộc chỉ tìm trong bảng NhanVien
+        provider.setUserDetailsService(email -> userDetailsService.loadNhanVienOnly(email));
         provider.setPasswordEncoder(passwordEncoder());
-        provider.setHideUserNotFoundExceptions(false); // Quan trọng: Để không giấu lỗi UsernameNotFoundException
+        provider.setHideUserNotFoundExceptions(false);
+        return provider;
+    }
+
+    // --- PROVIDER CHO CLIENT ---
+    @Bean
+    public DaoAuthenticationProvider clientProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        // Ép buộc chỉ tìm trong bảng KhachHang
+        provider.setUserDetailsService(email -> userDetailsService.loadKhachHangOnly(email));
+        provider.setPasswordEncoder(passwordEncoder());
+        provider.setHideUserNotFoundExceptions(false);
         return provider;
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
+    }
+
+    @Bean(name = "clientAuthenticationManager")
+    public AuthenticationManager clientAuthenticationManager() {
+        return new org.springframework.security.authentication.ProviderManager(clientProvider());
     }
 
     @Bean
@@ -58,11 +76,12 @@ public class SecurityConfig {
         http
             .securityMatcher("/admin/**")
             .csrf(csrf -> csrf.disable())
-            .authenticationProvider(authenticationProvider())
+            .authenticationProvider(adminProvider()) // Dùng bộ xác thực Admin
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/admin/login").permitAll()
-                .requestMatchers("/admin/nhan-vien/**", "/admin/thong-ke/**").hasRole("ADMIN")
-                .anyRequest().hasAnyRole("ADMIN", "EMPLOYEE")
+                // Nếu là Khách hàng (ROLE_USER) mà vào Admin thì bị chặn và bắt login lại
+                .requestMatchers("/admin/**").hasAnyRole("ADMIN", "EMPLOYEE")
+                .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/admin/login")
@@ -80,7 +99,20 @@ public class SecurityConfig {
                 .invalidateHttpSession(true)
                 .permitAll()
             )
-            .exceptionHandling(ex -> ex.accessDeniedPage("/403"));
+            .exceptionHandling(ex -> ex
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    org.springframework.security.core.Authentication auth = 
+                        org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+                    
+                    // Nếu là Khách hàng lạc vào Admin, xóa Session và bắt Login lại
+                    if (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
+                        new org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler().logout(request, response, auth);
+                        response.sendRedirect("/admin/login?error=unauthorized_client");
+                    } else {
+                        response.sendRedirect("/403");
+                    }
+                })
+            );
 
         return http.build();
     }
@@ -91,6 +123,7 @@ public class SecurityConfig {
     public SecurityFilterChain clientFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
+            .authenticationProvider(clientProvider()) // Dùng bộ xác thực Client
             .cors(cors -> cors.configurationSource(request -> {
                 var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
                 corsConfiguration.setAllowedOrigins(List.of("*"));
@@ -98,7 +131,6 @@ public class SecurityConfig {
                 corsConfiguration.setAllowedHeaders(List.of("*"));
                 return corsConfiguration;
             }))
-            .authenticationProvider(authenticationProvider())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
                     "/css/**", "/js/**", "/images/**", "/uploads/**", "/assets/**", "/vendor/**",
@@ -106,12 +138,11 @@ public class SecurityConfig {
                     "/dang-nhap", "/dang-ky", "/ve-chung-toi", "/phieu-giam-gia", "/tra-cuu", 
                     "/gio-hang", "/api/client/**", "/api/auth/**"
                 ).permitAll()
-                .requestMatchers("/thanh-toan/**", "/tai-khoan/**").authenticated()
                 .anyRequest().permitAll()
             )
             .formLogin(form -> form
                 .loginPage("/dang-nhap")
-                .loginProcessingUrl("/perform_login_client") // Đổi tên để không trùng với admin
+                .loginProcessingUrl("/perform_login_client")
                 .usernameParameter("email")
                 .passwordParameter("password")
                 .successHandler(successHandler)

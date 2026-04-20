@@ -111,11 +111,9 @@
                 transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             }
 
-            .status-step.completed .step-circle {
-                background: #00b894;
-                border-color: #e6f7ee;
-                color: white;
-            }
+            .status-step.completed.step-xac-nhan .step-circle { background: #2980b9; border-color: #eaf2ff; color: white; }
+            .status-step.completed.step-giao .step-circle { background: #8e44ad; border-color: #f3eaff; color: white; }
+            .status-step.completed.step-done .step-circle { background: #27ae60; border-color: #e6f7ee; color: white; }
 
             .status-step.active .step-circle {
                 background: #d47d32;
@@ -123,6 +121,17 @@
                 color: white;
                 transform: scale(1.1);
                 box-shadow: 0 0 0 5px rgba(212, 125, 50, 0.1);
+            }
+
+            .btn-delivery {
+                background: #8e44ad;
+                color: white;
+                border: none;
+            }
+            .btn-delivery:hover {
+                background: #763991;
+                color: white;
+                box-shadow: 0 4px 15px rgba(142, 68, 173, 0.3);
             }
 
             .step-label {
@@ -355,7 +364,7 @@
                                 <input type="hidden" name="id" th:value="${hd.id}">
                                 <input type="hidden" name="status" value="DANG_GIAO">
                                 <button type="submit"
-                                    class="btn btn-info text-white px-4 fw-bold rounded-pill shadow-sm">
+                                    class="btn btn-delivery px-4 fw-bold rounded-pill shadow-sm">
                                     <i class="bi bi-truck me-1"></i> Giao hàng
                                 </button>
                             </form>
@@ -387,13 +396,13 @@
                         <div class="step-label">Chờ xác nhận</div>
                     </div>
 
-                    <div class="status-step"
+                    <div class="status-step step-xac-nhan"
                         th:classappend="${#lists.contains({'2','3','4','DA_XAC_NHAN','DANG_GIAO','HOAN_THANH'}, hd.trangThaiHoaDon)} ? 'completed' : ''">
                         <div class="step-circle"><i class="bi bi-box-seam"></i></div>
                         <div class="step-label">Đã xác nhận</div>
                     </div>
 
-                    <div class="status-step"
+                    <div class="status-step step-giao"
                         th:classappend="${#lists.contains({'3','4','DANG_GIAO','HOAN_THANH'}, hd.trangThaiHoaDon)} ? 'completed' : ''">
                         <div class="step-circle"><i class="bi bi-truck"></i></div>
                         <div class="step-label">Đang giao</div>

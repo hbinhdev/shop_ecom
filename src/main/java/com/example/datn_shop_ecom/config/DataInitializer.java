@@ -42,23 +42,29 @@ public class DataInitializer implements CommandLineRunner {
             }
         });
 
-        // 2. Tạo tài khoản admin mặc định nếu chưa có
-        if (nhanVienRepository.findByEmail("admin@peaksneaker.com").isEmpty()) {
-            VaiTro admin = vaiTroRepository.findByMa("ROLE_ADMIN").orElseThrow();
-            nhanVienRepository.save(NhanVien.builder()
-                    .maNhanVien("NV000001")
-                    .tenDayDu("Quản trị viên")
-                    .email("admin@peaksneaker.com")
-                    .matKhau(passwordEncoder.encode("Admin@123"))
-                    .trangThai("Hoạt động")
-                    .vaiTro(admin)
-                    .xoaMem(false)
-                    .nguoiTao("system")
-                    .ngayTao(LocalDateTime.now())
-                    .build());
-            System.out.println("[DataInitializer] Đã tạo tài khoản admin mặc định");
-            System.out.println("  Email   : admin@peaksneaker.com");
-            System.out.println("  Password: Admin@123");
-        }
+        // 2. Tạo hoặc Cập nhật tài khoản admin mặc định
+        nhanVienRepository.findByEmail("admin@peaksneaker.com").ifPresentOrElse(
+            adminExist -> {
+                adminExist.setMatKhau(passwordEncoder.encode("Admin@123"));
+                adminExist.setTrangThai("Hoạt động");
+                nhanVienRepository.save(adminExist);
+                System.out.println("[DataInitializer] Đã cập nhật mật khẩu mới cho ADMIM: Admin@123");
+            },
+            () -> {
+                VaiTro adminRole = vaiTroRepository.findByMa("ROLE_ADMIN").orElseThrow();
+                nhanVienRepository.save(NhanVien.builder()
+                        .maNhanVien("NV000001")
+                        .tenDayDu("Quản trị viên")
+                        .email("admin@peaksneaker.com")
+                        .matKhau(passwordEncoder.encode("Admin@123"))
+                        .trangThai("Hoạt động")
+                        .vaiTro(adminRole)
+                        .xoaMem(false)
+                        .nguoiTao("system")
+                        .ngayTao(LocalDateTime.now())
+                        .build());
+                System.out.println("[DataInitializer] Đã tạo tài khoản admin mặc định mới: Admin@123");
+            }
+        );
     }
 }

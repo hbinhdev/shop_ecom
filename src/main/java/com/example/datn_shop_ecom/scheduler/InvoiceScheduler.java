@@ -21,7 +21,7 @@ public class InvoiceScheduler {
     /**
      * Tự động hủy toàn bộ các hóa đơn chờ tại quầy (POS) vào lúc 12h đêm hàng ngày.
      */
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void autoCancelPOSInvoices() {
         log.info("--- [SYSTEM] Bắt đầu quét và reset hóa đơn POS chờ thanh toán cuối ngày ---");

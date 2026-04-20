@@ -32,6 +32,8 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
             errorMessage = "Đăng nhập thất bại. Vui lòng thử lại";
         }
 
+        System.out.println("--- [FAILURE] Login failed: " + exception.getMessage());
+
         String encoded = URLEncoder.encode(errorMessage, StandardCharsets.UTF_8);
         
         // Kiểm tra xem là đăng nhập từ Admin hay Client để quay về đúng trang

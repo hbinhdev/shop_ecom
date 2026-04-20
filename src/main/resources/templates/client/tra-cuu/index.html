@@ -20,7 +20,9 @@
                     <!-- Search form -->
                     <div class="tracuu-card mb-4">
                         <div class="text-center mb-4">
-                            <div class="tracuu-icon mb-3"><i class="bi bi-search"></i></div>
+                            <div class="tracuu-icon mb-3" id="mainStatusIcon">
+                                <i class="bi bi-search"></i>
+                            </div>
                             <h2 class="fw-black mb-1">TRA CỨU ĐƠN HÀNG</h2>
                             <p class="text-muted small">Nhập mã hóa đơn để kiểm tra trạng thái đơn hàng</p>
                         </div>
@@ -75,7 +77,7 @@
                         <div class="row g-3 mb-4">
                             <div class="col-md-6">
                                 <div class="info-block">
-                                    <h6 class="fw-bold mb-3"><i class="bi bi-person-fill me-2 text-primary"></i>Người
+                                    <h6 class="fw-bold mb-3"><i class="bi bi-person-fill me-2 text-premium"></i>Người
                                         nhận</h6>
                                     <div class="info-row"><i class="bi bi-person"></i><span id="rTenNguoiNhan">—</span>
                                     </div>
@@ -89,7 +91,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="info-block">
-                                    <h6 class="fw-bold mb-3"><i class="bi bi-wallet2 me-2 text-primary"></i>Thanh toán
+                                    <h6 class="fw-bold mb-3"><i class="bi bi-wallet2 me-2 text-premium"></i>Thanh toán
                                     </h6>
                                     <div class="info-row"><i class="bi bi-cash"></i><span>Tiền mặt (COD)</span></div>
                                     <div class="info-row"><i class="bi bi-receipt"></i>
@@ -118,7 +120,7 @@
 
                         <!-- Products -->
                         <div class="tracuu-card">
-                            <h6 class="fw-bold mb-3"><i class="bi bi-bag me-2 text-primary"></i>Sản phẩm đặt hàng</h6>
+                            <h6 class="fw-bold mb-3"><i class="bi bi-bag me-2 text-premium"></i>Sản phẩm đặt hàng</h6>
                             <div id="rProductList"></div>
                         </div>
 
@@ -146,7 +148,15 @@
                 justify-content: center;
                 font-size: 1.8rem;
                 color: #d47d32;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
+
+            /* Màu sắc động cho Icon chính */
+            .tracuu-icon.icon-cho { color: #f39c12; background: rgba(241, 196, 15, 0.15); }
+            .tracuu-icon.icon-xac-nhan { color: #2980b9; background: rgba(52, 152, 219, 0.15); }
+            .tracuu-icon.icon-giao { color: #8e44ad; background: rgba(155, 89, 182, 0.15); }
+            .tracuu-icon.icon-done { color: #27ae60; background: rgba(39, 174, 96, 0.15); }
+            .tracuu-icon.icon-huy { color: #e74c3c; background: rgba(231, 76, 60, 0.15); }
 
             .search-group .form-control {
                 border-radius: 14px 0 0 14px;
@@ -207,6 +217,7 @@
                 box-shadow: 0 0 0 2px #e0e0e0;
                 position: relative;
                 z-index: 1;
+                transition: all 0.3s ease;
             }
 
             .timeline-step.done .timeline-dot {
@@ -215,23 +226,23 @@
                 box-shadow: 0 0 0 2px #27ae60;
             }
 
+            /* Màu sắc động cho từng trạng thái trên timeline */
+            .timeline-step.done.step-cho .timeline-dot { background: #f39c12; box-shadow: 0 0 0 2px #f39c12; }
+            .timeline-step.done.step-xac-nhan .timeline-dot { background: #2980b9; box-shadow: 0 0 0 2px #2980b9; }
+            .timeline-step.done.step-giao .timeline-dot { background: #8e44ad; box-shadow: 0 0 0 2px #8e44ad; }
+            .timeline-step.done.step-done .timeline-dot { background: #27ae60; box-shadow: 0 0 0 2px #27ae60; }
+
             .timeline-step.current .timeline-dot {
                 background: #d47d32;
                 color: white;
                 box-shadow: 0 0 0 2px #d47d32;
-                animation: pulse 1.5s infinite;
+                animation: pulse-dynamic 1.5s infinite;
             }
 
-            @keyframes pulse {
-
-                0%,
-                100% {
-                    box-shadow: 0 0 0 2px #d47d32;
-                }
-
-                50% {
-                    box-shadow: 0 0 0 6px rgba(212, 125, 50, 0.25);
-                }
+            @keyframes pulse-dynamic {
+                0% { box-shadow: 0 0 0 0px rgba(212, 125, 50, 0.4); }
+                70% { box-shadow: 0 0 0 10px rgba(212, 125, 50, 0); }
+                100% { box-shadow: 0 0 0 0px rgba(212, 125, 50, 0); }
             }
 
             .timeline-label {
@@ -240,13 +251,26 @@
                 color: #aaa;
             }
 
-            .timeline-step.done .timeline-label {
-                color: #27ae60;
-            }
+            .timeline-step.done.step-cho .timeline-label { color: #f39c12; }
+            .timeline-step.done.step-xac-nhan .timeline-label { color: #2980b9; }
+            .timeline-step.done.step-giao .timeline-label { color: #8e44ad; }
+            .timeline-step.done.step-done .timeline-label { color: #27ae60; }
 
-            .timeline-step.current .timeline-label {
-                color: #d47d32;
-            }
+            .timeline-step.current.step-cho .timeline-label { color: #f39c12; }
+            .timeline-step.current.step-xac-nhan .timeline-label { color: #2980b9; }
+            .timeline-step.current.step-giao .timeline-label { color: #8e44ad; }
+            .timeline-step.current.step-done .timeline-label { color: #27ae60; }
+            
+            /* Ghi đè màu pulse cho từng trạng thái */
+            .timeline-step.current.step-cho .timeline-dot { background: #f39c12; box-shadow: 0 0 0 2px #f39c12; animation-name: pulse-cho; }
+            .timeline-step.current.step-xac-nhan .timeline-dot { background: #2980b9; box-shadow: 0 0 0 2px #2980b9; animation-name: pulse-xac-nhan; }
+            .timeline-step.current.step-giao .timeline-dot { background: #8e44ad; box-shadow: 0 0 0 2px #8e44ad; animation-name: pulse-giao; }
+            .timeline-step.current.step-done .timeline-dot { background: #27ae60; box-shadow: 0 0 0 2px #27ae60; animation-name: pulse-done; }
+
+            @keyframes pulse-cho { 0% { box-shadow: 0 0 0 0px rgba(243, 156, 18, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(243, 156, 18, 0); } 100% { box-shadow: 0 0 0 0px rgba(243, 156, 18, 0); } }
+            @keyframes pulse-xac-nhan { 0% { box-shadow: 0 0 0 0px rgba(41, 128, 185, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(41, 128, 185, 0); } 100% { box-shadow: 0 0 0 0px rgba(41, 128, 185, 0); } }
+            @keyframes pulse-giao { 0% { box-shadow: 0 0 0 0px rgba(142, 68, 173, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(142, 68, 173, 0); } 100% { box-shadow: 0 0 0 0px rgba(142, 68, 173, 0); } }
+            @keyframes pulse-done { 0% { box-shadow: 0 0 0 0px rgba(39, 174, 96, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(39, 174, 96, 0); } 100% { box-shadow: 0 0 0 0px rgba(39, 174, 96, 0); } }
 
             /* Status tag */
             .status-tag {
@@ -400,7 +424,7 @@
                 const statusMap = {
                     'CHO_XAC_NHAN': { cls: 'status-cho', icon: 'bi-clock-history', label: 'Chờ xác nhận' },
                     'DA_XAC_NHAN': { cls: 'status-xac-nhan', icon: 'bi-check2-all', label: 'Đã xác nhận' },
-                    'DANG_GIAO': { cls: 'status-giao', icon: 'bi-truck', label: 'Đang giao hàng' },
+                    'DANG_GIAO': { cls: 'status-giao', icon: 'bi-truck', label: 'Đang giao' },
                     'DA_GIAO_HANG': { cls: 'status-done', icon: 'bi-box-seam', label: 'Đã giao hàng' },
                     'HOAN_THANH': { cls: 'status-done', icon: 'bi-check-circle-fill', label: 'Hoàn thành' },
                     'DA_HUY': { cls: 'status-huy', icon: 'bi-x-circle', label: 'Đã hủy' },
@@ -409,27 +433,49 @@
                 document.getElementById('rTrangThaiTag').className = 'status-tag ' + st.cls;
                 document.getElementById('rTrangThaiTag').innerHTML = `<i class="bi ${st.icon} me-1"></i>${st.label}`;
 
-                // Timeline
+                // Cập nhật Icon chính to ở phía trên
+                const mainIconDiv = document.getElementById('mainStatusIcon');
+                const iconMap = {
+                    'CHO_XAC_NHAN': { icon: 'bi-clock-history', cls: 'icon-cho' },
+                    'DA_XAC_NHAN': { icon: 'bi-check2-all', cls: 'icon-xac-nhan' },
+                    'DANG_GIAO': { icon: 'bi-truck', cls: 'icon-giao' },
+                    'DA_GIAO_HANG': { icon: 'bi-box-seam', cls: 'icon-done' },
+                    'HOAN_THANH': { icon: 'bi-check-circle-fill', cls: 'icon-done' },
+                    'DA_HUY': { icon: 'bi-x-circle', cls: 'icon-huy' },
+                };
+                const mi = iconMap[hd.trangThai] || { icon: 'bi-search', cls: '' };
+                mainIconDiv.className = 'tracuu-icon mb-3 ' + mi.cls;
+                mainIconDiv.innerHTML = `<i class="bi ${mi.icon}"></i>`;
+
+                // Timeline logic
                 const steps = [
-                    { key: 'CHO_XAC_NHAN', label: 'Đặt hàng', icon: 'bi-bag-plus' },
-                    { key: 'DA_XAC_NHAN', label: 'Xác nhận', icon: 'bi-check-circle' },
-                    { key: 'DANG_GIAO', label: 'Đang giao', icon: 'bi-truck' },
-                    { key: 'DA_GIAO||HOAN_THANH', label: 'Hoàn thành', icon: 'bi-bag-check' },
+                    { key: 'CHO_XAC_NHAN', label: 'Đặt hàng', icon: 'bi-bag-plus', cls: 'step-cho' },
+                    { key: 'DA_XAC_NHAN', label: 'Xác nhận', icon: 'bi-check-circle', cls: 'step-xac-nhan' },
+                    { key: 'DANG_GIAO', label: 'Đang giao', icon: 'bi-truck', cls: 'step-giao' },
+                    { key: 'DA_GIAO_HANG||HOAN_THANH', label: 'Hoàn thành', icon: 'bi-bag-check', cls: 'step-done' },
                 ];
-                const statusOrder = ['CHO_XAC_NHAN', 'DA_XAC_NHAN', 'DANG_GIAO', 'DA_GIAO', 'HOAN_THANH'];
-                const currentIdx = statusOrder.indexOf(hd.trangThai);
+                
+                // Map trạng thái thực tế sang index của timeline
+                const statusOrderMapping = {
+                    'CHO_XAC_NHAN': 0,
+                    'DA_XAC_NHAN': 1,
+                    'DANG_GIAO': 2,
+                    'DA_GIAO_HANG': 3,
+                    'HOAN_THANH': 3
+                };
+                const currentIdx = statusOrderMapping[hd.trangThai] ?? -1;
 
                 document.getElementById('rTimeline').innerHTML = steps.map((step, i) => {
-                    let cls = '';
-                    if (i < currentIdx + 1) cls = 'done';
-                    if (i === currentIdx) cls = 'current';
-                    if (i === currentIdx + 1 && i < steps.length) cls = 'current';
+                    let stateCls = '';
+                    if (i < currentIdx) stateCls = 'done ' + step.cls;
+                    else if (i === currentIdx) stateCls = 'current ' + step.cls;
+                    
                     return `
-                <div class="timeline-step ${cls}">
-                    <div class="timeline-dot"><i class="bi ${step.icon}"></i></div>
-                    <div class="timeline-label">${step.label}</div>
-                </div>
-            `;
+                        <div class="timeline-step ${stateCls}">
+                            <div class="timeline-dot"><i class="bi ${step.icon}"></i></div>
+                            <div class="timeline-label">${step.label}</div>
+                        </div>
+                    `;
                 }).join('');
 
                 // Products

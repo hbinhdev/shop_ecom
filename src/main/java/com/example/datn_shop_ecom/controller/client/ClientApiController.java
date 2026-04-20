@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import com.example.datn_shop_ecom.service.GioHangService;
+import com.example.datn_shop_ecom.service.EmailService;
 import com.example.datn_shop_ecom.service.GHNService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -56,13 +57,22 @@ public class ClientApiController {
     private GHNService ghnService;
 
     @Autowired
+    @org.springframework.beans.factory.annotation.Qualifier("clientAuthenticationManager")
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private EmailService emailService;
 
     @GetMapping("/auth/get-token")
     public ResponseEntity<?> getToken(Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
             String token = tokenProvider.generateToken(authentication);
-            return ResponseEntity.ok(Map.of("token", token));
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("token", token);
+            resp.put("username", authentication.getName());
+            resp.put("roles", authentication.getAuthorities().stream()
+                    .map(a -> a.getAuthority()).collect(java.util.stream.Collectors.toList()));
+            return ResponseEntity.ok(resp);
         }
         return ResponseEntity.status(401).body("Not authenticated");
     }
@@ -331,19 +341,26 @@ public class ClientApiController {
         return ResponseEntity.ok(Map.of("success", success, "errors", errors));
     }
 
-    @PostMapping("/place-order")
+    @PostMapping("/checkout")
     @SuppressWarnings("unchecked")
-    public ResponseEntity<?> placeOrder(@RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> checkout(@RequestBody Map<String, Object> body) {
+        System.out.println("--- [DEBUG CHECKOUT] Body: " + body);
         try {
-            Long khId = body.get("khId") != null ? Long.valueOf(body.get("khId").toString()) : null;
+            // Đồng bộ tên trường với Frontend (khachHangId, soDienThoai, idPhieuGiamGia)
+            Long khId = body.get("khachHangId") != null ? Long.valueOf(body.get("khachHangId").toString()) : null;
             String ten = (String) body.get("tenNguoiNhan");
-            String sdt = (String) body.get("soDienThoaiNguoiNhan");
+            String sdt = (String) body.get("soDienThoai");
             String ttp = (String) body.get("tinhThanhPho");
             String qh = (String) body.get("quanHuyen");
             String xp = (String) body.get("xaPhuong");
             String ct = (String) body.get("chiTiet");
-            double phiShip = Double.parseDouble(body.get("phiShip").toString());
-            Long voucherId = body.get("voucherId") != null ? Long.valueOf(body.get("voucherId").toString()) : null;
+            
+            double phiShip = 0;
+            if (body.get("phiShip") != null) {
+                phiShip = Double.parseDouble(body.get("phiShip").toString());
+            }
+            
+            Long voucherId = body.get("idPhieuGiamGia") != null ? Long.valueOf(body.get("idPhieuGiamGia").toString()) : null;
             List<Map<String, Object>> items = (List<Map<String, Object>>) body.get("cartItems");
 
             java.math.BigDecimal subTotal = java.math.BigDecimal.ZERO;
@@ -358,7 +375,9 @@ public class ClientApiController {
 
             HoaDon hd = new HoaDon();
             hd.setMaHoaDon("HD-" + System.currentTimeMillis());
-            hd.setKhachHang(khachHangRepository.findById(khId).orElse(null));
+            if (khId != null) {
+                hd.setKhachHang(khachHangRepository.findById(khId).orElse(null));
+            }
             hd.setTenNguoiNhan(ten);
             hd.setSoDienThoaiNguoiNhan(sdt);
             hd.setTinhThanhPho(ttp);
@@ -435,12 +454,33 @@ public class ClientApiController {
                 }
             }
 
+            // Xóa giỏ hàng
             if (khId != null) {
                 gioHangService.clearCart(khId);
             }
 
-            return ResponseEntity.ok(Map.of("success", true, "orderId", savedHd.getId()));
+            // --- GỬI EMAIL THÔNG BÁO ---
+            try {
+                String emailNhan = (String) body.get("email");
+                if (emailNhan != null && !emailNhan.isEmpty()) {
+                    String subject = "Xác nhận đơn hàng thành công - PeakSneaker " + savedHd.getMaHoaDon();
+                    String bodyMail = String.format(
+                        "Chào %s,\n\nĐơn hàng %s của bạn đã được hệ thống tiếp nhận thành công.\n" +
+                        "Tổng số tiền thanh toán: %s VNĐ.\n" +
+                        "Địa chỉ nhận hàng: %s, %s, %s, %s.\n\n" +
+                        "Cảm ơn bạn đã tin tưởng và mua sắm tại PeakSneaker!",
+                        ten, savedHd.getMaHoaDon(), savedHd.getTongTienAfterGiam(), ct, xp, qh, ttp
+                    );
+                    emailService.sendEmail(emailNhan, subject, bodyMail);
+                }
+            } catch (Exception e) {
+                System.err.println("Lỗi khi gửi email xác nhận: " + e.getMessage());
+                // Không return lỗi ở đây để tránh làm gián đoạn việc đặt hàng thành công
+            }
+
+            return ResponseEntity.ok(Map.of("success", true, "orderId", savedHd.getId(), "maHoaDon", savedHd.getMaHoaDon()));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.status(500).body(Map.of("success", false, "message", e.getMessage()));
         }
     }
@@ -459,7 +499,6 @@ public class ClientApiController {
             
             // Lấy danh sách địa chỉ của khách hàng
             List<DiaChi> diaChis = diaChiRepository.findByKhachHangId(khId);
-            System.out.println("DEBUG: Profile user " + khId + " co " + diaChis.size() + " dia chi.");
             map.put("danhSachDiaChi", diaChis);
             
             return ResponseEntity.ok(map);
@@ -535,6 +574,7 @@ public class ClientApiController {
             return ResponseEntity.status(500).body(e.getMessage());
         }
     }
+
     @GetMapping("/shipping-fee")
     public ResponseEntity<?> getShippingFee(@RequestParam String province, @RequestParam String district, @RequestParam(required = false) String ward) {
         try {
@@ -547,6 +587,72 @@ public class ClientApiController {
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body(Map.of("success", false, "message", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/tra-cuu")
+    public ResponseEntity<?> traCuu(@RequestParam String maHoaDon) {
+        try {
+            System.out.println("--- [DEBUG TRA CUU] Ma: " + maHoaDon);
+            // Làm sạch mã hóa đơn (xóa dấu cách, ký tự đặc biệt)
+            String cleanMa = maHoaDon.replace(": #", "").replace("#", "").trim();
+            
+            Optional<HoaDon> opt = hoaDonRepository.findByMaHoaDon(cleanMa);
+            if (opt.isEmpty()) {
+                return ResponseEntity.ok(Map.of("success", false, "message", "Không tìm thấy hóa đơn: " + cleanMa));
+            }
+
+            HoaDon hd = opt.get();
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("success", true);
+            
+            Map<String, Object> hdMap = new HashMap<>();
+            hdMap.put("id", hd.getId());
+            hdMap.put("maHoaDon", hd.getMaHoaDon());
+            hdMap.put("tenNguoiNhan", hd.getTenNguoiNhan() != null ? hd.getTenNguoiNhan() : "—");
+            hdMap.put("soDienThoaiNguoiNhan", hd.getSoDienThoaiNguoiNhan() != null ? hd.getSoDienThoaiNguoiNhan() : "—");
+            
+            String dc = String.format("%s, %s, %s, %s", 
+                hd.getChiTietNguoiNhan() != null ? hd.getChiTietNguoiNhan() : "",
+                hd.getXaPhuong() != null ? hd.getXaPhuong() : "",
+                hd.getQuanHuyen() != null ? hd.getQuanHuyen() : "",
+                hd.getTinhThanhPho() != null ? hd.getTinhThanhPho() : ""
+            ).replaceAll("^, |, $", "").replaceAll(", ,", ",");
+            hdMap.put("diaChiGiao", dc.length() > 5 ? dc : "—");
+            
+            hdMap.put("tongTien", hd.getTongTien() != null ? hd.getTongTien() : 0);
+            hdMap.put("tienVanChuyen", hd.getTienVanChuyen() != null ? hd.getTienVanChuyen() : 0);
+            hdMap.put("tienPhieuGiamGia", hd.getTienPhieuGiamGia() != null ? hd.getTienPhieuGiamGia() : 0);
+            hdMap.put("tongTienAfterGiam", hd.getTongTienAfterGiam() != null ? hd.getTongTienAfterGiam() : 0);
+            hdMap.put("trangThai", hd.getTrangThaiHoaDon());
+            hdMap.put("ngayDatHang", hd.getNgayDatHang());
+            hdMap.put("ngayTao", hd.getNgayTao());
+            hdMap.put("ghiChu", hd.getMoTa());
+
+            // Chi tiết sản phẩm
+            List<Map<String, Object>> details = new ArrayList<>();
+            List<ChiTietHoaDon> listChiTiet = chiTietHoaDonRepository.findByHoaDonId(hd.getId());
+            for (ChiTietHoaDon ct : listChiTiet) {
+                Map<String, Object> d = new HashMap<>();
+                SanPhamChiTiet spct = ct.getSanPhamChiTiet();
+                if (spct != null) {
+                    d.put("tenSanPham", spct.getSanPham() != null ? spct.getSanPham().getTenSanPham() : "Sản phẩm đã xóa");
+                    d.put("mauSac", spct.getMauSac() != null ? spct.getMauSac().getTenMauSac() : "");
+                    d.put("kichThuoc", spct.getKichThuoc() != null ? spct.getKichThuoc().getTenKichThuoc() : "");
+                    d.put("soLuong", ct.getSoLuong());
+                    d.put("gia", ct.getGia());
+                    d.put("duongDanAnh", spct.getDuongDanAnh());
+                    details.add(d);
+                }
+            }
+            hdMap.put("chiTietSanPham", details);
+            
+            resp.put("hoaDon", hdMap);
+            return ResponseEntity.ok(resp);
+        } catch (Exception e) {
+            System.err.println("!!! LỖI TRA CỨU !!!");
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of("success", false, "message", "Lỗi máy chủ: " + e.getMessage()));
         }
     }
 }

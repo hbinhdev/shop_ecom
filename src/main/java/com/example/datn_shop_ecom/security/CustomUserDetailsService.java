@@ -51,9 +51,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         // 2. Nếu chưa có nhãn hoặc đang cố đăng nhập Client, dùng URI để đoán
         boolean isAdminPath = uri.contains("/admin") || uri.contains("/perform_login_admin");
         if (isAdminPath) {
-            return loadNhanVienFirst(email);
+            System.out.println("DEBUG: Portal ADMIN detected - Searching NHAN_VIEN only");
+            return loadNhanVienOnly(email); // Chỉ tìm trong NhanVien, không nhảy sang KhachHang
         } else {
-            return loadKhachHangFirst(email);
+            System.out.println("DEBUG: Portal CLIENT detected - Searching KHACH_HANG only");
+            return loadKhachHangOnly(email); // Chỉ tìm trong KhachHang, không nhảy sang NhanVien
         }
     }
 
@@ -68,67 +70,50 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
     }
 
-    private UserDetails loadNhanVienFirst(String email) {
-        NhanVien nhanVien = nhanVienRepository.findByEmail(email).orElse(null);
-        if (nhanVien != null) {
-            String role = (nhanVien.getVaiTro() != null) ? nhanVien.getVaiTro().getMa() : "ROLE_EMPLOYEE";
-            System.out.println("DEBUG: Dang nhap Nhan vien: " + email + " - Quyen: " + role);
-            
-            boolean active = !Boolean.TRUE.equals(nhanVien.getXoaMem());
-            return User.builder()
-                    .username(nhanVien.getEmail())
-                    .password(nhanVien.getMatKhau())
-                    .authorities(List.of(new SimpleGrantedAuthority(role)))
-                    .disabled(!active)
-                    .accountLocked(!active)
-                    .build();
-        }
-        // Nếu không thấy trong Nhân viên, thử tìm trong Khách hàng
-        return loadKhachHangOnly(email);
-    }
-
-    private UserDetails loadKhachHangFirst(String email) {
-        KhachHang khachHang = khachHangRepository.findByEmail(email).orElse(null);
-        if (khachHang != null) {
-            if (Boolean.TRUE.equals(khachHang.getXoaMem())) {
-                throw new UsernameNotFoundException("Tài khoản khách hàng đã bị xóa: " + email);
-            }
-            String role = (khachHang.getVaiTro() != null) ? khachHang.getVaiTro().getMa() : "ROLE_CUSTOMER";
-            boolean active = !Boolean.TRUE.equals(khachHang.getXoaMem());
-            return User.builder()
-                    .username(khachHang.getEmail())
-                    .password(khachHang.getMatKhau())
-                    .authorities(List.of(new SimpleGrantedAuthority(role)))
-                    .disabled(!active)
-                    .accountLocked(!active)
-                    .build();
-        }
-        // Nếu không thấy trong Khách hàng, thử tìm trong Nhân viên
-        return loadNhanVienOnly(email);
-    }
-
-    private UserDetails loadKhachHangOnly(String email) {
+    public UserDetails loadKhachHangOnly(String email) {
         KhachHang kh = khachHangRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy tài khoản: " + email));
+                .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy tài khoản khách hàng: " + email));
         String role = (kh.getVaiTro() != null) ? kh.getVaiTro().getMa() : "ROLE_CUSTOMER";
         boolean active = !Boolean.TRUE.equals(kh.getXoaMem());
         return User.builder()
                 .username(kh.getEmail())
-                .password(kh.getMatKhau())
+                .password(kh.getMatKhau() != null ? kh.getMatKhau().trim() : null)
                 .authorities(List.of(new SimpleGrantedAuthority(role)))
                 .disabled(!active)
                 .accountLocked(!active)
                 .build();
     }
 
-    private UserDetails loadNhanVienOnly(String email) {
+    public UserDetails loadNhanVienOnly(String email) {
+        System.out.println("DEBUG: Executing loadNhanVienOnly for email: " + email);
         NhanVien nv = nhanVienRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Không tìm thấy tài khoản: " + email));
-        String role = (nv.getVaiTro() != null) ? nv.getVaiTro().getMa() : "ROLE_EMPLOYEE";
+                .orElseThrow(() -> {
+                    System.out.println("ERROR: Could not find NhanVien with email: " + email);
+                    return new UsernameNotFoundException("Không tìm thấy tài khoản nhân viên: " + email);
+                });
+        
+        // Lấy mã vai trò và làm sạch (Trim + Uppercase)
+        String role = (nv.getVaiTro() != null && nv.getVaiTro().getMa() != null) 
+                      ? nv.getVaiTro().getMa().trim().toUpperCase() 
+                      : "ROLE_EMPLOYEE";
+
+        // Nếu mã không bắt đầu bằng ROLE_, tự thêm vào cho chuẩn Spring Security
+        if (!role.startsWith("ROLE_")) {
+            role = "ROLE_" + role;
+        }
+
+        System.out.println("DEBUG: Loaded NhanVien: " + nv.getTenDayDu() + " | Role: " + role);
+
+        // Ép buộc: Nhân viên thì vai trò PHẢI là ADMIN hoặc EMPLOYEE
+        if (role.equals("ROLE_USER") || role.equals("ROLE_CUSTOMER") || role.equals("ROLE_GUEST")) {
+            System.out.println("WARN: Phat hien Nhan vien mang quyen Khach hang. Dang ep ve ROLE_EMPLOYEE for: " + email);
+            role = "ROLE_EMPLOYEE"; 
+        }
+
         boolean active = !Boolean.TRUE.equals(nv.getXoaMem());
         return User.builder()
                 .username(nv.getEmail())
-                .password(nv.getMatKhau())
+                .password(nv.getMatKhau() != null ? nv.getMatKhau().trim() : null)
                 .authorities(List.of(new SimpleGrantedAuthority(role)))
                 .disabled(!active)
                 .accountLocked(!active)

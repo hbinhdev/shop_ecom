@@ -391,12 +391,17 @@
 
             .badge-shipping {
                 background: #eaf2ff;
-                color: #0984e3;
+                color: #2980b9;
+            }
+
+            .badge-delivery {
+                background: #f3eaff;
+                color: #8e44ad;
             }
 
             .badge-cancel {
                 background: #ffeef0;
-                color: #ff7675;
+                color: #e74c3c;
             }
 
             .type-label {
@@ -581,8 +586,8 @@
 
             <span th:if="${hd.trangThaiHoaDon == '1' or hd.trangThaiHoaDon == 'CHO_XAC_NHAN'}" class="badge-custom badge-pending"><i class="bi bi-clock-history me-1"></i>Chờ xác nhận</span>
             <span th:if="${hd.trangThaiHoaDon == '2' or hd.trangThaiHoaDon == 'DA_XAC_NHAN'}" class="badge-custom badge-shipping"><i class="bi bi-check2-all me-1"></i>Đã xác nhận</span>
-            <span th:if="${hd.trangThaiHoaDon == '3' or hd.trangThaiHoaDon == 'DANG_GIAO'}" class="badge-custom badge-shipping"><i class="bi bi-truck me-1"></i>Đang giao</span>
-            <span th:if="${hd.trangThaiHoaDon == '4' or hd.trangThaiHoaDon == 'DA_GIAO_HANG'}" class="badge-custom badge-shipping"><i class="bi bi-box-seam me-1"></i>Đã giao hàng</span>
+            <span th:if="${hd.trangThaiHoaDon == '3' or hd.trangThaiHoaDon == 'DANG_GIAO'}" class="badge-custom badge-delivery"><i class="bi bi-truck me-1"></i>Đang giao</span>
+            <span th:if="${hd.trangThaiHoaDon == '4' or hd.trangThaiHoaDon == 'DA_GIAO_HANG'}" class="badge-custom badge-complete"><i class="bi bi-box-seam me-1"></i>Đã giao hàng</span>
             <span th:if="${hd.trangThaiHoaDon == '5' or hd.trangThaiHoaDon == 'HOAN_THANH'}" class="badge-custom badge-complete"><i class="bi bi-check-circle-fill me-1"></i>Hoàn thành</span>
             <span th:if="${hd.trangThaiHoaDon == '6' or hd.trangThaiHoaDon == 'DA_HUY'}" class="badge-custom badge-cancel"><i class="bi bi-x-circle me-1"></i>Đã hủy</span>
             <span th:if="${hd.trangThaiHoaDon == '7' or hd.trangThaiHoaDon == 'YEU_CAU_HUY'}" class="badge-custom badge-warning"><i class="bi bi-exclamation-triangle me-1"></i>Yêu cầu hủy</span>

@@ -447,12 +447,20 @@
                     const data = await res.json();
                     if (data.token) {
                         localStorage.setItem('adminToken', data.token);
-                        localStorage.setItem('token', data.token); // Đồng bộ cả key 'token' nếu cần
-                        console.log("--- [SYSTEM] Đã đồng bộ Token vào LocalStorage ---");
+                        localStorage.setItem('token', data.token);
+                        
+                        // Lưu thông tin User Admin
+                        const adminUser = {
+                            email: data.username,
+                            roles: data.roles
+                        };
+                        localStorage.setItem('adminUser', JSON.stringify(adminUser));
+                        
+                        console.log("--- [SYSTEM] Đã đồng bộ Token và Profile Admin vào LocalStorage ---");
                     }
                 }
             } catch (e) {
-                console.error("Lỗi đồng bộ Token:", e);
+                console.error("Lỗi đồng bộ thông tin Admin:", e);
             }
         });
     </script>
