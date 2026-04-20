@@ -51,7 +51,14 @@ public class NhanVienServiceImpl implements NhanVienService {
     @Override
     @Transactional
     public NhanVien saveNhanVien(NhanVien nhanVien, org.springframework.web.multipart.MultipartFile anhFile) {
-        
+        System.out.println("Processing saveNhanVien...");
+        System.out.println("Full Name: " + nhanVien.getTenDayDu());
+        System.out.println("Email: " + nhanVien.getEmail());
+        System.out.println("Role Object: " + nhanVien.getVaiTro());
+        if (nhanVien.getVaiTro() != null) {
+            System.out.println("Role ID: " + nhanVien.getVaiTro().getId());
+        }
+
         if (nhanVien.getTenDayDu() == null || nhanVien.getTenDayDu().trim().isEmpty()) {
             throw new RuntimeException("Họ tên không được để trống");
         }
@@ -71,18 +78,19 @@ public class NhanVienServiceImpl implements NhanVienService {
         }
 
         
-        if (nhanVienRepository.existsByEmail(nhanVien.getEmail())) {
-            Optional<NhanVien> existing = nhanVienRepository.findByEmail(nhanVien.getEmail());
-            if (existing.isPresent() && !existing.get().getId().equals(nhanVien.getId())) {
-                throw new RuntimeException("Email đã tồn tại trong hệ thống!");
+        // Kiểm tra trùng Email
+        Optional<NhanVien> exByEmail = nhanVienRepository.findByEmail(nhanVien.getEmail());
+        if (exByEmail.isPresent()) {
+            if (nhanVien.getId() == null || !exByEmail.get().getId().equals(nhanVien.getId())) {
+                throw new RuntimeException("Email '" + nhanVien.getEmail() + "' đã được sử dụng bởi một nhân viên khác!");
             }
         }
 
-        
-        if (nhanVienRepository.existsBySoDienThoai(nhanVien.getSoDienThoai())) {
-            Optional<NhanVien> existing = nhanVienRepository.findBySoDienThoai(nhanVien.getSoDienThoai());
-            if (existing.isPresent() && !existing.get().getId().equals(nhanVien.getId())) {
-                throw new RuntimeException("Số điện thoại đã tồn tại trong hệ thống!");
+        // Kiểm tra trùng Số điện thoại
+        Optional<NhanVien> exByPhone = nhanVienRepository.findBySoDienThoai(nhanVien.getSoDienThoai());
+        if (exByPhone.isPresent()) {
+            if (nhanVien.getId() == null || !exByPhone.get().getId().equals(nhanVien.getId())) {
+                throw new RuntimeException("Số điện thoại '" + nhanVien.getSoDienThoai() + "' đã được sử dụng!");
             }
         }
 
@@ -104,6 +112,10 @@ public class NhanVienServiceImpl implements NhanVienService {
             } catch (java.io.IOException e) {
                 
             }
+        }
+
+        if (nhanVien.getVaiTro() == null || nhanVien.getVaiTro().getId() == null) {
+            throw new RuntimeException("Vui lòng chọn quyền hạn cho nhân viên");
         }
 
         if (nhanVien.getId() != null) {

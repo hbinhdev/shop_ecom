@@ -57,13 +57,16 @@ public class KhachHang {
     @Column(name = "ngay_sua_cuoi")
     private LocalDateTime ngaySuaCuoi;
 
+    @Builder.Default
     @Column(name = "xoa_mem")
     private Boolean xoaMem = false;
 
+    @Builder.Default
     @Column(name = "diem_tich_luy")
     private Integer diemTichLuy = 0;
 
-    @OneToMany(mappedBy = "khachHang", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    @OneToMany(mappedBy = "khachHang", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private java.util.List<DiaChi> danhSachDiaChi = new java.util.ArrayList<>();
 }
 

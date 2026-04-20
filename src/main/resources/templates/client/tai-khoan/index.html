@@ -27,34 +27,41 @@
                 <div class="row g-4">
                     <!-- Sidebar -->
                     <div class="col-lg-4 col-xl-3">
-                        <div
-                            class="card border-0 shadow-sm rounded-4 p-4 mb-4 text-center overflow-hidden position-relative">
-                            <div class="position-absolute top-0 start-0 w-100 h-25"
-                                style="background: linear-gradient(135deg, #d47d32, #eb984e);"></div>
-                            <div class="mt-4 mb-3 position-relative z-1">
-                                <div class="avatar-large mx-auto shadow-sm" id="userInitial">A</div>
-                            </div>
-                            <h5 class="fw-bold mb-1" id="userNameDis">Họ và tên</h5>
-                            <p class="text-muted small mb-3" id="userEmailDis">email@example.com</p>
-                            <div class="d-grid">
-                                <button class="btn btn-outline-danger btn-sm rounded-pill" onclick="logoutAccount()">
-                                    <i class="bi bi-box-arrow-left me-1"></i> Đăng xuất
+                        <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-4 profile-card">
+                            <div class="profile-header"></div>
+                            <div class="card-body pt-0 text-center">
+                                <div class="avatar-wrapper">
+                                    <div class="avatar-circle" id="userInitial">A</div>
+                                </div>
+                                <h5 class="fw-bold mb-1 mt-3" id="userNameDis">Họ và tên</h5>
+                                <p class="text-muted small mb-3" id="userEmailDis">email@example.com</p>
+                                <button class="btn btn-logout rounded-pill px-4" onclick="logoutAccount()">
+                                    <i class="bi bi-box-arrow-left me-2"></i> Đăng xuất
                                 </button>
                             </div>
                         </div>
-
+ 
                         <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-                            <div class="list-group list-group-flush">
+                            <div class="list-group list-group-flush sidebar-menu">
                                 <a href="javascript:void(0)"
-                                    class="list-group-item list-group-item-action py-3 border-0 active"
+                                    class="list-group-item list-group-item-action py-3 px-4 border-0 active"
                                     onclick="switchTab('profile', this)">
                                     <i class="bi bi-person-circle me-3"></i> Thông tin cá nhân
                                 </a>
-
+                                <a href="javascript:void(0)"
+                                    class="list-group-item list-group-item-action py-3 px-4 border-0"
+                                    onclick="switchTab('orders', this)">
+                                    <i class="bi bi-bag-check me-3"></i> Lịch sử đơn hàng
+                                </a>
+                                <a href="javascript:void(0)"
+                                    class="list-group-item list-group-item-action py-3 px-4 border-0"
+                                    onclick="switchTab('addresses', this)">
+                                    <i class="bi bi-geo-alt me-3"></i> Số địa chỉ
+                                </a>
                             </div>
                         </div>
                     </div>
-
+ 
                     <!-- Main Content -->
                     <div class="col-lg-8 col-xl-9">
                         <!-- Tab: Profile -->
@@ -67,47 +74,47 @@
                                         <i class="bi bi-pencil-square me-1"></i> Chỉnh sửa
                                     </button>
                                 </div>
-
+ 
                                 <!-- View Mode -->
                                 <div id="profileViewMode" class="row g-4">
                                     <div class="col-md-6">
                                         <label class="small fw-bold text-muted mb-2">HỌ VÀ TÊN</label>
-                                        <div class="bg-light p-3 rounded-4 fw-medium" id="valName">—</div>
+                                        <div class="info-box" id="valName">—</div>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="small fw-bold text-muted mb-2">ĐỊA CHỈ EMAIL</label>
-                                        <div class="bg-light p-3 rounded-4 fw-medium" id="valEmail">—</div>
+                                        <div class="info-box" id="valEmail">—</div>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="small fw-bold text-muted mb-2">SỐ ĐIỆN THOẠI</label>
-                                        <div class="bg-light p-3 rounded-4 fw-medium" id="valPhone">—</div>
+                                        <div class="info-box" id="valPhone">—</div>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="small fw-bold text-muted mb-2">GIỚI TÍNH</label>
-                                        <div class="bg-light p-3 rounded-4 fw-medium" id="valGender">—</div>
+                                        <div class="info-box" id="valGender">—</div>
                                     </div>
                                     <div class="col-md-6">
                                         <label class="small fw-bold text-muted mb-2">NGÀY SINH</label>
-                                        <div class="bg-light p-3 rounded-4 fw-medium" id="valDob">—</div>
+                                        <div class="info-box" id="valDob">—</div>
                                     </div>
                                 </div>
-
+ 
                                 <!-- Edit Mode -->
                                 <form id="profileEditMode" class="d-none" onsubmit="handleUpdateProfile(event)">
                                     <div class="row g-4 mb-4">
                                         <div class="col-md-6">
                                             <label class="small fw-bold text-muted mb-2">HỌ VÀ TÊN (*)</label>
-                                            <input type="text" class="form-control rounded-4 py-2 bg-light-subtle"
+                                            <input type="text" class="form-control rounded-pill py-2 bg-light px-3"
                                                 id="editName" required>
                                         </div>
                                         <div class="col-md-6">
                                             <label class="small fw-bold text-muted mb-2">SỐ ĐIỆN THOẠI</label>
-                                            <input type="text" class="form-control rounded-4 py-2 bg-light-subtle"
+                                            <input type="text" class="form-control rounded-pill py-2 bg-light px-3"
                                                 id="editPhone">
                                         </div>
                                         <div class="col-md-6">
                                             <label class="small fw-bold text-muted mb-2">GIỚI TÍNH</label>
-                                            <select class="form-select rounded-4 py-2 bg-light-subtle" id="editGender">
+                                            <select class="form-select rounded-pill py-2 bg-light px-3" id="editGender">
                                                 <option value="">Chọn giới tính</option>
                                                 <option value="Nam">Nam</option>
                                                 <option value="Nữ">Nữ</option>
@@ -116,7 +123,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             <label class="small fw-bold text-muted mb-2">NGÀY SINH</label>
-                                            <input type="date" class="form-control rounded-4 py-2 bg-light-subtle"
+                                            <input type="date" class="form-control rounded-pill py-2 bg-light px-3"
                                                 id="editDob">
                                         </div>
                                     </div>
@@ -129,27 +136,32 @@
                                 </form>
                             </div>
                         </div>
-
-                        <!-- Tab: Orders (Trình giữ chỗ) -->
+ 
+                        <!-- Tab: Orders -->
                         <div id="tab-orders" class="tab-content-item d-none">
-                            <div class="card border-0 shadow-sm rounded-4 p-4">
-                                <h4 class="fw-bold mb-4 border-bottom pb-3">LỊCH SỬ ĐƠN HÀNG</h4>
-                                <div class="text-center py-5">
-                                    <div class="display-3 text-muted mb-3 opacity-25"><i class="bi bi-cart-x"></i></div>
-                                    <p class="text-muted">Bạn chưa có đơn đặt hàng nào.</p>
-                                    <a th:href="@{/client/san-pham}" class="btn btn-premium btn-sm px-4 py-2 text-white">MUA
-                                        SẮM NGAY</a>
-                                </div>
+                            <div id="orderListContainer" class="d-flex flex-column gap-4">
+                                <!-- Order Cards will be injected here -->
+                            </div>
+                            
+                            <div id="noOrdersMsg" class="card border-0 shadow-sm rounded-4 p-5 text-center d-none">
+                                <div class="display-3 text-muted mb-3 opacity-25"><i class="bi bi-cart-x"></i></div>
+                                <h5 class="fw-bold">Bạn chưa có đơn đặt hàng nào</h5>
+                                <p class="text-muted mb-4">Hãy khám phá các sản phẩm tuyệt vời của chúng tôi nhé.</p>
+                                <a th:href="@{/client/san-pham}" class="btn btn-premium px-5 py-2 text-white">MUA SẮM NGAY</a>
                             </div>
                         </div>
-
-                        <!-- Tab: Addresses (Trình giữ chỗ) -->
+ 
+                        <!-- Tab: Addresses -->
                         <div id="tab-addresses" class="tab-content-item d-none">
                             <div class="card border-0 shadow-sm rounded-4 p-4">
-                                <h4 class="fw-bold mb-4 border-bottom pb-3">SỔ ĐỊA CHỈ</h4>
-                                <div id="addressList">
-                                    <!-- Địa chỉ sẽ được nạp vào đây -->
-                                    <p class="text-muted small">Đang tải địa chỉ...</p>
+                                <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+                                    <h4 class="fw-bold mb-0">SỐ ĐỊA CHỈ</h4>
+                                    <button class="btn btn-premium btn-sm rounded-pill px-3" onclick="openAddressModal()">
+                                        <i class="bi bi-plus-lg me-1"></i> THÊM ĐỊA CHỈ
+                                    </button>
+                                </div>
+                                <div id="addressList" class="row g-3">
+                                    <!-- Địa chỉ load here -->
                                 </div>
                             </div>
                         </div>
@@ -157,97 +169,299 @@
                 </div>
             </div>
         </div>
+ 
+        <!-- Modal Chi tiết đơn hàng -->
+        <div class="modal fade" id="orderDetailModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content border-0 rounded-4 shadow-lg">
+                    <div class="modal-header border-bottom-0 p-4 pb-0">
+                        <h5 class="modal-title fw-bold" id="detailTitle">Chi tiết đơn hàng</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body p-4" id="orderDetailContent">
+                        <!-- Content load here -->
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <!-- Address Modal -->
+        <div class="modal fade" id="addressModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content border-0 rounded-4 shadow-lg">
+                    <form id="addressForm">
+                        <input type="hidden" id="addrId">
+                        <div class="modal-header border-bottom-0 p-4">
+                            <h5 class="modal-title fw-bold" id="addrModalTitle">Địa chỉ mới</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body p-4 pt-0">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="tiny fw-bold text-muted mb-1 text-uppercase">Họ tên người nhận</label>
+                                    <input type="text" class="form-control rounded-3" id="addrName" required>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="tiny fw-bold text-muted mb-1 text-uppercase">Số điện thoại</label>
+                                    <input type="tel" class="form-control rounded-3" id="addrPhone" required>
+                                </div>
+                                <div class="col-12">
+                                    <label class="tiny fw-bold text-muted mb-1 text-uppercase">Tỉnh / Thành phố</label>
+                                    <select class="form-select rounded-3" id="addrProvince" required></select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="tiny fw-bold text-muted mb-1 text-uppercase">Quận / Huyện</label>
+                                    <select class="form-select rounded-3" id="addrDistrict" required></select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="tiny fw-bold text-muted mb-1 text-uppercase">Phường / Xã</label>
+                                    <select class="form-select rounded-3" id="addrWard" required></select>
+                                </div>
+                                <div class="col-12">
+                                    <label class="tiny fw-bold text-muted mb-1 text-uppercase">Địa chỉ chi tiết</label>
+                                    <textarea class="form-control rounded-3" id="addrDetail" rows="2" placeholder="Số nhà, tên đường..." required></textarea>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-check form-switch mt-2">
+                                        <input class="form-check-input" type="checkbox" id="addrIsDefault">
+                                        <label class="form-check-label small fw-bold" for="addrIsDefault">Đặt làm địa chỉ mặc định</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-top-0 p-4 pt-0">
+                            <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Hủy</button>
+                            <button type="submit" class="btn btn-premium rounded-pill px-4" id="btnSaveAddr">Lưu địa chỉ</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+ 
         <style>
+            :root {
+                --pk-orange: #d47d32;
+                --pk-orange-light: #eb984e;
+            }
+ 
             .btn-premium {
-                background: linear-gradient(135deg, #d47d32 0%, #eb984e 100%) !important;
+                background: linear-gradient(135deg, var(--pk-orange) 0%, var(--pk-orange-light) 100%) !important;
                 color: white !important;
                 border: none;
-                border-radius: 50px;
                 transition: all 0.3s;
             }
-
+ 
             .btn-premium:hover {
-                box-shadow: 0 4px 12px rgba(212, 125, 50, 0.3);
-                transform: translateY(-1px);
+                box-shadow: 0 4px 15px rgba(212, 125, 50, 0.4);
+                transform: translateY(-2px);
             }
-
-            .btn-outline-premium {
-                border: 1px solid #d47d32;
-                color: #d47d32;
-                transition: all 0.3s;
+ 
+            /* Profile Card Styling */
+            .profile-card {
+                position: relative;
             }
-
-            .btn-outline-premium:hover {
-                background-color: #d47d32;
-                color: white;
+            .profile-header {
+                height: 80px;
+                background: linear-gradient(135deg, #fceada, #f5d3b3);
             }
-
-            .avatar-large {
-                width: 100px;
-                height: 100px;
+            .avatar-wrapper {
+                margin-top: -40px;
+                position: relative;
+                z-index: 2;
+            }
+            .avatar-circle {
+                width: 80px;
+                height: 80px;
                 border-radius: 50%;
                 background: white;
                 border: 4px solid white;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-size: 2.5rem;
+                font-size: 2rem;
                 font-weight: 800;
-                color: #d47d32;
+                color: var(--pk-orange);
+                margin: 0 auto;
             }
-
-            .list-group-item {
+            .btn-logout {
+                border: 1px solid #dee2e6;
+                background: white;
+                color: #6c757d;
+                font-size: 0.85rem;
+                font-weight: 600;
+                transition: all 0.2s;
+            }
+            .btn-logout:hover {
+                background: #fff5f5;
+                color: #dc3545;
+                border-color: #ffc9c9;
+            }
+ 
+            /* Sidebar Menu */
+            .sidebar-menu .list-group-item {
                 font-weight: 500;
-                font-size: 0.95rem;
-                border-left: 4px solid transparent !important;
+                color: #495057;
+                transition: all 0.2s;
             }
-
-            .list-group-item.active {
-                background-color: rgba(212, 125, 50, 0.05) !important;
-                color: #d47d32 !important;
-                border-left-color: #d47d32 !important;
+            .sidebar-menu .list-group-item.active {
+                background-color: #fff9f4 !important;
+                color: var(--pk-orange) !important;
                 font-weight: 700;
             }
-
-            .bg-light {
-                background-color: #f8f9fa !important;
+            .sidebar-menu .list-group-item:hover:not(.active) {
+                background-color: #f8f9fa;
+            }
+ 
+            /* Address Card Styling */
+            .address-card {
+                transition: all 0.3s;
+                cursor: default;
+            }
+            .address-card:hover {
+                border-color: var(--pk-orange-light) !important;
+                box-shadow: 0 8px 25px rgba(212, 125, 50, 0.1) !important;
+                transform: translateY(-5px);
+            }
+            .tiny { font-size: 0.7rem; }
+            .order-item-card {
+                background: white;
+                border-radius: 1rem;
+                padding: 1.5rem;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+                transition: all 0.3s;
+                cursor: pointer;
+                border: 1px solid transparent;
+            }
+            .order-item-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+                border-color: #eee;
+            }
+            .order-card-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1rem;
+                padding-bottom: 0.75rem;
+                border-bottom: 1px solid #f8f9fa;
+            }
+            .order-id {
+                font-weight: 700;
+                color: #212529;
+                font-size: 1rem;
+            }
+            .order-date {
+                font-size: 0.8rem;
+                color: #adb5bd;
+            }
+            .order-card-body {
+                display: flex;
+                align-items: center;
+                gap: 1.5rem;
+            }
+            .order-img {
+                width: 70px;
+                height: 70px;
+                object-fit: cover;
+                border-radius: 0.75rem;
+                background: #f8f9fa;
+            }
+            .order-info-main {
+                flex-grow: 1;
+            }
+            .order-product-name {
+                font-weight: 700;
+                margin-bottom: 0.25rem;
+                color: #212529;
+            }
+            .order-price-summary {
+                text-align: right;
+            }
+            .order-price-total {
+                font-weight: 800;
+                color: var(--pk-orange);
+                font-size: 1.1rem;
+                display: block;
+            }
+            .order-qty-sub {
+                font-size: 0.8rem;
+                color: #adb5bd;
+            }
+ 
+            /* Status Badges - Exactly as Admin */
+            .badge-status {
+                font-size: 0.75rem;
+                padding: 6px 16px;
+                border-radius: 50rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+            }
+            .status-hoanthanh { background: #e6f7ee; color: #00b894; }
+            .status-daxacnhan { background: #eaf2ff; color: #2980b9; }  /* Admin Shipping - Blue */
+            .status-danggiao { background: #f3eaff; color: #8e44ad; }   /* Admin Delivery - Purple */
+            .status-choxacnhan { background: #fff9e6; color: #f1c40f; } /* Admin Pending - Yellow */
+            .status-huy { background: #ffeef0; color: #e74c3c; }        /* Admin Cancel - Red */
+            .status-default { background: #f8f9fa; color: #adb5bd; }
+ 
+            .info-box {
+                background-color: #f8f9fa;
+                padding: 1rem;
+                border-radius: 1rem;
+                font-weight: 500;
                 border: 1px solid #eee;
             }
-
-            .bg-light-subtle {
-                background-color: #f1f3f5 !important;
-                border: 1px solid #dee2e6;
-            }
+            .tiny { font-size: 0.7rem; }
         </style>
-
+ 
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
         <script>
-            document.addEventListener('DOMContentLoaded', () => {
+            document.addEventListener('DOMContentLoaded', async () => {
                 const userJson = localStorage.getItem('pk_user');
                 if (!userJson) {
                     document.getElementById('authRequired').classList.remove('d-none');
                     return;
                 }
 
-                const user = JSON.parse(userJson);
+                let user = JSON.parse(userJson);
                 document.getElementById('accountContent').classList.remove('d-none');
-
-                // Render Sidebar
-                document.getElementById('userInitial').innerText = user.hoTen ? user.hoTen[0].toUpperCase() : 'A';
+                
+                // Set sidebar profile (nhanh từ local)
+                document.getElementById('userInitial').innerText = user.hoTen ? user.hoTen[0].toUpperCase() : 'U';
                 document.getElementById('userNameDis').innerText = user.hoTen || 'Thành viên';
                 document.getElementById('userEmailDis').innerText = user.email || '—';
 
-                // Render Profile data
                 renderProfileData(user);
-            });
 
+                // Fetch data mới nhất từ server để đồng bộ
+                try {
+                    const res = await fetch(`/api/client/profile/${user.id}`);
+                    if (res.ok) {
+                        const freshUser = await res.json();
+                        // Gộp dữ liệu mới (giữ lại token cũ)
+                        const updatedUser = { ...user, ...freshUser, hoTen: freshUser.tenDayDu || freshUser.hoTen };
+                        localStorage.setItem('pk_user', JSON.stringify(updatedUser));
+                        renderProfileData(updatedUser);
+                        
+                        // Cập nhật lại UI sidebar nếu có thay đổi
+                        document.getElementById('userNameDis').innerText = updatedUser.hoTen;
+                        document.getElementById('userInitial').innerText = updatedUser.hoTen ? updatedUser.hoTen[0].toUpperCase() : 'U';
+                    }
+                } catch (e) {
+                    console.error("Lỗi đồng bộ profile:", e);
+                }
+            });
+ 
             function renderProfileData(user) {
                 document.getElementById('valName').innerText = user.hoTen || '—';
                 document.getElementById('valEmail').innerText = user.email || '—';
                 document.getElementById('valPhone').innerText = user.soDienThoai || '—';
                 document.getElementById('valGender').innerText = user.gioiTinh || '—';
-
+                
                 let dobStr = '—';
                 if (user.ngaySinh) {
                     const parts = user.ngaySinh.split('-');
@@ -255,84 +469,427 @@
                 }
                 document.getElementById('valDob').innerText = dobStr;
             }
-
+ 
             function switchTab(tabName, element) {
-                document.querySelectorAll('.list-group-item').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('.sidebar-menu .list-group-item').forEach(el => el.classList.remove('active'));
                 element.classList.add('active');
-
+ 
                 document.querySelectorAll('.tab-content-item').forEach(el => el.classList.add('d-none'));
                 document.getElementById('tab-' + tabName).classList.remove('d-none');
+ 
+                if (tabName === 'orders') loadOrders();
+                if (tabName === 'addresses') loadAddresses();
             }
-
+ 
+            async function loadOrders() {
+                const user = JSON.parse(localStorage.getItem('pk_user'));
+                const container = document.getElementById('orderListContainer');
+                const noOrders = document.getElementById('noOrdersMsg');
+                
+                try {
+                    const res = await fetch(`/api/client/orders/${user.id}`);
+                    const data = await res.json();
+                    
+                    if (data.length === 0) {
+                        noOrders.classList.remove('d-none');
+                        container.innerHTML = '';
+                    } else {
+                        noOrders.classList.add('d-none');
+                        container.innerHTML = data.map(o => {
+                            let imgSrc = o.firstItemImage;
+                            if (imgSrc && !imgSrc.startsWith('http') && !imgSrc.startsWith('/uploads/')) {
+                                imgSrc = '/uploads/san-pham/' + imgSrc;
+                            }
+                            if (!imgSrc) imgSrc = 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=200';
+                            
+                            const statusText = getStatusDisplay(o.trangThai);
+                            const statusClass = getStatusStyle(o.trangThai);
+                            
+                            return `
+                            <div class="order-item-card" onclick="viewOrderDetail('${o.id}')">
+                                <div class="order-card-header">
+                                    <div>
+                                        <div class="order-id">${o.maHoaDon}</div>
+                                        <div class="order-date">${new Date(o.ngayTao).toLocaleDateString('vi-VN')}</div>
+                                    </div>
+                                    <span class="badge-status ${statusClass}">${statusText}</span>
+                                </div>
+                                <div class="order-card-body">
+                                    <img src="${imgSrc}" class="order-img border" alt="product">
+                                    <div class="order-info-main">
+                                        <div class="order-product-name">${o.firstItemName || 'Sản phẩm Peaksneaker'}</div>
+                                        <div class="small text-muted">${o.otherItemsCount > 0 ? `và ${o.otherItemsCount} sản phẩm khác` : '1 sản phẩm'}</div>
+                                    </div>
+                                    <div class="order-price-summary">
+                                        <span class="order-price-total">${formPrice(o.tongTienAfterGiam)}</span>
+                                        <span class="order-qty-sub">${o.totalItems} sản phẩm</span>
+                                    </div>
+                                </div>
+                            </div>
+                            `;
+                        }).join('');
+                    }
+                } catch (e) { console.error(e); }
+            }
+ 
+            async function loadAddresses() {
+                const user = JSON.parse(localStorage.getItem('pk_user'));
+                const list = document.getElementById('addressList');
+                try {
+                    const res = await fetch(`/api/client/profile/${user.id}`);
+                    const data = await res.json();
+                    const adds = data.danhSachDiaChi || [];
+                    
+                    if (adds.length === 0) {
+                        list.innerHTML = '<div class="col-12 text-center py-5 text-muted">Chưa có thông tin địa chỉ.</div>';
+                    } else {
+                        list.innerHTML = adds.map(a => `
+                            <div class="col-md-6">
+                                <div class="card border border-light shadow-sm rounded-4 p-3 h-100 position-relative address-card">
+                                    ${a.diaChiMacDinh ? '<span class="badge bg-success position-absolute top-0 end-0 m-3 tiny">Mặc định</span>' : ''}
+                                    <h6 class="fw-bold mb-2">${a.tenNguoiNhan}</h6>
+                                    <p class="small text-muted mb-2"><i class="bi bi-telephone text-primary me-2"></i>${a.soDienThoaiNguoiNhan}</p>
+                                    <p class="small mb-2 text-dark opacity-75"><i class="bi bi-geo-alt text-primary me-2"></i>${a.chiTiet}, ${a.xaPhuong}, ${a.quanHuyen}, ${a.tinhThanhPho}</p>
+                                    
+                                    <div class="mt-auto pt-3 border-top d-flex align-items-center">
+                                        ${!a.diaChiMacDinh ? `<button class="btn btn-link btn-sm p-0 text-decoration-none text-primary tiny fw-bold" onclick="setDefaultAddress('${a.id}')">Đặt mặc định</button>` : ''}
+                                        <div class="ms-auto flex-shrink-0">
+                                            <button class="btn btn-light btn-sm rounded-circle me-1" onclick='editAddress(${JSON.stringify(a).replace(/'/g, "&apos;")})'><i class="bi bi-pencil-square"></i></button>
+                                            <button class="btn btn-light btn-sm rounded-circle text-danger" onclick="deleteAddress('${a.id}')"><i class="bi bi-trash"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                } catch (e) { console.error(e); }
+            }
+ 
+            async function viewOrderDetail(id) {
+                const modal = new bootstrap.Modal(document.getElementById('orderDetailModal'));
+                const content = document.getElementById('orderDetailContent');
+                
+                content.innerHTML = '<div class="text-center py-5"><span class="spinner-border text-primary"></span></div>';
+                modal.show();
+                
+                try {
+                    const res = await fetch(`/api/client/orders/detail/${id}`);
+                    const o = await res.json();
+                    
+                    content.innerHTML = `
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6">
+                                <div class="p-3 bg-light rounded-4 h-100">
+                                    <label class="tiny fw-bold text-muted mb-2 text-uppercase">Người nhận hàng</label>
+                                    <h6 class="fw-bold mb-1">${o.tenNguoiNhan}</h6>
+                                    <p class="small mb-1">${o.soDienThoai}</p>
+                                    <p class="small text-muted mb-0">${o.diaChi}</p>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="p-3 bg-light rounded-4 h-100">
+                                    <label class="tiny fw-bold text-muted mb-2 text-uppercase">Đơn hàng & Thanh toán</label>
+                                    <p class="small mb-1"><b>Mã đơn:</b> ${o.maHoaDon}</p>
+                                    <p class="small mb-1"><b>Trạng thái:</b> <span class="badge-status ${getStatusStyle(o.trangThai)} tiny">${getStatusDisplay(o.trangThai)}</span></p>
+                                    <p class="small mb-0"><b>Hình thức:</b> ${o.phuongThuc}</p>
+                                </div>
+                            </div>
+                        </div>
+ 
+                        <div class="mb-4">
+                            <label class="tiny fw-bold text-muted mb-3 text-uppercase">Danh sách sản phẩm</label>
+                            ${o.items.map(i => {
+                                let imgSrc = i.anh;
+                                if (imgSrc && !imgSrc.startsWith('http') && !imgSrc.startsWith('/uploads/')) {
+                                    imgSrc = '/uploads/san-pham/' + imgSrc;
+                                }
+                                return `
+                                <div class="d-flex gap-3 mb-3 pb-3 border-bottom border-light align-items-center">
+                                    <img src="${imgSrc || 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=120'}" class="rounded-3 border" style="width:60px;height:60px;object-fit:cover;">
+                                    <div class="flex-grow-1">
+                                        <h6 class="fw-bold mb-0 small">${i.tenSanPham}</h6>
+                                        <div class="tiny text-muted">Size: ${i.kichThuoc} | Màu: ${i.mauSac}</div>
+                                    </div>
+                                    <div class="text-end">
+                                        <div class="small fw-bold">${formPrice(i.gia)}</div>
+                                        <div class="tiny text-muted">x${i.soLuong}</div>
+                                    </div>
+                                </div>`;
+                            }).join('')}
+                        </div>
+ 
+                        <div class="p-4 bg-light rounded-4 shadow-sm">
+                            <div class="d-flex justify-content-between mb-2 small text-muted"><span>Tạm tính</span> <span>${formPrice(o.tongTien)}</span></div>
+                            <div class="d-flex justify-content-between mb-2 small text-muted"><span>Phí vận chuyển</span> <span class="text-success">+ ${formPrice(o.phiShip)}</span></div>
+                            <div class="d-flex justify-content-between mb-2 small text-muted"><span>Giảm giá voucher</span> <span class="text-danger">- ${formPrice(o.giamGia)}</span></div>
+                            <hr class="my-3">
+                            <div class="d-flex justify-content-between align-items-center"><span class="fw-bold">TỔNG THANH TOÁN</span> <span class="fw-bold fs-5 text-primary">${formPrice(o.thanhTien)}</span></div>
+                        </div>
+                    `;
+                } catch (e) { content.innerHTML = '<div class="alert alert-danger">Không thể tải thông tin.</div>'; }
+            }
+ 
+            function getStatusDisplay(s) {
+                switch(s) {
+                    case '5':
+                    case 'HOAN_THANH': return '<i class="bi bi-check-circle-fill"></i> HOÀN THÀNH';
+                    case '6':
+                    case 'DA_HUY': 
+                    case 'HUY': return '<i class="bi bi-x-circle"></i> ĐÃ HỦY';
+                    case '1':
+                    case 'CHO_XAC_NHAN': return '<i class="bi bi-clock-history"></i> CHỜ XÁC NHẬN';
+                    case '2':
+                    case 'DA_XAC_NHAN': return '<i class="bi bi-check2-all"></i> ĐÃ XÁC NHẬN';
+                    case '3':
+                    case 'DANG_GIAO': return '<i class="bi bi-truck"></i> ĐANG GIAO';
+                    default: return s.replace(/_/g, ' ').toUpperCase();
+                }
+            }
+  
+            function getStatusStyle(s) {
+                switch(s) {
+                    case '5':
+                    case 'HOAN_THANH': return 'status-hoanthanh';
+                    case '6':
+                    case 'DA_HUY':
+                    case 'HUY': return 'status-huy';
+                    case '1':
+                    case 'CHO_XAC_NHAN': return 'status-choxacnhan';
+                    case '2':
+                    case 'DA_XAC_NHAN': return 'status-daxacnhan';
+                    case '3':
+                    case 'DANG_GIAO': return 'status-danggiao';
+                    default: return 'status-default';
+                }
+            }
+            
             function logoutAccount() {
                 if (confirm('Bạn có chắc chắn muốn đăng xuất không?')) {
                     localStorage.removeItem('pk_user');
-                    window.location.href = '/client';
+                    window.location.href = '/dang-nhap';
                 }
             }
-
+ 
             function toggleEditProfile() {
-                const viewMode = document.getElementById('profileViewMode');
-                const editMode = document.getElementById('profileEditMode');
-
-                if (viewMode.classList.contains('d-none')) {
-                    viewMode.classList.remove('d-none');
-                    editMode.classList.add('d-none');
+                const view = document.getElementById('profileViewMode');
+                const edit = document.getElementById('profileEditMode');
+                if (view.classList.contains('d-none')) {
+                    view.classList.remove('d-none'); edit.classList.add('d-none');
                 } else {
                     const user = JSON.parse(localStorage.getItem('pk_user'));
                     document.getElementById('editName').value = user.hoTen || '';
                     document.getElementById('editPhone').value = user.soDienThoai || '';
                     document.getElementById('editGender').value = user.gioiTinh || '';
                     document.getElementById('editDob').value = user.ngaySinh || '';
-
-                    viewMode.classList.add('d-none');
-                    editMode.classList.remove('d-none');
+                    view.classList.add('d-none'); edit.classList.remove('d-none');
                 }
             }
-
+ 
             async function handleUpdateProfile(e) {
                 e.preventDefault();
                 const btn = document.getElementById('btnSaveProfile');
-                btn.disabled = true;
-                btn.innerHTML = 'Đang lưu...';
-
                 const user = JSON.parse(localStorage.getItem('pk_user'));
                 const payload = {
-                    id: user.id,
-                    hoTen: document.getElementById('editName').value,
+                    id: user.id, hoTen: document.getElementById('editName').value,
                     soDienThoai: document.getElementById('editPhone').value,
                     gioiTinh: document.getElementById('editGender').value,
-                    ngaySinh: document.getElementById('editDob').value,
-                    token: user.token
+                    ngaySinh: document.getElementById('editDob').value, token: user.token
+                };
+                try {
+                    const res = await fetch('/api/client/profile/update', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    const data = await res.json();
+                    if (data.success) {
+                        localStorage.setItem('pk_user', JSON.stringify(data.user));
+                        Swal.fire({ icon: 'success', title: 'Đã lưu!', timer: 1000, showConfirmButton: false });
+                        renderProfileData(data.user); toggleEditProfile();
+                        document.getElementById('userNameDis').innerText = data.user.hoTen;
+                        document.getElementById('userInitial').innerText = data.user.hoTen ? data.user.hoTen[0].toUpperCase() : 'U';
+                    } else Swal.fire('Lỗi', data.message, 'error');
+                } catch (e) { Swal.fire('Lỗi', 'Lỗi mạng', 'error'); }
+            }
+
+            // --- Address Management Logic ---
+            let addrModal;
+            document.addEventListener('DOMContentLoaded', () => {
+                addrModal = new bootstrap.Modal(document.getElementById('addressModal'));
+                document.getElementById('addressForm').addEventListener('submit', handleAddressSubmit);
+                
+                document.getElementById('addrProvince').addEventListener('change', function() {
+                    const code = this.options[this.selectedIndex].getAttribute('data-code');
+                    if (code) loadDistricts(code);
+                });
+                document.getElementById('addrDistrict').addEventListener('change', function() {
+                    const code = this.options[this.selectedIndex].getAttribute('data-code');
+                    if (code) loadWards(code);
+                });
+            });
+
+            async function openAddressModal() {
+                document.getElementById('addrModalTitle').innerText = 'Địa chỉ mới';
+                document.getElementById('addrId').value = '';
+                document.getElementById('addressForm').reset();
+                await loadProvinces();
+                addrModal.show();
+            }
+
+            async function loadProvinces(current = '') {
+                const sel = document.getElementById('addrProvince');
+                try {
+                    const res = await fetch('/api/client/provinces');
+                    const data = await res.json();
+                    const target = cleanAddrName(current);
+                    sel.innerHTML = '<option value="">Chọn Tỉnh/Thành</option>' + 
+                        data.map(p => {
+                            const optName = cleanAddrName(p.name);
+                            const isSel = target && (optName === target || optName.includes(target) || target.includes(optName));
+                            return `<option value="${p.name}" data-code="${p.code}" ${isSel ? 'selected' : ''}>${p.name}</option>`;
+                        }).join('');
+                } catch (e) { console.error("Lỗi load tỉnh:", e); }
+            }
+
+            async function loadDistricts(pCode, current = '') {
+                const sel = document.getElementById('addrDistrict');
+                try {
+                    const res = await fetch(`/api/client/districts/${pCode}`);
+                    const data = await res.json();
+                    const target = cleanAddrName(current);
+                    sel.innerHTML = '<option value="">Chọn Quận/Huyện</option>' + 
+                        data.districts.map(d => {
+                            const optName = cleanAddrName(d.name);
+                            const isSel = target && (optName === target || optName.includes(target) || target.includes(optName));
+                            return `<option value="${d.name}" data-code="${d.code}" ${isSel ? 'selected' : ''}>${d.name}</option>`;
+                        }).join('');
+                    if (!current) document.getElementById('addrWard').innerHTML = '<option value="">Chọn Phường/Xã</option>';
+                } catch (e) { console.error("Lỗi load huyện:", e); }
+            }
+
+            async function loadWards(dCode, current = '') {
+                const sel = document.getElementById('addrWard');
+                try {
+                    const res = await fetch(`/api/client/wards/${dCode}`);
+                    const data = await res.json();
+                    const target = cleanAddrName(current);
+                    sel.innerHTML = '<option value="">Chọn Phường/Xã</option>' + 
+                        data.wards.map(w => {
+                            const optName = cleanAddrName(w.name);
+                            const isSel = target && (optName === target || optName.includes(target) || target.includes(optName));
+                            return `<option value="${w.name}" data-code="${w.code}" ${isSel ? 'selected' : ''}>${w.name}</option>`;
+                        }).join('');
+                } catch (e) { console.error("Lỗi load xã:", e); }
+            }
+
+            async function handleAddressSubmit(e) {
+                e.preventDefault();
+                const user = JSON.parse(localStorage.getItem('pk_user'));
+                const id = document.getElementById('addrId').value;
+                const payload = {
+                    id: id,
+                    khachHangId: user.id,
+                    tenNguoiNhan: document.getElementById('addrName').value,
+                    soDienThoai: document.getElementById('addrPhone').value,
+                    tinhThanhPho: document.getElementById('addrProvince').value,
+                    quanHuyen: document.getElementById('addrDistrict').value,
+                    xaPhuong: document.getElementById('addrWard').value,
+                    chiTiet: document.getElementById('addrDetail').value,
+                    diaChiMacDinh: document.getElementById('addrIsDefault').checked
                 };
 
+                const method = id ? 'PUT' : 'POST';
+                const url = id ? '/api/client/address/update' : '/api/client/address/add';
+
                 try {
-                    const response = await fetch('/api/client/profile/update', {
-                        method: 'PUT',
+                    const res = await fetch(url, {
+                        method: method,
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(payload)
                     });
-                    const data = await response.json();
-
+                    const data = await res.json();
                     if (data.success) {
-                        localStorage.setItem('pk_user', JSON.stringify(data.user));
-                        Swal.fire({
-                            icon: 'success', title: 'Thành công', text: 'Đã cập nhật thông tin!', timer: 1500, showConfirmButton: false
-                        });
-                        renderProfileData(data.user);
-                        document.getElementById('userNameDis').innerText = data.user.hoTen;
-                        document.getElementById('userInitial').innerText = data.user.hoTen ? data.user.hoTen[0].toUpperCase() : 'A';
-                        toggleEditProfile();
-                    } else {
-                        Swal.fire('Lỗi', data.message || 'Có lỗi xảy ra', 'error');
-                    }
-                } catch (err) {
-                    Swal.fire('Lỗi', 'Lỗi kết nối mạng', 'error');
-                } finally {
-                    btn.disabled = false;
-                    btn.innerHTML = 'Lưu thay đổi';
-                }
+                        Swal.fire({ icon: 'success', title: 'Thành công!', timer: 1000, showConfirmButton: false });
+                        addrModal.hide();
+                        loadAddresses();
+                    } else Swal.fire('Lỗi', data.message, 'error');
+                } catch (e) { Swal.fire('Lỗi', 'Lỗi kết nối', 'error'); }
             }
+
+            function cleanAddrName(name) {
+                if (!name) return "";
+                return name.toLowerCase()
+                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Loại bỏ dấu tiếng Việt
+                    .replace(/thanh pho|tinh|quan|huyen|thi xa|phuong|xa|thi tran/g, "")
+                    .replace(/[^\w\s]/gi, "") // Loại bỏ ký tự đặc biệt
+                    .trim();
+            }
+
+            window.editAddress = async function(a) {
+                document.getElementById('addrModalTitle').innerText = 'Sửa địa chỉ';
+                document.getElementById('addrId').value = a.id;
+                document.getElementById('addrName').value = a.tenNguoiNhan;
+                document.getElementById('addrPhone').value = a.soDienThoaiNguoiNhan;
+                document.getElementById('addrDetail').value = a.chiTiet;
+                document.getElementById('addrIsDefault').checked = !!a.diaChiMacDinh;
+
+                // Hiển thị ngay thông tin từ DB vào các select (dạng tạm thời)
+                document.getElementById('addrProvince').innerHTML = `<option value="${a.tinhThanhPho}" selected>${a.tinhThanhPho}</option>`;
+                document.getElementById('addrDistrict').innerHTML = `<option value="${a.quanHuyen}" selected>${a.quanHuyen}</option>`;
+                document.getElementById('addrWard').innerHTML = `<option value="${a.xaPhuong}" selected>${a.xaPhuong}</option>`;
+
+                addrModal.show();
+
+                // Sau đó mới load ngầm danh sách thực tế từ API để đồng bộ
+                try {
+                    await loadProvinces(a.tinhThanhPho);
+                    const pSel = document.getElementById('addrProvince');
+                    const pCode = pSel.options[pSel.selectedIndex]?.getAttribute('data-code');
+
+                    if (pCode) {
+                        await loadDistricts(pCode, a.quanHuyen);
+                        const dSel = document.getElementById('addrDistrict');
+                        const dCode = dSel.options[dSel.selectedIndex]?.getAttribute('data-code');
+                        if (dCode) {
+                            await loadWards(dCode, a.xaPhuong);
+                        }
+                    }
+                } catch (e) {
+                    console.warn("Không thể đồng bộ danh sách địa chỉ toàn diện:", e);
+                }
+            };
+
+            window.deleteAddress = async function(id) {
+                const res = await Swal.fire({
+                    title: 'Xác nhận xóa?',
+                    text: "Bạn không thể hoàn tác thao tác này!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d47d32',
+                    cancelButtonColor: '#adb5bd',
+                    confirmButtonText: 'Xóa ngay',
+                    cancelButtonText: 'Hủy'
+                });
+                if (res.isConfirmed) {
+                    try {
+                        const response = await fetch(`/api/client/address/delete/${id}`, { method: 'DELETE' });
+                        const data = await response.json();
+                        if (data.success) {
+                            Swal.fire({ icon: 'success', title: 'Đã xóa!', timer: 800, showConfirmButton: false });
+                            loadAddresses();
+                        } else Swal.fire('Lỗi', data.message, 'error');
+                    } catch (e) { Swal.fire('Lỗi', 'Lỗi kết nối', 'error'); }
+                }
+            };
+
+            window.setDefaultAddress = async function(id) {
+                try {
+                    const res = await fetch(`/api/client/address/set-default/${id}`, { method: 'POST' });
+                    const data = await res.json();
+                    if (data.success) {
+                        Swal.fire({ icon: 'success', title: 'Đã đặt làm mặc định!', timer: 800, showConfirmButton: false });
+                        loadAddresses();
+                    } else Swal.fire('Lỗi', data.message, 'error');
+                } catch (e) { Swal.fire('Lỗi', 'Lỗi kết nối', 'error'); }
+            };
+
+            function formPrice(v) { return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(v); }
         </script>
     </main>
 </body>

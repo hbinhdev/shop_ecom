@@ -30,6 +30,9 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
 
     // ── 2. POS & QUẢN LÝ (Gộp từ đoạn 1) ───────────────────────────────────────
 
+    @Query("SELECT h FROM HoaDon h WHERE h.trangThaiHoaDon = 'CHO_THANH_TOAN' AND h.loaiHoaDon = 'TAI_QUAY' AND h.ngayTao < :cutoff ORDER BY h.ngayTao ASC")
+    List<HoaDon> findAllPendingPOSBefore(@Param("cutoff") LocalDateTime cutoff);
+
     @Query("SELECT h FROM HoaDon h WHERE h.trangThaiHoaDon = 'CHO_THANH_TOAN' AND h.loaiHoaDon = 'TAI_QUAY' ORDER BY h.ngayTao ASC")
     List<HoaDon> findAllPendingPOS();
 

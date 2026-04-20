@@ -8,13 +8,13 @@
 <body>
     <main>
         <div class="container-fluid p-0">
-            
+
             <div class="mb-4">
                 <h4 class="fw-bold section-title">Quản lý sản phẩm / <span class="fw-bold section-title">Danh sách sản
                         phẩm</span></h4>
             </div>
 
-            
+
             <form th:action="@{/admin/san-pham}" method="GET" id="filterForm">
                 <div class="card shadow-sm border-0 rounded-4 mb-4">
                     <div class="card-body p-4">
@@ -45,30 +45,33 @@
                         </div>
 
                         <div class="row g-3 align-items-center">
-                            
+
                             <div class="col-md-4 d-flex align-items-center gap-3">
                                 <label class="form-label mb-0 text-nowrap fw-medium">Thương hiệu:</label>
-                                <select name="idThuongHieu" class="form-select rounded-pill border-1 bg-light-subtle" onchange="this.form.submit()">
+                                <select name="idThuongHieu" class="form-select rounded-pill border-1 bg-light-subtle"
+                                    onchange="this.form.submit()">
                                     <option value="">Tất cả</option>
-                                    <option th:each="th : ${listThuongHieu}" th:value="${th.id}" 
-                                            th:text="${th.tenThuongHieu}" th:selected="${th.id == idThuongHieu}"></option>
+                                    <option th:each="th : ${listThuongHieu}" th:value="${th.id}"
+                                        th:text="${th.tenThuongHieu}" th:selected="${th.id == idThuongHieu}"></option>
                                 </select>
                             </div>
 
-                            
+
                             <div class="col-md-4 d-flex align-items-center gap-3">
                                 <label class="form-label mb-0 text-nowrap fw-medium">Chất liệu:</label>
-                                <select name="idChatLieu" class="form-select rounded-pill border-1 bg-light-subtle" onchange="this.form.submit()">
+                                <select name="idChatLieu" class="form-select rounded-pill border-1 bg-light-subtle"
+                                    onchange="this.form.submit()">
                                     <option value="">Tất cả</option>
-                                    <option th:each="cl : ${listChatLieu}" th:value="${cl.id}" 
-                                            th:text="${cl.tenChatLieu}" th:selected="${cl.id == idChatLieu}"></option>
+                                    <option th:each="cl : ${listChatLieu}" th:value="${cl.id}"
+                                        th:text="${cl.tenChatLieu}" th:selected="${cl.id == idChatLieu}"></option>
                                 </select>
                             </div>
 
-                            
+
                             <div class="col-md-4 d-flex align-items-center gap-3">
                                 <label class="form-label mb-0 text-nowrap fw-medium">Trạng thái:</label>
-                                <select name="trangThai" class="form-select rounded-pill border-1 bg-light-subtle" onchange="this.form.submit()">
+                                <select name="trangThai" class="form-select rounded-pill border-1 bg-light-subtle"
+                                    onchange="this.form.submit()">
                                     <option value="">Tất cả</option>
                                     <option value="false" th:selected="${trangThai == false}">Đang kinh doanh</option>
                                     <option value="true" th:selected="${trangThai == true}">Ngừng kinh doanh</option>
@@ -79,7 +82,7 @@
                 </div>
             </form>
 
-            
+
             <div class="custom-table overflow-hidden shadow-sm rounded-4 bg-white">
                 <table class="table align-middle mb-0">
                     <thead class="bg-light text-muted small text-uppercase fw-bold">
@@ -116,16 +119,15 @@
                                     <div class="form-check form-switch p-0 m-0">
                                         <input class="form-check-input ms-0 custom-switch" type="checkbox"
                                             th:checked="${sp.xoaMem == false || sp.xoaMem == null}"
-                                            th:data-id="${sp.id}"
-                                            onchange="confirmToggleProduct(this)"
+                                            th:data-id="${sp.id}" onchange="confirmToggleProduct(this)"
                                             style="cursor: pointer;">
                                     </div>
-                                    <a th:href="@{/admin/san-pham/bien-the(idSanPham=${sp.id})}"
+                                    <!-- <a th:href="@{/admin/san-pham/bien-the(idSanPham=${sp.id})}"
                                         class="btn-icon rounded-circle shadow-xs" title="Xem biến thể sản phẩm">
                                         <i class="bi bi-eye"></i>
-                                    </a>
+                                    </a> -->
                                     <a th:href="@{/admin/san-pham/edit/{id}(id=${sp.id})}"
-                                       class="btn-icon rounded-circle shadow-xs text-primary" title="Sửa sản phẩm">
+                                        class="btn-icon rounded-circle shadow-xs text-primary" title="Sửa sản phẩm">
                                         <i class="bi bi-pencil"></i>
                                     </a>
                                     <a th:href="@{/admin/san-pham/bien-the(idSanPham=${sp.id})}"
@@ -145,8 +147,7 @@
                     </tbody>
                 </table>
                 <div class="px-3 py-3 border-top bg-light-subtle">
-                    <div
-                        th:replace="~{admin/fragments/pagination :: pagination(${spPage}, '/admin/san-pham', 
+                    <div th:replace="~{admin/fragments/pagination :: pagination(${spPage}, '/admin/san-pham', 
                         'search=' + (${search} ?: '') + 
                         '&trangThai=' + (${trangThai} ?: '') + 
                         '&idThuongHieu=' + (${idThuongHieu} ?: '') + 
@@ -156,7 +157,7 @@
             </div>
         </div>
 
-        
+
         <script>
             function confirmToggleProduct(checkbox) {
                 confirmToggle(checkbox, '/admin/san-pham/toggle-status', 'Đã cập nhật trạng thái sản phẩm và các biến thể!', 'Lỗi khi cập nhật trạng thái.');

@@ -353,8 +353,20 @@ public class SanPhamController {
             @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) String trThai) {
         
-        java.io.ByteArrayInputStream in = spctService.exportToExcel(search, idSanPham, idMauSac, idKichThuoc, minPrice, maxPrice, trThai);
+//        java.io.ByteArrayInputStream in = spctService.exportToExcel(search, idSanPham, idMauSac, idKichThuoc, minPrice, maxPrice, trThai);
+        java.io.ByteArrayInputStream in = spctService.exportToExcel(
+                search,      // 1
+                idMauSac,    // 2
+                idKichThuoc, // 3
+                minPrice,    // 4
+                maxPrice,    // 5
+                trThai,      // 6
+                idSanPham,   // 7
+                null,        // 8 (idThuongHieu - nếu không có thì để null)
+                null         // 9 (idDanhMuc - nếu không có thì để null)
+        );
         org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+
         headers.add("Content-Disposition", "attachment; filename=bien_the_san_pham.xlsx");
 
         return ResponseEntity.ok()

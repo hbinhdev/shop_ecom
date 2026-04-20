@@ -48,19 +48,27 @@ public class PhieuGiamGiaServiceImpl implements PhieuGiamGiaService {
         if (pgg.getGiaTriGiam() == null || pgg.getGiaTriGiam().doubleValue() <= 0) {
             throw new RuntimeException("Giá trị giảm phải lớn hơn 0");
         }
-        if ("%".equals(pgg.getHinhThucGiam()) && pgg.getGiaTriGiam().doubleValue() > 100) {
-            throw new RuntimeException("Giảm giá theo % không được vượt quá 100%");
+        if ("%".equals(pgg.getHinhThucGiam())) {
+            double val = pgg.getGiaTriGiam().doubleValue();
+            if (val <= 1 || val > 100) {
+                throw new RuntimeException("Giảm giá theo % phải lớn hơn 1% và không vượt quá 100%");
+            }
+        } else {
+            // Giảm theo tiền mặt
+            if (pgg.getGiaTriGiam().doubleValue() >= 100000000) {
+                throw new RuntimeException("Giá trị giảm tiền mặt phải nhỏ hơn 100,000,000 VNĐ");
+            }
         }
         if (pgg.getNgayBatDau() != null && pgg.getNgayKetThuc() != null) {
             if (pgg.getNgayKetThuc().isBefore(pgg.getNgayBatDau())) {
                 throw new RuntimeException("Ngày kết thúc phải sau ngày bắt đầu");
             }
         }
-        if (pgg.getSoLuong() != null && pgg.getSoLuong() < 0) {
-            throw new RuntimeException("Số lượng không được nhỏ hơn 0");
+        if (pgg.getSoLuong() != null && pgg.getSoLuong() < 1) {
+            throw new RuntimeException("Số lượng phải ít nhất là 1");
         }
         if (pgg.getGiaTriToiThieu() != null && pgg.getGiaTriToiThieu().doubleValue() < 0) {
-            throw new RuntimeException("Hóa đơn tối thiểu không được nhỏ hơn 0");
+            throw new RuntimeException("Giá trị hóa đơn tối thiểu không được nhỏ hơn 0");
         }
 
         

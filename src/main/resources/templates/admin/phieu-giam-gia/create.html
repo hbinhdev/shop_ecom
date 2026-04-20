@@ -162,6 +162,24 @@
                     checkedRadio.dispatchEvent(new Event('change'));
                 }
             });
+
+            document.getElementById('pggForm').addEventListener('submit', function(e) {
+                const hinhThuc = document.querySelector('input[name="hinhThucGiam"]:checked')?.value;
+                if (hinhThuc === 'VNĐ') {
+                    const giaTriGiam = parseInt(document.getElementById('giaTriGiam').value.replace(/\./g, "")) || 0;
+                    const giaTriToiThieu = parseInt(document.getElementById('giaTriToiThieu').value.replace(/\./g, "")) || 0;
+                    
+                    if (giaTriGiam >= giaTriToiThieu && giaTriToiThieu > 0) {
+                        e.preventDefault();
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Giá trị không hợp lệ',
+                            text: 'Giá trị giảm phải nhỏ hơn hóa đơn tối thiểu!',
+                            confirmButtonColor: '#d47d32'
+                        });
+                    }
+                }
+            });
         </script>
     </main>
 </body>

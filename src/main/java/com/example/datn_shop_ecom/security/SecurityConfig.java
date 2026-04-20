@@ -3,6 +3,7 @@ package com.example.datn_shop_ecom.security;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -14,6 +15,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -24,78 +27,61 @@ public class SecurityConfig {
     private final CustomAuthenticationSuccessHandler successHandler;
     private final CustomAuthenticationFailureHandler failureHandler;
 
-    // ----------------------------------------------------------------
-    // 1. Password Encoder - BCrypt
-    // ----------------------------------------------------------------
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // ----------------------------------------------------------------
-    // 2. Authentication Provider - kết nối UserDetailsService + BCrypt
-    // ----------------------------------------------------------------
+    // --- PROVIDER CHO ADMIN ---
     @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
+    public DaoAuthenticationProvider adminProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(userDetailsService);
+        // Ép buộc chỉ tìm trong bảng NhanVien
+        provider.setUserDetailsService(email -> userDetailsService.loadNhanVienOnly(email));
         provider.setPasswordEncoder(passwordEncoder());
+        provider.setHideUserNotFoundExceptions(false);
         return provider;
     }
 
-    // ----------------------------------------------------------------
-    // 3. Authentication Manager
-    // ----------------------------------------------------------------
+    // --- PROVIDER CHO CLIENT ---
+    @Bean
+    public DaoAuthenticationProvider clientProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        // Ép buộc chỉ tìm trong bảng KhachHang
+        provider.setUserDetailsService(email -> userDetailsService.loadKhachHangOnly(email));
+        provider.setPasswordEncoder(passwordEncoder());
+        provider.setHideUserNotFoundExceptions(false);
+        return provider;
+    }
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    // ----------------------------------------------------------------
-    // 4. Session Event Publisher - theo dõi session hết hạn
-    // ----------------------------------------------------------------
+    @Bean(name = "clientAuthenticationManager")
+    public AuthenticationManager clientAuthenticationManager() {
+        return new org.springframework.security.authentication.ProviderManager(clientProvider());
+    }
+
     @Bean
     public HttpSessionEventPublisher httpSessionEventPublisher() {
         return new HttpSessionEventPublisher();
     }
 
-    // ----------------------------------------------------------------
-    // 5. Security Filter Chain - quy tắc phân quyền URL
-    // ----------------------------------------------------------------
+    // 1. Cấu hình bảo mật cho trang ADMIN
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    @Order(1)
+    public SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
-            .cors(cors -> cors.configurationSource(request -> {
-                var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
-                corsConfiguration.setAllowedOrigins(java.util.List.of("*"));
-                corsConfiguration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                corsConfiguration.setAllowedHeaders(java.util.List.of("*"));
-                return corsConfiguration;
-            }))
-            .authenticationProvider(authenticationProvider())
+            .securityMatcher("/admin/**")
+            .authenticationProvider(adminProvider()) // Dùng bộ xác thực Admin
             .authorizeHttpRequests(auth -> auth
-                // Tài nguyên tĩnh & trang công khai
-                .requestMatchers(
-                    "/css/**", "/js/**", "/images/**", "/uploads/**", "/assets/**", "/vendor/**",
-                    "/client/**",
-                    "/", "/index", "/san-pham/**", "/admin/login", "/error", "/403", "/404",
-                    "/dang-nhap", "/dang-ky", "/ve-chung-toi", "/phieu-giam-gia", "/tra-cuu", 
-                    "/gio-hang", "/thanh-toan", "/tai-khoan",
-                    "/api/client/**", "/api/auth/**"
-                ).permitAll()
-
-                // Chỉ Admin: quản lý nhân viên, thống kê
-                .requestMatchers("/admin/nhan-vien/**", "/admin/thong-ke/**").hasRole("ADMIN")
-
-                // Admin hoặc Nhân viên: toàn bộ admin còn lại
+                .requestMatchers("/admin/login").permitAll()
+                // Nếu là Khách hàng (ROLE_USER) mà vào Admin thì bị chặn và bắt login lại
                 .requestMatchers("/admin/**").hasAnyRole("ADMIN", "EMPLOYEE")
-
-                // Đã đăng nhập (bất kỳ role)
                 .anyRequest().authenticated()
             )
-
-            // Cấu hình trang Login
             .formLogin(form -> form
                 .loginPage("/admin/login")
                 .loginProcessingUrl("/admin/login")
@@ -105,25 +91,73 @@ public class SecurityConfig {
                 .failureHandler(failureHandler)
                 .permitAll()
             )
-
-            // Cấu hình Logout
             .logout(logout -> logout
-                .logoutUrl("/logout")
+                .logoutUrl("/admin/logout")
                 .logoutSuccessUrl("/admin/login?logout")
-                .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
+                .invalidateHttpSession(true)
                 .permitAll()
             )
-
-            // Trang 403 Access Denied
             .exceptionHandling(ex -> ex
-                .accessDeniedPage("/403")
-            )
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    org.springframework.security.core.Authentication auth = 
+                        org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+                    
+                    // Nếu là Khách hàng lạc vào Admin, xóa Session và bắt Login lại
+                    if (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
+                        new org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler().logout(request, response, auth);
+                        response.sendRedirect("/admin/login?error=unauthorized_client");
+                    } else {
+                        response.sendRedirect("/403");
+                    }
+                })
+            );
 
-            // Session Management - giới hạn 1 session / tài khoản
+        return http.build();
+    }
+
+    // 2. Cấu hình bảo mật cho trang CLIENT
+    @Bean
+    @Order(2)
+    public SecurityFilterChain clientFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
+            .authenticationProvider(clientProvider()) // Dùng bộ xác thực Client
+            .cors(cors -> cors.configurationSource(request -> {
+                var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
+                corsConfiguration.setAllowedOrigins(List.of("*"));
+                corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                corsConfiguration.setAllowedHeaders(List.of("*"));
+                return corsConfiguration;
+            }))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(
+                    "/css/**", "/js/**", "/images/**", "/uploads/**", "/assets/**", "/vendor/**",
+                    "/", "/index", "/san-pham/**", "/error", "/403", "/404",
+                    "/dang-nhap", "/dang-ky", "/ve-chung-toi", "/phieu-giam-gia", "/tra-cuu", 
+                    "/gio-hang", "/api/client/**", "/api/auth/**"
+                ).permitAll()
+                .anyRequest().permitAll()
+            )
+            .formLogin(form -> form
+                .loginPage("/dang-nhap")
+                .loginProcessingUrl("/perform_login_client")
+                .usernameParameter("email")
+                .passwordParameter("password")
+                .successHandler(successHandler)
+                .failureHandler(failureHandler)
+                .permitAll()
+            )
+            .logout(logout -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/dang-nhap?logout")
+                .deleteCookies("JSESSIONID")
+                .invalidateHttpSession(true)
+                .permitAll()
+            )
             .sessionManagement(session -> session
                 .maximumSessions(1)
-                .expiredUrl("/admin/login?sessionExpired=true")
+                .expiredUrl("/dang-nhap?sessionExpired=true")
             );
 
         return http.build();

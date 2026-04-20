@@ -120,10 +120,11 @@
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Quyền hạn <span
                                     class="text-danger">*</span></label>
-                            <select class="form-select rounded-3 py-2 px-3 border-1 bg-white" th:field="*{vaiTro}"
+                            <select class="form-select rounded-3 py-2 px-3 border-1 bg-white" name="vaiTro.id"
                                 required>
                                 <option value="">-- Chọn quyền hạn --</option>
-                                <option th:each="vt : ${vaiTros}" th:value="${vt.id}" th:text="${vt.ten}"></option>
+                                <option th:each="vt : ${vaiTros}" th:value="${vt.id}" th:text="${vt.ten}"
+                                    th:selected="${nhanVien.vaiTro != null && nhanVien.vaiTro.id == vt.id}"></option>
                             </select>
                         </div>
 
@@ -149,7 +150,7 @@
 
         <script th:inline="javascript">
             const initialValues = {
-                province: /*[[${nhanVien.tinhThanhPho}]]*/ null,
+                city: /*[[${nhanVien.tinhThanhPho}]]*/ null,
                 district: /*[[${nhanVien.quanHuyen}]]*/ null,
                 ward: /*[[${nhanVien.xaPhuong}]]*/ null
             };
