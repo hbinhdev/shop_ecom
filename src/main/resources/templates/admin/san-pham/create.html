@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/full-page :: layout(~{::main}, ~{::title})}">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
 
 <head>
     <title>Thêm mới sản phẩm - PeakSneaker </title>
@@ -364,6 +364,15 @@
 
 
         <script th:inline="javascript">
+            // Hàm lấy CSRF Token để gửi yêu cầu POST/PUT/DELETE
+            function getCsrfHeaders() {
+                const token = document.querySelector('meta[name="_csrf"]')?.content;
+                const header = document.querySelector('meta[name="_csrf_header"]')?.content;
+                const headers = {};
+                if (token && header) headers[header] = token;
+                return headers;
+            }
+
             const colorPicker = { 'Xanh dương': '#3b82f6', 'Trắng': '#ffffff', 'Đen': '#000000', 'Đỏ': '#ef4444', 'Vàng': '#f59e0b', 'Cam': '#fb923c', 'Xanh lá': '#22c55e', 'Tím': '#a855f7' };
             const VariantApp = {
                 dict: {}, variants: [], currentType: '', tempIds: [], colorFiles: {},
@@ -474,28 +483,6 @@
                                 });
                                 resolve(resized);
                             }, 'image/jpeg', 0.88);
-                handleFiles(cid, files) {
-                    const div = document.getElementById(`placeholder-${cid}`);
-                    let container = div.querySelector('.preview-scroll');
-                    if (!container) {
-                        div.innerHTML = `<div class="preview-scroll d-flex gap-2 p-1 overflow-auto w-100" style="height:120px"></div>`;
-                        container = div.querySelector('.preview-scroll');
-                    }
-
-                    if (!this.colorFiles[cid]) this.colorFiles[cid] = [];
-                    const newFiles = Array.from(files);
-                    this.colorFiles[cid] = [...this.colorFiles[cid], ...newFiles];
-
-                    newFiles.forEach(f => {
-                        const reader = new FileReader();
-                        reader.onload = (e) => {
-                            const wrapper = document.createElement('div');
-                            wrapper.className = 'position-relative flex-shrink-0';
-                            wrapper.innerHTML = `
-                                <img src="${e.target.result}" style="width: 100px; height: 100px; object-fit: cover;" class="rounded border shadow-sm">
-                                <span class="position-absolute top-0 end-0 badge rounded-circle bg-danger cursor-pointer" onclick="this.parentElement.remove()" style="margin: -5px -5px 0 0">×</span>
-                            `;
-                            container.appendChild(wrapper);
                         };
                         img.onerror = () => { URL.revokeObjectURL(objectUrl); resolve(file); };
                         img.src = objectUrl;
