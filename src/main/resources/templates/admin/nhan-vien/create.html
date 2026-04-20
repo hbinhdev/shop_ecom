@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
 
 <head>
@@ -28,6 +28,12 @@
                                 <i class="bi bi-save"></i> Lưu
                             </button>
                         </div>
+                    </div>
+
+                    <!-- Hiển thị lỗi nếu có -->
+                    <div th:if="${error}" class="alert alert-danger border-0 rounded-4 shadow-sm mb-4">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        <span th:text="${error}"></span>
                     </div>
                     
                     <div class="text-end mb-2">
@@ -84,7 +90,7 @@
                             <label class="form-label fw-bold small text-uppercase text-muted">Tỉnh/Thành phố</label>
                             <select class="form-select rounded-3 py-2 px-3 border-1 bg-white city-select"
                                 th:field="*{tinhThanhPho}">
-                                <option value="">Thành phố Hà Nội</option>
+                                <option value="">-- Chọn Tỉnh/Thành --</option>
                             </select>
                         </div>
 
@@ -120,10 +126,11 @@
                         <div class="col-md-6">
                             <label class="form-label fw-bold small text-uppercase text-muted">Quyền hạn <span
                                     class="text-danger">*</span></label>
-                            <select class="form-select rounded-3 py-2 px-3 border-1 bg-white" th:field="*{vaiTro}"
+                            <select class="form-select rounded-3 py-2 px-3 border-1 bg-white" name="vaiTro.id"
                                 required>
                                 <option value="">-- Chọn quyền hạn --</option>
-                                <option th:each="vt : ${vaiTros}" th:value="${vt.id}" th:text="${vt.ten}"></option>
+                                <option th:each="vt : ${vaiTros}" th:value="${vt.id}" th:text="${vt.ten}"
+                                    th:selected="${nhanVien.vaiTro != null && nhanVien.vaiTro.id == vt.id}"></option>
                             </select>
                         </div>
                         <div class="col-md-6">
@@ -137,8 +144,6 @@
                     </div>
                 </div>
             </form>
-        </div>
-        </form>
         </div>
 
         
@@ -187,6 +192,17 @@
 
         <script th:inline="javascript">
             document.addEventListener('DOMContentLoaded', function() {
+                const form = document.getElementById('employeeForm');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        console.log("Submitting form...");
+                        const formData = new FormData(this);
+                        for (let [key, value] of formData.entries()) {
+                            console.log(`${key}: ${value}`);
+                        }
+                    });
+                }
+
                 if (typeof initAddressSelects === 'function') {
                     initAddressSelects('.city-select', '.district-select', '.ward-select');
                 }

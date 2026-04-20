@@ -107,18 +107,22 @@
                                             <input type="text" class="form-control form-control-sm inline-edit-input d-none attr-edit-input" th:value="${m.tenMauSac}">
                                         </td>
                                         <td class="text-center">
-                                            <span th:if="${m.xoaMem == false || m.xoaMem == null}" class="attr-badge-active">Hoạt động</span>
-                                            <span th:if="${m.xoaMem == true}" class="attr-badge-inactive">Ngừng</span>
+                                            <span th:if="${m.xoaMem == false || m.xoaMem == null}" 
+                                                class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Hoạt động</span>
+                                            <span th:if="${m.xoaMem == true}" 
+                                                class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng hoạt động</span>
                                         </td>
                                         <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-2">
+                                            <div class="d-flex justify-content-center align-items-center gap-3">
+                                                <div class="form-check form-switch p-0 m-0">
+                                                    <input class="form-check-input ms-0 custom-switch" 
+                                                        type="checkbox" th:checked="${m.xoaMem == false || m.xoaMem == null}" 
+                                                        th:data-id="${m.id}" data-type="mau-sac"
+                                                        onchange="confirmToggleProp(this)" style="cursor: pointer;">
+                                                </div>
                                                 <button class="btn btn-sm btn-icon rounded-circle" title="Sửa tên"
                                                     onclick="toggleEdit(this)" th:data-id="${m.id}" data-type="mau-sac">
                                                     <i class="bi bi-pencil-square"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-icon rounded-circle" title="Đổi trạng thái"
-                                                    onclick="toggleStatus(this)" th:data-id="${m.id}" data-type="mau-sac">
-                                                    <i class="bi bi-arrow-repeat"></i>
                                                 </button>
                                             </div>
                                         </td>
@@ -158,18 +162,22 @@
                                             <input type="text" class="form-control form-control-sm inline-edit-input d-none attr-edit-input" th:value="${k.tenKichThuoc}">
                                         </td>
                                         <td class="text-center">
-                                            <span th:if="${k.xoaMem == false || k.xoaMem == null}" class="attr-badge-active">Hoạt động</span>
-                                            <span th:if="${k.xoaMem == true}" class="attr-badge-inactive">Ngừng</span>
+                                            <span th:if="${k.xoaMem == false || k.xoaMem == null}" 
+                                                class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Hoạt động</span>
+                                            <span th:if="${k.xoaMem == true}" 
+                                                class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng hoạt động</span>
                                         </td>
                                         <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-2">
+                                            <div class="d-flex justify-content-center align-items-center gap-3">
+                                                <div class="form-check form-switch p-0 m-0">
+                                                    <input class="form-check-input ms-0 custom-switch" 
+                                                        type="checkbox" th:checked="${k.xoaMem == false || k.xoaMem == null}" 
+                                                        th:data-id="${k.id}" data-type="kich-thuoc"
+                                                        onchange="confirmToggleProp(this)" style="cursor: pointer;">
+                                                </div>
                                                 <button class="btn btn-sm btn-icon rounded-circle" title="Sửa"
                                                     onclick="toggleEdit(this)" th:data-id="${k.id}" data-type="kich-thuoc">
                                                     <i class="bi bi-pencil-square"></i>
-                                                </button>
-                                                <button class="btn btn-sm btn-icon rounded-circle" title="Đổi trạng thái"
-                                                    onclick="toggleStatus(this)" th:data-id="${k.id}" data-type="kich-thuoc">
-                                                    <i class="bi bi-arrow-repeat"></i>
                                                 </button>
                                             </div>
                                         </td>
@@ -209,13 +217,22 @@
                                             <input type="text" class="form-control form-control-sm inline-edit-input d-none attr-edit-input" th:value="${d.tenDanhMuc}">
                                         </td>
                                         <td class="text-center">
-                                            <span th:if="${d.xoaMem == false || d.xoaMem == null}" class="attr-badge-active">Hoạt động</span>
-                                            <span th:if="${d.xoaMem == true}" class="attr-badge-inactive">Ngừng</span>
+                                            <span th:if="${d.xoaMem == false || d.xoaMem == null}" 
+                                                class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Hoạt động</span>
+                                            <span th:if="${d.xoaMem == true}" 
+                                                class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng hoạt động</span>
                                         </td>
                                         <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-2">
-                                                <button class="btn btn-sm btn-icon rounded-circle" onclick="toggleEdit(this)" th:data-id="${d.id}" data-type="danh-muc"><i class="bi bi-pencil-square"></i></button>
-                                                <button class="btn btn-sm btn-icon rounded-circle" onclick="toggleStatus(this)" th:data-id="${d.id}" data-type="danh-muc"><i class="bi bi-arrow-repeat"></i></button>
+                                            <div class="d-flex justify-content-center align-items-center gap-3">
+                                                <div class="form-check form-switch p-0 m-0">
+                                                    <input class="form-check-input ms-0 custom-switch" 
+                                                        type="checkbox" th:checked="${d.xoaMem == false || d.xoaMem == null}" 
+                                                        th:data-id="${d.id}" data-type="danh-muc"
+                                                        onchange="confirmToggleProp(this)" style="cursor: pointer;">
+                                                </div>
+                                                <button class="btn btn-sm btn-icon rounded-circle" onclick="toggleEdit(this)" th:data-id="${d.id}" data-type="danh-muc">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -254,13 +271,22 @@
                                             <input type="text" class="form-control form-control-sm inline-edit-input d-none attr-edit-input" th:value="${t.tenThuongHieu}">
                                         </td>
                                         <td class="text-center">
-                                            <span th:if="${t.xoaMem == false || t.xoaMem == null}" class="attr-badge-active">Hoạt động</span>
-                                            <span th:if="${t.xoaMem == true}" class="attr-badge-inactive">Ngừng</span>
+                                            <span th:if="${t.xoaMem == false || t.xoaMem == null}" 
+                                                class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Hoạt động</span>
+                                            <span th:if="${t.xoaMem == true}" 
+                                                class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng hoạt động</span>
                                         </td>
                                         <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-2">
-                                                <button class="btn btn-sm btn-icon rounded-circle" onclick="toggleEdit(this)" th:data-id="${t.id}" data-type="thuong-hieu"><i class="bi bi-pencil-square"></i></button>
-                                                <button class="btn btn-sm btn-icon rounded-circle" onclick="toggleStatus(this)" th:data-id="${t.id}" data-type="thuong-hieu"><i class="bi bi-arrow-repeat"></i></button>
+                                            <div class="d-flex justify-content-center align-items-center gap-3">
+                                                <div class="form-check form-switch p-0 m-0">
+                                                    <input class="form-check-input ms-0 custom-switch" 
+                                                        type="checkbox" th:checked="${t.xoaMem == false || t.xoaMem == null}" 
+                                                        th:data-id="${t.id}" data-type="thuong-hieu"
+                                                        onchange="confirmToggleProp(this)" style="cursor: pointer;">
+                                                </div>
+                                                <button class="btn btn-sm btn-icon rounded-circle" onclick="toggleEdit(this)" th:data-id="${t.id}" data-type="thuong-hieu">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -299,13 +325,22 @@
                                             <input type="text" class="form-control form-control-sm inline-edit-input d-none attr-edit-input" th:value="${k.tenKieuDang}">
                                         </td>
                                         <td class="text-center">
-                                            <span th:if="${k.xoaMem == false || k.xoaMem == null}" class="attr-badge-active">Hoạt động</span>
-                                            <span th:if="${k.xoaMem == true}" class="attr-badge-inactive">Ngừng</span>
+                                            <span th:if="${k.xoaMem == false || k.xoaMem == null}" 
+                                                class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Hoạt động</span>
+                                            <span th:if="${k.xoaMem == true}" 
+                                                class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng hoạt động</span>
                                         </td>
                                         <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-2">
-                                                <button class="btn btn-sm btn-icon rounded-circle" onclick="toggleEdit(this)" th:data-id="${k.id}" data-type="kieu-dang"><i class="bi bi-pencil-square"></i></button>
-                                                <button class="btn btn-sm btn-icon rounded-circle" onclick="toggleStatus(this)" th:data-id="${k.id}" data-type="kieu-dang"><i class="bi bi-arrow-repeat"></i></button>
+                                            <div class="d-flex justify-content-center align-items-center gap-3">
+                                                <div class="form-check form-switch p-0 m-0">
+                                                    <input class="form-check-input ms-0 custom-switch" 
+                                                        type="checkbox" th:checked="${k.xoaMem == false || k.xoaMem == null}" 
+                                                        th:data-id="${k.id}" data-type="kieu-dang"
+                                                        onchange="confirmToggleProp(this)" style="cursor: pointer;">
+                                                </div>
+                                                <button class="btn btn-sm btn-icon rounded-circle" onclick="toggleEdit(this)" th:data-id="${k.id}" data-type="kieu-dang">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -344,13 +379,22 @@
                                             <input type="text" class="form-control form-control-sm inline-edit-input d-none attr-edit-input" th:value="${c.tenChatLieu}">
                                         </td>
                                         <td class="text-center">
-                                            <span th:if="${c.xoaMem == false || c.xoaMem == null}" class="attr-badge-active">Hoạt động</span>
-                                            <span th:if="${c.xoaMem == true}" class="attr-badge-inactive">Ngừng</span>
+                                            <span th:if="${c.xoaMem == false || c.xoaMem == null}" 
+                                                class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Hoạt động</span>
+                                            <span th:if="${c.xoaMem == true}" 
+                                                class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng hoạt động</span>
                                         </td>
                                         <td class="text-center">
-                                            <div class="d-flex justify-content-center gap-2">
-                                                <button class="btn btn-sm btn-icon rounded-circle" onclick="toggleEdit(this)" th:data-id="${c.id}" data-type="chat-lieu"><i class="bi bi-pencil-square"></i></button>
-                                                <button class="btn btn-sm btn-icon rounded-circle" onclick="toggleStatus(this)" th:data-id="${c.id}" data-type="chat-lieu"><i class="bi bi-arrow-repeat"></i></button>
+                                            <div class="d-flex justify-content-center align-items-center gap-3">
+                                                <div class="form-check form-switch p-0 m-0">
+                                                    <input class="form-check-input ms-0 custom-switch" 
+                                                        type="checkbox" th:checked="${c.xoaMem == false || c.xoaMem == null}" 
+                                                        th:data-id="${c.id}" data-type="chat-lieu"
+                                                        onchange="confirmToggleProp(this)" style="cursor: pointer;">
+                                                </div>
+                                                <button class="btn btn-sm btn-icon rounded-circle" onclick="toggleEdit(this)" th:data-id="${c.id}" data-type="chat-lieu">
+                                                    <i class="bi bi-pencil-square"></i>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -396,14 +440,10 @@
                 });
             });
 
-            // Đổi trạng thái
-            async function toggleStatus(btn) {
-                const id = btn.dataset.id;
-                const type = btn.dataset.type;
-                const res = await csrfPost(`/admin/thuoc-tinh/${type}/toggle/${id}`);
-                const data = await res.json();
-                if (data.success) location.reload();
-                else Swal.fire('Lỗi', 'Không thể cập nhật trạng thái!', 'error');
+            // Đổi trạng thái (Toggle)
+            async function confirmToggleProp(checkbox) {
+                const type = checkbox.dataset.type;
+                await confirmToggle(checkbox, `/admin/thuoc-tinh/${type}/toggle`, 'Đã cập nhật trạng thái!', 'Lỗi cập nhật.');
             }
 
             // Inline edit (sửa tên)

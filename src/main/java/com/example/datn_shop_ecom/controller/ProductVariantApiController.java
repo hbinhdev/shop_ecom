@@ -4,6 +4,7 @@ import com.example.datn_shop_ecom.entity.*;
 import com.example.datn_shop_ecom.repository.HinhAnhRepository;
 import com.example.datn_shop_ecom.repository.SanPhamChiTietRepository;
 import com.example.datn_shop_ecom.repository.SanPhamRepository;
+import com.example.datn_shop_ecom.service.SanPhamChiTietService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +42,9 @@ public class ProductVariantApiController {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private SanPhamChiTietService spctService;
 
     @Value("${upload.path}")
     private String uploadPath;
@@ -261,6 +265,16 @@ public class ProductVariantApiController {
             return ResponseEntity.ok(Map.of("success", true));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/variant/toggle-status/{id}")
+    public ResponseEntity<?> toggleVariantStatus(@PathVariable Long id) {
+        try {
+            spctService.toggleVariantStatus(id);
+            return ResponseEntity.ok(Map.of("success", true, "message", "Cập nhật trạng thái biến thể thành công!"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
         }
     }
 

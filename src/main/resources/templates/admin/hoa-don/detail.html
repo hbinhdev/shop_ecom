@@ -111,11 +111,9 @@
                 transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             }
 
-            .status-step.completed .step-circle {
-                background: #00b894;
-                border-color: #e6f7ee;
-                color: white;
-            }
+            .status-step.completed.step-xac-nhan .step-circle { background: #2980b9; border-color: #eaf2ff; color: white; }
+            .status-step.completed.step-giao .step-circle { background: #8e44ad; border-color: #f3eaff; color: white; }
+            .status-step.completed.step-done .step-circle { background: #27ae60; border-color: #e6f7ee; color: white; }
 
             .status-step.active .step-circle {
                 background: #d47d32;
@@ -123,6 +121,17 @@
                 color: white;
                 transform: scale(1.1);
                 box-shadow: 0 0 0 5px rgba(212, 125, 50, 0.1);
+            }
+
+            .btn-delivery {
+                background: #8e44ad;
+                color: white;
+                border: none;
+            }
+            .btn-delivery:hover {
+                background: #763991;
+                color: white;
+                box-shadow: 0 4px 15px rgba(142, 68, 173, 0.3);
             }
 
             .step-label {
@@ -355,7 +364,7 @@
                                 <input type="hidden" name="id" th:value="${hd.id}">
                                 <input type="hidden" name="status" value="DANG_GIAO">
                                 <button type="submit"
-                                    class="btn btn-info text-white px-4 fw-bold rounded-pill shadow-sm">
+                                    class="btn btn-delivery px-4 fw-bold rounded-pill shadow-sm">
                                     <i class="bi bi-truck me-1"></i> Giao hàng
                                 </button>
                             </form>
@@ -387,13 +396,13 @@
                         <div class="step-label">Chờ xác nhận</div>
                     </div>
 
-                    <div class="status-step"
+                    <div class="status-step step-xac-nhan"
                         th:classappend="${#lists.contains({'2','3','4','DA_XAC_NHAN','DANG_GIAO','HOAN_THANH'}, hd.trangThaiHoaDon)} ? 'completed' : ''">
                         <div class="step-circle"><i class="bi bi-box-seam"></i></div>
                         <div class="step-label">Đã xác nhận</div>
                     </div>
 
-                    <div class="status-step"
+                    <div class="status-step step-giao"
                         th:classappend="${#lists.contains({'3','4','DANG_GIAO','HOAN_THANH'}, hd.trangThaiHoaDon)} ? 'completed' : ''">
                         <div class="step-circle"><i class="bi bi-truck"></i></div>
                         <div class="step-label">Đang giao</div>
@@ -434,9 +443,9 @@
                                                 : (hd.khachHang != null ? hd.khachHang.soDienThoai : 'N/A')}"></span>
                                     </div>
                                     <div class="info-item" style="border: none;">
-                                        <span class="info-label">Email:</span>
+                                        <span class="info-label">Email nhận:</span>
                                         <span class="info-value"
-                                            th:text="${hd.khachHang != null ? hd.khachHang.email : 'N/A'}"></span>
+                                            th:text="${hd.emailNguoiNhan != null ? hd.emailNguoiNhan : (hd.khachHang != null ? hd.khachHang.email : 'N/A')}"></span>
                                     </div>
                                 </div>
                             </div>
@@ -492,6 +501,7 @@
                                     <thead>
                                         <tr>
                                             <th>STT</th>
+                                            <th>Ảnh</th>
                                             <th>Sản phẩm</th>
                                             <th>Phân loại</th>
                                             <th class="text-center">Số lượng</th>
@@ -502,6 +512,11 @@
                                     <tbody>
                                         <tr th:each="ct, iter : ${listChiTiet}">
                                             <td th:text="${iter.count}"></td>
+                                            <td>
+                                                <img th:with="displayImg=${ct.sanPhamChiTiet.duongDanAnh != null ? ct.sanPhamChiTiet.duongDanAnh : (ct.sanPhamChiTiet.sanPham != null ? ct.sanPhamChiTiet.sanPham.duongDanAnh : null)}"
+                                                     th:src="${displayImg != null ? (displayImg.startsWith('http') ? displayImg : '/uploads/san-pham/' + displayImg) : 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=60'}" 
+                                                     class="rounded-3" style="width: 50px; height: 50px; object-fit: cover; border: 1px solid #eee;">
+                                            </td>
                                             <td>
                                                 <div class="fw-bold" th:text="${ct.sanPhamChiTiet.sanPham.tenSanPham}">
                                                 </div>

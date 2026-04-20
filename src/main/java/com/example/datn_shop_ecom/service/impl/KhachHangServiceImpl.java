@@ -23,6 +23,12 @@ public class KhachHangServiceImpl implements KhachHangService {
     @Autowired
     private com.example.datn_shop_ecom.service.EmailService emailService;
 
+    @Autowired
+    private com.example.datn_shop_ecom.repository.VaiTroRepository vaiTroRepository;
+
+    @Autowired
+    private org.springframework.security.crypto.password.PasswordEncoder passwordEncoder;
+
     @Override
     public java.util.List<KhachHang> filterKhachHang(String search, String gioiTinh, Boolean xoaMem) {
         if (search != null && search.trim().isEmpty())
@@ -116,9 +122,10 @@ public class KhachHangServiceImpl implements KhachHangService {
                 khachHang.setNgayTao(LocalDateTime.now());
             }
             khachHang.setXoaMem(false);
+            khachHang.setTrangThai("Hoạt động"); // Đảm bảo trạng thái hoạt động để đăng nhập được
             
             String password = generateRandomPassword(8);
-            khachHang.setMatKhau(password);
+            khachHang.setMatKhau(passwordEncoder.encode(password));
 
             if (khachHang.getDanhSachDiaChi() != null) {
                 khachHang.getDanhSachDiaChi().forEach(dc -> {
@@ -152,7 +159,7 @@ public class KhachHangServiceImpl implements KhachHangService {
     }
 
     private String generateRandomPassword(int length) {
-        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456389";
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         java.util.Random rnd = new java.util.Random();
         StringBuilder sb = new StringBuilder(length);
         for (int i = 0; i < length; i++)
@@ -177,13 +184,17 @@ public class KhachHangServiceImpl implements KhachHangService {
             
         // Tự sinh mật khẩu ngẫu nhiên
         String randomPwd = generateRandomPassword(8);
-        khachHang.setMatKhau(randomPwd);
+        khachHang.setMatKhau(passwordEncoder.encode(randomPwd));
         
         if (khachHang.getMaKhachHang() == null || khachHang.getMaKhachHang().isEmpty())
             khachHang.setMaKhachHang(generateMaKhachHang());
             
         khachHang.setNgayTao(LocalDateTime.now());
         khachHang.setXoaMem(false);
+        khachHang.setTrangThai("Hoạt động");
+        
+        // Gán vai trò ROLE_CUSTOMER
+        vaiTroRepository.findByMa("ROLE_CUSTOMER").ifPresent(khachHang::setVaiTro);
         
         if (khachHang.getDanhSachDiaChi() != null) {
             khachHang.getDanhSachDiaChi().forEach(dc -> {

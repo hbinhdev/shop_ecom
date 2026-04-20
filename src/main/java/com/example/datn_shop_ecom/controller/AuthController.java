@@ -13,6 +13,16 @@ public class AuthController {
 
     @GetMapping("/403")
     public String accessDenied() {
+        org.springframework.security.core.Authentication auth = 
+            org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            System.out.println("--- [DEBUG 403] ---");
+            System.out.println("Email: " + auth.getName());
+            System.out.println("Authorities: " + auth.getAuthorities());
+            System.out.println("Is Authenticated: " + auth.isAuthenticated());
+        } else {
+            System.out.println("--- [DEBUG 403] No authentication found! ---");
+        }
         return "admin/403";
     }
 
