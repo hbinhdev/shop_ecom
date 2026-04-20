@@ -75,7 +75,6 @@ public class SecurityConfig {
     public SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
         http
             .securityMatcher("/admin/**")
-            .csrf(csrf -> csrf.disable())
             .authenticationProvider(adminProvider()) // Dùng bộ xác thực Admin
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/admin/login").permitAll()
