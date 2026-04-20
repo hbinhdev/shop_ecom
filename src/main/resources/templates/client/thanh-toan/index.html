@@ -59,7 +59,7 @@
                             </div>
                             <div class="d-flex justify-content-between mb-2">
                                 <span class="text-muted small">Phí vận chuyển</span>
-                                <span class="fw-bold small text-success">30.000 ₫</span>
+                                <span id="labelShip" class="fw-bold small text-success">0 ₫</span>
                             </div>
                             <div class="d-flex justify-content-between mb-2" id="rowDiscount"
                                 style="display:none !important;">
@@ -169,7 +169,7 @@
 
         <script th:inline="javascript">
             let cartData = [], discAmt = 0, voucherID = null;
-            const SHIP_FEE = 30000;
+            let currentShipFee = 0;
             let provinces = [];
 
             document.addEventListener('DOMContentLoaded', init);
@@ -182,8 +182,10 @@
                 }
 
                 // Load tỉnh thành sẵn
-                const resP = await fetch('/api/client/provinces');
-                provinces = await resP.json();
+                try {
+                    const resP = await fetch('/api/client/provinces');
+                    if (resP.ok) provinces = await resP.json();
+                } catch (e) { console.error("DEBUG: Lỗi nạp tỉnh thành:", e); }
 
                 // Load sản phẩm
                 try {
@@ -201,8 +203,35 @@
                     if (rProfile.ok) {
                         const freshUser = await rProfile.json();
                         renderAddressInputs(freshUser.danhSachDiaChi || []);
+                    } else {
+                        renderAddressInputs([]); 
                     }
-                } catch (e) { console.error("Sync fail", e); }
+                } catch (e) { 
+                    renderAddressInputs([]); 
+                }
+
+                // Auto apply best voucher
+                autoApplyBestVoucher();
+            }
+
+            async function autoApplyBestVoucher() {
+                let sub = cartData.reduce((s, i) => s + (i.gia * i.soLuong), 0);
+                if (sub <= 0) return;
+                try {
+                    const res = await fetch(`/api/client/vouchers/best?cartTotal=${sub}&khId=${getUser()?.id || ''}`);
+                    const d = await res.json();
+                    if (d.success) {
+                        voucherID = d.id;
+                        document.getElementById('voucherInput').value = d.ma;
+                        if (d.hinhThuc === 'VNĐ') {
+                            discAmt = d.giaTri;
+                        } else {
+                            discAmt = sub * (d.giaTri / 100);
+                        }
+                        document.getElementById('voucherMsg').innerHTML = `<span class="text-success small"><i class="bi bi-magic"></i> Đã tự động áp dụng mã tốt nhất: <b>${d.ma}</b> (-${d.discountLabel})</span>`;
+                        calcTotal();
+                    }
+                } catch (e) {}
             }
 
             function renderOrderItems() {
@@ -237,8 +266,10 @@
             }
 
             function renderAddressInputs(addresses) {
+                console.log("DEBUG: Bắt đầu render danh sách địa chỉ. Số lượng:", addresses.length);
                 const container = document.getElementById('addressContainer');
                 if (addresses.length === 0) {
+                    console.warn("DEBUG: Danh sách địa chỉ rỗng, hiển thị thông báo mặc định.");
                     container.innerHTML = '<div class="text-center py-3 text-muted">Bạn chưa có địa chỉ lưu. Hãy nhấn "Thêm địa chỉ mới".</div>';
                     return;
                 }
@@ -253,6 +284,15 @@
 
             function createAddressHtml(a, i) {
                 const isDefault = a.diaChiMacDinh || i === 0;
+                
+                // Hàm chuẩn hóa để so sánh tên địa danh
+                const normalize = (str) => {
+                    if (!str) return "";
+                    return str.toLowerCase()
+                        .replace(/^(tỉnh|thành phố|thành phố trực thuộc trung ương|huyện|quận|thị xã|phường|xã|thị trấn)\s+/g, "")
+                        .trim();
+                };
+
                 return `
                 <div class="addr-item card rounded-4 p-4 mb-4 ${isDefault ? 'selected' : ''}" id="addr-block-${i}">
                     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -277,6 +317,10 @@
                             <input type="text" class="form-control rounded-pill co-input addr-sdt" value="${a.soDienThoaiNguoiNhan || ''}" placeholder="0123...">
                         </div>
                         <div class="col-12">
+                            <label class="label-co">Sổ địa chỉ Email (Để nhận thông báo đơn hàng)</label>
+                            <input type="email" class="form-control rounded-pill co-input addr-email" value="${getUser()?.email || ''}" placeholder="email@example.com">
+                        </div>
+                        <div class="col-12">
                             <label class="label-co">Số nhà / Đường *</label>
                             <input type="text" class="form-control rounded-pill co-input addr-detail" value="${a.chiTiet || ''}" placeholder="Địa chỉ chi tiết">
                         </div>
@@ -284,7 +328,10 @@
                             <label class="label-co">Tỉnh/Thành *</label>
                             <select class="form-select rounded-pill co-input addr-city" onchange="citySelectChange(${i})">
                                 <option value="">-- Chọn --</option>
-                                ${provinces.map(p => `<option value="${p.code}" ${p.name === a.tinhThanhPho ? 'selected' : ''}>${p.name}</option>`).join('')}
+                                ${provinces.map(p => {
+                                    const isSel = normalize(p.name) === normalize(a.tinhThanhPho);
+                                    return `<option value="${p.code}" ${isSel ? 'selected' : ''}>${p.name}</option>`;
+                                }).join('')}
                             </select>
                         </div>
                         <div class="col-md-4">
@@ -319,8 +366,17 @@
             }
 
             function selectAddressBlock(idx) {
+                console.log("Selecting address block:", idx);
                 document.querySelectorAll('.addr-item').forEach(el => el.classList.remove('selected'));
-                document.getElementById(`addr-block-${idx}`).classList.add('selected');
+                const block = document.getElementById(`addr-block-${idx}`);
+                block.classList.add('selected');
+
+                // Khi đổi địa chỉ, tính lại phí ship
+                const province = block.querySelector('.addr-city').options[block.querySelector('.addr-city').selectedIndex]?.text;
+                const district = block.querySelector('.addr-dist').options[block.querySelector('.addr-dist').selectedIndex]?.text;
+                const ward = block.querySelector('.addr-ward').value;
+                console.log("Address changed to:", { province, district, ward });
+                updateShippingFee(province, district, ward);
             }
 
             async function initCitySync(idx, a) {
@@ -329,17 +385,34 @@
                 const distSel = block.querySelector('.addr-dist');
                 const wardSel = block.querySelector('.addr-ward');
 
+                const normalize = (str) => {
+                    if (!str) return "";
+                    return str.toLowerCase()
+                        .replace(/^(tỉnh|thành phố|thành phố trực thuộc trung ương|huyện|quận|thị xã|phường|xã|thị trấn)\s+/g, "")
+                        .trim();
+                };
+
                 if (citySel.value) {
                     const resD = await fetch(`/api/client/districts/${citySel.value}`);
                     const dataD = await resD.json();
                     distSel.innerHTML = '<option value="">-- Chọn --</option>' +
-                        dataD.districts.map(d => `<option value="${d.code}" ${d.name === distSel.dataset.saved ? 'selected' : ''}>${d.name}</option>`).join('');
+                        dataD.districts.map(d => {
+                            const isSD = normalize(d.name) === normalize(distSel.dataset.saved);
+                            return `<option value="${d.code}" ${isSD ? 'selected' : ''}>${d.name}</option>`;
+                        }).join('');
 
                     if (distSel.value) {
                         const resW = await fetch(`/api/client/wards/${distSel.value}`);
                         const dataW = await resW.json();
                         wardSel.innerHTML = '<option value="">-- Chọn --</option>' +
-                            dataW.wards.map(w => `<option value="${w.name}" ${w.name === wardSel.dataset.saved ? 'selected' : ''}>${w.name}</option>`).join('');
+                            dataW.wards.map(w => {
+                                const isSW = normalize(w.name) === normalize(wardSel.dataset.saved);
+                                return `<option value="${w.name}" ${isSW ? 'selected' : ''}>${w.name}</option>`;
+                            }).join('');
+                        
+                        if (block.classList.contains('selected')) {
+                            updateShippingFee(citySel.options[citySel.selectedIndex]?.text, distSel.options[distSel.selectedIndex]?.text, wardSel.value);
+                        }
                     }
                 }
             }
@@ -373,12 +446,48 @@
                     const data = await res.json();
                     wardSel.innerHTML = '<option value="">-- Chọn Phường/Xã --</option>' +
                         data.wards.map(w => `<option value="${w.name}">${w.name}</option>`).join('');
+                    
+                    // Thêm sự kiện khi chọn xã thì tính phí
+                    wardSel.onchange = () => {
+                        const province = block.querySelector('.addr-city').options[block.querySelector('.addr-city').selectedIndex]?.text;
+                        const district = block.querySelector('.addr-dist').options[block.querySelector('.addr-dist').selectedIndex]?.text;
+                        const ward = wardSel.value;
+                        updateShippingFee(province, district, ward);
+                    };
+
+                    updateShippingFee(block.querySelector('.addr-city').options[block.querySelector('.addr-city').selectedIndex]?.text, 
+                                      block.querySelector('.addr-dist').options[block.querySelector('.addr-dist').selectedIndex]?.text,
+                                      '');
+                }
+            }
+
+            async function updateShippingFee(province, district, ward) {
+                console.log("Attempting to update shipping fee for:", { province, district, ward });
+                if (!province || province === '-- Chọn --' || !district || district === '-- Chọn --') {
+                    console.warn("Incomplete address info, skipping fee update.");
+                    return;
+                }
+                try {
+                    const url = `/api/client/shipping-fee?province=${encodeURIComponent(province)}&district=${encodeURIComponent(district)}&ward=${encodeURIComponent(ward || '')}`;
+                    console.log("Calling Fee API:", url);
+                    const res = await fetch(url);
+                    const d = await res.json();
+                    console.log("Fee API Response:", d);
+                    if (d.success) {
+                        currentShipFee = d.fee;
+                        document.getElementById('labelShip').innerText = formPrice(currentShipFee);
+                        calcTotal();
+                    } else {
+                        console.error("Fee API Error:", d.message);
+                    }
+                } catch (e) {
+                    console.error("Fetch Error in updateShippingFee:", e);
                 }
             }
 
             function calcTotal() {
                 let sub = cartData.reduce((s, i) => s + (i.gia * i.soLuong), 0);
-                let total = sub + SHIP_FEE - discAmt;
+                let total = sub + currentShipFee - discAmt;
                 if (total < 0) total = 0;
                 document.getElementById('labelSubtotal').innerText = formPrice(sub);
                 document.getElementById('labelDiscount').innerText = '-' + formPrice(discAmt);
@@ -417,13 +526,14 @@
                     khachHangId: getUser().id,
                     tenNguoiNhan: selectedBlock.querySelector('.addr-name').value,
                     soDienThoai: selectedBlock.querySelector('.addr-sdt').value,
+                    email: selectedBlock.querySelector('.addr-email')?.value,
                     chiTiet: selectedBlock.querySelector('.addr-detail').value,
                     tinhThanhPho: selectedBlock.querySelector('.addr-city').options[selectedBlock.querySelector('.addr-city').selectedIndex]?.text,
                     quanHuyen: selectedBlock.querySelector('.addr-dist').options[selectedBlock.querySelector('.addr-dist').selectedIndex]?.text,
                     xaPhuong: selectedBlock.querySelector('.addr-ward').value,
                     ghiChu: document.getElementById('inputNote').value,
-                    tongTien: cartData.reduce((s, i) => s + (i.gia * i.soLuong), 0) + SHIP_FEE - discAmt,
-                    phiShip: SHIP_FEE,
+                    tongTien: cartData.reduce((s, i) => s + (i.gia * i.soLuong), 0) + currentShipFee - discAmt,
+                    phiShip: currentShipFee,
                     idPhieuGiamGia: voucherID,
                     cartItems: cartData.map(i => ({ spctId: i.spctId, soLuong: i.soLuong }))
                 };

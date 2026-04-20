@@ -108,24 +108,31 @@
                                         <i class="bi bi-trash"></i> Xóa
                                     </button>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <label class="form-label small fw-medium text-muted">Tên người nhận *</label>
                                     <input type="text"
-                                        class="form-control form-control-sm rounded-4 border-1 bg-white py-2"
+                                        class="form-control form-control-sm rounded-pill border-1 bg-white py-2 px-3"
                                         th:field="*{danhSachDiaChi[__${stat.index}__].tenNguoiNhan}"
-                                        placeholder="Họ và tên người nhận" required>
+                                        placeholder="Họ và tên" required>
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label small fw-medium text-muted">Số nhà / Đường</label>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-medium text-muted">Số điện thoại *</label>
                                     <input type="text"
-                                        class="form-control form-control-sm rounded-4 border-1 bg-white py-2"
+                                        class="form-control form-control-sm rounded-pill border-1 bg-white py-2 px-3"
+                                        th:field="*{danhSachDiaChi[__${stat.index}__].soDienThoaiNguoiNhan}"
+                                        placeholder="0xxx..." required>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-medium text-muted">Số nhà / Đường *</label>
+                                    <input type="text"
+                                        class="form-control form-control-sm rounded-pill border-1 bg-white py-2 px-3"
                                         th:field="*{danhSachDiaChi[__${stat.index}__].chiTiet}"
-                                        placeholder="Ví dụ: 12A Nguyễn Trãi">
+                                        placeholder="Địa chỉ chi tiết" required>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label small fw-medium text-muted">Tỉnh/Thành</label>
                                     <select
-                                        class="form-select form-select-sm rounded-4 border-1 bg-white py-2 city-select"
+                                        class="form-select form-select-sm rounded-pill border-1 bg-white py-2 city-select"
                                         th:field="*{danhSachDiaChi[__${stat.index}__].tinhThanhPho}">
                                         <option value="">-- Chọn tỉnh/thành --</option>
                                         <option th:if="${dc.tinhThanhPho != null}" th:value="${dc.tinhThanhPho}"
@@ -135,7 +142,7 @@
                                 <div class="col-md-4">
                                     <label class="form-label small fw-medium text-muted">Quận/Huyện</label>
                                     <select
-                                        class="form-select form-select-sm rounded-4 border-1 bg-white py-2 district-select"
+                                        class="form-select form-select-sm rounded-pill border-1 bg-white py-2 district-select"
                                         th:field="*{danhSachDiaChi[__${stat.index}__].quanHuyen}">
                                         <option value="">-- Chọn quận/huyện --</option>
                                         <option th:if="${dc.quanHuyen != null}" th:value="${dc.quanHuyen}"
@@ -145,7 +152,7 @@
                                 <div class="col-md-4">
                                     <label class="form-label small fw-medium text-muted">Phường/Xã</label>
                                     <select
-                                        class="form-select form-select-sm rounded-4 border-1 bg-white py-2 ward-select"
+                                        class="form-select form-select-sm rounded-pill border-1 bg-white py-2 ward-select"
                                         th:field="*{danhSachDiaChi[__${stat.index}__].xaPhuong}">
                                         <option value="">-- Chọn phường/xã --</option>
                                         <option th:if="${dc.xaPhuong != null}" th:value="${dc.xaPhuong}"
@@ -160,7 +167,7 @@
         </div>
 
         <script th:inline="javascript">
-            let addressIndex =  0;
+            let addressIndex = /*[[${khachHang.danhSachDiaChi.size()}]]*/ 0;
 
             function addAddress() {
                 const container = document.getElementById('addressContainer');
@@ -179,29 +186,33 @@
                                     <i class="bi bi-trash"></i> Xóa
                                 </button>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label class="form-label small fw-medium text-muted">Tên người nhận *</label>
-                                <input type="text" class="form-control form-control-sm rounded-4 border-1 bg-white py-2" name="danhSachDiaChi[${addressIndex}].tenNguoiNhan" placeholder="Họ và tên người nhận" required>
+                                <input type="text" class="form-control form-control-sm rounded-pill border-1 bg-white py-2 px-3" name="danhSachDiaChi[${addressIndex}].tenNguoiNhan" placeholder="Họ và tên" required>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label small fw-medium text-muted">Số nhà / Đường</label>
-                                <input type="text" class="form-control form-control-sm rounded-4 border-1 bg-white py-2" name="danhSachDiaChi[${addressIndex}].chiTiet" placeholder="Ví dụ: 12A Nguyễn Trãi">
+                            <div class="col-md-4">
+                                <label class="form-label small fw-medium text-muted">Số điện thoại *</label>
+                                <input type="text" class="form-control form-control-sm rounded-pill border-1 bg-white py-2 px-3" name="danhSachDiaChi[${addressIndex}].soDienThoaiNguoiNhan" placeholder="0xxx..." required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label small fw-medium text-muted">Số nhà / Đường *</label>
+                                <input type="text" class="form-control form-control-sm rounded-pill border-1 bg-white py-2 px-3" name="danhSachDiaChi[${addressIndex}].chiTiet" placeholder="Địa chỉ chi tiết" required>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small fw-medium text-muted">Tỉnh/Thành</label>
-                                <select class="form-select form-select-sm rounded-4 border-1 bg-white py-2 city-select" name="danhSachDiaChi[${addressIndex}].tinhThanhPho">
+                                <select class="form-select form-select-sm rounded-pill border-1 bg-white py-2 city-select" name="danhSachDiaChi[${addressIndex}].tinhThanhPho">
                                     <option value="">-- Chọn tỉnh/thành --</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small fw-medium text-muted">Quận/Huyện</label>
-                                <select class="form-select form-select-sm rounded-4 border-1 bg-white py-2 district-select" name="danhSachDiaChi[${addressIndex}].quanHuyen">
+                                <select class="form-select form-select-sm rounded-pill border-1 bg-white py-2 district-select" name="danhSachDiaChi[${addressIndex}].quanHuyen">
                                     <option value="">-- Chọn quận/huyện --</option>
                                 </select>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small fw-medium text-muted">Phường/Xã</label>
-                                <select class="form-select form-select-sm rounded-4 border-1 bg-white py-2 ward-select" name="danhSachDiaChi[${addressIndex}].xaPhuong">
+                                <select class="form-select form-select-sm rounded-pill border-1 bg-white py-2 ward-select" name="danhSachDiaChi[${addressIndex}].xaPhuong">
                                     <option value="">-- Chọn phường/xã --</option>
                                 </select>
                             </div>

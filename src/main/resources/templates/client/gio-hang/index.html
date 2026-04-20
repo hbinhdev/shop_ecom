@@ -61,10 +61,6 @@
                             <span class="text-muted">Đã chọn (<span id="sumCount">0</span> món)</span>
                             <span class="fw-medium" id="sumSubtotal">0 ₫</span>
                         </div>
-                        <div class="d-flex justify-content-between mb-2 small">
-                            <span class="text-muted">Phí vận chuyển</span>
-                            <span class="fw-medium text-success" id="sumShip">30.000 ₫</span>
-                        </div>
                         <hr class="my-3">
                         <div class="d-flex justify-content-between mb-4">
                             <span class="fw-bold">Tổng cộng</span>
@@ -182,7 +178,6 @@
         </style>
 
         <script>
-            const SHIP_FEE = 30000;
             const FALLBACK_IMG = 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=120';
 
             /* ===== CART STORAGE ===== */
@@ -273,7 +268,7 @@
                     }
                 });
 
-                const total = subtotal > 0 ? subtotal + SHIP_FEE : 0;
+                const total = subtotal;
 
                 const sumCountEl = document.getElementById('sumCount');
                 const sumSubEl = document.getElementById('sumSubtotal');
@@ -346,6 +341,16 @@
 
             /* ===== CHECKOUT ===== */
             async function proceedToCheckout() {
+                console.log("TIẾN HÀNH THANH TOÁN được nhấn...");
+                const user = JSON.parse(localStorage.getItem('pk_user') || 'null');
+                console.log("Dữ liệu User từ LocalStorage:", user);
+
+                if (!user) {
+                    console.log("Không tìm thấy User. Chuyển hướng sang trang Đăng nhập.");
+                    window.location.href = '/dang-nhap';
+                    return;
+                }
+
                 const cart = getCart();
                 const checks = document.querySelectorAll('.item-check');
                 const selectedItems = [];
@@ -355,6 +360,7 @@
                         selectedItems.push(cart[chk.dataset.idx]);
                     }
                 });
+                console.log("Các sản phẩm đã chọn:", selectedItems);
 
                 if (selectedItems.length === 0) {
                     alert('Vui lòng chọn ít nhất một sản phẩm để thanh toán!');
@@ -398,9 +404,25 @@
 
             /* ===== INIT & SYNC WITH DB ===== */
             async function initCartPage() {
+                console.log("Trang Giỏ hàng đã tải xong. Đang kiểm tra Session...");
                 const user = JSON.parse(localStorage.getItem('pk_user') || 'null');
+                console.log("User hiện tại từ LocalStorage:", user);
+
                 if (user && user.id) {
-                    console.log("Fetching cart from DB for user:", user.id);
+                    // ĐỒNG BỘ SESSION VỚI SERVER (RE-AUTH)
+                    console.log("Đang đồng bộ session với Server cho email:", user.email);
+                    try {
+                        await fetch('/api/client/re-auth', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email: user.email })
+                        });
+                        console.log("Đồng bộ session (Re-auth) thành công.");
+                    } catch (e) {
+                        console.warn("Đồng bộ session thất bại, có thể cần đăng nhập lại.", e);
+                    }
+
+                    console.log("Đang lấy giỏ hàng từ DB cho User ID:", user.id);
                     try {
                         const res = await fetch(`/api/client/cart/items/${user.id}`);
                         const dbItems = await res.json();

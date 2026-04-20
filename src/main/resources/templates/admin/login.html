@@ -231,7 +231,6 @@
 <body>
     <div class="login-wrapper">
         <div class="login-card">
-            <!-- Brand -->
             <div class="brand">
                 <div class="brand-icon">
                     <i class="bi bi-box-seam-fill"></i>
@@ -242,28 +241,22 @@
             <h2>Đăng nhập</h2>
             <p class="subtitle">Nhập thông tin tài khoản để tiếp tục</p>
 
-            <!-- Thông báo lỗi -->
             <div th:if="${param.error}" class="alert-custom alert-danger-custom">
                 <i class="bi bi-exclamation-circle-fill"></i>
                 <span th:text="${param.error[0]}">Email hoặc mật khẩu không đúng</span>
             </div>
 
-            <!-- Thông báo đăng xuất -->
             <div th:if="${param.logout}" class="alert-custom alert-success-custom">
                 <i class="bi bi-check-circle-fill"></i>
                 Bạn đã đăng xuất thành công.
             </div>
 
-            <!-- Thông báo session hết hạn -->
             <div th:if="${param.sessionExpired}" class="alert-custom alert-info-custom">
                 <i class="bi bi-clock-history"></i>
                 Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.
             </div>
 
-            <!-- Form đăng nhập -->
             <form th:action="@{/admin/login}" method="post">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-
                 <div>
                     <label class="form-label">Email</label>
                     <div class="input-group-custom">

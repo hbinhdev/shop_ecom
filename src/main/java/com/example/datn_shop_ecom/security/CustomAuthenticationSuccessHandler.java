@@ -17,11 +17,14 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException {
 
-        if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
-            response.sendRedirect("/admin/dashboard");
-        } else if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_EMPLOYEE"))) {
+        if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN")) ||
+            authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_EMPLOYEE"))) {
+            System.out.println("--- [SUCCESS] Admin/Employee login successful: " + authentication.getName());
+            request.getSession().setAttribute("login_portal", "ADMIN");
             response.sendRedirect("/admin/dashboard");
         } else {
+            System.out.println("--- [SUCCESS] Client login successful: " + authentication.getName());
+            request.getSession().setAttribute("login_portal", "CLIENT");
             response.sendRedirect("/");
         }
     }

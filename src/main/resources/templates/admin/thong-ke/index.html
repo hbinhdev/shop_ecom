@@ -405,8 +405,9 @@
                             <tr>
                                 <th>STT</th>
                                 <th>Tên sản phẩm</th>
-                                <th class="text-right">Giá</th>
-                                <th class="text-right">SL bán</th>
+                                <th class="text-right">Giá bán</th>
+                                <th class="text-right">Đã bán</th>
+                                <th class="text-right">Doanh thu</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -420,9 +421,11 @@
                                               th:text="${' · ' + sp.tenKichThuoc}"></span>
                                     </div>
                                 </td>
-                                <td class="text-right tk-price-green"
+                                <td class="text-right" style="font-size:12px;"
                                     th:text="${#numbers.formatDecimal(sp.giaBan, 0, 'POINT', 0, 'COMMA') + ' đ'}">0 đ</td>
                                 <td class="text-right fw-bold" th:text="${sp.soLuongBan}">0</td>
+                                <td class="text-right tk-price-green"
+                                    th:text="${#numbers.formatDecimal(sp.doanhThu, 0, 'POINT', 0, 'COMMA') + ' đ'}">0 đ</td>
                             </tr>
                         </tbody>
                     </table>
