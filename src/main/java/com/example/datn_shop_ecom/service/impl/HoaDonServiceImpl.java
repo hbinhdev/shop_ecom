@@ -55,16 +55,37 @@ public class HoaDonServiceImpl implements HoaDonService {
 
         String currentStatus = hd.getTrangThaiHoaDon();
 
-        // Logic trừ tồn kho khi xác nhận đơn hàng
-        // Chú ý: "2" hoặc "DA_XAC_NHAN" là trạng thái xác nhận
+        // Logic trừ/hoàn tồn kho
+        List<ChiTietHoaDon> details = chiTietHoaDonRepository.findByHoaDonId(id);
+        
+        // 1. TRỪ KHO khi Xác nhận đơn hàng (Chuyển từ CHỜ XÁC NHẬN -> ĐÃ XÁC NHẬN)
         if (("2".equals(status) || "DA_XAC_NHAN".equals(status)) &&
                 ("1".equals(currentStatus) || "CHO_XAC_NHAN".equals(currentStatus))) {
+            
+            // Kiểm tra tồn kho trước khi trừ
+            for (ChiTietHoaDon d : details) {
+                com.example.datn_shop_ecom.entity.SanPhamChiTiet spct = d.getSanPhamChiTiet();
+                if (spct != null && (spct.getSoTonKho() == null || spct.getSoTonKho() < d.getSoLuong())) {
+                    throw new RuntimeException("Sản phẩm '" + spct.getSanPham().getTenSanPham() + "' không đủ tồn kho!");
+                }
+            }
 
-            List<ChiTietHoaDon> details = chiTietHoaDonRepository.findByHoaDonId(id);
             for (ChiTietHoaDon d : details) {
                 com.example.datn_shop_ecom.entity.SanPhamChiTiet spct = d.getSanPhamChiTiet();
                 if (spct != null) {
                     spct.setSoTonKho(spct.getSoTonKho() - d.getSoLuong());
+                    spctRepository.save(spct);
+                }
+            }
+        }
+        
+        // 2. HOÀN KHO khi Hủy đơn hàng (Chuyển sang ĐÃ HỦY từ các trạng thái đã trừ kho)
+        if (("5".equals(status) || "DA_HUY".equals(status)) && 
+                List.of("2", "3", "4", "5", "DA_XAC_NHAN", "DANG_GIAO", "HOAN_THANH").contains(currentStatus)) {
+            for (ChiTietHoaDon d : details) {
+                com.example.datn_shop_ecom.entity.SanPhamChiTiet spct = d.getSanPhamChiTiet();
+                if (spct != null) {
+                    spct.setSoTonKho((spct.getSoTonKho() != null ? spct.getSoTonKho() : 0) + d.getSoLuong());
                     spctRepository.save(spct);
                 }
             }
