@@ -48,19 +48,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String getJwtFromRequest(HttpServletRequest request) {
-        // 1. Check Header
         String bearerToken = request.getHeader("Authorization");
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
-        }
-        
-        // 2. Check Cookie (for Thymeleaf pages)
-        if (request.getCookies() != null) {
-            for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
-                if ("client_token".equals(cookie.getName())) {
-                    return cookie.getValue();
-                }
-            }
         }
         return null;
     }

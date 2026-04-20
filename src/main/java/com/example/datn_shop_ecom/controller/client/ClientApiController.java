@@ -137,17 +137,10 @@ public class ClientApiController {
         try {
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            HttpSession session = request.getSession(true);
+            session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
             Optional<KhachHang> khOpt = khachHangRepository.findByEmail(email);
             String token = tokenProvider.generateToken(authentication);
-
-            // Ghi đè Cookie để dùng chung trình duyệt với Admin
-            jakarta.servlet.http.Cookie cookie = new jakarta.servlet.http.Cookie("client_token", token);
-            cookie.setHttpOnly(true);
-            cookie.setPath("/");
-            cookie.setMaxAge(86400); // 1 ngày
-            cookie.setSecure(false); // Đặt true nếu dùng HTTPS
-            ((jakarta.servlet.http.HttpServletResponse) ((org.springframework.web.context.request.ServletRequestAttributes) org.springframework.web.context.request.RequestContextHolder.getRequestAttributes()).getResponse()).addCookie(cookie);
-
             Map<String, Object> user = new HashMap<>();
             if (khOpt.isPresent()) {
                 KhachHang kh = khOpt.get();
@@ -326,6 +319,7 @@ public class ClientApiController {
                     cthd.setSoLuong(Integer.parseInt(item.get("soLuong").toString()));
                     cthd.setGia(spct.getGiaBan()); cthd.setThanhTien(spct.getGiaBan().multiply(java.math.BigDecimal.valueOf(cthd.getSoLuong())));
                     chiTietHoaDonRepository.save(cthd);
+                    spct.setSoTonKho(spct.getSoTonKho() - cthd.getSoLuong()); spctRepository.save(spct);
                 }
             }
             if (khId != null) gioHangService.clearCart(khId);
