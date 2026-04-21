@@ -1563,33 +1563,32 @@
             // ────────────────────────────────────────────────
             function updateCleanupCountdown() {
                 const now = new Date();
-                // Test: Đếm ngược theo chu kỳ 30 giây
-                const secsInCycle = 30;
-                const progress = Math.floor(now.getTime() / 1000) % secsInCycle;
-                const diffSecs = secsInCycle - progress;
+                const nextMidnight = new Date();
+                nextMidnight.setHours(24, 0, 0, 0); // Đặt mốc là 00:00:00 của ngày mai
                 
-                const hours = 0;
-                const mins = 0;
-                const secs = diffSecs;
+                const diffMs = nextMidnight - now;
+                const totalSecs = Math.max(0, Math.floor(diffMs / 1000));
+                
+                const hours = Math.floor(totalSecs / 3600);
+                const mins = Math.floor((totalSecs % 3600) / 60);
+                const secs = totalSecs % 60;
                 
                 const timerEl = document.getElementById('cleanupTimer');
                 const textEl = document.getElementById('countdownText');
                 
-                textEl.textContent = `${secs.toString().padStart(2, '0')}s (TEST)`;
+                textEl.textContent = `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
                 
-                // Khi đếm ngược về 0 (hoặc vừa qua 0), tự động làm mới giao diện
-                if (diffSecs === secsInCycle) {
-                    textEl.textContent = "ĐANG RESET...";
-                    setTimeout(() => {
-                        location.reload(); // Load lại trang để cập nhật danh sách hóa đơn mới nhất
-                    }, 1000);
+                // Tự động tải lại trang khi sang ngày mới để cập nhật danh sách
+                if (totalSecs === 0) {
+                    textEl.textContent = "ĐANG LÀM MỚI...";
+                    setTimeout(() => location.reload(), 1500);
                 }
 
-                // Cảnh báo màu sắc cho bài test 30s
-                if (diffSecs < 10) {
-                    timerEl.className = 'cleanup-timer danger';
-                } else if (diffSecs < 20) {
-                    timerEl.className = 'cleanup-timer warning';
+                // Cảnh báo màu sắc dựa trên thời gian thực
+                if (hours < 1) {
+                    timerEl.className = 'cleanup-timer danger'; // Còn dưới 1 tiếng
+                } else if (hours < 3) {
+                    timerEl.className = 'cleanup-timer warning'; // Còn dưới 3 tiếng
                 } else {
                     timerEl.className = 'cleanup-timer';
                 }
