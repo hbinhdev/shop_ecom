@@ -380,7 +380,6 @@
                     const res = await fetch('/api/admin/dictionary/all');
                     this.dict = await res.json();
                     const maps = [
-
                         ['idMauSac', this.dict.mauSac, 'tenMauSac'],
                         ['idKichThuoc', this.dict.kichThuoc, 'tenKichThuoc'],
                         ['idDanhMuc', this.dict.danhMuc, 'tenDanhMuc'],
@@ -389,8 +388,22 @@
                         ['idChatLieu', this.dict.chatLieu, 'tenChatLieu']
                     ];
                     maps.forEach(m => this.f(m[0], m[1], m[2]));
+
+                    ['idDanhMuc', 'idThuongHieu', 'idKieuDang', 'idChatLieu'].forEach(id => {
+                        $(`#${id}`).select2({
+                            theme: 'bootstrap-5',
+                            placeholder: '-- Chọn --',
+                            allowClear: true,
+                            width: '100%'
+                        });
+                    });
                 },
-                f(id, l, p) { const s = $('#' + id); s.empty().append(s.prop('multiple') ? '' : '<option value="">-- Chọn --</option>'); if (l) l.forEach(i => s.append(new Option(i[p], i.id))); },
+                f(id, l, p) { 
+                    const s = $('#' + id); 
+                    s.empty().append(s.prop('multiple') ? '' : '<option value="">-- Chọn --</option>'); 
+                    if (l) l.forEach(i => s.append(new Option(i[p], i.id))); 
+                    if (s.hasClass('select2-hidden-accessible')) s.trigger('change');
+                },
                 openModal(type) {
                     this.currentType = type;
                     const fieldId = type === 'Color' ? '#idMauSac' : '#idKichThuoc';
@@ -618,12 +631,12 @@
                                </div>
                                <div class="text-start">
                                  <label class="small fw-bold mb-1 d-block">Giá bán (₫)</label>
-                                 <input id="swal-p" class="form-control" type="number" min="0" placeholder="VD: 1500000">
+                                 <input id="swal-p" class="form-control" type="text" placeholder="VD: 1.500.000" oninput="VariantApp.onPriceInput(this)">
                                </div>`,
                         didOpen: () => { document.getElementById('swal-q').focus(); },
                         preConfirm: () => {
                             const q = document.getElementById('swal-q').value;
-                            const p = document.getElementById('swal-p').value;
+                            const p = VariantApp.parseVND(document.getElementById('swal-p').value);
                             return [q, p];
                         }
                     });
@@ -643,12 +656,12 @@
                                </div>
                                <div class="text-start">
                                  <label class="small fw-bold mb-1 d-block">Giá bán chung (₫)</label>
-                                 <input id="swal-pa" class="form-control" type="number" min="0" placeholder="VD: 1500000">
+                                 <input id="swal-pa" class="form-control" type="text" placeholder="VD: 1.500.000" oninput="VariantApp.onPriceInput(this)">
                                </div>`,
                         didOpen: () => { document.getElementById('swal-qa').focus(); },
                         preConfirm: () => {
                             const q = document.getElementById('swal-qa').value;
-                            const p = document.getElementById('swal-pa').value;
+                            const p = VariantApp.parseVND(document.getElementById('swal-pa').value);
                             return [q, p];
                         }
                     });

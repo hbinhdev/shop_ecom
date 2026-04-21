@@ -135,5 +135,10 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
             row.createCell(8).setCellValue("1".equals(v.getTrangThai()) ? "Đang kinh doanh" : "Ngừng kinh doanh");
         });
     }
+    @Override
+    public BigDecimal findMaxPrice() {
+        BigDecimal max = repository.findMaxPrice();
+        return max != null ? max : BigDecimal.ZERO;
+    }
 }
 

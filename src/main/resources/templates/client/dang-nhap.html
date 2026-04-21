@@ -60,9 +60,20 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         // KIỂM TRA ĐĂNG NHẬP NGAY LẬP TỨC
-        if (localStorage.getItem('pk_user')) {
-            window.location.href = '/';
-        }
+        (function() {
+            try {
+                const user = JSON.parse(localStorage.getItem('pk_user'));
+                if (user && user.id) {
+                    window.location.href = '/';
+                } else if (localStorage.getItem('pk_user') === 'undefined') {
+                    // Xóa nếu dữ liệu bị lỗi "undefined"
+                    localStorage.removeItem('pk_user');
+                }
+            } catch (e) {
+                // Nếu parse lỗi thì xóa luôn để người dùng có thể đăng nhập lại
+                localStorage.removeItem('pk_user');
+            }
+        })();
 
         async function handleLogin(e) {
             e.preventDefault();

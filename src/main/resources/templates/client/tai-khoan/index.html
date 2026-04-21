@@ -427,7 +427,17 @@
                     return;
                 }
 
-                let user = JSON.parse(userJson);
+                let user;
+                try {
+                    user = JSON.parse(userJson);
+                    if (!user || !user.id) throw new Error("Invalid user data");
+                } catch (e) {
+                    console.error("Lỗi parse user từ localStorage:", e);
+                    localStorage.removeItem('pk_user');
+                    document.getElementById('authRequired').classList.remove('d-none');
+                    return;
+                }
+
                 document.getElementById('accountContent').classList.remove('d-none');
                 
                 // Set sidebar profile (nhanh từ local)
@@ -705,7 +715,10 @@
                         document.getElementById('userNameDis').innerText = data.user.hoTen;
                         document.getElementById('userInitial').innerText = data.user.hoTen ? data.user.hoTen[0].toUpperCase() : 'U';
                     } else Swal.fire('Lỗi', data.message, 'error');
-                } catch (e) { Swal.fire('Lỗi', 'Lỗi mạng', 'error'); }
+                } catch (e) { 
+                    console.error("Update profile error:", e);
+                    Swal.fire('Lỗi', 'Không thể cập nhật thông tin. Vui lòng thử lại sau.', 'error'); 
+                }
             }
 
             // --- Address Management Logic ---

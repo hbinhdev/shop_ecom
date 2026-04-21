@@ -140,10 +140,20 @@ public class SanPhamController {
         model.addAttribute("listThuongHieu", thuongHieuRepo.findAll());
         model.addAttribute("listDanhMuc", danhMucRepo.findAll());
 
+        BigDecimal maxPriceLimit = spctService.findMaxPrice();
+        if (maxPriceLimit == null || maxPriceLimit.compareTo(BigDecimal.ZERO) == 0) {
+            maxPriceLimit = new BigDecimal("20000000"); 
+        }
+        model.addAttribute("maxPriceLimit", maxPriceLimit);
         
-        
+        if (maxPrice == null) {
+            model.addAttribute("maxPrice", maxPriceLimit);
+        } else {
+            model.addAttribute("maxPrice", maxPrice);
+        }
+
         model.addAttribute("sanPhams", sanPhamService.findAll()); 
-        
+
         return "admin/san-pham/chi-tiet-san-pham";
     }
 

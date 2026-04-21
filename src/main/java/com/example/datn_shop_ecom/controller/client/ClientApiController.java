@@ -419,9 +419,19 @@ public class ClientApiController {
             if (body.get("ngaySinh") != null && !body.get("ngaySinh").toString().isEmpty())
                 kh.setNgaySinh(LocalDate.parse(body.get("ngaySinh").toString()));
             khachHangRepository.save(kh);
-            return ResponseEntity.ok(Map.of("success", true));
+
+            Map<String, Object> user = new HashMap<>();
+            user.put("id", kh.getId());
+            user.put("hoTen", kh.getTenDayDu());
+            user.put("email", kh.getEmail());
+            user.put("soDienThoai", kh.getSoDienThoai());
+            user.put("gioiTinh", kh.getGioiTinh());
+            user.put("ngaySinh", kh.getNgaySinh());
+            user.put("token", body.get("token"));
+
+            return ResponseEntity.ok(Map.of("success", true, "user", user));
         } catch (Exception e) {
-            return ResponseEntity.status(500).body(e.getMessage());
+            return ResponseEntity.status(500).body(Map.of("success", false, "message", e.getMessage()));
         }
     }
 

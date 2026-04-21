@@ -151,11 +151,11 @@
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             }
 
-            /* Màu sắc động cho Icon chính */
-            .tracuu-icon.icon-cho { color: #f39c12; background: rgba(241, 196, 15, 0.15); }
-            .tracuu-icon.icon-xac-nhan { color: #2980b9; background: rgba(52, 152, 219, 0.15); }
-            .tracuu-icon.icon-giao { color: #8e44ad; background: rgba(155, 89, 182, 0.15); }
-            .tracuu-icon.icon-done { color: #27ae60; background: rgba(39, 174, 96, 0.15); }
+            /* Icon chính */
+            .tracuu-icon.icon-cho,
+            .tracuu-icon.icon-xac-nhan,
+            .tracuu-icon.icon-giao,
+            .tracuu-icon.icon-done { color: #d47d32; background: rgba(212, 125, 50, 0.15); }
             .tracuu-icon.icon-huy { color: #e74c3c; background: rgba(231, 76, 60, 0.15); }
 
             .search-group .form-control {
@@ -199,7 +199,7 @@
             }
 
             .timeline-step.done:not(:last-child)::after {
-                background: #27ae60;
+                background: #d47d32;
             }
 
             .timeline-dot {
@@ -221,25 +221,19 @@
             }
 
             .timeline-step.done .timeline-dot {
-                background: #27ae60;
+                background: #d47d32;
                 color: white;
-                box-shadow: 0 0 0 2px #27ae60;
+                box-shadow: 0 0 0 2px #d47d32;
             }
-
-            /* Màu sắc động cho từng trạng thái trên timeline */
-            .timeline-step.done.step-cho .timeline-dot { background: #f39c12; box-shadow: 0 0 0 2px #f39c12; }
-            .timeline-step.done.step-xac-nhan .timeline-dot { background: #2980b9; box-shadow: 0 0 0 2px #2980b9; }
-            .timeline-step.done.step-giao .timeline-dot { background: #8e44ad; box-shadow: 0 0 0 2px #8e44ad; }
-            .timeline-step.done.step-done .timeline-dot { background: #27ae60; box-shadow: 0 0 0 2px #27ae60; }
 
             .timeline-step.current .timeline-dot {
                 background: #d47d32;
                 color: white;
                 box-shadow: 0 0 0 2px #d47d32;
-                animation: pulse-dynamic 1.5s infinite;
+                animation: pulse-primary 1.5s infinite;
             }
 
-            @keyframes pulse-dynamic {
+            @keyframes pulse-primary {
                 0% { box-shadow: 0 0 0 0px rgba(212, 125, 50, 0.4); }
                 70% { box-shadow: 0 0 0 10px rgba(212, 125, 50, 0); }
                 100% { box-shadow: 0 0 0 0px rgba(212, 125, 50, 0); }
@@ -251,26 +245,8 @@
                 color: #aaa;
             }
 
-            .timeline-step.done.step-cho .timeline-label { color: #f39c12; }
-            .timeline-step.done.step-xac-nhan .timeline-label { color: #2980b9; }
-            .timeline-step.done.step-giao .timeline-label { color: #8e44ad; }
-            .timeline-step.done.step-done .timeline-label { color: #27ae60; }
-
-            .timeline-step.current.step-cho .timeline-label { color: #f39c12; }
-            .timeline-step.current.step-xac-nhan .timeline-label { color: #2980b9; }
-            .timeline-step.current.step-giao .timeline-label { color: #8e44ad; }
-            .timeline-step.current.step-done .timeline-label { color: #27ae60; }
-            
-            /* Ghi đè màu pulse cho từng trạng thái */
-            .timeline-step.current.step-cho .timeline-dot { background: #f39c12; box-shadow: 0 0 0 2px #f39c12; animation-name: pulse-cho; }
-            .timeline-step.current.step-xac-nhan .timeline-dot { background: #2980b9; box-shadow: 0 0 0 2px #2980b9; animation-name: pulse-xac-nhan; }
-            .timeline-step.current.step-giao .timeline-dot { background: #8e44ad; box-shadow: 0 0 0 2px #8e44ad; animation-name: pulse-giao; }
-            .timeline-step.current.step-done .timeline-dot { background: #27ae60; box-shadow: 0 0 0 2px #27ae60; animation-name: pulse-done; }
-
-            @keyframes pulse-cho { 0% { box-shadow: 0 0 0 0px rgba(243, 156, 18, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(243, 156, 18, 0); } 100% { box-shadow: 0 0 0 0px rgba(243, 156, 18, 0); } }
-            @keyframes pulse-xac-nhan { 0% { box-shadow: 0 0 0 0px rgba(41, 128, 185, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(41, 128, 185, 0); } 100% { box-shadow: 0 0 0 0px rgba(41, 128, 185, 0); } }
-            @keyframes pulse-giao { 0% { box-shadow: 0 0 0 0px rgba(142, 68, 173, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(142, 68, 173, 0); } 100% { box-shadow: 0 0 0 0px rgba(142, 68, 173, 0); } }
-            @keyframes pulse-done { 0% { box-shadow: 0 0 0 0px rgba(39, 174, 96, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(39, 174, 96, 0); } 100% { box-shadow: 0 0 0 0px rgba(39, 174, 96, 0); } }
+            .timeline-step.done .timeline-label,
+            .timeline-step.current .timeline-label { color: #d47d32; }
 
             /* Status tag */
             .status-tag {
@@ -283,24 +259,12 @@
                 font-size: 0.85rem;
             }
 
-            .status-cho {
-                background: rgba(241, 196, 15, 0.15);
-                color: #f39c12;
-            }
-
-            .status-xac-nhan {
-                background: rgba(52, 152, 219, 0.12);
-                color: #2980b9;
-            }
-
-            .status-giao {
-                background: rgba(155, 89, 182, 0.12);
-                color: #8e44ad;
-            }
-
+            .status-cho,
+            .status-xac-nhan,
+            .status-giao,
             .status-done {
-                background: rgba(39, 174, 96, 0.12);
-                color: #27ae60;
+                background: rgba(212, 125, 50, 0.12);
+                color: #d47d32;
             }
 
             .status-huy {
@@ -449,10 +413,10 @@
 
                 // Timeline logic
                 const steps = [
-                    { key: 'CHO_XAC_NHAN', label: 'Đặt hàng', icon: 'bi-bag-plus', cls: 'step-cho' },
-                    { key: 'DA_XAC_NHAN', label: 'Xác nhận', icon: 'bi-check-circle', cls: 'step-xac-nhan' },
+                    { key: 'CHO_XAC_NHAN', label: 'Đặt hàng', icon: 'bi-clock-history', cls: 'step-cho' },
+                    { key: 'DA_XAC_NHAN', label: 'Xác nhận', icon: 'bi-check2-all', cls: 'step-xac-nhan' },
                     { key: 'DANG_GIAO', label: 'Đang giao', icon: 'bi-truck', cls: 'step-giao' },
-                    { key: 'DA_GIAO_HANG||HOAN_THANH', label: 'Hoàn thành', icon: 'bi-bag-check', cls: 'step-done' },
+                    { key: 'DA_GIAO_HANG||HOAN_THANH', label: 'Hoàn thành', icon: 'bi-check-circle-fill', cls: 'step-done' },
                 ];
                 
                 // Map trạng thái thực tế sang index của timeline

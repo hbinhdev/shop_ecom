@@ -385,27 +385,27 @@
                                             <div class="range-slider-track"></div>
                                             <div class="range-slider-fill" id="rangeFill"></div>
                                             <input type="range" class="range-slider-input" id="minRangeInput" 
-                                                   min="0" max="20000000" step="100000" th:value="${minPrice ?: 0}">
+                                                   min="0" th:attr="max=${maxPriceLimit}" step="100000" th:value="${minPrice ?: 0}">
                                             <input type="range" class="range-slider-input" id="maxRangeInput" 
-                                                   min="0" max="20000000" step="100000" th:value="${maxPrice ?: 20000000}">
+                                                   min="0" th:attr="max=${maxPriceLimit}" step="100000" th:value="${maxPrice ?: maxPriceLimit}">
                                         </div>
                                     </div>
                                     
                                     <div class="position-relative price-input-compact">
                                         <input type="text" id="maxPriceDisplayInput"
                                                class="form-control rounded-pill py-2 border-1 number-format text-center ps-2 pe-4"
-                                               th:value="${#numbers.formatInteger(maxPrice ?: 20000000, 0, 'POINT')}">
+                                               th:value="${#numbers.formatInteger(maxPrice ?: maxPriceLimit, 0, 'POINT')}">
                                         <span class="position-absolute end-0 top-50 translate-middle-y me-2 small text-muted">đ</span>
                                     </div>
                                 </div>
                                 
                                 <input type="hidden" name="minPrice" id="minPriceInput" th:value="${minPrice ?: 0}">
-                                <input type="hidden" name="maxPrice" id="maxPriceInput" th:value="${maxPrice ?: 20000000}">
+                                <input type="hidden" name="maxPrice" id="maxPriceInput" th:value="${maxPrice ?: maxPriceLimit}">
                             </div>
                         </div>
                                 </div>
                                 <input type="hidden" name="minPrice" id="minPriceHidden" th:value="${minPrice ?: 0}">
-                                <input type="hidden" name="maxPrice" id="maxPriceHidden" th:value="${maxPrice ?: 20000000}">
+                                <input type="hidden" name="maxPrice" id="maxPriceHidden" th:value="${maxPrice ?: maxPriceLimit}">
                             </div>
                         </div>
 
@@ -519,7 +519,7 @@
                     '&idThuongHieu=' + (${idThuongHieu} ?: '') +
                     '&idDanhMuc=' + (${idDanhMuc} ?: '') +
                     '&minPrice=' + (${minPrice} ?: '0') +
-                    '&maxPrice=' + (${maxPrice} ?: '20000000'))}">
+                    '&maxPrice=' + (${maxPrice} ?: ${maxPriceLimit}))}">
                 </div>
             </div>
                 </div>
@@ -587,7 +587,7 @@
 
         if (minRange && maxRange) {
             function syncAll(min, max, source) {
-                const maxLimit = 20000000;
+                const maxLimit = [[${maxPriceLimit}]];
                 const minPercent = (min / maxLimit) * 100;
                 const maxPercent = (max / maxLimit) * 100;
 

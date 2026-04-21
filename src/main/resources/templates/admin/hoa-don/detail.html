@@ -111,9 +111,27 @@
                 transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             }
 
-            .status-step.completed.step-xac-nhan .step-circle { background: #2980b9; border-color: #eaf2ff; color: white; }
-            .status-step.completed.step-giao .step-circle { background: #8e44ad; border-color: #f3eaff; color: white; }
-            .status-step.completed.step-done .step-circle { background: #27ae60; border-color: #e6f7ee; color: white; }
+            .status-step.completed .step-circle { background: #d47d32; border-color: #fdf4ea; color: white; }
+
+            .badge-custom {
+                padding: 6px 16px;
+                border-radius: 50px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                display: inline-block;
+            }
+
+            .badge-complete,
+            .badge-pending,
+            .badge-shipping,
+            .badge-delivery,
+            .badge-warning,
+            .badge-info { 
+                background: rgba(212, 125, 50, 0.12); 
+                color: #d47d32; 
+            }
+            
+            .badge-cancel { background: #ffeef0; color: #e74c3c; }
 
             .status-step.active .step-circle {
                 background: #d47d32;
@@ -340,8 +358,7 @@
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
-                    <h5 class="fw-bold mb-0"><i class="bi bi-gear-wide-connected me-2 text-primary"></i>Thao tác đơn
-                        hàng</h5>
+                    <h5 class="fw-bold mb-0">Thao tác đơn hàng</h5>
                     <div class="d-flex gap-2">
                         <!-- Nút cho trạng thái Chờ xác nhận -->
                         <th:block th:if="${hd.trangThaiHoaDon == '1' or hd.trangThaiHoaDon == 'CHO_XAC_NHAN'}">
@@ -381,24 +398,31 @@
                             </form>
                         </th:block>
 
-                        <span th:if="${hd.trangThaiHoaDon == '5' or hd.trangThaiHoaDon == 'DA_HUY'}"
-                            class="badge bg-danger p-2 px-3 rounded-pill fw-bold">ĐƠN HÀNG ĐÃ HỦY</span>
-                        <span th:if="${hd.trangThaiHoaDon == '4' or hd.trangThaiHoaDon == 'HOAN_THANH'}"
-                            class="badge bg-success p-2 px-3 rounded-pill fw-bold">ĐƠN HÀNG HOÀN THÀNH</span>
+                        <span th:if="${hd.trangThaiHoaDon == 'CHO_THANH_TOAN'}" class="badge-custom badge-pending"><i class="bi bi-wallet2 me-1"></i>Chờ thanh toán</span>
+                        <span th:if="${hd.trangThaiHoaDon == 'DA_THANH_TOAN'}" class="badge-custom badge-complete"><i class="bi bi-cash-coin me-1"></i>Đã thanh toán</span>
+
+                        <span th:if="${hd.trangThaiHoaDon == '1' or hd.trangThaiHoaDon == 'CHO_XAC_NHAN'}" class="badge-custom badge-pending"><i class="bi bi-clock-history me-1"></i>Chờ xác nhận</span>
+                        <span th:if="${hd.trangThaiHoaDon == '2' or hd.trangThaiHoaDon == 'DA_XAC_NHAN'}" class="badge-custom badge-shipping"><i class="bi bi-check2-all me-1"></i>Đã xác nhận</span>
+                        <span th:if="${hd.trangThaiHoaDon == '3' or hd.trangThaiHoaDon == 'DANG_GIAO'}" class="badge-custom badge-delivery"><i class="bi bi-truck me-1"></i>Đang giao</span>
+                        <span th:if="${hd.trangThaiHoaDon == '4' or hd.trangThaiHoaDon == 'DA_GIAO_HANG'}" class="badge-custom badge-complete"><i class="bi bi-box-seam me-1"></i>Đã giao hàng</span>
+                        <span th:if="${hd.trangThaiHoaDon == '5' or hd.trangThaiHoaDon == 'HOAN_THANH'}" class="badge-custom badge-complete"><i class="bi bi-check-circle-fill me-1"></i>Hoàn thành</span>
+                        <span th:if="${hd.trangThaiHoaDon == '6' or hd.trangThaiHoaDon == 'DA_HUY'}" class="badge-custom badge-cancel"><i class="bi bi-x-circle me-1"></i>Đã hủy</span>
+                        <span th:if="${hd.trangThaiHoaDon == '7' or hd.trangThaiHoaDon == 'YEU_CAU_HUY'}" class="badge-custom badge-warning"><i class="bi bi-exclamation-triangle me-1"></i>Yêu cầu hủy</span>
+                        <span th:if="${hd.trangThaiHoaDon == '8' or hd.trangThaiHoaDon == 'CAN_HOAN_PHI'}" class="badge-custom badge-info"><i class="bi bi-arrow-return-left me-1"></i>Cần hoàn phí</span>
                     </div>
                 </div>
 
                 <div class="status-stepper">
 
-                    <div class="status-step"
+                    <div class="status-step step-pending"
                         th:classappend="${#lists.contains({'1','2','3','4','CHO_XAC_NHAN','DA_XAC_NHAN','DANG_GIAO','HOAN_THANH'}, hd.trangThaiHoaDon)} ? 'completed' : ''">
-                        <div class="step-circle"><i class="bi bi-file-earmark-check"></i></div>
+                        <div class="step-circle"><i class="bi bi-clock-history"></i></div>
                         <div class="step-label">Chờ xác nhận</div>
                     </div>
 
                     <div class="status-step step-xac-nhan"
                         th:classappend="${#lists.contains({'2','3','4','DA_XAC_NHAN','DANG_GIAO','HOAN_THANH'}, hd.trangThaiHoaDon)} ? 'completed' : ''">
-                        <div class="step-circle"><i class="bi bi-box-seam"></i></div>
+                        <div class="step-circle"><i class="bi bi-check2-all"></i></div>
                         <div class="step-label">Đã xác nhận</div>
                     </div>
 
@@ -408,7 +432,7 @@
                         <div class="step-label">Đang giao</div>
                     </div>
 
-                    <div class="status-step"
+                    <div class="status-step step-done"
                         th:classappend="${#lists.contains({'4','HOAN_THANH'}, hd.trangThaiHoaDon)} ? 'completed' : ''">
                         <div class="step-circle"><i class="bi bi-check-circle-fill"></i></div>
                         <div class="step-label">Hoàn thành</div>
