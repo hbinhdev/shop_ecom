@@ -22,13 +22,14 @@ public class InvoiceScheduler {
      * Tự động hủy toàn bộ các hóa đơn chờ tại quầy (POS) vào lúc 12h đêm hàng ngày.
      */
     @Scheduled(cron = "0 0 0 * * *")
+    // @Scheduled(cron = "0 * * * * *") // Chạy vào giây thứ 0 của mỗi phút
     @Transactional
     public void autoCancelPOSInvoices() {
         log.info("--- [SYSTEM] Bắt đầu quét và reset hóa đơn POS chờ thanh toán cuối ngày ---");
-        
+
         // Tìm toàn bộ hóa đơn chờ thanh toán tại quầy
         List<HoaDon> pendingInvoices = hoaDonRepository.findAllPendingPOS();
-        
+
         if (!pendingInvoices.isEmpty()) {
             for (HoaDon hd : pendingInvoices) {
                 hd.setTrangThaiHoaDon("DA_HUY");
