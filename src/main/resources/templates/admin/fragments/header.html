@@ -28,11 +28,9 @@
                     </li>
                     <li><hr class="dropdown-divider"></li>
                     <li>
-                        <form th:action="@{/admin/logout}" method="post">
-                            <button type="submit" class="dropdown-item text-danger">
-                                <i class="bi bi-box-arrow-right me-2"></i>Đăng xuất
-                            </button>
-                        </form>
+                        <button type="button" class="dropdown-item text-danger" onclick="adminLogout()">
+                            <i class="bi bi-box-arrow-right me-2"></i>Đăng xuất
+                        </button>
                     </li>
                 </ul>
             </div>

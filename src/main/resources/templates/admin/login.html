@@ -256,16 +256,15 @@
                 Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.
             </div>
 
-            <form th:action="@{/admin/login}" method="post">
+            <form id="adminLoginForm">
                 <div>
                     <label class="form-label">Email</label>
                     <div class="input-group-custom">
                         <i class="bi bi-envelope icon"></i>
                         <input type="email"
-                               name="email"
+                               id="email"
                                class="form-control"
                                placeholder="example@email.com"
-                               th:classappend="${param.error} ? 'is-invalid'"
                                required autofocus>
                     </div>
                 </div>
@@ -275,11 +274,9 @@
                     <div class="input-group-custom">
                         <i class="bi bi-lock icon"></i>
                         <input type="password"
-                               name="matKhau"
                                id="matKhau"
                                class="form-control"
                                placeholder="••••••••"
-                               th:classappend="${param.error} ? 'is-invalid'"
                                required>
                         <button type="button" class="toggle-pw" onclick="togglePassword()">
                             <i class="bi bi-eye" id="toggleIcon"></i>
@@ -287,7 +284,12 @@
                     </div>
                 </div>
 
-                <button type="submit" class="btn-login">
+                <div id="errorAlert" class="alert-custom alert-danger-custom d-none">
+                    <i class="bi bi-exclamation-circle-fill"></i>
+                    <span id="errorMessage"></span>
+                </div>
+
+                <button type="submit" class="btn-login" id="loginBtn">
                     <i class="bi bi-box-arrow-in-right me-2"></i>Đăng nhập
                 </button>
             </form>
@@ -295,6 +297,13 @@
     </div>
 
     <script>
+        // Xóa cookie khi đăng xuất
+        if (window.location.search.includes('logout')) {
+            document.cookie = "ADMIN_AUTH=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('adminUser');
+        }
+
         function togglePassword() {
             const input = document.getElementById('matKhau');
             const icon = document.getElementById('toggleIcon');
@@ -306,6 +315,45 @@
                 icon.className = 'bi bi-eye';
             }
         }
+
+        document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('loginBtn');
+            const errBox = document.getElementById('errorAlert');
+            const errMsg = document.getElementById('errorMessage');
+            
+            const email = document.getElementById('email').value;
+            const matKhau = document.getElementById('matKhau').value;
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Đang xác thực...';
+            errBox.classList.add('d-none');
+
+            try {
+                const res = await fetch('/api/auth/admin-login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, matKhau })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    localStorage.setItem('adminToken', data.token);
+                    localStorage.setItem('adminUser', JSON.stringify({ email: data.username }));
+                    window.location.href = '/admin/dashboard';
+                } else {
+                    errMsg.innerText = data.message || 'Lỗi đăng nhập hệ thống!';
+                    errBox.classList.remove('d-none');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-box-arrow-in-right me-2"></i>Đăng nhập';
+                }
+            } catch (err) {
+                errMsg.innerText = 'Không thể kết nối tới máy chủ!';
+                errBox.classList.remove('d-none');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-box-arrow-in-right me-2"></i>Đăng nhập';
+            }
+        });
     </script>
 </body>
 </html>
