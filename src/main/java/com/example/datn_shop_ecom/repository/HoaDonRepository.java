@@ -33,8 +33,8 @@ public interface HoaDonRepository extends JpaRepository<HoaDon, Long>, JpaSpecif
     @Query("SELECT h FROM HoaDon h WHERE h.trangThaiHoaDon = 'CHO_THANH_TOAN' AND h.loaiHoaDon = 'TAI_QUAY' AND h.ngayTao < :cutoff ORDER BY h.ngayTao ASC")
     List<HoaDon> findAllPendingPOSBefore(@Param("cutoff") LocalDateTime cutoff);
 
-    @Query("SELECT h FROM HoaDon h WHERE h.trangThaiHoaDon = 'CHO_THANH_TOAN' AND h.loaiHoaDon = 'TAI_QUAY' ORDER BY h.ngayTao ASC")
-    List<HoaDon> findAllPendingPOS();
+    @Query("SELECT h FROM HoaDon h WHERE h.trangThaiHoaDon = 'CHO_THANH_TOAN' AND h.loaiHoaDon = 'TAI_QUAY' AND h.ngayTao >= :startOfDay ORDER BY h.ngayTao ASC")
+    List<HoaDon> findAllPendingPOS(@Param("startOfDay") LocalDateTime startOfDay);
 
     @Query("SELECT COALESCE(MAX(h.id), 0) FROM HoaDon h")
     long findMaxId();

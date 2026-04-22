@@ -140,5 +140,11 @@ public class SanPhamChiTietServiceImpl implements SanPhamChiTietService {
         BigDecimal max = repository.findMaxPrice();
         return max != null ? max : BigDecimal.ZERO;
     }
+
+    @Override
+    public BigDecimal findMaxPriceBySanPhamId(Long idSanPham) {
+        BigDecimal max = repository.findMaxPriceBySanPhamId(idSanPham);
+        return max != null ? max : BigDecimal.ZERO;
+    }
 }
 

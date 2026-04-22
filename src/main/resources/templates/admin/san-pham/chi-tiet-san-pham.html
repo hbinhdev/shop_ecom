@@ -243,6 +243,7 @@
             height: 6px;
             background: transparent;
             -webkit-appearance: none;
+            appearance: none;
             pointer-events: none;
             top: 0;
         }
@@ -385,9 +386,9 @@
                                             <div class="range-slider-track"></div>
                                             <div class="range-slider-fill" id="rangeFill"></div>
                                             <input type="range" class="range-slider-input" id="minRangeInput" 
-                                                   min="0" th:attr="max=${maxPriceLimit}" step="100000" th:value="${minPrice ?: 0}">
+                                                   min="0" th:attr="max=${maxPriceLimit}" step="1" th:value="${minPrice ?: 0}">
                                             <input type="range" class="range-slider-input" id="maxRangeInput" 
-                                                   min="0" th:attr="max=${maxPriceLimit}" step="100000" th:value="${maxPrice ?: maxPriceLimit}">
+                                                   min="0" th:attr="max=${maxPriceLimit}" step="1" th:value="${maxPrice ?: maxPriceLimit}">
                                         </div>
                                     </div>
                                     
@@ -403,11 +404,8 @@
                                 <input type="hidden" name="maxPrice" id="maxPriceInput" th:value="${maxPrice ?: maxPriceLimit}">
                             </div>
                         </div>
-                                </div>
-                                <input type="hidden" name="minPrice" id="minPriceHidden" th:value="${minPrice ?: 0}">
-                                <input type="hidden" name="maxPrice" id="maxPriceHidden" th:value="${maxPrice ?: maxPriceLimit}">
-                            </div>
-                        </div>
+                    </div>
+                </div>
 
                     </div>
                 </div>

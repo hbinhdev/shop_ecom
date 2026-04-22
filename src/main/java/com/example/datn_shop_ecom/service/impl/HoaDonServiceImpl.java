@@ -224,7 +224,7 @@ public class HoaDonServiceImpl implements HoaDonService {
 
     @Override
     public List<HoaDon> findAllPendingPOS() {
-        return hoaDonRepository.findAllPendingPOS();
+        return hoaDonRepository.findAllPendingPOS(LocalDateTime.now().with(LocalTime.MIN));
     }
 
     @Override

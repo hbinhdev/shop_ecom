@@ -53,5 +53,8 @@ public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, 
 
     @Query("SELECT MAX(s.giaBan) FROM SanPhamChiTiet s")
     BigDecimal findMaxPrice();
+
+    @Query("SELECT MAX(s.giaBan) FROM SanPhamChiTiet s WHERE s.sanPham.id = :idSanPham")
+    BigDecimal findMaxPriceBySanPhamId(@Param("idSanPham") Long idSanPham);
 }
 

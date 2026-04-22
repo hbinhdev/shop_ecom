@@ -140,17 +140,28 @@ public class SanPhamController {
         model.addAttribute("listThuongHieu", thuongHieuRepo.findAll());
         model.addAttribute("listDanhMuc", danhMucRepo.findAll());
 
-        BigDecimal maxPriceLimit = spctService.findMaxPrice();
+        BigDecimal maxPriceLimit;
+        if (idSanPham != null && idSanPham > 0) {
+            maxPriceLimit = spctService.findMaxPriceBySanPhamId(idSanPham);
+        } else {
+            maxPriceLimit = spctService.findMaxPrice();
+        }
+
         if (maxPriceLimit == null || maxPriceLimit.compareTo(BigDecimal.ZERO) == 0) {
             maxPriceLimit = new BigDecimal("20000000"); 
         }
         model.addAttribute("maxPriceLimit", maxPriceLimit);
         
-        if (maxPrice == null) {
-            model.addAttribute("maxPrice", maxPriceLimit);
-        } else {
-            model.addAttribute("maxPrice", maxPrice);
-        }
+        // Đảm bảo minPrice và maxPrice nằm trong khoảng [0, maxPriceLimit]
+        BigDecimal finalMinPrice = (minPrice != null) ? minPrice : BigDecimal.ZERO;
+        BigDecimal finalMaxPrice = (maxPrice != null) ? maxPrice : maxPriceLimit;
+
+        if (finalMinPrice.compareTo(maxPriceLimit) > 0) finalMinPrice = BigDecimal.ZERO;
+        if (finalMaxPrice.compareTo(maxPriceLimit) > 0) finalMaxPrice = maxPriceLimit;
+        if (finalMinPrice.compareTo(finalMaxPrice) > 0) finalMinPrice = BigDecimal.ZERO;
+
+        model.addAttribute("minPrice", finalMinPrice);
+        model.addAttribute("maxPrice", finalMaxPrice);
 
         model.addAttribute("sanPhams", sanPhamService.findAll()); 
 

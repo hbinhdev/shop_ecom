@@ -28,4 +28,6 @@ public interface SanPhamChiTietService {
     );
     
     BigDecimal findMaxPrice();
+
+    BigDecimal findMaxPriceBySanPhamId(Long idSanPham);
 }
