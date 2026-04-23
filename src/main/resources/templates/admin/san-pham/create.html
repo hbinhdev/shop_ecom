@@ -9,8 +9,10 @@
         rel="stylesheet">
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
-            --accent-color: #FF4B2B;
+            --orange-start: #d47d32;
+            --orange-end: #eb984e;
+            --orange-grad: linear-gradient(135deg, #d47d32 0%, #eb984e 100%);
+            --orange-shadow: rgba(212, 125, 50, 0.35);
         }
 
         body {
@@ -20,10 +22,9 @@
         }
 
         .section-title {
-            color: #1a1a1a;
+            color: #2d3436;
             letter-spacing: -0.01em;
         }
-
 
         .card {
             transition: all 0.3s ease;
@@ -38,48 +39,56 @@
 
         .form-control:focus,
         .form-select:focus {
-            border-color: #333;
-            box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.05);
+            border-color: var(--orange-start);
+            box-shadow: 0 0 0 0.2rem rgba(212, 125, 50, 0.18);
         }
 
         .btn-add-customer {
-            background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
-            transition: all 0.3s;
-            color: white;
-            border: none;
+            background: var(--orange-grad) !important;
+            color: #fff !important;
+            border: none !important;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 14px var(--orange-shadow);
         }
 
-        .btn-add-customer:hover {
+        .btn-add-customer:hover,
+        .btn-add-customer:focus {
+            background: linear-gradient(135deg, #c06a20 0%, #d47d32 100%) !important;
+            color: #fff !important;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            color: white;
+            box-shadow: 0 6px 20px var(--orange-shadow);
         }
 
         .btn-light-outline {
             background: #fff;
-            border: 1px solid #dee2e6;
-            color: #666;
+            border: 1.5px solid #dee2e6;
+            color: #555;
             transition: all 0.2s;
         }
 
         .btn-light-outline:hover {
-            background: #f8f9fa;
-            color: #333;
-            border-color: #adb5bd;
+            background: #fff5eb;
+            color: var(--orange-start);
+            border-color: var(--orange-start);
         }
-
 
         .upload-zone {
             border: 2px dashed #dee2e6 !important;
             border-radius: 12px;
-            height: 160px;
+            min-height: 160px;
             transition: 0.3s;
             background: #fbfbfb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .upload-zone:hover {
-            border-color: #333 !important;
-            background: #fff;
+            border-color: var(--orange-start) !important;
+            background: #fff8f2;
         }
 
         .color-dot {
@@ -101,7 +110,6 @@
             font-size: 0.85rem;
         }
 
-
         .sticky-footer {
             animation: slideUp 0.5s ease-out;
             position: sticky;
@@ -122,65 +130,22 @@
 
         .image-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
         }
 
         .cursor-pointer {
             cursor: pointer;
         }
+
+        .extra-small {
+            font-size: 0.7rem;
+        }
     </style>
 </head>
 
 <body>
     <main>
-        <style>
-            :root {
-                --orange-start: #d47d32;
-                --orange-end:   #eb984e;
-                --orange-grad:  linear-gradient(135deg, #d47d32 0%, #eb984e 100%);
-                --orange-shadow: rgba(212, 125, 50, 0.35);
-            }
-            body { background-color: #f4f7f6; font-family: 'Outfit', sans-serif; color: #333; }
-            .section-title { color: #2d3436; letter-spacing: -0.01em; }
-            .card { transition: all 0.3s ease; border: none !important; }
-            .form-control, .form-select { border-color: #e9ecef; transition: all 0.2s; }
-            .form-control:focus, .form-select:focus {
-                border-color: var(--orange-start);
-                box-shadow: 0 0 0 0.2rem rgba(212,125,50,0.18);
-            }
-            /* BUTTON CAM */
-            .btn-add-customer {
-                background: var(--orange-grad) !important;
-                color: #fff !important;
-                border: none !important;
-                font-weight: 600;
-                letter-spacing: 0.3px;
-                transition: all 0.25s ease;
-                box-shadow: 0 4px 14px var(--orange-shadow);
-            }
-            .btn-add-customer:hover, .btn-add-customer:focus {
-                background: linear-gradient(135deg,#c06a20 0%,#d47d32 100%) !important;
-                color: #fff !important;
-                transform: translateY(-2px);
-                box-shadow: 0 6px 20px var(--orange-shadow);
-            }
-            .btn-add-customer:active { transform: translateY(0); box-shadow: 0 2px 8px var(--orange-shadow); }
-            /* BUTTON OUTLINE */
-            .btn-light-outline { background:#fff; border:1.5px solid #dee2e6; color:#555; transition:all 0.2s; }
-            .btn-light-outline:hover { background:#fff5eb; color:var(--orange-start); border-color:var(--orange-start); }
-            /* UPLOAD ZONE */
-            .upload-zone {
-                border: 2px dashed #dee2e6 !important;
-                border-radius: 12px; height: 160px; transition: 0.3s; background: #fbfbfb;
-                display: flex; flex-direction: column; align-items: center; justify-content: center;
-            }
-            .upload-zone:hover { border-color: var(--orange-start) !important; background: #fff8f2; }
-            .color-dot { width:12px; height:12px; border-radius:50%; display:inline-block; border:1px solid rgba(0,0,0,0.1); }
-            .tag-pill { background:#f8f9fa; border:1px solid #dee2e6; border-radius:8px; padding:4px 12px; display:inline-flex; align-items:center; gap:6px; font-size:0.85rem; }
-            .image-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:20px; }
-            .cursor-pointer { cursor:pointer; }
-        </style>
         <div class="container-fluid p-4">
             <!-- HEADER -->
             <div class="mb-4">
@@ -210,7 +175,7 @@
                 <div class="col-lg-7">
                     <div class="card shadow-sm rounded-4 p-4 h-100 bg-white">
                         <div class="d-flex align-items-center gap-2 mb-4 pb-2 border-bottom">
-                            <i class="bi bi-card-list fs-5 text-primary"></i>
+                            <i class="bi bi-info-circle-fill fs-5 text-dark"></i>
                             <h5 class="fw-bold mb-0 text-uppercase small">Thông tin cơ bản</h5>
                         </div>
                         <div class="row g-3">
@@ -218,7 +183,7 @@
                                 <label class="form-label fw-bold small text-uppercase text-muted">Tên sản phẩm <span
                                         class="text-danger">*</span></label>
                                 <input type="text" class="form-control rounded-3 py-2 px-3 bg-white" id="tenSanPham"
-                                    placeholder="Nike Air Jordan 1 High OG">
+                                    placeholder="Nhập tên sản phẩm...">
                             </div>
 
                             <div class="col-md-6 mb-2">
@@ -248,7 +213,7 @@
 
 
                             <div class="col-12 mt-3">
-                                <label class="form-label fw-bold small text-uppercase text-muted">Mô tả đặc điểm</label>
+                                <label class="form-label fw-bold small text-uppercase text-muted">Mô tả sản phẩm</label>
                                 <textarea class="form-control rounded-3 py-2 px-3" id="moTa" style="height: 120px;"
                                     placeholder="Nhập mô tả của sản phẩm..."></textarea>
                             </div>
@@ -261,7 +226,7 @@
                     <div class="card shadow-sm rounded-4 p-4 h-100 bg-white"
                         style="border: 2px dashed #e9ecef !important;">
                         <div class="d-flex align-items-center gap-2 mb-4 pb-2 border-bottom">
-                            <i class="bi bi-stack fs-5 text-dark"></i>
+                            <i class="bi bi-gear-wide-connected fs-5 text-dark"></i>
                             <h5 class="fw-bold mb-0 text-uppercase small">Cấu hình thuộc tính</h5>
                         </div>
 
@@ -281,7 +246,7 @@
                                     class="text-danger">*</span></label>
                             <div class="bg-white rounded-3 py-2 px-3 border d-flex justify-content-between align-items-center cursor-pointer"
                                 onclick="VariantApp.openModal('Size')" style="height: 48px;">
-                                <span id="sizeSummaryText" class="text-muted small">Chưa chọn size...</span>
+                                <span id="sizeSummaryText" class="text-muted small">Chưa chọn kích cỡ...</span>
                                 <i class="bi bi-rulers text-muted"></i>
                             </div>
                             <select class="d-none" id="idKichThuoc" multiple></select>
@@ -303,7 +268,7 @@
             <div id="imageSection" class="mt-5" style="display: none;">
                 <div class="card shadow-sm rounded-4 bg-white overflow-hidden">
                     <div class="card-header bg-white border-0 p-4 pb-0">
-                        <h5 class="fw-bold m-0 text-uppercase small"><i class="bi bi-images me-2"></i>Quản lý hình ảnh
+                        <h5 class="fw-bold m-0 text-uppercase small"><i class="bi bi-camera me-2"></i>Quản lý album ảnh
                             theo màu</h5>
                         <p class="text-muted small mt-2">Vui lòng tải lên ảnh cho từng phối màu đã chọn. (Thêm ảnh từ
                             đầu quy trình)</p>
@@ -318,8 +283,8 @@
             <div id="variantSection" class="mt-5 mb-5" style="display: none;">
                 <div class="card shadow-sm rounded-4 overflow-hidden bg-white">
                     <div class="card-header bg-white border-0 p-4 d-flex justify-content-between align-items-center">
-                        <h5 class="fw-bold m-0 text-uppercase small"><i class="bi bi-table me-2"></i>Danh sách biến thể
-                            sản phẩm</h5>
+                        <h5 class="fw-bold m-0 text-uppercase small"><i class="bi bi-grid-3x3-gap me-2"></i>Chi tiết các
+                            biến thể</h5>
                         <div class="d-flex gap-2">
                             <button class="btn btn-light-outline btn-sm rounded-pill px-3 py-2"
                                 onclick="VariantApp.quickFillAll()">Thiết lập nhanh</button>
@@ -393,10 +358,10 @@
                         });
                     });
                 },
-                f(id, l, p) { 
-                    const s = $('#' + id); 
-                    s.empty().append(s.prop('multiple') ? '' : '<option value="">-- Chọn --</option>'); 
-                    if (l) l.forEach(i => s.append(new Option(i[p], i.id))); 
+                f(id, l, p) {
+                    const s = $('#' + id);
+                    s.empty().append(s.prop('multiple') ? '' : '<option value="">-- Chọn --</option>');
+                    if (l) l.forEach(i => s.append(new Option(i[p], i.id)));
                     if (s.hasClass('select2-hidden-accessible')) s.trigger('change');
                 },
                 openModal(type) {
@@ -484,7 +449,7 @@
                             canvas.height = size;
                             const ctx = canvas.getContext('2d');
                             const minDim = Math.min(img.naturalWidth, img.naturalHeight);
-                            const sx = (img.naturalWidth  - minDim) / 2;
+                            const sx = (img.naturalWidth - minDim) / 2;
                             const sy = (img.naturalHeight - minDim) / 2;
                             ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, size, size);
                             canvas.toBlob((blob) => {
@@ -567,9 +532,9 @@
                     this.colorFiles[cid].splice(idx, 1);
                     this.renderImagePreview(cid);
                 },
-                fmtVND(val) { if (!val && val !== 0) return ''; return new Intl.NumberFormat('vi-VN').format(parseFloat(String(val).replace(/[^\d]/g,'')) || 0); },
-                parseVND(str) { return String(str).replace(/[^\d]/g,'') || '0'; },
-                onPriceInput(el) { const raw = String(el.value).replace(/[^\d]/g,''); el.value = raw ? new Intl.NumberFormat('vi-VN').format(parseInt(raw)) : ''; },
+                fmtVND(val) { if (!val && val !== 0) return ''; return new Intl.NumberFormat('vi-VN').format(parseFloat(String(val).replace(/[^\d]/g, '')) || 0); },
+                parseVND(str) { return String(str).replace(/[^\d]/g, '') || '0'; },
+                onPriceInput(el) { const raw = String(el.value).replace(/[^\d]/g, ''); el.value = raw ? new Intl.NumberFormat('vi-VN').format(parseInt(raw)) : ''; },
                 getN(k, i, p) { const it = this.dict[k].find(x => x.id == i); return it ? it[p] : 'N/A'; },
                 renderR() {
                     const cont = document.getElementById('variantGroupContainer'); cont.innerHTML = ''; const grp = {};
@@ -579,10 +544,9 @@
                         <tr>
                             <td class="ps-4 py-3">
                                 <div class="fw-bold text-dark">Size ${v.sName}</div>
-                                <div class="text-muted extra-small" style="font-size: 0.7rem"></div>
                             </td>
                             <td style="width: 150px">
-                                <input type="text" class="form-control form-control-sm border text-center rounded-pill number-format" placeholder="SL" value="${new Intl.NumberFormat('vi-VN').format(v.q || 0)}" onchange="VariantApp.uv('${v.uid}', 'q', this.value)">
+                                <input type="number" class="form-control form-control-sm border text-center rounded-pill" value="${v.q || 0}" onchange="VariantApp.uv('${v.uid}', 'q', this.value)">
                             </td>
                             <td style="width: 220px">
                                 <div class="input-group input-group-sm rounded-pill overflow-hidden border">
@@ -703,44 +667,44 @@
                     const formData = new FormData();
                     formData.append('data', JSON.stringify({
                         sanPham: { tenSanPham: ten, moTa: $('#moTa').val(), idDanhMuc: idDanhMuc || null, idThuongHieu: idThuongHieu || null, idKieuDang: idKieuDang || null, idChatLieu: idChatLieu || null },
-                        bienThes: this.variants.map(v => ({ idMauSac: v.cId, idKichThuoc: v.sId, soLuong: v.q || 0, giaBan: v.p ? parseInt(String(v.p).replace(/[^\d]/g,'')) : 0 }))
+                        bienThes: this.variants.map(v => ({ idMauSac: v.cId, idKichThuoc: v.sId, soLuong: v.q || 0, giaBan: v.p ? parseInt(String(v.p).replace(/[^\d]/g, '')) : 0 }))
                     }));
 
                     for (const [cid, files] of Object.entries(this.colorFiles)) { files.forEach(f => formData.append(`files_${cid}`, f)); }
 
-// Hiển thị loading và khóa click ra ngoài
-Swal.fire({ 
-    title: 'Đang xử lý...', 
-    didOpen: () => Swal.showLoading(), 
-    allowOutsideClick: false 
-});
+                    // Hiển thị loading và khóa click ra ngoài
+                    Swal.fire({
+                        title: 'Đang xử lý...',
+                        didOpen: () => Swal.showLoading(),
+                        allowOutsideClick: false
+                    });
 
-// Gửi request - Giữ lại getCsrfHeaders() để không bị lỗi 403
-const res = await fetch('/api/admin/product-variant/create-all-with-images', { 
-    method: 'POST', 
-    headers: getCsrfHeaders(), 
-    body: formData 
-});
+                    // Gửi request - Giữ lại getCsrfHeaders() để không bị lỗi 403
+                    const res = await fetch('/api/admin/product-variant/create-all-with-images', {
+                        method: 'POST',
+                        headers: getCsrfHeaders(),
+                        body: formData
+                    });
 
-// Đọc phản hồi JSON từ server
-const result = await res.json();
+                    // Đọc phản hồi JSON từ server
+                    const result = await res.json();
 
-if (res.ok && result.success) {
-    Swal.close();
-    // Dùng Toast cho sang chảnh
-    Toast.fire({ 
-        icon: 'success', 
-        title: 'Đã lưu sản phẩm thành công!' 
-    }).then(() => window.location.href = '/admin/san-pham');
-} else {
-    Swal.close();
-    // Hiển thị lỗi chi tiết từ server trả về
-    Toast.fire({ 
-        icon: 'error', 
-        title: 'Lỗi lưu dữ liệu', 
-        text: result.message || 'Không thể lưu sản phẩm. Vui lòng kiểm tra lại!' 
-    });
-}
+                    if (res.ok && result.success) {
+                        Swal.close();
+                        // Dùng Toast cho sang chảnh
+                        Toast.fire({
+                            icon: 'success',
+                            title: 'Đã lưu sản phẩm thành công!'
+                        }).then(() => window.location.href = '/admin/san-pham');
+                    } else {
+                        Swal.close();
+                        // Hiển thị lỗi chi tiết từ server trả về
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Lỗi lưu dữ liệu',
+                            text: result.message || 'Không thể lưu sản phẩm. Vui lòng kiểm tra lại!'
+                        });
+                    }
                 }
             };
             $(document).ready(() => VariantApp.init());

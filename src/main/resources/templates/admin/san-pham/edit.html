@@ -81,6 +81,10 @@
             min-height: 160px;
             transition: 0.3s;
             background: #fbfbfb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .upload-zone:hover {
@@ -147,7 +151,7 @@
         <div class="container-fluid p-4">
 
             <div class="mb-4">
-                <h4 class="fw-bold section-title">Quản lý Sản phẩm / <span class="fw-bold">Cập nhật sản phẩm</span></h4>
+                <h4 class="fw-bold section-title">Quản lý sản phẩm / <span class="fw-bold">Cập nhật sản phẩm</span></h4>
             </div>
 
 
@@ -177,7 +181,7 @@
                 <div class="col-lg-7">
                     <div class="card shadow-sm rounded-4 p-4 h-100 bg-white">
                         <div class="d-flex align-items-center gap-2 mb-4 pb-2 border-bottom">
-                            <i class="bi bi-pencil-square fs-5 text-primary"></i>
+                            <i class="bi bi-info-circle-fill fs-5 text-dark"></i>
                             <h5 class="fw-bold mb-0 text-uppercase small">Thông tin cơ bản</h5>
                         </div>
                         <div class="row g-3">
@@ -231,22 +235,22 @@
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label fw-bold small text-uppercase text-muted">Lựa chọn Màu sắc <span
+                            <label class="form-label fw-bold small text-uppercase text-muted">Chọn Màu sắc <span
                                     class="text-danger">*</span></label>
                             <div class="bg-white rounded-3 py-2 px-3 border d-flex justify-content-between align-items-center cursor-pointer"
                                 onclick="VariantApp.openModal('Color')" style="height: 48px;">
-                                <span id="colorSummaryText" class="text-muted small">Đang nạp màu sắc...</span>
+                                <span id="colorSummaryText" class="text-muted small">Chưa chọn màu...</span>
                                 <i class="bi bi-palette text-muted"></i>
                             </div>
                             <select class="d-none" id="idMauSac" multiple></select>
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label fw-bold small text-uppercase text-muted">Lựa chọn Kích cỡ <span
+                            <label class="form-label fw-bold small text-uppercase text-muted">Chọn Kích cỡ <span
                                     class="text-danger">*</span></label>
                             <div class="bg-white rounded-3 py-2 px-3 border d-flex justify-content-between align-items-center cursor-pointer"
                                 onclick="VariantApp.openModal('Size')" style="height: 48px;">
-                                <span id="sizeSummaryText" class="text-muted small">Đang nạp kích cỡ...</span>
+                                <span id="sizeSummaryText" class="text-muted small">Chưa chọn kích cỡ...</span>
                                 <i class="bi bi-rulers text-muted"></i>
                             </div>
                             <select class="d-none" id="idKichThuoc" multiple></select>
@@ -257,7 +261,7 @@
                         <div class="mt-auto">
                             <button type="button" class="btn btn-add-customer w-100 rounded-pill py-3 fw-bold shadow-sm"
                                 onclick="VariantApp.generateVariants()">
-                                <i class="bi bi-arrow-repeat me-2"></i> LÀM MỚI DANH SÁCH BIẾN THỂ
+                                <i class="bi bi-magic me-2"></i> TẠO BIẾN THỂ TỰ ĐỘNG
                             </button>
                             <p class="text-center text-muted extra-small mt-2 px-3 italic">Hành động này sẽ xóa các
                                 thiết lập cũ và tạo lại biến thể dựa trên thuộc tính mới.</p>
@@ -290,7 +294,7 @@
                             <button class="btn btn-light-outline btn-sm rounded-pill px-3 py-2"
                                 onclick="VariantApp.quickFillAll()">Thiết lập nhanh</button>
                             <button class="btn btn-outline-danger btn-sm rounded-pill px-3 py-2"
-                                onclick="VariantApp.clearAll()">Xóa hết</button>
+                                onclick="VariantApp.clearAll()">Xóa tất cả</button>
                         </div>
                     </div>
                     <div class="p-4 pt-0">
@@ -527,17 +531,70 @@
                     for (const [cid, g] of Object.entries(grp)) {
                         let rs = g.i.map(v => `
                         <tr>
-                            <td class="ps-4 py-3"><div class="fw-bold text-dark small">Size ${v.sName}</div></td>
-                            <td style="width: 150px"><input type="number" class="form-control form-control-sm border text-center rounded-pill" value="${v.q || 0}" onchange="VariantApp.uv('${v.uid}', 'q', this.value)"></td>
-                            <td style="width: 200px">
-                                <input type="text" inputmode="numeric" class="form-control form-control-sm border text-end rounded-pill price-input" 
-                                       placeholder="0" value="${v.p ? VariantApp.fmtVND(v.p) : ''}"
-                                       oninput="VariantApp.onPriceInput(this)"
-                                       onblur="VariantApp.uv('${v.uid}', 'p', VariantApp.parseVND(this.value))">
+                            <td class="ps-4 py-3">
+                                <div class="fw-bold text-dark">Size ${v.sName}</div>
+                            </td>
+                            <td style="width: 150px">
+                                <input type="number" class="form-control form-control-sm border text-center rounded-pill" value="${v.q || 0}" onchange="VariantApp.uv('${v.uid}', 'q', this.value)">
+                            </td>
+                            <td style="width: 220px">
+                                <div class="input-group input-group-sm rounded-pill overflow-hidden border">
+                                    <span class="input-group-text bg-white border-0 py-0 small fw-bold text-muted">₫</span>
+                                    <input type="text" inputmode="numeric" class="form-control border-0 fw-bold text-danger text-end pe-3 price-input" 
+                                           placeholder="0" value="${v.p ? VariantApp.fmtVND(v.p) : ''}"
+                                           oninput="VariantApp.onPriceInput(this)"
+                                           onblur="VariantApp.uv('${v.uid}', 'p', VariantApp.parseVND(this.value))">
+                                </div>
                             </td>
                             <td class="text-center"><button class="btn btn-outline-danger btn-sm border-0 rounded-circle" onclick="VariantApp.rm('${v.uid}')"><i class="bi bi-trash3"></i></button></td>
                         </tr>`).join('');
-                        cont.innerHTML += `<div class="mb-4 border rounded-3 overflow-hidden bg-white shadow-xs"><div class="bg-light px-4 py-2 border-bottom fw-bold text-uppercase" style="font-size: 0.75rem">${g.n}</div><table class="table mb-0 align-middle"><tbody>${rs}</tbody></table></div>`;
+                        cont.innerHTML += `
+                        <div class="mb-4 border rounded-3 overflow-hidden bg-white shadow-xs">
+                            <div class="bg-light px-4 py-2 border-bottom d-flex justify-content-between align-items-center">
+                                <div><span class="color-dot me-2 shadow-sm" style="background-color:${colorPicker[g.n] || '#ccc'}"></span><span class="fw-bold text-uppercase" style="font-size: 0.8rem">${g.n}</span></div>
+                                <button class="btn btn-add-customer btn-sm rounded-pill px-3" style="font-size: 0.70rem" onclick="VariantApp.qF('${cid}')">THIẾT LẬP NHÓM</button>
+                            </div>
+                            <table class="table mb-0 align-middle">
+                                <thead>
+                                    <tr class="text-uppercase text-muted" style="font-size: 0.65rem; background: #fafafa;">
+                                        <th class="ps-4">Chi tiết biến thể</th>
+                                        <th class="text-center">Số lượng</th>
+                                        <th class="text-center">Giá niêm yết</th>
+                                        <th class="text-center">Bỏ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${rs}</tbody>
+                            </table>
+                        </div>`;
+                    }
+                },
+                async qF(cid) {
+                    const { value: r } = await Swal.fire({
+                        title: 'Cấu hình nhanh nhóm',
+                        html: `<div class="text-start mb-3">
+                                 <label class="small fw-bold mb-1 d-block">Số lượng</label>
+                                 <input id="swal-q" class="form-control" type="number" min="0" placeholder="VD: 50">
+                               </div>
+                               <div class="text-start">
+                                 <label class="small fw-bold mb-1 d-block">Giá bán (₫)</label>
+                                 <input id="swal-p" class="form-control" type="text" placeholder="VD: 1.500.000" oninput="VariantApp.onPriceInput(this)">
+                               </div>`,
+                        didOpen: () => { document.getElementById('swal-q').focus(); },
+                        preConfirm: () => {
+                            return [
+                                document.getElementById('swal-q').value,
+                                VariantApp.parseVND(document.getElementById('swal-p').value)
+                            ]
+                        }
+                    });
+                    if (r) {
+                        this.variants.forEach(v => {
+                            if (v.cId == cid) {
+                                if (r[0]) v.q = r[0];
+                                if (r[1]) v.p = r[1];
+                            }
+                        });
+                        this.renderR();
                     }
                 },
                 fmtVND(val) { if (!val && val !== 0) return ''; return new Intl.NumberFormat('vi-VN').format(parseFloat(String(val).replace(/[^\d]/g,'')) || 0); },

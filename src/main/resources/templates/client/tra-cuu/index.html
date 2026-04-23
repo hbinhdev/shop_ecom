@@ -104,7 +104,8 @@
                                                 <span class="text-muted">Phí ship:</span>
                                                 <span id="rPhiShip">—</span>
                                             </div>
-                                            <div class="d-flex justify-content-between small text-danger" id="rGiamGiaRow" style="display:none">
+                                            <div class="d-flex justify-content-between small text-danger"
+                                                id="rGiamGiaRow" style="display:none">
                                                 <span class="">Giảm giá:</span>
                                                 <span id="rGiamGia">—</span>
                                             </div>
@@ -155,8 +156,15 @@
             .tracuu-icon.icon-cho,
             .tracuu-icon.icon-xac-nhan,
             .tracuu-icon.icon-giao,
-            .tracuu-icon.icon-done { color: #d47d32; background: rgba(212, 125, 50, 0.15); }
-            .tracuu-icon.icon-huy { color: #e74c3c; background: rgba(231, 76, 60, 0.15); }
+            .tracuu-icon.icon-done {
+                color: #d47d32;
+                background: rgba(212, 125, 50, 0.15);
+            }
+
+            .tracuu-icon.icon-huy {
+                color: #e74c3c;
+                background: rgba(231, 76, 60, 0.15);
+            }
 
             .search-group .form-control {
                 border-radius: 14px 0 0 14px;
@@ -244,9 +252,17 @@
             }
 
             @keyframes active-pulse {
-                0% { box-shadow: 0 0 0 0px rgba(212, 125, 50, 0.2), 0 0 0 10px rgba(212, 125, 50, 0.1); }
-                70% { box-shadow: 0 0 0 15px rgba(212, 125, 50, 0), 0 0 0 25px rgba(212, 125, 50, 0); }
-                100% { box-shadow: 0 0 0 0px rgba(212, 125, 50, 0), 0 0 0 0px rgba(212, 125, 50, 0); }
+                0% {
+                    box-shadow: 0 0 0 0px rgba(212, 125, 50, 0.2), 0 0 0 10px rgba(212, 125, 50, 0.1);
+                }
+
+                70% {
+                    box-shadow: 0 0 0 15px rgba(212, 125, 50, 0), 0 0 0 25px rgba(212, 125, 50, 0);
+                }
+
+                100% {
+                    box-shadow: 0 0 0 0px rgba(212, 125, 50, 0), 0 0 0 0px rgba(212, 125, 50, 0);
+                }
             }
 
             .timeline-label {
@@ -257,8 +273,14 @@
             }
 
             .timeline-step.done .timeline-label,
-            .timeline-step.current .timeline-label { color: #2d3436; }
-            .timeline-step.current .timeline-label { color: #d47d32; font-size: 0.9rem; }
+            .timeline-step.current .timeline-label {
+                color: #2d3436;
+            }
+
+            .timeline-step.current .timeline-label {
+                color: #d47d32;
+                font-size: 0.9rem;
+            }
 
             /* Status tag */
             .status-tag {
@@ -430,7 +452,7 @@
                     { key: 'DANG_GIAO', label: 'Đang giao', icon: 'bi-truck', cls: 'step-giao' },
                     { key: 'DA_GIAO_HANG||HOAN_THANH', label: 'Hoàn thành', icon: 'bi-check-circle-fill', cls: 'step-done' },
                 ];
-                
+
                 const statusOrderMapping = {
                     'CHO_XAC_NHAN': 0,
                     'DA_XAC_NHAN': 1,
@@ -447,7 +469,7 @@
                     let stateCls = '';
                     if (i < currentIdx) stateCls = 'done';
                     else if (i === currentIdx) stateCls = 'current';
-                    
+
                     return `
                         <div class="timeline-step ${stateCls}">
                             <div class="timeline-dot"><i class="bi ${step.icon}"></i></div>
@@ -455,7 +477,7 @@
                         </div>
                     `;
                 }).join('');
-                
+
                 document.getElementById('rTimeline').innerHTML = timelineHtml;
 
                 // Products
