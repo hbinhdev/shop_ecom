@@ -178,37 +178,35 @@
             .timeline-wrap {
                 display: flex;
                 align-items: flex-start;
-                justify-content: space-between;
+                justify-content: center;
                 position: relative;
                 margin: 40px 0 20px;
             }
 
-            .timeline-wrap::before {
-                content: '';
-                position: absolute;
-                top: 19px;
-                left: 0;
-                right: 0;
-                height: 4px;
-                background: #f1f2f6;
-                z-index: 1;
-            }
-
-            .timeline-progress-bar {
-                position: absolute;
-                top: 19px;
-                left: 0;
-                height: 4px;
-                background: #d47d32;
-                z-index: 2;
-                transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            }
-
             .timeline-step {
-                flex: 1;
+                width: 120px;
                 text-align: center;
                 position: relative;
                 z-index: 3;
+            }
+
+            .timeline-step::after {
+                content: '';
+                position: absolute;
+                top: 19px;
+                left: 50%;
+                width: 100%;
+                height: 4px;
+                background: #f1f2f6;
+                z-index: 0;
+            }
+
+            .timeline-step.done::after {
+                background: #d47d32;
+            }
+
+            .timeline-step:last-child::after {
+                display: none;
             }
 
             .timeline-dot {
@@ -225,6 +223,7 @@
                 border: 2px solid #f1f2f6;
                 box-shadow: 0 0 0 4px white;
                 position: relative;
+                z-index: 2;
                 transition: all 0.4s ease;
             }
 
@@ -424,11 +423,11 @@
                 mainIconDiv.innerHTML = `<i class="bi ${mi.icon}"></i>`;
 
                 // Timeline logic
-                const steps = [
-                    { key: 'CHO_XAC_NHAN', label: 'Đặt hàng', icon: 'bi-clock-history', cls: 'step-cho' },
-                    { key: 'DA_XAC_NHAN', label: 'Xác nhận', icon: 'bi-check2-all', cls: 'step-xac-nhan' },
-                    { key: 'DANG_GIAO', label: 'Đang giao', icon: 'bi-truck', cls: 'step-giao' },
-                    { key: 'DA_GIAO_HANG||HOAN_THANH', label: 'Hoàn thành', icon: 'bi-check-circle-fill', cls: 'step-done' },
+                const allSteps = [
+                    { key: 'CHO_XAC_NHAN', label: 'Đặt hàng', icon: 'bi-clock-history' },
+                    { key: 'DA_XAC_NHAN', label: 'Xác nhận', icon: 'bi-check2-all' },
+                    { key: 'DANG_GIAO', label: 'Đang giao', icon: 'bi-truck' },
+                    { key: 'DA_GIAO_HANG||HOAN_THANH', label: 'Hoàn thành', icon: 'bi-check-circle-fill' },
                 ];
                 
                 const statusOrderMapping = {
@@ -438,23 +437,36 @@
                     'DA_GIAO_HANG': 3,
                     'HOAN_THANH': 3
                 };
+
                 const currentIdx = statusOrderMapping[hd.trangThai] ?? -1;
                 const isCancelled = hd.trangThai === 'DA_HUY';
-                const progressWidth = isCancelled ? 0 : (currentIdx * 33.33);
 
-                let timelineHtml = `<div class="timeline-progress-bar" style="width: ${progressWidth}%"></div>`;
-                timelineHtml += steps.map((step, i) => {
-                    let stateCls = '';
-                    if (i < currentIdx) stateCls = 'done';
-                    else if (i === currentIdx) stateCls = 'current';
-                    
-                    return `
-                        <div class="timeline-step ${stateCls}">
-                            <div class="timeline-dot"><i class="bi ${step.icon}"></i></div>
-                            <div class="timeline-label">${step.label}</div>
+                let timelineHtml = '';
+                
+                if (isCancelled) {
+                    timelineHtml = `
+                        <div class="timeline-step current">
+                            <div class="timeline-dot" style="background: #e74c3c; color: white; border-color: #e74c3c;">
+                                <i class="bi bi-x-circle"></i>
+                            </div>
+                            <div class="timeline-label" style="color: #e74c3c; font-weight: bold;">Đã hủy</div>
                         </div>
                     `;
-                }).join('');
+                } else {
+                    timelineHtml = allSteps.map((step, i) => {
+                        if (i > currentIdx) return '';
+                        let stateCls = '';
+                        if (i < currentIdx) stateCls = 'done';
+                        else if (i === currentIdx) stateCls = 'current';
+                        
+                        return `
+                            <div class="timeline-step ${stateCls}">
+                                <div class="timeline-dot"><i class="bi ${step.icon}"></i></div>
+                                <div class="timeline-label">${step.label}</div>
+                            </div>
+                        `;
+                    }).join('');
+                }
                 
                 document.getElementById('rTimeline').innerHTML = timelineHtml;
 
