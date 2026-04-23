@@ -439,30 +439,38 @@
     <div th:replace="~{admin/fragments/scripts :: common_scripts}"></div>
     
     <script th:inline="javascript">
-        // Tự động đồng bộ Token vào localStorage cho các yêu cầu API
+        // Tự động đồng bộ Token vào localStorage cho các yêu cầu API của Admin
         document.addEventListener('DOMContentLoaded', async () => {
             try {
-                const res = await fetch('/api/client/auth/get-token');
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.token) {
-                        localStorage.setItem('adminToken', data.token);
-                        localStorage.setItem('token', data.token);
-                        
-                        // Lưu thông tin User Admin
-                        const adminUser = {
-                            email: data.username,
-                            roles: data.roles
-                        };
-                        localStorage.setItem('adminUser', JSON.stringify(adminUser));
-                        
-                        console.log("--- [SYSTEM] Đã đồng bộ Token và Profile Admin vào LocalStorage ---");
+                // Kiểm tra xem đã có adminToken chưa, nếu chưa có mới fetch (giảm tải)
+                if (!localStorage.getItem('adminToken')) {
+                    const res = await fetch('/api/client/auth/get-token'); 
+                    if (res.ok) {
+                        const data = await res.json();
+                        if (data.token) {
+                            localStorage.setItem('adminToken', data.token);
+                            
+                            const adminUser = {
+                                email: data.username,
+                                roles: data.roles
+                            };
+                            localStorage.setItem('adminUser', JSON.stringify(adminUser));
+                            console.log("--- [SYSTEM] Đã đồng bộ Admin Token ---");
+                        }
                     }
                 }
             } catch (e) {
                 console.error("Lỗi đồng bộ thông tin Admin:", e);
             }
         });
+
+        // Hàm logout riêng cho Admin để xóa Cookie ADMIN_AUTH
+        function adminLogout() {
+            document.cookie = "ADMIN_AUTH=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+            localStorage.removeItem('adminToken');
+            localStorage.removeItem('adminUser');
+            window.location.href = '/admin/login?logout';
+        }
     </script>
 </body>
 

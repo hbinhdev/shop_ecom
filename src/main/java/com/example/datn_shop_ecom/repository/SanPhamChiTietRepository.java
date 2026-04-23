@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,5 +50,11 @@ public interface SanPhamChiTietRepository extends JpaRepository<SanPhamChiTiet, 
     @Transactional
     @Query("UPDATE SanPhamChiTiet s SET s.soTonKho = s.soTonKho + :sl WHERE s.id = :id")
     void restoreStock(@Param("id") Long id, @Param("sl") int soLuong);
+
+    @Query("SELECT MAX(s.giaBan) FROM SanPhamChiTiet s")
+    BigDecimal findMaxPrice();
+
+    @Query("SELECT MAX(s.giaBan) FROM SanPhamChiTiet s WHERE s.sanPham.id = :idSanPham")
+    BigDecimal findMaxPriceBySanPhamId(@Param("idSanPham") Long idSanPham);
 }
 

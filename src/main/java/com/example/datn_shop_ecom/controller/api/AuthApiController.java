@@ -46,5 +46,38 @@ public class AuthApiController {
             ));
         }
     }
+
+    @PostMapping("/admin-login")
+    public ResponseEntity<?> adminLogin(@RequestBody Map<String, String> loginRequest, jakarta.servlet.http.HttpServletResponse response) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.get("email"),
+                            loginRequest.get("matKhau")
+                    )
+            );
+
+            String jwt = tokenProvider.generateToken(authentication);
+            
+            // Thiết lập Cookie cho Admin
+            jakarta.servlet.http.Cookie adminCookie = new jakarta.servlet.http.Cookie("ADMIN_AUTH", jwt);
+            adminCookie.setHttpOnly(true);
+            adminCookie.setSecure(false); // Đặt true nếu dùng HTTPS
+            adminCookie.setPath("/"); // Để Filter có thể đọc được ở mọi path
+            adminCookie.setMaxAge(86400); // 1 ngày
+            response.addCookie(adminCookie);
+
+            return ResponseEntity.ok(Map.of(
+                "success", true,
+                "token", jwt,
+                "username", authentication.getName()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of(
+                "success", false,
+                "message", "Email hoặc mật khẩu admin không chính xác!"
+            ));
+        }
+    }
 }
 

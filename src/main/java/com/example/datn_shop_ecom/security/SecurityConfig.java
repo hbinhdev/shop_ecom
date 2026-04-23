@@ -69,48 +69,29 @@ public class SecurityConfig {
         return new HttpSessionEventPublisher();
     }
 
-    // 1. Cấu hình bảo mật cho trang ADMIN
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter();
+    }
+
+    // 1. Cấu hình bảo mật cho trang ADMIN (Chạy chế độ STATELESS dùng JWT)
     @Bean
     @Order(1)
     public SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
         http
             .securityMatcher("/admin/**")
-            .csrf(csrf -> csrf.disable())
-            .authenticationProvider(adminProvider()) // Dùng bộ xác thực Admin
+            .authenticationProvider(adminProvider()) 
+            .csrf(csrf -> csrf.disable()) // Stateless không cần CSRF truyền thống
+            .sessionManagement(session -> session.sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/admin/login").permitAll()
-                // Nếu là Khách hàng (ROLE_USER) mà vào Admin thì bị chặn và bắt login lại
+                .requestMatchers("/admin/login", "/admin/api/login").permitAll()
                 .requestMatchers("/admin/**").hasAnyRole("ADMIN", "EMPLOYEE")
                 .anyRequest().authenticated()
             )
-            .formLogin(form -> form
-                .loginPage("/admin/login")
-                .loginProcessingUrl("/admin/login")
-                .usernameParameter("email")
-                .passwordParameter("matKhau")
-                .successHandler(successHandler)
-                .failureHandler(failureHandler)
-                .permitAll()
-            )
-            .logout(logout -> logout
-                .logoutUrl("/admin/logout")
-                .logoutSuccessUrl("/admin/login?logout")
-                .deleteCookies("JSESSIONID")
-                .invalidateHttpSession(true)
-                .permitAll()
-            )
+            .addFilterBefore(jwtAuthenticationFilter(), org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling(ex -> ex
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
-                    org.springframework.security.core.Authentication auth = 
-                        org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
-                    
-                    // Nếu là Khách hàng lạc vào Admin, xóa Session và bắt Login lại
-                    if (auth != null && auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_USER"))) {
-                        new org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler().logout(request, response, auth);
-                        response.sendRedirect("/admin/login?error=unauthorized_client");
-                    } else {
-                        response.sendRedirect("/403");
-                    }
+                    response.sendRedirect("/403");
                 })
             );
 

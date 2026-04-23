@@ -9,8 +9,10 @@
         rel="stylesheet">
     <style>
         :root {
-            --primary-gradient: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
-            --accent-color: #FF4B2B;
+            --orange-start: #d47d32;
+            --orange-end:   #eb984e;
+            --orange-grad:  linear-gradient(135deg, #d47d32 0%, #eb984e 100%);
+            --orange-shadow: rgba(212, 125, 50, 0.35);
         }
 
         body {
@@ -20,7 +22,7 @@
         }
 
         .section-title {
-            color: #1a1a1a;
+            color: #2d3436;
             letter-spacing: -0.01em;
         }
 
@@ -38,34 +40,38 @@
 
         .form-control:focus,
         .form-select:focus {
-            border-color: #333;
-            box-shadow: 0 0 0 0.25rem rgba(0, 0, 0, 0.05);
+            border-color: var(--orange-start);
+            box-shadow: 0 0 0 0.2rem rgba(212,125,50,0.18);
         }
 
         .btn-add-customer {
-            background: linear-gradient(135deg, #1a1a1a 0%, #333 100%);
-            transition: all 0.3s;
-            color: white;
-            border: none;
+            background: var(--orange-grad) !important;
+            color: #fff !important;
+            border: none !important;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            transition: all 0.25s ease;
+            box-shadow: 0 4px 14px var(--orange-shadow);
         }
 
-        .btn-add-customer:hover {
+        .btn-add-customer:hover, .btn-add-customer:focus {
+            background: linear-gradient(135deg,#c06a20 0%,#d47d32 100%) !important;
+            color: #fff !important;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            color: white;
+            box-shadow: 0 6px 20px var(--orange-shadow);
         }
 
         .btn-light-outline {
             background: #fff;
-            border: 1px solid #dee2e6;
-            color: #666;
+            border: 1.5px solid #dee2e6;
+            color: #555;
             transition: all 0.2s;
         }
 
         .btn-light-outline:hover {
-            background: #f8f9fa;
-            color: #333;
-            border-color: #adb5bd;
+            background: #fff5eb;
+            color: var(--orange-start);
+            border-color: var(--orange-start);
         }
 
 
@@ -75,11 +81,15 @@
             min-height: 160px;
             transition: 0.3s;
             background: #fbfbfb;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .upload-zone:hover {
-            border-color: #333 !important;
-            background: #fff;
+            border-color: var(--orange-start) !important;
+            background: #fff8f2;
         }
 
         .color-dot {
@@ -141,7 +151,7 @@
         <div class="container-fluid p-4">
 
             <div class="mb-4">
-                <h4 class="fw-bold section-title">Quản lý Sản phẩm / <span class="fw-bold">Cập nhật sản phẩm</span></h4>
+                <h4 class="fw-bold section-title">Quản lý sản phẩm / <span class="fw-bold">Cập nhật sản phẩm</span></h4>
             </div>
 
 
@@ -160,7 +170,7 @@
                         <button type="button"
                             class="btn btn-add-customer rounded-pill px-4 py-2 d-flex align-items-center gap-2"
                             onclick="VariantApp.submitData()">
-                            <i class="bi bi-cloud-upload"></i> Lưu thay đổi
+                            <i class="bi bi-save"></i> Lưu
                         </button>
                     </div>
                 </div>
@@ -171,7 +181,7 @@
                 <div class="col-lg-7">
                     <div class="card shadow-sm rounded-4 p-4 h-100 bg-white">
                         <div class="d-flex align-items-center gap-2 mb-4 pb-2 border-bottom">
-                            <i class="bi bi-pencil-square fs-5 text-primary"></i>
+                            <i class="bi bi-info-circle-fill fs-5 text-dark"></i>
                             <h5 class="fw-bold mb-0 text-uppercase small">Thông tin cơ bản</h5>
                         </div>
                         <div class="row g-3">
@@ -225,22 +235,22 @@
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label fw-bold small text-uppercase text-muted">Lựa chọn Màu sắc <span
+                            <label class="form-label fw-bold small text-uppercase text-muted">Chọn Màu sắc <span
                                     class="text-danger">*</span></label>
                             <div class="bg-white rounded-3 py-2 px-3 border d-flex justify-content-between align-items-center cursor-pointer"
                                 onclick="VariantApp.openModal('Color')" style="height: 48px;">
-                                <span id="colorSummaryText" class="text-muted small">Đang nạp màu sắc...</span>
+                                <span id="colorSummaryText" class="text-muted small">Chưa chọn màu...</span>
                                 <i class="bi bi-palette text-muted"></i>
                             </div>
                             <select class="d-none" id="idMauSac" multiple></select>
                         </div>
 
                         <div class="mb-4">
-                            <label class="form-label fw-bold small text-uppercase text-muted">Lựa chọn Kích cỡ <span
+                            <label class="form-label fw-bold small text-uppercase text-muted">Chọn Kích cỡ <span
                                     class="text-danger">*</span></label>
                             <div class="bg-white rounded-3 py-2 px-3 border d-flex justify-content-between align-items-center cursor-pointer"
                                 onclick="VariantApp.openModal('Size')" style="height: 48px;">
-                                <span id="sizeSummaryText" class="text-muted small">Đang nạp kích cỡ...</span>
+                                <span id="sizeSummaryText" class="text-muted small">Chưa chọn kích cỡ...</span>
                                 <i class="bi bi-rulers text-muted"></i>
                             </div>
                             <select class="d-none" id="idKichThuoc" multiple></select>
@@ -251,7 +261,7 @@
                         <div class="mt-auto">
                             <button type="button" class="btn btn-add-customer w-100 rounded-pill py-3 fw-bold shadow-sm"
                                 onclick="VariantApp.generateVariants()">
-                                <i class="bi bi-arrow-repeat me-2"></i> LÀM MỚI DANH SÁCH BIẾN THỂ
+                                <i class="bi bi-magic me-2"></i> TẠO BIẾN THỂ TỰ ĐỘNG
                             </button>
                             <p class="text-center text-muted extra-small mt-2 px-3 italic">Hành động này sẽ xóa các
                                 thiết lập cũ và tạo lại biến thể dựa trên thuộc tính mới.</p>
@@ -284,7 +294,7 @@
                             <button class="btn btn-light-outline btn-sm rounded-pill px-3 py-2"
                                 onclick="VariantApp.quickFillAll()">Thiết lập nhanh</button>
                             <button class="btn btn-outline-danger btn-sm rounded-pill px-3 py-2"
-                                onclick="VariantApp.clearAll()">Xóa hết</button>
+                                onclick="VariantApp.clearAll()">Xóa tất cả</button>
                         </div>
                     </div>
                     <div class="p-4 pt-0">
@@ -310,8 +320,8 @@
                         <div class="row g-3" id="modalGrid"
                             style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;"></div>
                         <button type="button"
-                            class="btn btn-add-customer rounded-pill px-4 text-white border-0 shadow-sm"
-                            onclick="VariantApp.confirmSelection()">Hoàn thành</button>
+                            class="btn btn-add-customer rounded-pill px-4 text-white border-0 shadow-sm mt-4"
+                            onclick="VariantApp.confirmSelection()"><i class="bi bi-save me-2"></i>Lưu</button>
                     </div>
                 </div>
             </div>
@@ -333,6 +343,17 @@
                         ['idChatLieu', this.dict.chatLieu, 'tenChatLieu']
                     ];
                     maps.forEach(m => this.f(m[0], m[1], m[2]));
+                    
+                    // Khởi tạo Select2 cho các dropdown đơn
+                    ['idDanhMuc', 'idThuongHieu', 'idKieuDang', 'idChatLieu'].forEach(id => {
+                        $(`#${id}`).select2({
+                            theme: 'bootstrap-5',
+                            placeholder: '-- Chọn --',
+                            allowClear: true,
+                            width: '100%'
+                        });
+                    });
+                    
                     this.loadProductData();
                 },
                 loadProductData() {
@@ -340,10 +361,10 @@
                     if (sp) {
                         $('#tenSanPham').val(sp.tenSanPham);
                         $('#moTa').val(sp.moTa);
-                        if (sp.danhMuc) $('#idDanhMuc').val(sp.danhMuc.id);
-                        if (sp.thuongHieu) $('#idThuongHieu').val(sp.thuongHieu.id);
-                        if (sp.kieuDang) $('#idKieuDang').val(sp.kieuDang.id);
-                        if (sp.chatLieu) $('#idChatLieu').val(sp.chatLieu.id);
+                        if (sp.danhMuc) $('#idDanhMuc').val(sp.danhMuc.id).trigger('change');
+                        if (sp.thuongHieu) $('#idThuongHieu').val(sp.thuongHieu.id).trigger('change');
+                        if (sp.kieuDang) $('#idKieuDang').val(sp.kieuDang.id).trigger('change');
+                        if (sp.chatLieu) $('#idChatLieu').val(sp.chatLieu.id).trigger('change');
                         if (sp.danhSachChiTiet && sp.danhSachChiTiet.length > 0) {
                             this.variants = sp.danhSachChiTiet.map(v => ({
                                 id: v.id,
@@ -375,7 +396,12 @@
                     if (!ids.length) { span.innerText = 'Nhấn để chọn...'; span.className = 'text-muted small'; }
                     else { span.innerText = ids.map(id => list.find(x => x.id == id)[prop]).join(', '); span.className = 'fw-bold text-dark small'; }
                 },
-                f(id, l, p) { const s = $('#' + id); s.empty().append(s.prop('multiple') ? '' : '<option value="">-- Chọn --</option>'); if (l) l.forEach(i => s.append(new Option(i[p], i.id))); },
+                f(id, l, p) { 
+                    const s = $('#' + id); 
+                    s.empty().append(s.prop('multiple') ? '' : '<option value="">-- Chọn --</option>'); 
+                    if (l) l.forEach(i => s.append(new Option(i[p], i.id))); 
+                    if (s.hasClass('select2-hidden-accessible')) s.trigger('change');
+                },
                 getN(k, i, p) { const it = this.dict[k].find(x => x.id == i); return it ? it[p] : 'N/A'; },
                 openModal(type) {
                     this.currentType = type;
@@ -389,9 +415,10 @@
                     const list = this.currentType === 'Color' ? this.dict.mauSac : this.dict.kichThuoc;
                     const prop = this.currentType === 'Color' ? 'tenMauSac' : 'tenKichThuoc';
                     document.getElementById('modalGrid').innerHTML = (list || []).map(it => `
-                        <div class="card border rounded-3 p-2 text-center cursor-pointer mb-0 ${this.tempIds.includes(it.id.toString()) ? 'border-primary bg-light' : ''}"
-                             onclick="VariantApp.toggle('${it.id}')" style="font-size: 0.85rem">
-                            ${this.currentType === 'Color' ? `<span class="color-dot me-1" style="background-color:${colorPicker[it[prop]] || '#ccc'}"></span>` : ''}${it[prop]}
+                        <div class="card rounded-3 p-2 text-center cursor-pointer mb-0 ${this.tempIds.includes(it.id.toString()) ? 'bg-light' : ''}"
+                             onclick="VariantApp.toggle('${it.id}')" 
+                             style="font-size: 0.85rem; border: 1px solid ${this.tempIds.includes(it.id.toString()) ? '#3498db' : '#dee2e6'} !important;">
+                            ${it[prop]}
                         </div>`).join('');
                 },
                 toggle(id) { const i = this.tempIds.indexOf(id.toString()); if (i > -1) this.tempIds.splice(i, 1); else this.tempIds.push(id.toString()); this.renderGrid(); this.updateSummary(); },
@@ -402,7 +429,9 @@
                     if (!this.tempIds.length) box.innerHTML = `<span class="text-muted small w-100 py-2">Chưa chọn mục nào...</span>`;
                     else box.innerHTML = this.tempIds.map(id => {
                         const it = list.find(x => x.id == id);
-                        return `<div class="tag-pill">${this.currentType === 'Color' ? `<span class="color-dot" style="background-color:${colorPicker[it[prop]] || '#ccc'}"></span>` : ''}${it[prop]} <i class="bi bi-x-circle ms-1 cursor-pointer text-danger" onclick="VariantApp.toggle('${id}')"></i></div>`;
+                        return `<div class="d-inline-flex align-items-center me-3 mb-2" style="font-size: 0.9rem;">
+                                    ${it[prop]} <i class="bi bi-x-circle ms-1 cursor-pointer text-danger" onclick="VariantApp.toggle('${id}')"></i>
+                                </div>`;
                     }).join('');
                 },
                 confirmSelection() {
@@ -502,20 +531,88 @@
                     for (const [cid, g] of Object.entries(grp)) {
                         let rs = g.i.map(v => `
                         <tr>
-                            <td class="ps-4 py-3"><div class="fw-bold text-dark small">Size ${v.sName}</div></td>
-                            <td style="width: 150px"><input type="number" class="form-control form-control-sm border text-center rounded-pill" value="${v.q || 0}" onchange="VariantApp.uv('${v.uid}', 'q', this.value)"></td>
-                            <td style="width: 200px"><input type="number" class="form-control form-control-sm border text-end rounded-pill" value="${v.p || 0}" onchange="VariantApp.uv('${v.uid}', 'p', this.value)"></td>
+                            <td class="ps-4 py-3">
+                                <div class="fw-bold text-dark">Size ${v.sName}</div>
+                            </td>
+                            <td style="width: 150px">
+                                <input type="number" class="form-control form-control-sm border text-center rounded-pill" value="${v.q || 0}" onchange="VariantApp.uv('${v.uid}', 'q', this.value)">
+                            </td>
+                            <td style="width: 220px">
+                                <div class="input-group input-group-sm rounded-pill overflow-hidden border">
+                                    <span class="input-group-text bg-white border-0 py-0 small fw-bold text-muted">₫</span>
+                                    <input type="text" inputmode="numeric" class="form-control border-0 fw-bold text-danger text-end pe-3 price-input" 
+                                           placeholder="0" value="${v.p ? VariantApp.fmtVND(v.p) : ''}"
+                                           oninput="VariantApp.onPriceInput(this)"
+                                           onblur="VariantApp.uv('${v.uid}', 'p', VariantApp.parseVND(this.value))">
+                                </div>
+                            </td>
                             <td class="text-center"><button class="btn btn-outline-danger btn-sm border-0 rounded-circle" onclick="VariantApp.rm('${v.uid}')"><i class="bi bi-trash3"></i></button></td>
                         </tr>`).join('');
-                        cont.innerHTML += `<div class="mb-4 border rounded-3 overflow-hidden bg-white shadow-xs"><div class="bg-light px-4 py-2 border-bottom fw-bold text-uppercase" style="font-size: 0.75rem">${g.n}</div><table class="table mb-0 align-middle"><tbody>${rs}</tbody></table></div>`;
+                        cont.innerHTML += `
+                        <div class="mb-4 border rounded-3 overflow-hidden bg-white shadow-xs">
+                            <div class="bg-light px-4 py-2 border-bottom d-flex justify-content-between align-items-center">
+                                <div><span class="color-dot me-2 shadow-sm" style="background-color:${colorPicker[g.n] || '#ccc'}"></span><span class="fw-bold text-uppercase" style="font-size: 0.8rem">${g.n}</span></div>
+                                <button class="btn btn-add-customer btn-sm rounded-pill px-3" style="font-size: 0.70rem" onclick="VariantApp.qF('${cid}')">THIẾT LẬP NHÓM</button>
+                            </div>
+                            <table class="table mb-0 align-middle">
+                                <thead>
+                                    <tr class="text-uppercase text-muted" style="font-size: 0.65rem; background: #fafafa;">
+                                        <th class="ps-4">Chi tiết biến thể</th>
+                                        <th class="text-center">Số lượng</th>
+                                        <th class="text-center">Giá niêm yết</th>
+                                        <th class="text-center">Bỏ</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${rs}</tbody>
+                            </table>
+                        </div>`;
                     }
                 },
-                uv(u, f, v) { const it = this.variants.find(x => x.uid === u); if (it) it[f] = v; },
+                async qF(cid) {
+                    const { value: r } = await Swal.fire({
+                        title: 'Cấu hình nhanh nhóm',
+                        html: `<div class="text-start mb-3">
+                                 <label class="small fw-bold mb-1 d-block">Số lượng</label>
+                                 <input id="swal-q" class="form-control" type="number" min="0" placeholder="VD: 50">
+                               </div>
+                               <div class="text-start">
+                                 <label class="small fw-bold mb-1 d-block">Giá bán (₫)</label>
+                                 <input id="swal-p" class="form-control" type="text" placeholder="VD: 1.500.000" oninput="VariantApp.onPriceInput(this)">
+                               </div>`,
+                        didOpen: () => { document.getElementById('swal-q').focus(); },
+                        preConfirm: () => {
+                            return [
+                                document.getElementById('swal-q').value,
+                                VariantApp.parseVND(document.getElementById('swal-p').value)
+                            ]
+                        }
+                    });
+                    if (r) {
+                        this.variants.forEach(v => {
+                            if (v.cId == cid) {
+                                if (r[0]) v.q = r[0];
+                                if (r[1]) v.p = r[1];
+                            }
+                        });
+                        this.renderR();
+                    }
+                },
+                fmtVND(val) { if (!val && val !== 0) return ''; return new Intl.NumberFormat('vi-VN').format(parseFloat(String(val).replace(/[^\d]/g,'')) || 0); },
+                parseVND(str) { return String(str).replace(/[^\d]/g,'') || '0'; },
+                onPriceInput(el) { const raw = String(el.value).replace(/[^\d]/g,''); el.value = raw ? new Intl.NumberFormat('vi-VN').format(parseInt(raw)) : ''; },
+                uv(u, f, v) { const it = this.variants.find(x => x.uid === u); if (it) it[f] = v.toString().replace(/\./g, ""); },
                 rm(u) { this.variants = this.variants.filter(x => x.uid !== u); this.renderR(); },
                 clearAll() { this.variants = []; this.renderR(); document.getElementById('variantSection').style.display = 'none'; document.getElementById('imageSection').style.display = 'none'; },
                 quickFillAll() {
-                    Swal.fire({ title: 'Thiết lập nhanh', html: '<input id="sq" type="number" class="form-control mb-2" placeholder="Số lượng"><input id="sp" type="number" class="form-control" placeholder="Giá bán">', preConfirm: () => [$('#sq').val(), $('#sp').val()] })
-                        .then(res => { if (res.value) { this.variants.forEach(v => { if (res.value[0]) v.q = res.value[0]; if (res.value[1]) v.p = res.value[1]; }); this.renderR(); } });
+                    Swal.fire({ 
+                        title: 'Thiết lập nhanh', 
+                        html: `
+                            <input id="sq" type="number" class="form-control mb-2" placeholder="Số lượng">
+                            <input id="sp" type="text" class="form-control" placeholder="Giá bán" oninput="VariantApp.onPriceInput(this)">
+                        `, 
+                        preConfirm: () => [$('#sq').val(), VariantApp.parseVND($('#sp').val())] 
+                    })
+                    .then(res => { if (res.value) { this.variants.forEach(v => { if (res.value[0]) v.q = res.value[0]; if (res.value[1]) v.p = res.value[1]; }); this.renderR(); } });
                 },
                 async submitData() {
                     const sp = /*[[${sp}]]*/ null;

@@ -72,48 +72,104 @@
 
             .status-stepper {
                 display: flex;
-                justify-content: space-between;
+                justify-content: center;
                 position: relative;
                 max-width: 900px;
                 margin: 0 auto;
-            }
-
-            .status-stepper::before {
-                content: '';
-                position: absolute;
-                top: 22px;
-                left: 10%;
-                right: 10%;
-                height: 4px;
-                background: #f1f2f6;
-                z-index: 1;
+                padding-bottom: 20px;
             }
 
             .status-step {
                 position: relative;
-                z-index: 2;
+                z-index: 3;
+                text-align: center;
+                width: 150px;
+            }
+
+            .status-step::after {
+                content: '';
+                position: absolute;
+                top: 24px;
+                left: 50%;
+                width: 100%;
+                height: 4px;
+                background: #f1f2f6;
+                z-index: 0;
+            }
+
+            .status-step.completed::after {
+                background: #d47d32;
+            }
+
+            .status-step:last-child::after {
+                display: none;
+            }
+
+            .status-step {
+                position: relative;
+                z-index: 3;
                 text-align: center;
                 flex: 1;
             }
 
             .step-circle {
-                width: 48px;
-                height: 48px;
+                width: 52px;
+                height: 52px;
                 background: white;
-                border: 4px solid #f1f2f6;
+                border: 2px solid #f1f2f6;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                margin: 0 auto 12px;
+                margin: 0 auto 15px;
                 color: #b2bec3;
-                font-size: 1.2rem;
-                transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                font-size: 1.3rem;
+                transition: all 0.4s ease;
+                box-shadow: 0 0 0 4px white;
+                position: relative;
+                z-index: 2;
             }
 
-            .status-step.completed.step-xac-nhan .step-circle { background: #2980b9; border-color: #eaf2ff; color: white; }
-            .status-step.completed.step-giao .step-circle { background: #8e44ad; border-color: #f3eaff; color: white; }
-            .status-step.completed.step-done .step-circle { background: #27ae60; border-color: #e6f7ee; color: white; }
+            .status-step.completed .step-circle,
+            .status-step.active .step-circle {
+                background: #d47d32;
+                border-color: #d47d32;
+                color: white;
+                box-shadow: 0 0 0 4px white, 0 0 0 6px rgba(212, 125, 50, 0.2);
+            }
+
+            .status-step.active .step-circle {
+                transform: scale(1.3);
+                box-shadow: 0 0 0 10px rgba(212, 125, 50, 0.1), 0 0 0 20px rgba(212, 125, 50, 0.05);
+                z-index: 10;
+                animation: active-pulse 2s infinite;
+            }
+
+            @keyframes active-pulse {
+                0% { box-shadow: 0 0 0 0px rgba(212, 125, 50, 0.2), 0 0 0 10px rgba(212, 125, 50, 0.1); }
+                70% { box-shadow: 0 0 0 15px rgba(212, 125, 50, 0), 0 0 0 25px rgba(212, 125, 50, 0); }
+                100% { box-shadow: 0 0 0 0px rgba(212, 125, 50, 0), 0 0 0 0px rgba(212, 125, 50, 0); }
+            }
+
+            .badge-custom {
+                padding: 6px 16px;
+                border-radius: 50px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                display: inline-block;
+            }
+
+            .badge-complete,
+            .badge-pending,
+            .badge-shipping,
+            .badge-delivery,
+            .badge-warning,
+            .badge-info { 
+                background: rgba(212, 125, 50, 0.12); 
+                color: #d47d32; 
+            }
+            
+            .badge-cancel { background: #ffeef0; color: #e74c3c; }
 
             .status-step.active .step-circle {
                 background: #d47d32;
@@ -136,8 +192,9 @@
 
             .step-label {
                 font-weight: 700;
-                font-size: 0.85rem;
+                font-size: 0.9rem;
                 color: #b2bec3;
+                transition: all 0.3s ease;
             }
 
             .status-step.completed .step-label,
@@ -145,10 +202,18 @@
                 color: var(--text-main);
             }
 
+            .status-step.active .step-label {
+                color: #d47d32;
+                font-size: 1.1rem;
+                font-weight: 800;
+                text-shadow: 0 0 10px rgba(212, 125, 50, 0.1);
+            }
+
             .step-time {
                 font-size: 0.75rem;
                 color: var(--text-muted);
                 margin-top: 5px;
+                font-weight: 500;
             }
 
 
@@ -340,8 +405,7 @@
                 </div>
 
                 <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
-                    <h5 class="fw-bold mb-0"><i class="bi bi-gear-wide-connected me-2 text-primary"></i>Thao tác đơn
-                        hàng</h5>
+                    <h5 class="fw-bold mb-0">Thao tác đơn hàng</h5>
                     <div class="d-flex gap-2">
                         <!-- Nút cho trạng thái Chờ xác nhận -->
                         <th:block th:if="${hd.trangThaiHoaDon == '1' or hd.trangThaiHoaDon == 'CHO_XAC_NHAN'}">
@@ -381,40 +445,62 @@
                             </form>
                         </th:block>
 
-                        <span th:if="${hd.trangThaiHoaDon == '5' or hd.trangThaiHoaDon == 'DA_HUY'}"
-                            class="badge bg-danger p-2 px-3 rounded-pill fw-bold">ĐƠN HÀNG ĐÃ HỦY</span>
-                        <span th:if="${hd.trangThaiHoaDon == '4' or hd.trangThaiHoaDon == 'HOAN_THANH'}"
-                            class="badge bg-success p-2 px-3 rounded-pill fw-bold">ĐƠN HÀNG HOÀN THÀNH</span>
+                        <span th:if="${hd.trangThaiHoaDon == 'CHO_THANH_TOAN'}" class="badge-custom badge-pending"><i class="bi bi-wallet2 me-1"></i>Chờ thanh toán</span>
+                        <span th:if="${hd.trangThaiHoaDon == 'DA_THANH_TOAN'}" class="badge-custom badge-complete"><i class="bi bi-cash-coin me-1"></i>Đã thanh toán</span>
+
+                        <span th:if="${hd.trangThaiHoaDon == '1' or hd.trangThaiHoaDon == 'CHO_XAC_NHAN'}" class="badge-custom badge-pending"><i class="bi bi-clock-history me-1"></i>Chờ xác nhận</span>
+                        <span th:if="${hd.trangThaiHoaDon == '2' or hd.trangThaiHoaDon == 'DA_XAC_NHAN'}" class="badge-custom badge-shipping"><i class="bi bi-check2-all me-1"></i>Đã xác nhận</span>
+                        <span th:if="${hd.trangThaiHoaDon == '3' or hd.trangThaiHoaDon == 'DANG_GIAO'}" class="badge-custom badge-delivery"><i class="bi bi-truck me-1"></i>Đang giao</span>
+                        <span th:if="${hd.trangThaiHoaDon == '4' or hd.trangThaiHoaDon == 'DA_GIAO_HANG'}" class="badge-custom badge-complete"><i class="bi bi-box-seam me-1"></i>Đã giao hàng</span>
+                        <span th:if="${hd.trangThaiHoaDon == '5' or hd.trangThaiHoaDon == 'HOAN_THANH'}" class="badge-custom badge-complete"><i class="bi bi-check-circle-fill me-1"></i>Hoàn thành</span>
+                        <span th:if="${hd.trangThaiHoaDon == '6' or hd.trangThaiHoaDon == 'DA_HUY'}" class="badge-custom badge-cancel"><i class="bi bi-x-circle me-1"></i>Đã hủy</span>
+                        <span th:if="${hd.trangThaiHoaDon == '7' or hd.trangThaiHoaDon == 'YEU_CAU_HUY'}" class="badge-custom badge-warning"><i class="bi bi-exclamation-triangle me-1"></i>Yêu cầu hủy</span>
+                        <span th:if="${hd.trangThaiHoaDon == '8' or hd.trangThaiHoaDon == 'CAN_HOAN_PHI'}" class="badge-custom badge-info"><i class="bi bi-arrow-return-left me-1"></i>Cần hoàn phí</span>
                     </div>
                 </div>
 
-                <div class="status-stepper">
-
-                    <div class="status-step"
-                        th:classappend="${#lists.contains({'1','2','3','4','CHO_XAC_NHAN','DA_XAC_NHAN','DANG_GIAO','HOAN_THANH'}, hd.trangThaiHoaDon)} ? 'completed' : ''">
-                        <div class="step-circle"><i class="bi bi-file-earmark-check"></i></div>
+                <div class="status-stepper" th:with="
+                    currentStatus=${hd.trangThaiHoaDon},
+                    isCancelled=${#lists.contains({'6','7','8','DA_HUY','YEU_CAU_HUY','CAN_HOAN_PHI'}, currentStatus)},
+                    statusIdx=${
+                        #lists.contains({'1','CHO_XAC_NHAN'}, currentStatus) ? 0 :
+                        #lists.contains({'2','DA_XAC_NHAN'}, currentStatus) ? 1 :
+                        #lists.contains({'3','DANG_GIAO'}, currentStatus) ? 2 :
+                        #lists.contains({'4','5','DA_GIAO_HANG','HOAN_THANH'}, currentStatus) ? 3 : 
+                        isCancelled ? 4 : -1
+                    }">
+                    
+                    <div class="status-step" th:if="${statusIdx >= 0 and statusIdx != 4}"
+                        th:classappend="${statusIdx > 0 ? 'completed' : (statusIdx == 0 ? 'active' : '')}">
+                        <div class="step-circle"><i class="bi bi-clock-history"></i></div>
                         <div class="step-label">Chờ xác nhận</div>
                     </div>
 
-                    <div class="status-step step-xac-nhan"
-                        th:classappend="${#lists.contains({'2','3','4','DA_XAC_NHAN','DANG_GIAO','HOAN_THANH'}, hd.trangThaiHoaDon)} ? 'completed' : ''">
-                        <div class="step-circle"><i class="bi bi-box-seam"></i></div>
+                    <div class="status-step" th:if="${statusIdx >= 1 and statusIdx != 4}"
+                        th:classappend="${statusIdx > 1 ? 'completed' : (statusIdx == 1 ? 'active' : '')}">
+                        <div class="step-circle"><i class="bi bi-check2-all"></i></div>
                         <div class="step-label">Đã xác nhận</div>
                     </div>
 
-                    <div class="status-step step-giao"
-                        th:classappend="${#lists.contains({'3','4','DANG_GIAO','HOAN_THANH'}, hd.trangThaiHoaDon)} ? 'completed' : ''">
+                    <div class="status-step" th:if="${statusIdx >= 2 and statusIdx != 4}"
+                        th:classappend="${statusIdx > 2 ? 'completed' : (statusIdx == 2 ? 'active' : '')}">
                         <div class="step-circle"><i class="bi bi-truck"></i></div>
                         <div class="step-label">Đang giao</div>
                     </div>
 
-                    <div class="status-step"
-                        th:classappend="${#lists.contains({'4','HOAN_THANH'}, hd.trangThaiHoaDon)} ? 'completed' : ''">
+                    <div class="status-step" th:if="${statusIdx >= 3 and statusIdx != 4}"
+                        th:classappend="${statusIdx >= 3 ? (currentStatus == '5' or currentStatus == 'HOAN_THANH' ? 'active' : 'completed') : ''}">
                         <div class="step-circle"><i class="bi bi-check-circle-fill"></i></div>
                         <div class="step-label">Hoàn thành</div>
                         <div class="step-time"
-                            th:if="${hd.trangThaiHoaDon == '4' or hd.trangThaiHoaDon == 'HOAN_THANH'}"
+                            th:if="${statusIdx >= 3}"
                             th:text="${#temporals.format(hd.ngaySuaCuoi, 'HH:mm dd/MM/yyyy')}"></div>
+                    </div>
+
+                    <div class="status-step active" th:if="${isCancelled}">
+                        <div class="step-circle bg-danger border-danger text-white"><i class="bi bi-x-circle"></i></div>
+                        <div class="step-label text-danger">Đã hủy</div>
+                        <div class="step-time" th:text="${#temporals.format(hd.ngaySuaCuoi, 'HH:mm dd/MM/yyyy')}"></div>
                     </div>
                 </div>
             </div>

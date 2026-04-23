@@ -57,11 +57,11 @@ public class HoaDonController {
             @RequestParam(defaultValue = "5") int size,
             Model model) {
 
-        // Nếu không có bất kỳ bộ lọc nào và chưa tìm kiếm, mặc định lọc hóa đơn ngày hôm nay
-        boolean noFilter = maHoaDon == null && tenKhachHang == null && trangThai == null
-                && loaiHoaDon == null && ngayBatDau == null && ngayKetThuc == null && !searched;
-        if (noFilter) {
+        // Thiết lập lọc mặc định theo ngày hôm nay nếu chưa có điều kiện tìm kiếm
+        if (ngayBatDau == null && !searched) {
             ngayBatDau = LocalDate.now();
+        }
+        if (ngayKetThuc == null && !searched) {
             ngayKetThuc = LocalDate.now();
         }
 

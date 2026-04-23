@@ -24,23 +24,18 @@ public class InvoiceScheduler {
     @Scheduled(cron = "0 0 0 * * *")
     @Transactional
     public void autoCancelPOSInvoices() {
-        log.info("--- [SYSTEM] Bắt đầu quét và reset hóa đơn POS chờ thanh toán cuối ngày ---");
-        
-        // Tìm toàn bộ hóa đơn chờ thanh toán tại quầy
-        List<HoaDon> pendingInvoices = hoaDonRepository.findAllPendingPOS();
-        
+        log.info("--- [SYSTEM] Chức năng tự động hủy đơn POS đã được tạm dừng theo yêu cầu. ---");
+        /*
+        List<HoaDon> pendingInvoices = hoaDonRepository.findAllPendingPOS(LocalDateTime.now().minusDays(1));
         if (!pendingInvoices.isEmpty()) {
             for (HoaDon hd : pendingInvoices) {
                 hd.setTrangThaiHoaDon("DA_HUY");
                 hd.setMoTa("Hệ thống tự động hủy đơn chờ cuối ngày (12h đêm)");
                 hd.setNgaySuaCuoi(LocalDateTime.now());
                 hd.setNguoiSuaCuoi("SYSTEM");
-                log.info("Đã tự động hủy hóa đơn chờ: {}", hd.getMaHoaDon());
             }
             hoaDonRepository.saveAll(pendingInvoices);
-            log.info("Hoàn tất hủy {} hóa đơn POS tồn đọng.", pendingInvoices.size());
-        } else {
-            log.info("Không có hóa đơn POS nào đang chờ. Hoàn tất reset.");
         }
+        */
     }
 }

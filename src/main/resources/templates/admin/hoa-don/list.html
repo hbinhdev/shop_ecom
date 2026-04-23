@@ -379,30 +379,17 @@
                 font-weight: 600;
             }
 
-            .badge-complete {
-                background: #e6f7ee;
-                color: #00b894;
+            .badge-complete,
+            .badge-pending,
+            .badge-shipping,
+            .badge-delivery,
+            .badge-warning,
+            .badge-info { 
+                background: rgba(212, 125, 50, 0.12); 
+                color: #d47d32; 
             }
-
-            .badge-pending {
-                background: #fff9e6;
-                color: #f1c40f;
-            }
-
-            .badge-shipping {
-                background: #eaf2ff;
-                color: #2980b9;
-            }
-
-            .badge-delivery {
-                background: #f3eaff;
-                color: #8e44ad;
-            }
-
-            .badge-cancel {
-                background: #ffeef0;
-                color: #e74c3c;
-            }
+            
+            .badge-cancel { background: #ffeef0; color: #e74c3c; }
 
             .type-label {
                 padding: 6px 16px;
@@ -500,7 +487,7 @@
                             <i class="bi bi-search"></i> Tìm kiếm
                         </button>
                         <button type="button" onclick="window.location.href='/admin/hoa-don'" class="btn-dark-ghost">
-                            <i class="bi bi-arrow-clockwise"></i> Đặt lại (hôm nay)
+                            <i class="bi bi-arrow-clockwise"></i> Làm mới
                         </button>
                         <button type="button" class="btn btn-light-outline px-4" onclick="exportToExcel()"
                             style="border-radius: 10px; font-size: 0.85rem; font-weight: 600;">

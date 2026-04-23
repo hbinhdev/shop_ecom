@@ -25,4 +25,9 @@ public interface SanPhamChiTietService {
         BigDecimal minPrice, BigDecimal maxPrice, 
         String trangThai, Long idSanPham, 
         Long idThuongHieu, Long idDanhMuc
-    );}
+    );
+    
+    BigDecimal findMaxPrice();
+
+    BigDecimal findMaxPriceBySanPhamId(Long idSanPham);
+}
