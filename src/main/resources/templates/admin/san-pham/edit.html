@@ -166,7 +166,7 @@
                         <button type="button"
                             class="btn btn-add-customer rounded-pill px-4 py-2 d-flex align-items-center gap-2"
                             onclick="VariantApp.submitData()">
-                            <i class="bi bi-cloud-upload"></i> Lưu thay đổi
+                            <i class="bi bi-save"></i> Lưu
                         </button>
                     </div>
                 </div>
@@ -316,8 +316,8 @@
                         <div class="row g-3" id="modalGrid"
                             style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;"></div>
                         <button type="button"
-                            class="btn btn-add-customer rounded-pill px-4 text-white border-0 shadow-sm"
-                            onclick="VariantApp.confirmSelection()">Hoàn thành</button>
+                            class="btn btn-add-customer rounded-pill px-4 text-white border-0 shadow-sm mt-4"
+                            onclick="VariantApp.confirmSelection()"><i class="bi bi-save me-2"></i>Lưu</button>
                     </div>
                 </div>
             </div>
@@ -411,9 +411,10 @@
                     const list = this.currentType === 'Color' ? this.dict.mauSac : this.dict.kichThuoc;
                     const prop = this.currentType === 'Color' ? 'tenMauSac' : 'tenKichThuoc';
                     document.getElementById('modalGrid').innerHTML = (list || []).map(it => `
-                        <div class="card border rounded-3 p-2 text-center cursor-pointer mb-0 ${this.tempIds.includes(it.id.toString()) ? 'border-primary bg-light' : ''}"
-                             onclick="VariantApp.toggle('${it.id}')" style="font-size: 0.85rem">
-                            ${this.currentType === 'Color' ? `<span class="color-dot me-1" style="background-color:${colorPicker[it[prop]] || '#ccc'}"></span>` : ''}${it[prop]}
+                        <div class="card rounded-3 p-2 text-center cursor-pointer mb-0 ${this.tempIds.includes(it.id.toString()) ? 'bg-light' : ''}"
+                             onclick="VariantApp.toggle('${it.id}')" 
+                             style="font-size: 0.85rem; border: 1px solid ${this.tempIds.includes(it.id.toString()) ? '#3498db' : '#dee2e6'} !important;">
+                            ${it[prop]}
                         </div>`).join('');
                 },
                 toggle(id) { const i = this.tempIds.indexOf(id.toString()); if (i > -1) this.tempIds.splice(i, 1); else this.tempIds.push(id.toString()); this.renderGrid(); this.updateSummary(); },
@@ -424,7 +425,9 @@
                     if (!this.tempIds.length) box.innerHTML = `<span class="text-muted small w-100 py-2">Chưa chọn mục nào...</span>`;
                     else box.innerHTML = this.tempIds.map(id => {
                         const it = list.find(x => x.id == id);
-                        return `<div class="tag-pill">${this.currentType === 'Color' ? `<span class="color-dot" style="background-color:${colorPicker[it[prop]] || '#ccc'}"></span>` : ''}${it[prop]} <i class="bi bi-x-circle ms-1 cursor-pointer text-danger" onclick="VariantApp.toggle('${id}')"></i></div>`;
+                        return `<div class="d-inline-flex align-items-center me-3 mb-2" style="font-size: 0.9rem;">
+                                    ${it[prop]} <i class="bi bi-x-circle ms-1 cursor-pointer text-danger" onclick="VariantApp.toggle('${id}')"></i>
+                                </div>`;
                     }).join('');
                 },
                 confirmSelection() {

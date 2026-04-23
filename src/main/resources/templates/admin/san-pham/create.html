@@ -201,7 +201,7 @@
                         <button type="button"
                             class="btn btn-add-customer rounded-pill px-4 py-2 d-flex align-items-center gap-2"
                             onclick="VariantApp.submitData()">
-                            <i class="bi bi-check-circle"></i> Hoàn tất & Lưu
+                            <i class="bi bi-save"></i> Lưu
                         </button>
                     </div>
                 </div>
@@ -340,23 +340,18 @@
 
         <div class="modal fade" id="pickerModal" tabindex="-1">
             <div class="modal-dialog modal-lg modal-dialog-centered">
-                <div class="modal-content border-0 rounded-4 shadow">
+                <div class="modal-content border-0 rounded-4 shadow-lg">
                     <div class="modal-header border-0 bg-light p-4">
                         <h5 class="fw-bold mb-0" id="modalTitle">Lựa chọn thuộc tính</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body p-4">
-                        <div id="modalSummaryBox" class="mb-4 d-flex flex-wrap gap-2 min-vh-10 pb-2 border-bottom">
-                        </div>
+                        <div id="modalSummaryBox" class="mb-4 d-flex flex-wrap gap-2 pb-2 border-bottom"></div>
                         <div class="row g-3" id="modalGrid"
                             style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;"></div>
-                    </div>
-                    <div class="modal-footer border-0 p-4">
-                        <button type="button" class="btn btn-light rounded-pill px-4"
-                            data-bs-dismiss="modal">Đóng</button>
                         <button type="button"
-                            class="btn btn-add-customer rounded-pill px-4 text-white border-0 shadow-sm"
-                            onclick="VariantApp.confirmSelection()">Xác nhận</button>
+                            class="btn btn-add-customer rounded-pill px-4 text-white border-0 shadow-sm mt-4"
+                            onclick="VariantApp.confirmSelection()"><i class="bi bi-save me-2"></i>Lưu</button>
                     </div>
                 </div>
             </div>
@@ -373,7 +368,7 @@
                 return headers;
             }
 
-            const colorPicker = { 'Xanh dương': '#3b82f6', 'Trắng': '#ffffff', 'Đen': '#000000', 'Đỏ': '#ef4444', 'Vàng': '#f59e0b', 'Cam': '#fb923c', 'Xanh lá': '#22c55e', 'Tím': '#a855f7' };
+            const colorPicker = { 'Xanh dương': '#0000FF', 'Trắng': '#FFFFFF', 'Đen': '#000000', 'Đỏ': '#FF0000', 'Vàng': '#FFFF00', 'Cam': '#FFA500', 'Xanh lá': '#008000', 'Tím': '#800080' };
             const VariantApp = {
                 dict: {}, variants: [], currentType: '', tempIds: [], colorFiles: {},
                 async init() {
@@ -416,9 +411,10 @@
                     const list = this.currentType === 'Color' ? this.dict.mauSac : this.dict.kichThuoc;
                     const prop = this.currentType === 'Color' ? 'tenMauSac' : 'tenKichThuoc';
                     document.getElementById('modalGrid').innerHTML = (list || []).map(it => `
-                        <div class="card border rounded-3 p-2 text-center cursor-pointer mb-0 ${this.tempIds.includes(it.id.toString()) ? 'border-dark bg-light-subtle shadow-sm' : ''}" 
-                             onclick="VariantApp.toggle('${it.id}')" style="font-size: 0.85rem">
-                            ${this.currentType === 'Color' ? `<span class="color-dot me-1" style="background-color:${colorPicker[it[prop]] || '#ccc'}"></span>` : ''}${it[prop]}
+                        <div class="card rounded-3 p-2 text-center cursor-pointer mb-0 ${this.tempIds.includes(it.id.toString()) ? 'bg-light' : ''}" 
+                             onclick="VariantApp.toggle('${it.id}')" 
+                             style="font-size: 0.85rem; border: 1px solid ${this.tempIds.includes(it.id.toString()) ? '#3498db' : '#dee2e6'} !important;">
+                            ${it[prop]}
                         </div>`).join('');
                 },
                 toggle(id) { const i = this.tempIds.indexOf(id.toString()); if (i > -1) this.tempIds.splice(i, 1); else this.tempIds.push(id.toString()); this.renderGrid(); this.updateSummary(); },
@@ -429,7 +425,9 @@
                     if (!this.tempIds.length) box.innerHTML = `<span class="text-muted small w-100 py-2">Chưa chọn mục nào...</span>`;
                     else box.innerHTML = this.tempIds.map(id => {
                         const it = list.find(x => x.id == id);
-                        return `<div class="tag-pill">${this.currentType === 'Color' ? `<span class="color-dot" style="background-color:${colorPicker[it[prop]] || '#ccc'}"></span>` : ''}${it[prop]} <i class="bi bi-x-circle ms-1 cursor-pointer text-danger" onclick="VariantApp.toggle('${id}')"></i></div>`;
+                        return `<div class="d-inline-flex align-items-center me-3 mb-2" style="font-size: 0.9rem;">
+                                    ${it[prop]} <i class="bi bi-x-circle ms-1 cursor-pointer text-danger" onclick="VariantApp.toggle('${id}')"></i>
+                                </div>`;
                     }).join('');
                 },
                 confirmSelection() {

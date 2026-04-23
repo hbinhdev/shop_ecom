@@ -6,7 +6,7 @@
         <div class="container">
             <nav aria-label="breadcrumb" class="mb-4">
                 <ol class="breadcrumb mb-0">
-                    <li class="breadcrumb-item"><a th:href="@{/client}" class="text-decoration-none text-muted">Trang chủ</a>
+                    <li class="breadcrumb-item"><a th:href="@{/}" class="text-decoration-none text-muted">Trang chủ</a>
                     </li>
                     <li class="breadcrumb-item active fw-bold">Cửa hàng</li>
                 </ol>
@@ -15,7 +15,7 @@
 
                 <!-- SIDEBAR BỘ LỌC -->
                 <aside class="col-lg-2">
-                    <div class="card border-0 shadow-sm rounded-4 p-3 sticky-top" style="top: 100px;">
+                    <div class="card border-0 shadow-sm rounded-4 p-3">
                         <h5 class="fw-bold mb-3 border-bottom pb-2 text-primary" style="font-size: 1.1rem;">BỘ LỌC</h5>
 
                         <!-- Tìm kiếm -->
@@ -64,7 +64,8 @@
 
                         <!-- Kiểu dáng -->
                         <div class="mb-4">
-                            <label class="form-label small fw-bold text-muted text-uppercase text-primary">Kiểu dáng</label>
+                            <label class="form-label small fw-bold text-muted text-uppercase text-primary">Kiểu
+                                dáng</label>
                             <div class="d-flex flex-column gap-2 mt-2">
                                 <div class="form-check" th:each="kd : ${kieuDangs}">
                                     <input class="form-check-input filter-style" type="radio" name="kieuDang"
@@ -78,7 +79,8 @@
 
                         <!-- Chất liệu -->
                         <div class="mb-4">
-                            <label class="form-label small fw-bold text-muted text-uppercase text-primary">Chất liệu</label>
+                            <label class="form-label small fw-bold text-muted text-uppercase text-primary">Chất
+                                liệu</label>
                             <div class="d-flex flex-column gap-2 mt-2">
                                 <div class="form-check" th:each="cl : ${chatLieus}">
                                     <input class="form-check-input filter-material" type="radio" name="chatLieu"
@@ -117,7 +119,7 @@
 
                         <button onclick="applyFilters()"
                             class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow-sm mt-3">ÁP DỤNG</button>
-                        <a th:href="@{/client/san-pham}"
+                        <a th:href="@{/san-pham}"
                             class="btn btn-link w-100 text-decoration-none text-muted small mt-2">Xóa bộ lọc</a>
                     </div>
                 </aside>

@@ -57,8 +57,13 @@ public class HoaDonController {
             @RequestParam(defaultValue = "5") int size,
             Model model) {
 
-        // Bỏ lọc mặc định theo ngày hôm nay để tránh đơn hàng bị "biến mất" sau 12h đêm
-        // Người dùng có thể tự chọn ngày nếu muốn lọc
+        // Thiết lập lọc mặc định theo ngày hôm nay nếu chưa có điều kiện tìm kiếm
+        if (ngayBatDau == null && !searched) {
+            ngayBatDau = LocalDate.now();
+        }
+        if (ngayKetThuc == null && !searched) {
+            ngayKetThuc = LocalDate.now();
+        }
 
         Page<HoaDon> hoaDonPage = hoaDonService.searchInvoices(
                 maHoaDon, tenKhachHang, trangThai, loaiHoaDon, ngayBatDau, ngayKetThuc,
