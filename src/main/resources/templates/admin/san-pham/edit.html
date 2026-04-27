@@ -447,7 +447,14 @@
                 generateVariants() {
                     const c = $('#idMauSac').val() || []; 
                     const s = $('#idKichThuoc').val() || [];
-                    if (!c.length || !s.length) return Swal.fire('Thông báo', 'Dữ liệu chưa đầy đủ!', 'warning');
+                    if (!c.length || !s.length) return Swal.fire({
+                        title: 'Thông báo',
+                        text: 'Dữ liệu chưa đầy đủ!',
+                        icon: 'warning',
+                        confirmButtonText: 'OK',
+                        customClass: { confirmButton: 'btn btn-add-customer rounded-pill px-4' },
+                        buttonsStyling: false
+                    });
                     
                     // Lưu lại các biến thể cũ để map ID
                     const oldVariants = [...this.variants];
@@ -585,7 +592,10 @@
                                 document.getElementById('swal-q').value,
                                 VariantApp.parseVND(document.getElementById('swal-p').value)
                             ]
-                        }
+                        },
+                        confirmButtonText: 'OK',
+                        customClass: { confirmButton: 'btn btn-add-customer rounded-pill px-4' },
+                        buttonsStyling: false
                     });
                     if (r) {
                         this.variants.forEach(v => {
@@ -610,7 +620,10 @@
                             <input id="sq" type="number" class="form-control mb-2" placeholder="Số lượng">
                             <input id="sp" type="text" class="form-control" placeholder="Giá bán" oninput="VariantApp.onPriceInput(this)">
                         `, 
-                        preConfirm: () => [$('#sq').val(), VariantApp.parseVND($('#sp').val())] 
+                        preConfirm: () => [$('#sq').val(), VariantApp.parseVND($('#sp').val())],
+                        confirmButtonText: 'OK',
+                        customClass: { confirmButton: 'btn btn-add-customer rounded-pill px-4' },
+                        buttonsStyling: false
                     })
                     .then(res => { if (res.value) { this.variants.forEach(v => { if (res.value[0]) v.q = res.value[0]; if (res.value[1]) v.p = res.value[1]; }); this.renderR(); } });
                 },
@@ -625,8 +638,22 @@
 
                     Swal.fire({ title: 'Đang xử lý...', didOpen: () => Swal.showLoading() });
                     const res = await fetch('/api/admin/product-variant/create-all-with-images', { method: 'POST', headers: getCsrfHeaders(), body: formData });
-                    if (res.ok) Swal.fire('Thành công', 'Đã lưu sản phẩm!', 'success').then(() => window.location.href = '/admin/san-pham');
-                    else Swal.fire('Lỗi', 'Không thể lưu. Vui lòng kiểm tra lại dữ liệu!', 'error');
+                    if (res.ok) Swal.fire({
+                        title: 'Thành công',
+                        text: 'Đã lưu sản phẩm!',
+                        icon: 'success',
+                        confirmButtonText: 'OK',
+                        customClass: { confirmButton: 'btn btn-add-customer rounded-pill px-4' },
+                        buttonsStyling: false
+                    }).then(() => window.location.href = '/admin/san-pham');
+                    else Swal.fire({
+                        title: 'Lỗi',
+                        text: 'Không thể lưu. Vui lòng kiểm tra lại dữ liệu!',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        customClass: { confirmButton: 'btn btn-add-customer rounded-pill px-4' },
+                        buttonsStyling: false
+                    });
                 }
             };
             $(document).ready(() => VariantApp.init());

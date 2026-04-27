@@ -141,6 +141,24 @@
         .extra-small {
             font-size: 0.7rem;
         }
+
+        /* THIẾT KẾ NÚT OK CỦA SWEETALERT TẠI ĐÂY */
+        .swal2-confirm {
+            background: var(--orange-grad) !important;
+            color: #fff !important;
+            border: none !important;
+            font-weight: 600 !important;
+            border-radius: 50rem !important;
+            padding: 10px 30px !important;
+            box-shadow: 0 4px 14px var(--orange-shadow) !important;
+            transition: all 0.25s ease !important;
+        }
+
+        .swal2-confirm:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 20px var(--orange-shadow) !important;
+            background: linear-gradient(135deg, #c06a20 0%, #d47d32 100%) !important;
+        }
     </style>
 </head>
 
@@ -407,7 +425,14 @@
                 },
                 generateVariants() {
                     const c = $('#idMauSac').val() || []; const s = $('#idKichThuoc').val() || [];
-                    if (!c.length || !s.length) return Swal.fire('Thông báo', 'Vui lòng chọn đầy đủ các thuộc tính bắt buộc (Màu, Size)!', 'warning');
+                    if (!c.length || !s.length) return Swal.fire({
+                        title: 'Thông báo',
+                        text: 'Vui lòng chọn đầy đủ các thuộc tính bắt buộc (Màu, Size)!',
+                        icon: 'warning',
+                        confirmButtonText: 'OK',
+                        customClass: { confirmButton: 'btn btn-add-customer rounded-pill px-4' },
+                        buttonsStyling: false
+                    });
                     this.variants = []; c.forEach(cid => s.forEach(sid => { this.variants.push({ uid: `${cid}-${sid}`, cId: cid, cName: this.getN('mauSac', cid, 'tenMauSac'), sId: sid, sName: this.getN('kichThuoc', sid, 'tenKichThuoc'), q: '', p: '' }); }));
                     this.renderR(); this.renderImageCards();
                     document.getElementById('variantSection').style.display = 'block';
@@ -600,7 +625,10 @@
                             const q = document.getElementById('swal-q').value;
                             const p = VariantApp.parseVND(document.getElementById('swal-p').value);
                             return [q, p];
-                        }
+                        },
+                        confirmButtonText: 'OK',
+                        customClass: { confirmButton: 'btn btn-add-customer rounded-pill px-4' },
+                        buttonsStyling: false
                     });
                     if (r && (r[0] || r[1])) {
                         this.variants.forEach(v => {
@@ -625,7 +653,10 @@
                             const q = document.getElementById('swal-qa').value;
                             const p = VariantApp.parseVND(document.getElementById('swal-pa').value);
                             return [q, p];
-                        }
+                        },
+                        confirmButtonText: 'OK',
+                        customClass: { confirmButton: 'btn btn-add-customer rounded-pill px-4' },
+                        buttonsStyling: false
                     });
                     if (r && (r[0] || r[1])) {
                         this.variants.forEach(v => {
