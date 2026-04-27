@@ -523,7 +523,14 @@
             async function placeOrder() {
                 const selectedBlock = document.querySelector('.addr-item.selected');
                 if (!selectedBlock) {
-                    Swal.fire('Thông tin', 'Vui lòng chọn địa chỉ giao hàng.', 'warning');
+                    Swal.fire({
+                        title: 'Thông tin',
+                        text: 'Vui lòng chọn địa chỉ giao hàng.',
+                        icon: 'warning',
+                        confirmButtonText: 'OK',
+                        customClass: { confirmButton: 'btn btn-dark rounded-pill px-4' },
+                        buttonsStyling: false
+                    });
                     return;
                 }
 
@@ -544,9 +551,33 @@
                 };
 
                 if (!payload.tenNguoiNhan || !payload.soDienThoai || !payload.chiTiet || payload.tinhThanhPho === '-- Chọn --') {
-                    Swal.fire('Thông tin', 'Vui lòng điền đầy đủ thông tin địa chỉ đã chọn.', 'warning');
+                    Swal.fire({
+                        title: 'Thông tin',
+                        text: 'Vui lòng điền đầy đủ thông tin địa chỉ đã chọn.',
+                        icon: 'warning',
+                        confirmButtonText: 'OK',
+                        customClass: { confirmButton: 'btn btn-dark rounded-pill px-4' },
+                        buttonsStyling: false
+                    });
                     return;
                 }
+
+                // Hộp thoại xác nhận đặt hàng
+                const confirmRes = await Swal.fire({
+                    title: 'Xác nhận đặt hàng',
+                    text: 'Bạn có chắc chắn muốn đặt đơn hàng này không?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Xác nhận',
+                    cancelButtonText: 'Hủy',
+                    customClass: {
+                        confirmButton: 'btn btn-premium rounded-pill px-4 text-white me-2',
+                        cancelButton: 'btn btn-outline-dark rounded-pill px-4'
+                    },
+                    buttonsStyling: false
+                });
+
+                if (!confirmRes.isConfirmed) return;
 
                 const btn = document.getElementById('btnPay');
                 btn.disabled = true;
