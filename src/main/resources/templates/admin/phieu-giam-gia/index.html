@@ -1,5 +1,6 @@
-﻿<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+    th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
 
 <head>
     <title>Quản lý Phiếu giảm giá - PeakSneaker </title>
@@ -35,7 +36,7 @@
                                     class="btn btn-light-outline rounded-pill px-4 py-2">
                                     <i class="bi bi-file-earmark-excel"></i> Xuất Excel
                                 </a>
-                                <a th:href="@{/admin/phieu-giam-gia/create}"
+                                <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/phieu-giam-gia/create}"
                                     class="btn btn-add-customer rounded-pill px-4 py-2 text-white border-0 shadow-sm">
                                     <i class="bi bi-plus-lg"></i> Thêm phiếu
                                 </a>
@@ -105,7 +106,7 @@
                             </td>
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center align-items-center gap-2">
-                                    <div class="form-check form-switch p-0 m-0">
+                                    <div sec:authorize="hasRole('ADMIN')" class="form-check form-switch p-0 m-0">
                                         <input class="form-check-input ms-0 custom-switch pgg-status-toggle"
                                             type="checkbox" th:checked="${pgg.trangThai == 1}" th:data-id="${pgg.id}"
                                             onchange="confirmTogglePGG(this)" style="cursor: pointer;">

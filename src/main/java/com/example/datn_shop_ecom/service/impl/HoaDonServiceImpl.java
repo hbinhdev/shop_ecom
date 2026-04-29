@@ -111,9 +111,9 @@ public class HoaDonServiceImpl implements HoaDonService {
             }
             if (loaiHoaDon != null) {
                 if (loaiHoaDon == 1) {
-                    predicates.add(root.get("loaiHoaDon").in(List.of("1", "TAI_CUA_HANG", "TAI_QUAY")));
+                    predicates.add(root.get("loaiHoaDon").in(List.of("1", "TAI_CUA_HANG", "TAI_QUAY", "Tại quầy")));
                 } else if (loaiHoaDon == 2) {
-                    predicates.add(root.get("loaiHoaDon").in(List.of("2", "GIAO_HANG")));
+                    predicates.add(root.get("loaiHoaDon").in(List.of("2", "GIAO_HANG", "Giao hàng")));
                 } else {
                     predicates.add(criteriaBuilder.equal(root.get("loaiHoaDon"), loaiHoaDon.toString()));
                 }
@@ -134,9 +134,11 @@ public class HoaDonServiceImpl implements HoaDonService {
             case 1  -> List.of("1", "CHO_XAC_NHAN");
             case 2  -> List.of("2", "DA_XAC_NHAN");
             case 3  -> List.of("3", "DANG_GIAO");
-            case 4  -> List.of("4");
-            case 5  -> List.of("4", "HOAN_THANH");
-            case 6  -> List.of("5", "DA_HUY");
+            case 4  -> List.of("4", "DA_GIAO_HANG");
+            case 5  -> List.of("5", "HOAN_THANH");
+            case 6  -> List.of("6", "DA_HUY");
+            case 7  -> List.of("7", "YEU_CAU_HUY");
+            case 8  -> List.of("8", "CAN_HOAN_PHI");
             default -> List.of(trangThai.toString());
         };
     }
@@ -156,9 +158,9 @@ public class HoaDonServiceImpl implements HoaDonService {
             }
             if (loaiHoaDon != null) {
                 if (loaiHoaDon == 1) {
-                    predicates.add(root.get("loaiHoaDon").in(List.of("1", "TAI_CUA_HANG", "TAI_QUAY")));
+                    predicates.add(root.get("loaiHoaDon").in(List.of("1", "TAI_CUA_HANG", "TAI_QUAY", "Tại quầy")));
                 } else if (loaiHoaDon == 2) {
-                    predicates.add(root.get("loaiHoaDon").in(List.of("2", "GIAO_HANG")));
+                    predicates.add(root.get("loaiHoaDon").in(List.of("2", "GIAO_HANG", "Giao hàng")));
                 } else {
                     predicates.add(criteriaBuilder.equal(root.get("loaiHoaDon"), loaiHoaDon.toString()));
                 }

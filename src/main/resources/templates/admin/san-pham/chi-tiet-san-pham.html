@@ -477,22 +477,23 @@
                                 </td>
                                 <td class="text-center pe-4">
                                     <div class="d-flex justify-content-center align-items-center gap-2">
-                                        <div class="form-check form-switch p-0 m-0">
+                                        <div sec:authorize="hasRole('ADMIN')" class="form-check form-switch p-0 m-0">
                                             <input class="form-check-input ms-0 custom-switch variant-status-toggle"
                                                 type="checkbox" th:checked="${v.trangThai == '1'}" th:data-id="${v.id}"
                                                 onchange="confirmToggleVariant(this)" style="cursor:pointer;">
                                         </div>
-                                        <button type="button" class="btn-icon rounded-circle shadow-xs"
+                                        <button sec:authorize="hasRole('ADMIN')" type="button" class="btn-icon rounded-circle shadow-xs"
                                             th:data-id="${v.id}" th:data-name="${v.tenSanPham}"
                                             th:data-color="${v.mauSac}" th:data-size="${v.kichThuoc}"
                                             th:data-qty="${v.soTonKho}" th:data-price="${v.giaBan}"
                                             onclick="openEditModal(this)" title="Cập nhật">
                                             <i class="bi bi-pencil-square"></i>
                                         </button>
-                                        <button type="button" class="btn-icon rounded-circle shadow-xs text-danger"
+                                        <button sec:authorize="hasRole('ADMIN')" type="button" class="btn-icon rounded-circle shadow-xs text-danger"
                                             th:data-id="${v.id}" onclick="confirmDeleteVariant(this)" title="Xóa">
                                             <i class="bi bi-trash3"></i>
                                         </button>
+                                        <span sec:authorize="!hasRole('ADMIN')" class="text-muted small">Chỉ xem</span>
                                     </div>
                                 </td>
                             </tr>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+    th:replace="~{admin/layout/main :: layout(~{::main}, ~{::title})}">
 
 <head>
     <title>Quản lý sản phẩm - PeakSneaker</title>
@@ -37,7 +38,7 @@
                                     class="btn btn-light-outline rounded-pill px-4 py-2 d-flex align-items-center gap-2">
                                     <i class="bi bi-file-earmark-excel"></i> Xuất Excel
                                 </a>
-                                <a th:href="@{/admin/san-pham/create}"
+                                <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/san-pham/create}"
                                     class="btn btn-add-customer rounded-pill px-4 py-2 d-flex align-items-center gap-2 text-white border-0 shadow-sm">
                                     <i class="bi bi-plus-lg"></i> Thêm sản phẩm
                                 </a>
@@ -116,17 +117,13 @@
                             </td>
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center align-items-center gap-2">
-                                    <div class="form-check form-switch p-0 m-0">
+                                    <div sec:authorize="hasRole('ADMIN')" class="form-check form-switch p-0 m-0">
                                         <input class="form-check-input ms-0 custom-switch" type="checkbox"
                                             th:checked="${sp.xoaMem == false || sp.xoaMem == null}"
                                             th:data-id="${sp.id}" onchange="confirmToggleProduct(this)"
                                             style="cursor: pointer;">
                                     </div>
-                                    <!-- <a th:href="@{/admin/san-pham/bien-the(idSanPham=${sp.id})}"
-                                        class="btn-icon rounded-circle shadow-xs" title="Xem biến thể sản phẩm">
-                                        <i class="bi bi-eye"></i>
-                                    </a> -->
-                                    <a th:href="@{/admin/san-pham/edit/{id}(id=${sp.id})}"
+                                    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/san-pham/edit/{id}(id=${sp.id})}"
                                         class="btn-icon rounded-circle shadow-xs text-primary" title="Sửa sản phẩm">
                                         <i class="bi bi-pencil"></i>
                                     </a>
