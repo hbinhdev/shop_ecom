@@ -597,19 +597,19 @@
                         <ul class="pagination mb-0">
                             <li class="page-item" th:classappend="${hoaDonPage.first} ? 'disabled'">
                                 <a class="page-link border-0"
-                                    th:href="@{/admin/hoa-don(page=${hoaDonPage.number - 1}, maHoaDon=${maHoaDon}, trangThai=${trangThai})}">
+                                    th:href="@{/admin/hoa-don(page=${hoaDonPage.number - 1}, maHoaDon=${maHoaDon}, trangThai=${trangThai}, loaiHoaDon=${loaiHoaDon}, ngayBatDau=${ngayBatDau}, ngayKetThuc=${ngayKetThuc}, searched=true)}">
                                     <i class="bi bi-chevron-left"></i>
                                 </a>
                             </li>
                             <li class="page-item mx-1" th:each="i : ${#numbers.sequence(0, hoaDonPage.totalPages - 1)}">
                                 <a class="page-link rounded-pill border-0"
                                     th:style="${hoaDonPage.number == i} ? 'background: var(--primary-gradient); color: white;' : 'color: #636e72;'"
-                                    th:href="@{/admin/hoa-don(page=${i}, maHoaDon=${maHoaDon}, trangThai=${trangThai})}"
+                                    th:href="@{/admin/hoa-don(page=${i}, maHoaDon=${maHoaDon}, trangThai=${trangThai}, loaiHoaDon=${loaiHoaDon}, ngayBatDau=${ngayBatDau}, ngayKetThuc=${ngayKetThuc}, searched=true)}"
                                     th:text="${i + 1}"></a>
                             </li>
                             <li class="page-item" th:classappend="${hoaDonPage.last} ? 'disabled'">
                                 <a class="page-link border-0"
-                                    th:href="@{/admin/hoa-don(page=${hoaDonPage.number + 1}, maHoaDon=${maHoaDon}, trangThai=${trangThai})}">
+                                    th:href="@{/admin/hoa-don(page=${hoaDonPage.number + 1}, maHoaDon=${maHoaDon}, trangThai=${trangThai}, loaiHoaDon=${loaiHoaDon}, ngayBatDau=${ngayBatDau}, ngayKetThuc=${ngayKetThuc}, searched=true)}">
                                     <i class="bi bi-chevron-right"></i>
                                 </a>
                             </li>

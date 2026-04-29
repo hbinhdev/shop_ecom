@@ -79,13 +79,33 @@ public class SecurityConfig {
     @Order(1)
     public SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
         http
-            .securityMatcher("/admin/**")
+            .securityMatcher("/admin/**", "/api/admin/**")
             .authenticationProvider(adminProvider()) 
             .csrf(csrf -> csrf.disable()) // Stateless không cần CSRF truyền thống
             .sessionManagement(session -> session.sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/admin/login", "/admin/api/login").permitAll()
-                .requestMatchers("/admin/**").hasAnyRole("ADMIN", "EMPLOYEE")
+                
+                // Phân quyền chi tiết cho Sản phẩm (sp)
+                // Nhân viên & Admin đều được xem danh sách, biến thể và chi tiết
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/admin/san-pham", "/admin/san-pham/bien-the", "/admin/san-pham/detail/**").hasAnyRole("ADMIN", "EMPLOYEE")
+                
+                // Chỉ Admin mới được Thêm mới, Sửa, Lưu hoặc Đổi trạng thái Sản phẩm
+                .requestMatchers("/admin/san-pham/create", "/admin/san-pham/edit/**", "/admin/san-pham/api/save", "/admin/san-pham/toggle-status/**").hasRole("ADMIN")
+
+                // Phân quyền chi tiết cho Biến thể sản phẩm (Variant)
+                // Chỉ Admin mới được Thêm/Sửa/Xóa/Đổi trạng thái biến thể
+                .requestMatchers("/api/admin/product-variant/create-all-with-images", "/api/admin/product-variant/save-simple", 
+                               "/api/admin/product-variant/variant/save", "/api/admin/product-variant/variant/toggle-status/**", 
+                               "/api/admin/product-variant/variant/delete/**").hasRole("ADMIN")
+                
+                // Phân quyền chi tiết cho Phiếu giảm giá (pgg)
+                // Nhân viên & Admin đều được xem danh sách và xem form (nhưng nhân viên sẽ bị ẩn nút lưu ở giao diện)
+                .requestMatchers(org.springframework.http.HttpMethod.GET, "/admin/phieu-giam-gia", "/admin/phieu-giam-gia/edit/**").hasAnyRole("ADMIN", "EMPLOYEE")
+                // Chỉ Admin mới được Tạo mới, Lưu hoặc Xóa
+                .requestMatchers("/admin/phieu-giam-gia/create", "/admin/phieu-giam-gia/save", "/admin/phieu-giam-gia/toggle-status/**", "/admin/phieu-giam-gia/soft-delete/**").hasRole("ADMIN")
+
+                .requestMatchers("/admin/**", "/api/admin/**").hasAnyRole("ADMIN", "EMPLOYEE")
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter(), org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter.class)
