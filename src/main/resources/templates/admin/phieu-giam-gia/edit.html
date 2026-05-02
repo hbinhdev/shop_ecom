@@ -200,21 +200,70 @@
                 }
             });
 
-            document.getElementById('pggForm').addEventListener('submit', function(e) {
+            document.getElementById('pggForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
                 const hinhThuc = document.querySelector('input[name="hinhThucGiam"]:checked')?.value;
                 if (hinhThuc === 'VNĐ') {
                     const giaTriGiam = parseInt(document.getElementById('giaTriGiam').value.replace(/\./g, "")) || 0;
                     const giaTriToiThieu = parseInt(document.getElementById('giaTriToiThieu').value.replace(/\./g, "")) || 0;
                     
                     if (giaTriGiam >= giaTriToiThieu && giaTriToiThieu > 0) {
-                        e.preventDefault();
-                        Swal.fire({
+                        return Swal.fire({
                             icon: 'warning',
                             title: 'Giá trị không hợp lệ',
                             text: 'Giá trị giảm phải nhỏ hơn hóa đơn tối thiểu!',
                             confirmButtonColor: '#d47d32'
                         });
                     }
+                }
+
+                const pggForm = document.getElementById('pggForm');
+                
+                // Temporary copy the form to not mess up the UI inputs while serializing
+                const formData = new FormData(pggForm);
+                // Strip dots from numbers
+                pggForm.querySelectorAll('.number-format').forEach(input => {
+                    const val = input.value.replace(/\./g, "");
+                    formData.set(input.name, val);
+                });
+
+                Swal.fire({
+                    title: 'Đang xử lý...',
+                    didOpen: () => Swal.showLoading(),
+                    allowOutsideClick: false
+                });
+
+                try {
+                    const token = document.querySelector('meta[name="_csrf"]')?.content;
+                    const header = document.querySelector('meta[name="_csrf_header"]')?.content;
+                    const headers = {};
+                    if (token && header) headers[header] = token;
+
+                    const res = await fetch('/admin/phieu-giam-gia/api/save', {
+                        method: 'POST',
+                        headers: headers,
+                        body: formData
+                    });
+                    
+                    const result = await res.json();
+
+                    if (res.ok && result.success) {
+                        Swal.close();
+                        Toast.fire({
+                            icon: 'success',
+                            title: result.message || 'Lưu thành công!'
+                        }).then(() => window.location.href = '/admin/phieu-giam-gia');
+                    } else {
+                        Swal.close();
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: result.message || 'Không thể lưu phiếu giảm giá'
+                        });
+                    }
+                } catch (error) {
+                    Swal.close();
+                    Toast.fire({ icon: 'error', title: 'Lỗi kết nối' });
                 }
             });
 

@@ -110,13 +110,19 @@
 
                     <!-- ===== MÀU SẮC ===== -->
                     <div class="tab-pane fade show active" id="tab-mau-sac">
-                        <div class="add-attr-bar d-flex gap-2 align-items-center">
-                            <input type="text" id="inp-mau-sac" class="form-control rounded-pill border-1"
-                                placeholder="Nhập tên màu sắc mới... (VD: Đỏ tươi, Xanh navy)" style="max-width:350px;">
+                        <div class="add-attr-bar d-flex justify-content-between align-items-center flex-wrap gap-3">
+                            <div class="d-flex gap-2" style="flex: 1; min-width: 300px;">
+                                <input type="text" id="inp-mau-sac" class="form-control rounded-pill border-1"
+                                placeholder="Nhập tên màu sắc mới... (VD: Đỏ tươi, Xanh navy)" >
                             <button class="btn btn-add-customer rounded-pill px-4 text-white border-0"
                                 onclick="addAttr('mau-sac', 'inp-mau-sac')">
                                 <i class="bi bi-plus-lg me-1"></i> Thêm
                             </button>
+                            </div>
+                            <div class="search-box position-relative" style="width: 300px;">
+                                <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                <input type="text" id="search-mau-sac" class="form-control rounded-pill ps-5 py-2 border-1" placeholder="Tìm kiếm thuộc tính...">
+                            </div>
                         </div>
                         <div class="table-responsive">
                             <table class="table align-middle mb-0">
@@ -167,17 +173,26 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="px-3 py-3 border-top bg-light-subtle mt-3 rounded-bottom-4">
+                            <div id="pg-mau-sac"></div>
+                        </div>
                     </div>
 
                     <!-- ===== KÍCH THƯỚC ===== -->
                     <div class="tab-pane fade" id="tab-kich-thuoc">
-                        <div class="add-attr-bar d-flex gap-2 align-items-center">
-                            <input type="text" id="inp-kich-thuoc" class="form-control rounded-pill border-1"
-                                placeholder="Nhập kích thước mới... (VD: 39, 40, 41)" style="max-width:350px;">
+                        <div class="add-attr-bar d-flex justify-content-between align-items-center flex-wrap gap-3">
+                            <div class="d-flex gap-2" style="flex: 1; min-width: 300px;">
+                                <input type="text" id="inp-kich-thuoc" class="form-control rounded-pill border-1"
+                                placeholder="Nhập kích thước mới... (VD: 39, 40, 41)" >
                             <button class="btn btn-add-customer rounded-pill px-4 text-white border-0"
                                 onclick="addAttr('kich-thuoc', 'inp-kich-thuoc')">
                                 <i class="bi bi-plus-lg me-1"></i> Thêm
                             </button>
+                            </div>
+                            <div class="search-box position-relative" style="width: 300px;">
+                                <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                <input type="text" id="search-kich-thuoc" class="form-control rounded-pill ps-5 py-2 border-1" placeholder="Tìm kiếm thuộc tính...">
+                            </div>
                         </div>
                         <div class="table-responsive">
                             <table class="table align-middle mb-0">
@@ -189,7 +204,7 @@
                                         <th class="py-3 text-center" style="width:140px">Thao tác</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="tbody-kich-thuoc">
                                     <tr th:each="k, stat : ${listKichThuoc}" class="attr-row border-bottom">
                                         <td class="ps-3 text-muted small" th:text="${stat.count}">1</td>
                                         <td>
@@ -229,18 +244,27 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="px-3 py-3 border-top bg-light-subtle mt-3 rounded-bottom-4">
+                            <div id="pg-kich-thuoc"></div>
+                        </div>
                     </div>
 
                     <!-- ===== DANH MỤC ===== -->
                     <div class="tab-pane fade" id="tab-danh-muc">
-                        <div class="add-attr-bar d-flex gap-2 align-items-center">
-                            <input type="text" id="inp-danh-muc" class="form-control rounded-pill border-1"
+                        <div class="add-attr-bar d-flex justify-content-between align-items-center flex-wrap gap-3">
+                            <div class="d-flex gap-2" style="flex: 1; min-width: 300px;">
+                                <input type="text" id="inp-danh-muc" class="form-control rounded-pill border-1"
                                 placeholder="Nhập tên danh mục mới... (VD: Giày thể thao, Giày chạy bộ)"
-                                style="max-width:400px;">
+                                >
                             <button class="btn btn-add-customer rounded-pill px-4 text-white border-0"
                                 onclick="addAttr('danh-muc', 'inp-danh-muc')">
                                 <i class="bi bi-plus-lg me-1"></i> Thêm
                             </button>
+                            </div>
+                            <div class="search-box position-relative" style="width: 300px;">
+                                <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                <input type="text" id="search-danh-muc" class="form-control rounded-pill ps-5 py-2 border-1" placeholder="Tìm kiếm thuộc tính...">
+                            </div>
                         </div>
                         <div class="table-responsive">
                             <table class="table align-middle mb-0">
@@ -252,7 +276,7 @@
                                         <th class="py-3 text-center" style="width:140px">Thao tác</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="tbody-danh-muc">
                                     <tr th:each="d, stat : ${listDanhMuc}" class="attr-row border-bottom">
                                         <td class="ps-3 text-muted small" th:text="${stat.count}">1</td>
                                         <td>
@@ -292,17 +316,26 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="px-3 py-3 border-top bg-light-subtle mt-3 rounded-bottom-4">
+                            <div id="pg-danh-muc"></div>
+                        </div>
                     </div>
 
                     <!-- ===== THƯƠNG HIỆU ===== -->
                     <div class="tab-pane fade" id="tab-thuong-hieu">
-                        <div class="add-attr-bar d-flex gap-2 align-items-center">
-                            <input type="text" id="inp-thuong-hieu" class="form-control rounded-pill border-1"
-                                placeholder="Nhập tên thương hiệu... (VD: Nike, Adidas, Puma)" style="max-width:350px;">
+                        <div class="add-attr-bar d-flex justify-content-between align-items-center flex-wrap gap-3">
+                            <div class="d-flex gap-2" style="flex: 1; min-width: 300px;">
+                                <input type="text" id="inp-thuong-hieu" class="form-control rounded-pill border-1"
+                                placeholder="Nhập tên thương hiệu... (VD: Nike, Adidas, Puma)" >
                             <button class="btn btn-add-customer rounded-pill px-4 text-white border-0"
                                 onclick="addAttr('thuong-hieu', 'inp-thuong-hieu')">
                                 <i class="bi bi-plus-lg me-1"></i> Thêm
                             </button>
+                            </div>
+                            <div class="search-box position-relative" style="width: 300px;">
+                                <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                <input type="text" id="search-thuong-hieu" class="form-control rounded-pill ps-5 py-2 border-1" placeholder="Tìm kiếm thuộc tính...">
+                            </div>
                         </div>
                         <div class="table-responsive">
                             <table class="table align-middle mb-0">
@@ -314,7 +347,7 @@
                                         <th class="py-3 text-center" style="width:140px">Thao tác</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="tbody-thuong-hieu">
                                     <tr th:each="t, stat : ${listThuongHieu}" class="attr-row border-bottom">
                                         <td class="ps-3 text-muted small" th:text="${stat.count}">1</td>
                                         <td>
@@ -354,17 +387,26 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="px-3 py-3 border-top bg-light-subtle mt-3 rounded-bottom-4">
+                            <div id="pg-thuong-hieu"></div>
+                        </div>
                     </div>
 
                     <!-- ===== KIỂU DÁNG ===== -->
                     <div class="tab-pane fade" id="tab-kieu-dang">
-                        <div class="add-attr-bar d-flex gap-2 align-items-center">
-                            <input type="text" id="inp-kieu-dang" class="form-control rounded-pill border-1"
-                                placeholder="Nhập kiểu dáng... (VD: Cổ cao, Cổ thấp, Slip-on)" style="max-width:350px;">
+                        <div class="add-attr-bar d-flex justify-content-between align-items-center flex-wrap gap-3">
+                            <div class="d-flex gap-2" style="flex: 1; min-width: 300px;">
+                                <input type="text" id="inp-kieu-dang" class="form-control rounded-pill border-1"
+                                placeholder="Nhập kiểu dáng... (VD: Cổ cao, Cổ thấp, Slip-on)" >
                             <button class="btn btn-add-customer rounded-pill px-4 text-white border-0"
                                 onclick="addAttr('kieu-dang', 'inp-kieu-dang')">
                                 <i class="bi bi-plus-lg me-1"></i> Thêm
                             </button>
+                            </div>
+                            <div class="search-box position-relative" style="width: 300px;">
+                                <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                <input type="text" id="search-kieu-dang" class="form-control rounded-pill ps-5 py-2 border-1" placeholder="Tìm kiếm thuộc tính...">
+                            </div>
                         </div>
                         <div class="table-responsive">
                             <table class="table align-middle mb-0">
@@ -376,7 +418,7 @@
                                         <th class="py-3 text-center" style="width:140px">Thao tác</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="tbody-kieu-dang">
                                     <tr th:each="k, stat : ${listKieuDang}" class="attr-row border-bottom">
                                         <td class="ps-3 text-muted small" th:text="${stat.count}">1</td>
                                         <td>
@@ -416,18 +458,27 @@
                                 </tbody>
                             </table>
                         </div>
+                        <div class="px-3 py-3 border-top bg-light-subtle mt-3 rounded-bottom-4">
+                            <div id="pg-kieu-dang"></div>
+                        </div>
                     </div>
 
                     <!-- ===== CHẤT LIỆU ===== -->
                     <div class="tab-pane fade" id="tab-chat-lieu">
-                        <div class="add-attr-bar d-flex gap-2 align-items-center">
-                            <input type="text" id="inp-chat-lieu" class="form-control rounded-pill border-1"
+                        <div class="add-attr-bar d-flex justify-content-between align-items-center flex-wrap gap-3">
+                            <div class="d-flex gap-2" style="flex: 1; min-width: 300px;">
+                                <input type="text" id="inp-chat-lieu" class="form-control rounded-pill border-1"
                                 placeholder="Nhập chất liệu... (VD: Da thật, Canvas, Vải lưới)"
-                                style="max-width:350px;">
+                                >
                             <button class="btn btn-add-customer rounded-pill px-4 text-white border-0"
                                 onclick="addAttr('chat-lieu', 'inp-chat-lieu')">
                                 <i class="bi bi-plus-lg me-1"></i> Thêm
                             </button>
+                            </div>
+                            <div class="search-box position-relative" style="width: 300px;">
+                                <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                <input type="text" id="search-chat-lieu" class="form-control rounded-pill ps-5 py-2 border-1" placeholder="Tìm kiếm thuộc tính...">
+                            </div>
                         </div>
                         <div class="table-responsive">
                             <table class="table align-middle mb-0">
@@ -439,7 +490,7 @@
                                         <th class="py-3 text-center" style="width:140px">Thao tác</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="tbody-chat-lieu">
                                     <tr th:each="c, stat : ${listChatLieu}" class="attr-row border-bottom">
                                         <td class="ps-3 text-muted small" th:text="${stat.count}">1</td>
                                         <td>
@@ -478,6 +529,9 @@
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="px-3 py-3 border-top bg-light-subtle mt-3 rounded-bottom-4">
+                            <div id="pg-chat-lieu"></div>
                         </div>
                     </div>
 
@@ -562,6 +616,90 @@
                     input.onkeydown = (e) => { if (e.key === 'Enter') toggleEdit(btn); };
                 }
             }
+
+            // --- Pagination & Search Client-side ---
+            function setupTableSearchAndPagination(tabName, rowsPerPage = 5) {
+                const tbody = document.getElementById(`tbody-${tabName}`);
+                const searchInput = document.getElementById(`search-${tabName}`);
+                const paginationContainer = document.getElementById(`pg-${tabName}`);
+                if(!tbody || !searchInput || !paginationContainer) return;
+                
+                let rows = Array.from(tbody.querySelectorAll('tr.attr-row'));
+                let currentPage = 1;
+                let filteredRows = rows;
+
+                function renderTable() {
+                    rows.forEach(r => r.style.display = 'none');
+                    const start = (currentPage - 1) * rowsPerPage;
+                    const end = start + rowsPerPage;
+                    filteredRows.slice(start, end).forEach(r => r.style.display = '');
+                    renderPagination();
+                }
+
+                function renderPagination() {
+                    paginationContainer.innerHTML = '';
+                    const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+                    if(totalPages <= 1) return;
+                    
+                    let html = '<div class="card-footer bg-transparent border-0 p-0"><nav aria-label="Page navigation"><ul class="pagination pagination-sm justify-content-center mb-0 gap-1">';
+                    html += `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                                <a class="page-link rounded-circle border-0 bg-light text-dark" href="#" data-page="${currentPage - 1}">
+                                    <i class="bi bi-chevron-left" style="pointer-events: none;"></i>
+                                </a>
+                             </li>`;
+                    for(let i=1; i<=totalPages; i++) {
+                        const activeClass = currentPage === i ? 'bg-dark text-white' : 'bg-light-subtle text-dark';
+                        html += `<li class="page-item ${currentPage === i ? 'active' : ''}">
+                                    <a class="page-link rounded-circle border-0 ${activeClass}" href="#" data-page="${i}">${i}</a>
+                                 </li>`;
+                    }
+                    html += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                                <a class="page-link rounded-circle border-0 bg-light text-dark" href="#" data-page="${currentPage + 1}">
+                                    <i class="bi bi-chevron-right" style="pointer-events: none;"></i>
+                                </a>
+                             </li>`;
+                    html += '</ul></nav></div>';
+                    
+                    paginationContainer.innerHTML = html;
+                    
+                    paginationContainer.querySelectorAll('.page-link').forEach(link => {
+                        link.addEventListener('click', e => {
+                            e.preventDefault();
+                            const page = parseInt(e.target.dataset.page);
+                            if(page > 0 && page <= totalPages) {
+                                currentPage = page;
+                                renderTable();
+                            }
+                        });
+                    });
+                }
+
+                searchInput.addEventListener('input', e => {
+                    const text = e.target.value.toLowerCase().trim();
+                    filteredRows = rows.filter(r => {
+                        const label = r.querySelector('.attr-label').textContent.toLowerCase();
+                        return label.includes(text);
+                    });
+                    currentPage = 1;
+                    renderTable();
+                    
+                    const emptyRow = tbody.querySelector('.empty-row-search');
+                    if(filteredRows.length === 0) {
+                        if(!emptyRow) {
+                            tbody.insertAdjacentHTML('beforeend', '<tr class="empty-row-search"><td colspan="4" class="text-center py-4 text-muted"><i class="bi bi-search me-2"></i>Không tìm thấy kết quả</td></tr>');
+                        }
+                    } else if(emptyRow) {
+                        emptyRow.remove();
+                    }
+                });
+
+                renderTable();
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const tabs = ['mau-sac', 'kich-thuoc', 'danh-muc', 'thuong-hieu', 'kieu-dang', 'chat-lieu'];
+                tabs.forEach(tab => setupTableSearchAndPagination(tab));
+            });
         </script>
     </main>
 </body>
