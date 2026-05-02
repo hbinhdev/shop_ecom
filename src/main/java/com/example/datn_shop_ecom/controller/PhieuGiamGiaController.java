@@ -74,6 +74,17 @@ public class PhieuGiamGiaController {
         }
     }
 
+    @PostMapping("/api/save")
+    @ResponseBody
+    public ResponseEntity<?> saveApi(@ModelAttribute("pgg") PhieuGiamGia pgg) {
+        try {
+            pggService.savePGG(pgg);
+            return ResponseEntity.ok(Map.of("success", true, "message", "Lưu phiếu giảm giá thành công!"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", e.getMessage()));
+        }
+    }
+
     @PostMapping("/toggle-status/{id}")
     @ResponseBody
     public ResponseEntity<?> toggleStatus(@PathVariable Long id) {

@@ -3,6 +3,30 @@
 
 <head>
     <title>Cập nhật Phiếu giảm giá - PeakSneaker </title>
+    <style>
+        :root {
+            --orange-grad: linear-gradient(135deg, #d47d32 0%, #eb984e 100%);
+            --orange-shadow: rgba(212, 125, 50, 0.35);
+        }
+
+        /* THIẾT KẾ NÚT OK CỦA SWEETALERT GIỐNG TRANG SẢN PHẨM */
+        .swal2-confirm {
+            background: var(--orange-grad) !important;
+            color: #fff !important;
+            border: none !important;
+            font-weight: 600 !important;
+            border-radius: 50rem !important;
+            padding: 10px 30px !important;
+            box-shadow: 0 4px 14px var(--orange-shadow) !important;
+            transition: all 0.25s ease !important;
+        }
+
+        .swal2-confirm:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 20px var(--orange-shadow) !important;
+            background: linear-gradient(135deg, #c06a20 0%, #d47d32 100%) !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -249,9 +273,11 @@
 
                     if (res.ok && result.success) {
                         Swal.close();
-                        Toast.fire({
+                        Swal.fire({
                             icon: 'success',
-                            title: result.message || 'Lưu thành công!'
+                            title: 'Thành công!',
+                            text: result.message || 'Cập nhật phiếu giảm giá thành công!',
+                            confirmButtonText: 'Đồng ý'
                         }).then(() => window.location.href = '/admin/phieu-giam-gia');
                     } else {
                         Swal.close();
