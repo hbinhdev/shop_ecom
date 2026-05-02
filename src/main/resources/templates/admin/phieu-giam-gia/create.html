@@ -3,6 +3,30 @@
 
 <head>
     <title>Thêm mới Phiếu giảm giá - PeakSneaker </title>
+    <style>
+        :root {
+            --orange-grad: linear-gradient(135deg, #d47d32 0%, #eb984e 100%);
+            --orange-shadow: rgba(212, 125, 50, 0.35);
+        }
+
+        /* THIẾT KẾ NÚT OK CỦA SWEETALERT GIỐNG TRANG SẢN PHẨM */
+        .swal2-confirm {
+            background: var(--orange-grad) !important;
+            color: #fff !important;
+            border: none !important;
+            font-weight: 600 !important;
+            border-radius: 50rem !important;
+            padding: 10px 30px !important;
+            box-shadow: 0 4px 14px var(--orange-shadow) !important;
+            transition: all 0.25s ease !important;
+        }
+
+        .swal2-confirm:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 6px 20px var(--orange-shadow) !important;
+            background: linear-gradient(135deg, #c06a20 0%, #d47d32 100%) !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -163,21 +187,72 @@
                 }
             });
 
-            document.getElementById('pggForm').addEventListener('submit', function(e) {
+            document.getElementById('pggForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
                 const hinhThuc = document.querySelector('input[name="hinhThucGiam"]:checked')?.value;
                 if (hinhThuc === 'VNĐ') {
                     const giaTriGiam = parseInt(document.getElementById('giaTriGiam').value.replace(/\./g, "")) || 0;
                     const giaTriToiThieu = parseInt(document.getElementById('giaTriToiThieu').value.replace(/\./g, "")) || 0;
                     
                     if (giaTriGiam >= giaTriToiThieu && giaTriToiThieu > 0) {
-                        e.preventDefault();
-                        Swal.fire({
+                        return Swal.fire({
                             icon: 'warning',
                             title: 'Giá trị không hợp lệ',
                             text: 'Giá trị giảm phải nhỏ hơn hóa đơn tối thiểu!',
                             confirmButtonColor: '#d47d32'
                         });
                     }
+                }
+
+                const pggForm = document.getElementById('pggForm');
+                
+                // Temporary copy the form to not mess up the UI inputs while serializing
+                const formData = new FormData(pggForm);
+                // Strip dots from numbers
+                pggForm.querySelectorAll('.number-format').forEach(input => {
+                    const val = input.value.replace(/\./g, "");
+                    formData.set(input.name, val);
+                });
+
+                Swal.fire({
+                    title: 'Đang xử lý...',
+                    didOpen: () => Swal.showLoading(),
+                    allowOutsideClick: false
+                });
+
+                try {
+                    const token = document.querySelector('meta[name="_csrf"]')?.content;
+                    const header = document.querySelector('meta[name="_csrf_header"]')?.content;
+                    const headers = {};
+                    if (token && header) headers[header] = token;
+
+                    const res = await fetch('/admin/phieu-giam-gia/api/save', {
+                        method: 'POST',
+                        headers: headers,
+                        body: formData
+                    });
+                    
+                    const result = await res.json();
+
+                    if (res.ok && result.success) {
+                        Swal.close();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công!',
+                            text: result.message || 'Lưu phiếu giảm giá thành công!',
+                            confirmButtonText: 'Đồng ý'
+                        }).then(() => window.location.href = '/admin/phieu-giam-gia');
+                    } else {
+                        Swal.close();
+                        Toast.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: result.message || 'Không thể lưu phiếu giảm giá'
+                        });
+                    }
+                } catch (error) {
+                    Swal.close();
+                    Toast.fire({ icon: 'error', title: 'Lỗi kết nối' });
                 }
             });
         </script>
