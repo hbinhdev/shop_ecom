@@ -59,11 +59,21 @@ public class PhieuGiamGiaServiceImpl implements PhieuGiamGiaService {
                 throw new RuntimeException("Giá trị giảm tiền mặt phải nhỏ hơn 100,000,000 VNĐ");
             }
         }
+
+        LocalDate today = LocalDate.now();
         if (pgg.getNgayBatDau() != null && pgg.getNgayKetThuc() != null) {
             if (pgg.getNgayKetThuc().isBefore(pgg.getNgayBatDau())) {
                 throw new RuntimeException("Ngày kết thúc phải sau ngày bắt đầu");
             }
         }
+
+        // Fix 1: Thêm ngày thì phải từ ngày hôm nay hoặc là tương lai (khi tạo mới)
+        if (pgg.getId() == null) {
+            if (pgg.getNgayBatDau() != null && pgg.getNgayBatDau().isBefore(today)) {
+                throw new RuntimeException("Ngày bắt đầu không được ở quá khứ");
+            }
+        }
+
         if (pgg.getSoLuong() != null && pgg.getSoLuong() < 1) {
             throw new RuntimeException("Số lượng phải ít nhất là 1");
         }
@@ -71,7 +81,9 @@ public class PhieuGiamGiaServiceImpl implements PhieuGiamGiaService {
             throw new RuntimeException("Giá trị hóa đơn tối thiểu không được nhỏ hơn 0");
         }
 
-        
+        // Tự động tính toán trạng thái dựa trên ngày
+        pgg.setTrangThai(calculateStatus(pgg));
+
         if (pgg.getId() != null) {
             PhieuGiamGia existing = pggRepo.findById(pgg.getId())
                     .orElseThrow(() -> new RuntimeException("Phiếu giảm giá không tồn tại"));
@@ -98,14 +110,24 @@ public class PhieuGiamGiaServiceImpl implements PhieuGiamGiaService {
             if (pgg.getNgayTao() == null) {
                 pgg.setNgayTao(LocalDateTime.now());
             }
-            if (pgg.getTrangThai() == null) {
-                pgg.setTrangThai(1);
-            }
             pgg.setXoaMem(false);
             pgg.setNguoiTao("Admin");
 
             return pggRepo.save(pgg);
         }
+    }
+
+    private Integer calculateStatus(PhieuGiamGia pgg) {
+        LocalDate today = LocalDate.now();
+        if (pgg.getNgayBatDau() != null && today.isBefore(pgg.getNgayBatDau())) {
+            return 2; // Chưa bắt đầu
+        }
+        if (pgg.getNgayKetThuc() != null && today.isAfter(pgg.getNgayKetThuc())) {
+            return 0; // Đã kết thúc
+        }
+        // Nếu đã qua ngày kết thúc hoặc số lượng hết thì có thể coi là kết thúc
+        // Tuy nhiên ở đây chỉ tính theo ngày theo yêu cầu
+        return 1; // Đang hoạt động
     }
 
     @Override
@@ -114,9 +136,23 @@ public class PhieuGiamGiaServiceImpl implements PhieuGiamGiaService {
     }
 
     @Override
+    @Transactional
     public void toggleStatus(Long id) {
         PhieuGiamGia pgg = findById(id);
-        int newStatus = (pgg.getTrangThai() == 1) ? 0 : 1;
+        // Nếu đang hoạt động (1) hoặc chưa bắt đầu (2) -> Ngừng hoạt động (3)
+        // Nếu đang Ngừng hoạt động (3) -> Kích hoạt lại (tính toán theo ngày)
+        
+        int newStatus;
+        if (pgg.getTrangThai() == 1 || pgg.getTrangThai() == 2) {
+            newStatus = 3; // Chuyển sang Ngừng hoạt động
+        } else if (pgg.getTrangThai() == 3) {
+            newStatus = calculateStatus(pgg);
+            if (newStatus == 0) {
+                throw new RuntimeException("Phiếu này đã hết hạn, không thể kích hoạt lại");
+            }
+        } else {
+            throw new RuntimeException("Phiếu này đã kết thúc, không thể thay đổi trạng thái");
+        }
         pggRepo.updateStatus(id, newStatus, LocalDateTime.now(), "Admin");
     }
 
@@ -149,9 +185,48 @@ public class PhieuGiamGiaServiceImpl implements PhieuGiamGiaService {
             row.createCell(6).setCellValue(pgg.getNgayKetThuc() != null ? pgg.getNgayKetThuc().format(dtf) : "-");
             row.createCell(7).setCellValue(pgg.getGiaTriGiam() != null ? pgg.getGiaTriGiam().toString() : "0");
             row.createCell(8).setCellValue(pgg.getHinhThucGiam() != null ? pgg.getHinhThucGiam() : "");
-            row.createCell(9).setCellValue(
-                    pgg.getTrangThai() != null && pgg.getTrangThai() == 1 ? "Hoạt động" : "Ngừng hoạt động");
+            
+            String statusText = "Ngừng hoạt động";
+            if (pgg.getTrangThai() == 1) statusText = "Đang hoạt động";
+            else if (pgg.getTrangThai() == 2) statusText = "Chưa bắt đầu";
+            else if (pgg.getTrangThai() == 0) statusText = "Đã kết thúc";
+            
+            row.createCell(9).setCellValue(statusText);
         });
+    }
+
+    @Override
+    @Transactional
+    public void updateAllStatuses() {
+        List<PhieuGiamGia> list = pggRepo.findAll();
+        for (PhieuGiamGia pgg : list) {
+            if (!pgg.getXoaMem()) {
+                Integer currentStatus = pgg.getTrangThai();
+                Integer calculatedStatus = calculateStatus(pgg);
+
+                boolean changed = false;
+                
+                // Nếu đang Ngừng hoạt động (3), chỉ tự động chuyển sang Đã kết thúc (0) nếu hết hạn
+                if (currentStatus == 3) {
+                    if (calculatedStatus == 0) {
+                        pgg.setTrangThai(0);
+                        changed = true;
+                    }
+                } else {
+                    // Các trạng thái khác tự động cập nhật theo ngày
+                    if (currentStatus != calculatedStatus && currentStatus != 3) {
+                        pgg.setTrangThai(calculatedStatus);
+                        changed = true;
+                    }
+                }
+
+                if (changed) {
+                    pgg.setNgaySuaCuoi(LocalDateTime.now());
+                    pgg.setNguoiSuaCuoi("System");
+                    pggRepo.save(pgg);
+                }
+            }
+        }
     }
 
     @Override

@@ -19,6 +19,7 @@ public interface PhieuGiamGiaService {
     
     String generateMaPGG();
     List<PhieuGiamGia> findAllByXoaMemFalse();
+    void updateAllStatuses();
     ByteArrayInputStream exportToExcel(String search, LocalDate startDate, LocalDate endDate, Integer status);
 }
 

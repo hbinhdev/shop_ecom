@@ -156,7 +156,9 @@
                             <select class="form-select rounded-pill py-2 px-3 border-1 bg-light-subtle"
                                 th:field="*{trangThai}">
                                 <option value="1">Đang hoạt động</option>
-                                <option value="0">Ngừng hoạt động</option>
+                                <option value="2">Chưa bắt đầu</option>
+                                <option value="3">Ngừng hoạt động</option>
+                                <option value="0">Đã kết thúc</option>
                             </select>
                         </div>
 
@@ -294,7 +296,7 @@
             });
 
             async function confirmSoftDelete() {
-                const id = [[${pgg.id}]]; // Fix missing ID
+                const id = /*[[${pgg.id}]]*/ null; // Fix missing ID
                 if (!id) return;
                 const result = await Swal.fire({
                     title: 'Xóa phiếu?', text: 'Dữ liệu sẽ được ẩn khỏi hệ thống.',

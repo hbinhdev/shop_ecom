@@ -59,8 +59,10 @@
                                 <select name="trangThai" class="form-select rounded-pill border-1"
                                     onchange="this.form.submit()">
                                     <option value="" th:selected="${trangThai == null}">Tất cả</option>
-                                    <option value="1" th:selected="${trangThai == 1}">Hoạt động</option>
-                                    <option value="0" th:selected="${trangThai == 0}">Ngừng hoạt động</option>
+                                    <option value="1" th:selected="${trangThai == 1}">Đang hoạt động</option>
+                                    <option value="2" th:selected="${trangThai == 2}">Chưa bắt đầu</option>
+                                    <option value="0" th:selected="${trangThai == 0}">Đã kết thúc</option>
+                                    <option value="3" th:selected="${trangThai == 3}">Ngừng hoạt động</option>
                                 </select>
                             </div>
                         </div>
@@ -98,17 +100,24 @@
                                 31/12/2024</td>
                             <td>
                                 <span th:if="${pgg.trangThai == 1}"
-                                    class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Đang
+                                    class="badge rounded-pill bg-success-subtle text-success px-3 py-2 fw-medium border border-success-subtle">Đang
                                     hoạt động</span>
-                                <span th:if="${pgg.trangThai != 1}"
-                                    class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border">Ngừng
+                                <span th:if="${pgg.trangThai == 2}"
+                                    class="badge rounded-pill bg-primary-subtle text-primary px-3 py-2 fw-medium border border-primary-subtle">Chưa
+                                    bắt đầu</span>
+                                <span th:if="${pgg.trangThai == 0}"
+                                    class="badge rounded-pill bg-danger-subtle text-danger px-3 py-2 fw-medium border border-danger-subtle">Đã
+                                    kết thúc</span>
+                                <span th:if="${pgg.trangThai == 3}"
+                                    class="badge rounded-pill bg-secondary-subtle text-dark px-3 py-2 fw-medium border border-secondary-subtle">Ngừng
                                     hoạt động</span>
                             </td>
                             <td class="text-center pe-4">
                                 <div class="d-flex justify-content-center align-items-center gap-2">
                                     <div sec:authorize="hasRole('ADMIN')" class="form-check form-switch p-0 m-0">
-                                        <input class="form-check-input ms-0 custom-switch pgg-status-toggle"
-                                            type="checkbox" th:checked="${pgg.trangThai == 1}" th:data-id="${pgg.id}"
+                                        <!-- Chỉ hiện toggle nếu chưa kết thúc (trangThai != 0) -->
+                                        <input th:if="${pgg.trangThai != 0}" class="form-check-input ms-0 custom-switch pgg-status-toggle"
+                                            type="checkbox" th:checked="${pgg.trangThai == 1 || pgg.trangThai == 2}" th:data-id="${pgg.id}"
                                             onchange="confirmTogglePGG(this)" style="cursor: pointer;">
                                     </div>
                                     <a th:href="@{/admin/phieu-giam-gia/edit/{id}(id=${pgg.id})}"
