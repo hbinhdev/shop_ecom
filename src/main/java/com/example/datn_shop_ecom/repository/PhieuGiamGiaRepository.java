@@ -19,7 +19,8 @@ public interface PhieuGiamGiaRepository extends JpaRepository<PhieuGiamGia, Long
            "(:startDate IS NULL OR p.ngayBatDau >= :startDate) AND " +
            "(:endDate IS NULL OR p.ngayKetThuc <= :endDate) AND " +
            "(:trangThai IS NULL OR p.trangThai = :trangThai) AND " +
-           "(p.xoaMem = false)")
+           "(p.xoaMem = false) " +
+           "ORDER BY (CASE p.trangThai WHEN 1 THEN 1 WHEN 3 THEN 2 WHEN 2 THEN 3 WHEN 0 THEN 4 ELSE 5 END), p.ngayTao DESC")
     org.springframework.data.domain.Page<PhieuGiamGia> findByFiltersPage(
             @Param("search") String search,
             @Param("startDate") java.time.LocalDate startDate,
@@ -34,7 +35,7 @@ public interface PhieuGiamGiaRepository extends JpaRepository<PhieuGiamGia, Long
            "(:endDate IS NULL OR p.ngayKetThuc <= :endDate) AND " +
            "(:trangThai IS NULL OR p.trangThai = :trangThai) AND " +
            "(p.xoaMem = false) " +
-           "ORDER BY p.ngayTao DESC")
+           "ORDER BY (CASE p.trangThai WHEN 1 THEN 1 WHEN 3 THEN 2 WHEN 2 THEN 3 WHEN 0 THEN 4 ELSE 5 END), p.ngayTao DESC")
     List<PhieuGiamGia> findByFilters(
             @Param("search") String search,
             @Param("startDate") java.time.LocalDate startDate,
