@@ -35,6 +35,9 @@ public class PhieuGiamGiaController {
             @RequestParam(defaultValue = "0") int page,
             Model model) {
         org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, 5);
+        if (search != null) {
+            search = search.trim();
+        }
         org.springframework.data.domain.Page<PhieuGiamGia> pggPage = pggService.filterPhieuGiamGiaPage(search,
                 startDate, endDate, trangThai, pageable);
 
@@ -64,6 +67,15 @@ public class PhieuGiamGiaController {
     @PostMapping("/save")
     public String save(@ModelAttribute("pgg") PhieuGiamGia pgg, RedirectAttributes ra, Model model) {
         try {
+            if (pgg.getTenPhieu() != null && pgg.getTenPhieu().trim().length() > 29) {
+                throw new IllegalArgumentException("Tên phiếu giảm giá không được quá 29 ký tự!");
+            }
+            if (pgg.getTenPhieu() != null) {
+                pgg.setTenPhieu(pgg.getTenPhieu().trim());
+            }
+            if (pgg.getMaPhieu() != null) {
+                pgg.setMaPhieu(pgg.getMaPhieu().trim());
+            }
             pggService.savePGG(pgg);
             ra.addFlashAttribute("successMsg", "Lưu phiếu giảm giá thành công!");
             return "redirect:/admin/phieu-giam-gia";
@@ -78,6 +90,15 @@ public class PhieuGiamGiaController {
     @ResponseBody
     public ResponseEntity<?> saveApi(@ModelAttribute("pgg") PhieuGiamGia pgg) {
         try {
+            if (pgg.getTenPhieu() != null && pgg.getTenPhieu().trim().length() > 29) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên phiếu giảm giá không được quá 29 ký tự!"));
+            }
+            if (pgg.getTenPhieu() != null) {
+                pgg.setTenPhieu(pgg.getTenPhieu().trim());
+            }
+            if (pgg.getMaPhieu() != null) {
+                pgg.setMaPhieu(pgg.getMaPhieu().trim());
+            }
             pggService.savePGG(pgg);
             return ResponseEntity.ok(Map.of("success", true, "message", "Lưu phiếu giảm giá thành công!"));
         } catch (Exception e) {

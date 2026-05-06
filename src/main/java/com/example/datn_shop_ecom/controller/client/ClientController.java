@@ -180,6 +180,24 @@ public class ClientController {
             Model model,
             RedirectAttributes redirectAttributes) {
         try {
+            if (khachHang.getTenDayDu() == null || !khachHang.getTenDayDu().matches("^[\\p{L}\\s]+$")) {
+                model.addAttribute("pageTitle", "Đăng ký tài khoản - PeakSneaker");
+                model.addAttribute("khachHang", khachHang);
+                model.addAttribute("error", "Họ tên không được chứa số và ký tự đặc biệt!");
+                return "client/dang-ky";
+            }
+            if (khachHang.getSoDienThoai() == null || !khachHang.getSoDienThoai().matches("^0\\d{9}$")) {
+                model.addAttribute("pageTitle", "Đăng ký tài khoản - PeakSneaker");
+                model.addAttribute("khachHang", khachHang);
+                model.addAttribute("error", "Số điện thoại phải bắt đầu bằng 0 và gồm đúng 10 chữ số!");
+                return "client/dang-ky";
+            }
+            if (khachHang.getNgaySinh() == null) {
+                model.addAttribute("pageTitle", "Đăng ký tài khoản - PeakSneaker");
+                model.addAttribute("khachHang", khachHang);
+                model.addAttribute("error", "Ngày sinh không được để trống!");
+                return "client/dang-ky";
+            }
             khachHangService.registerKhachHang(khachHang);
             redirectAttributes.addFlashAttribute("success", "Đăng ký thành công! Vui lòng kiểm tra Email để nhận mật khẩu đăng nhập.");
             return "redirect:/dang-nhap";

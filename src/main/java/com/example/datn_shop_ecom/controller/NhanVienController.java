@@ -76,6 +76,18 @@ public class NhanVienController {
                        @RequestParam(value = "anhFile", required = false) org.springframework.web.multipart.MultipartFile anhFile,
                        RedirectAttributes redirectAttributes,
                        Model model) {
+        if (nhanVien.getNgaySinh() == null) {
+            model.addAttribute("nhanVien", nhanVien);
+            model.addAttribute("vaiTros", vaiTroRepository.findAllByXoaMemFalse());
+            model.addAttribute("error", "Dữ liệu nhập vào chưa đúng: Ngày sinh không được để trống!");
+            return (nhanVien.getId() == null) ? "admin/nhan-vien/create" : "admin/nhan-vien/edit";
+        }
+        if (nhanVien.getSoDienThoai() == null || !nhanVien.getSoDienThoai().matches("^0\\d{9}$")) {
+            model.addAttribute("nhanVien", nhanVien);
+            model.addAttribute("vaiTros", vaiTroRepository.findAllByXoaMemFalse());
+            model.addAttribute("error", "Dữ liệu nhập vào chưa đúng: Số điện thoại phải bắt đầu bằng 0 và gồm đúng 10 chữ số!");
+            return (nhanVien.getId() == null) ? "admin/nhan-vien/create" : "admin/nhan-vien/edit";
+        }
         if (result.hasErrors()) {
             model.addAttribute("nhanVien", nhanVien);
             model.addAttribute("vaiTros", vaiTroRepository.findAllByXoaMemFalse());

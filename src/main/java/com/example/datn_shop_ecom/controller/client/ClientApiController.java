@@ -191,10 +191,22 @@ public class ClientApiController {
     public ResponseEntity<?> register(@RequestBody Map<String, Object> body) {
         Map<String, Object> resp = new HashMap<>();
         try {
+            String hoTen = (String) body.get("tenDayDu");
+            String sdt = (String) body.get("soDienThoai");
+            if (hoTen == null || !hoTen.matches("^[\\p{L}\\s]+$")) {
+                resp.put("success", false);
+                resp.put("message", "Họ tên không được chứa số và ký tự đặc biệt!");
+                return ResponseEntity.status(400).body(resp);
+            }
+            if (sdt == null || !sdt.matches("^0\\d{9}$")) {
+                resp.put("success", false);
+                resp.put("message", "Số điện thoại phải bắt đầu bằng 0 và gồm đúng 10 chữ số!");
+                return ResponseEntity.status(400).body(resp);
+            }
             KhachHang kh = new KhachHang();
-            kh.setTenDayDu((String) body.get("tenDayDu"));
+            kh.setTenDayDu(hoTen);
             kh.setEmail((String) body.get("email"));
-            kh.setSoDienThoai((String) body.get("soDienThoai"));
+            kh.setSoDienThoai(sdt);
             kh.setGioiTinh((String) body.get("gioiTinh"));
             if (body.get("ngaySinh") != null && !body.get("ngaySinh").toString().isEmpty())
                 kh.setNgaySinh(LocalDate.parse(body.get("ngaySinh").toString()));
@@ -275,6 +287,14 @@ public class ClientApiController {
             Long khId = body.get("khachHangId") != null ? Long.valueOf(body.get("khachHangId").toString()) : null;
             String ten = (String) body.get("tenNguoiNhan");
             String sdt = (String) body.get("soDienThoai");
+            
+            if (ten == null || !ten.matches("^[\\p{L}\\s]+$")) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Họ tên không được chứa số và ký tự đặc biệt!"));
+            }
+            if (sdt == null || !sdt.matches("^0\\d{9}$")) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Số điện thoại phải bắt đầu bằng 0 và gồm đúng 10 chữ số!"));
+            }
+
             String ttp = (String) body.get("tinhThanhPho");
             String qh = (String) body.get("quanHuyen");
             String xp = (String) body.get("xaPhuong");
@@ -410,11 +430,20 @@ public class ClientApiController {
     @PutMapping("/profile/update")
     public ResponseEntity<?> updateProfile(@RequestBody Map<String, Object> body) {
         try {
+            String hoTen = (String) body.get("hoTen");
+            String sdt = (String) body.get("soDienThoai");
+            if (hoTen == null || !hoTen.matches("^[\\p{L}\\s]+$")) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Họ tên không được chứa số và ký tự đặc biệt!"));
+            }
+            if (sdt == null || !sdt.matches("^0\\d{9}$")) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Số điện thoại phải bắt đầu bằng 0 và gồm đúng 10 chữ số!"));
+            }
+
             KhachHang kh = khachHangRepository.findById(Long.valueOf(body.get("id").toString())).orElse(null);
             if (kh == null)
                 return ResponseEntity.notFound().build();
-            kh.setTenDayDu((String) body.get("hoTen"));
-            kh.setSoDienThoai((String) body.get("soDienThoai"));
+            kh.setTenDayDu(hoTen);
+            kh.setSoDienThoai(sdt);
             kh.setGioiTinh((String) body.get("gioiTinh"));
             if (body.get("ngaySinh") != null && !body.get("ngaySinh").toString().isEmpty())
                 kh.setNgaySinh(LocalDate.parse(body.get("ngaySinh").toString()));
@@ -597,13 +626,22 @@ public class ClientApiController {
     @PostMapping("/address/add")
     public ResponseEntity<?> addAddress(@RequestBody Map<String, Object> body) {
         try {
+            String tenNguoiNhan = (String) body.get("tenNguoiNhan");
+            String soDienThoai = (String) body.get("soDienThoai");
+            if (tenNguoiNhan == null || !tenNguoiNhan.matches("^[\\p{L}\\s]+$")) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên người nhận không được chứa số và ký tự đặc biệt!"));
+            }
+            if (soDienThoai == null || !soDienThoai.matches("^0\\d{9}$")) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Số điện thoại phải bắt đầu bằng 0 và gồm đúng 10 chữ số!"));
+            }
+
             KhachHang kh = khachHangRepository.findById(Long.valueOf(body.get("khachHangId").toString())).orElse(null);
             if (kh == null)
                 return ResponseEntity.badRequest().body("Not found");
             DiaChi dc = new DiaChi();
             dc.setKhachHang(kh);
-            dc.setTenNguoiNhan((String) body.get("tenNguoiNhan"));
-            dc.setSoDienThoaiNguoiNhan((String) body.get("soDienThoai"));
+            dc.setTenNguoiNhan(tenNguoiNhan);
+            dc.setSoDienThoaiNguoiNhan(soDienThoai);
             dc.setTinhThanhPho((String) body.get("tinhThanhPho"));
             dc.setQuanHuyen((String) body.get("quanHuyen"));
             dc.setXaPhuong((String) body.get("xaPhuong"));
@@ -625,11 +663,20 @@ public class ClientApiController {
     @PutMapping("/address/update")
     public ResponseEntity<?> updateAddress(@RequestBody Map<String, Object> body) {
         try {
+            String tenNguoiNhan = (String) body.get("tenNguoiNhan");
+            String soDienThoai = (String) body.get("soDienThoai");
+            if (tenNguoiNhan == null || !tenNguoiNhan.matches("^[\\p{L}\\s]+$")) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên người nhận không được chứa số và ký tự đặc biệt!"));
+            }
+            if (soDienThoai == null || !soDienThoai.matches("^0\\d{9}$")) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Số điện thoại phải bắt đầu bằng 0 và gồm đúng 10 chữ số!"));
+            }
+
             DiaChi dc = diaChiRepository.findById(Long.valueOf(body.get("id").toString())).orElse(null);
             if (dc == null)
                 return ResponseEntity.notFound().build();
-            dc.setTenNguoiNhan((String) body.get("tenNguoiNhan"));
-            dc.setSoDienThoaiNguoiNhan((String) body.get("soDienThoai"));
+            dc.setTenNguoiNhan(tenNguoiNhan);
+            dc.setSoDienThoaiNguoiNhan(soDienThoai);
             dc.setTinhThanhPho((String) body.get("tinhThanhPho"));
             dc.setQuanHuyen((String) body.get("quanHuyen"));
             dc.setXaPhuong((String) body.get("xaPhuong"));

@@ -172,6 +172,12 @@ public class BanHangController {
             @RequestBody QuickCreateKhRequest req,
             @AuthenticationPrincipal UserDetails userDetails) {
         try {
+            if (req.tenDayDu() == null || !req.tenDayDu().matches("^[\\p{L}\\s]+$")) {
+                return ResponseEntity.badRequest().body("Họ tên không được chứa số và ký tự đặc biệt!");
+            }
+            if (req.soDienThoai() == null || !req.soDienThoai().matches("^0\\d{9}$")) {
+                return ResponseEntity.badRequest().body("Số điện thoại phải bắt đầu bằng 0 và gồm đúng 10 chữ số!");
+            }
             KhachHang kh = banHangService.quickCreateCustomer(
                     req.tenDayDu(), req.soDienThoai(), req.email(),
                     userDetails.getUsername());

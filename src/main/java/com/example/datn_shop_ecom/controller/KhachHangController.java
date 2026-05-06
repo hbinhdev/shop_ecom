@@ -70,6 +70,16 @@ public class KhachHangController {
     @PostMapping("/save")
     public String save(@ModelAttribute("khachHang") KhachHang khachHang, RedirectAttributes redirectAttributes, Model model) {
         try {
+            if (khachHang.getNgaySinh() == null) {
+                model.addAttribute("khachHang", khachHang);
+                model.addAttribute("error", "Ngày sinh không được để trống!");
+                return (khachHang.getId() == null) ? "admin/khach-hang/create" : "admin/khach-hang/edit";
+            }
+            if (khachHang.getSoDienThoai() == null || !khachHang.getSoDienThoai().matches("^0\\d{9}$")) {
+                model.addAttribute("khachHang", khachHang);
+                model.addAttribute("error", "Số điện thoại phải bắt đầu bằng 0 và gồm đúng 10 chữ số!");
+                return (khachHang.getId() == null) ? "admin/khach-hang/create" : "admin/khach-hang/edit";
+            }
             khachHangService.saveKhachHang(khachHang);
             String message = (khachHang.getId() == null) ? "Thêm khách hàng thành công!" : "Cập nhật khách hàng thành công!";
             redirectAttributes.addFlashAttribute("success", message);
