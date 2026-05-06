@@ -41,6 +41,9 @@ public class ThuocTinhController {
     public ResponseEntity<?> addMauSac(@RequestParam String ten) {
         if (ten == null || ten.isBlank())
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên không được để trống!"));
+        if (mauSacRepo.findAll().stream().anyMatch(m -> m.getTenMauSac().equalsIgnoreCase(ten.trim()))) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên màu sắc đã tồn tại!"));
+        }
         MauSac m = new MauSac();
         m.setTenMauSac(ten.trim());
         m.setXoaMem(false);
@@ -64,6 +67,11 @@ public class ThuocTinhController {
     @PutMapping("/mau-sac/update/{id}")
     @ResponseBody
     public ResponseEntity<?> updateMauSac(@PathVariable Long id, @RequestParam String ten) {
+        if (ten == null || ten.isBlank())
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên không được để trống!"));
+        if (mauSacRepo.findAll().stream().anyMatch(m -> !m.getId().equals(id) && m.getTenMauSac().equalsIgnoreCase(ten.trim()))) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên màu sắc đã tồn tại!"));
+        }
         return mauSacRepo.findById(id).map(m -> {
             m.setTenMauSac(ten.trim());
             m.setNgaySuaCuoi(LocalDateTime.now());
@@ -80,6 +88,17 @@ public class ThuocTinhController {
     public ResponseEntity<?> addKichThuoc(@RequestParam String ten) {
         if (ten == null || ten.isBlank())
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên không được để trống!"));
+        try {
+            int size = Integer.parseInt(ten.trim());
+            if (size < 36 || size > 45) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Kích thước phải từ 36 đến 45!"));
+            }
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Kích thước phải là số!"));
+        }
+        if (kichThuocRepo.findAll().stream().anyMatch(k -> k.getTenKichThuoc().equalsIgnoreCase(ten.trim()))) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên kích thước đã tồn tại!"));
+        }
         KichThuoc k = new KichThuoc();
         k.setTenKichThuoc(ten.trim());
         k.setXoaMem(false);
@@ -103,6 +122,19 @@ public class ThuocTinhController {
     @PutMapping("/kich-thuoc/update/{id}")
     @ResponseBody
     public ResponseEntity<?> updateKichThuoc(@PathVariable Long id, @RequestParam String ten) {
+        if (ten == null || ten.isBlank())
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên không được để trống!"));
+        try {
+            int size = Integer.parseInt(ten.trim());
+            if (size < 36 || size > 45) {
+                return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Kích thước phải từ 36 đến 45!"));
+            }
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Kích thước phải là số!"));
+        }
+        if (kichThuocRepo.findAll().stream().anyMatch(k -> !k.getId().equals(id) && k.getTenKichThuoc().equalsIgnoreCase(ten.trim()))) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên kích thước đã tồn tại!"));
+        }
         return kichThuocRepo.findById(id).map(k -> {
             k.setTenKichThuoc(ten.trim());
             k.setNgaySuaCuoi(LocalDateTime.now());
@@ -119,6 +151,9 @@ public class ThuocTinhController {
     public ResponseEntity<?> addDanhMuc(@RequestParam String ten) {
         if (ten == null || ten.isBlank())
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên không được để trống!"));
+        if (danhMucRepo.findAll().stream().anyMatch(d -> d.getTenDanhMuc().equalsIgnoreCase(ten.trim()))) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên danh mục đã tồn tại!"));
+        }
         DanhMuc d = new DanhMuc();
         d.setTenDanhMuc(ten.trim());
         d.setXoaMem(false);
@@ -142,6 +177,11 @@ public class ThuocTinhController {
     @PutMapping("/danh-muc/update/{id}")
     @ResponseBody
     public ResponseEntity<?> updateDanhMuc(@PathVariable Long id, @RequestParam String ten) {
+        if (ten == null || ten.isBlank())
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên không được để trống!"));
+        if (danhMucRepo.findAll().stream().anyMatch(d -> !d.getId().equals(id) && d.getTenDanhMuc().equalsIgnoreCase(ten.trim()))) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên danh mục đã tồn tại!"));
+        }
         return danhMucRepo.findById(id).map(d -> {
             d.setTenDanhMuc(ten.trim());
             d.setNgaySuaCuoi(LocalDateTime.now());
@@ -158,6 +198,9 @@ public class ThuocTinhController {
     public ResponseEntity<?> addThuongHieu(@RequestParam String ten) {
         if (ten == null || ten.isBlank())
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên không được để trống!"));
+        if (thuongHieuRepo.findAll().stream().anyMatch(t -> t.getTenThuongHieu().equalsIgnoreCase(ten.trim()))) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên thương hiệu đã tồn tại!"));
+        }
         ThuongHieu t = new ThuongHieu();
         t.setTenThuongHieu(ten.trim());
         t.setXoaMem(false);
@@ -181,6 +224,11 @@ public class ThuocTinhController {
     @PutMapping("/thuong-hieu/update/{id}")
     @ResponseBody
     public ResponseEntity<?> updateThuongHieu(@PathVariable Long id, @RequestParam String ten) {
+        if (ten == null || ten.isBlank())
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên không được để trống!"));
+        if (thuongHieuRepo.findAll().stream().anyMatch(t -> !t.getId().equals(id) && t.getTenThuongHieu().equalsIgnoreCase(ten.trim()))) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên thương hiệu đã tồn tại!"));
+        }
         return thuongHieuRepo.findById(id).map(t -> {
             t.setTenThuongHieu(ten.trim());
             t.setNgaySuaCuoi(LocalDateTime.now());
@@ -197,6 +245,9 @@ public class ThuocTinhController {
     public ResponseEntity<?> addKieuDang(@RequestParam String ten) {
         if (ten == null || ten.isBlank())
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên không được để trống!"));
+        if (kieuDangRepo.findAll().stream().anyMatch(k -> k.getTenKieuDang().equalsIgnoreCase(ten.trim()))) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên kiểu dáng đã tồn tại!"));
+        }
         KieuDang k = new KieuDang();
         k.setTenKieuDang(ten.trim());
         k.setXoaMem(false);
@@ -220,6 +271,11 @@ public class ThuocTinhController {
     @PutMapping("/kieu-dang/update/{id}")
     @ResponseBody
     public ResponseEntity<?> updateKieuDang(@PathVariable Long id, @RequestParam String ten) {
+        if (ten == null || ten.isBlank())
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên không được để trống!"));
+        if (kieuDangRepo.findAll().stream().anyMatch(k -> !k.getId().equals(id) && k.getTenKieuDang().equalsIgnoreCase(ten.trim()))) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên kiểu dáng đã tồn tại!"));
+        }
         return kieuDangRepo.findById(id).map(k -> {
             k.setTenKieuDang(ten.trim());
             k.setNgaySuaCuoi(LocalDateTime.now());
@@ -236,6 +292,9 @@ public class ThuocTinhController {
     public ResponseEntity<?> addChatLieu(@RequestParam String ten) {
         if (ten == null || ten.isBlank())
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên không được để trống!"));
+        if (chatLieuRepo.findAll().stream().anyMatch(c -> c.getTenChatLieu().equalsIgnoreCase(ten.trim()))) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên chất liệu đã tồn tại!"));
+        }
         ChatLieu c = new ChatLieu();
         c.setTenChatLieu(ten.trim());
         c.setXoaMem(false);
@@ -259,6 +318,11 @@ public class ThuocTinhController {
     @PutMapping("/chat-lieu/update/{id}")
     @ResponseBody
     public ResponseEntity<?> updateChatLieu(@PathVariable Long id, @RequestParam String ten) {
+        if (ten == null || ten.isBlank())
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên không được để trống!"));
+        if (chatLieuRepo.findAll().stream().anyMatch(c -> !c.getId().equals(id) && c.getTenChatLieu().equalsIgnoreCase(ten.trim()))) {
+            return ResponseEntity.badRequest().body(Map.of("success", false, "message", "Tên chất liệu đã tồn tại!"));
+        }
         return chatLieuRepo.findById(id).map(c -> {
             c.setTenChatLieu(ten.trim());
             c.setNgaySuaCuoi(LocalDateTime.now());
