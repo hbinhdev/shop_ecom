@@ -274,7 +274,8 @@ public class ClientApiController {
                 success = false;
                 errors.add(
                         Map.of("spctId", spctId, "tenSanPham", spct != null ? spct.getSanPham().getTenSanPham() : "N/A",
-                                "soLuongTon", spct != null ? spct.getSoTonKho() : 0));
+                                "soTonKho", spct != null ? spct.getSoTonKho() : 0,
+                                "soLuongYeuCau", qty));
             }
         }
         return ResponseEntity.ok(Map.of("success", success, "errors", errors));

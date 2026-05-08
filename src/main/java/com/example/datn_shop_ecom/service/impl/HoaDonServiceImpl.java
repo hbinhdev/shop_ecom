@@ -61,10 +61,28 @@ public class HoaDonServiceImpl implements HoaDonService {
                 ("1".equals(currentStatus) || "CHO_XAC_NHAN".equals(currentStatus))) {
 
             List<ChiTietHoaDon> details = chiTietHoaDonRepository.findByHoaDonId(id);
+            
+            // Check stock first
             for (ChiTietHoaDon d : details) {
                 com.example.datn_shop_ecom.entity.SanPhamChiTiet spct = d.getSanPhamChiTiet();
                 if (spct != null) {
-                    spct.setSoTonKho(spct.getSoTonKho() - d.getSoLuong());
+                    int tonKho = spct.getSoTonKho() != null ? spct.getSoTonKho() : 0;
+                    int yeuCau = d.getSoLuong() != null ? d.getSoLuong() : 0;
+                    if (tonKho < yeuCau) {
+                        String tenSp = spct.getSanPham() != null ? spct.getSanPham().getTenSanPham() : "Không rõ";
+                        String mau = spct.getMauSac() != null ? spct.getMauSac().getTenMauSac() : "Không rõ";
+                        String size = spct.getKichThuoc() != null ? spct.getKichThuoc().getTenKichThuoc() : "Không rõ";
+                        throw new RuntimeException("Sản phẩm " + tenSp + " [" + mau + " - " + size + "] không đủ số lượng. Tồn kho: " + tonKho + ", Yêu cầu: " + yeuCau);
+                    }
+                }
+            }
+
+            for (ChiTietHoaDon d : details) {
+                com.example.datn_shop_ecom.entity.SanPhamChiTiet spct = d.getSanPhamChiTiet();
+                if (spct != null) {
+                    int tonKho = spct.getSoTonKho() != null ? spct.getSoTonKho() : 0;
+                    int yeuCau = d.getSoLuong() != null ? d.getSoLuong() : 0;
+                    spct.setSoTonKho(tonKho - yeuCau);
                     spctRepository.save(spct);
                 }
             }
