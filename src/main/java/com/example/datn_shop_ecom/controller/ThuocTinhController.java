@@ -2,6 +2,7 @@ package com.example.datn_shop_ecom.controller;
 
 import com.example.datn_shop_ecom.entity.*;
 import com.example.datn_shop_ecom.repository.*;
+import com.example.datn_shop_ecom.service.ExcelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -329,5 +330,29 @@ public class ThuocTinhController {
             chatLieuRepo.save(c);
             return ResponseEntity.ok(Map.of("success", true));
         }).orElse(ResponseEntity.notFound().build());
+    }
+    @Autowired private ExcelService excelService;
+
+    @GetMapping("/export")
+    public ResponseEntity<org.springframework.core.io.InputStreamResource> exportExcel() {
+        try {
+            java.io.ByteArrayInputStream in = excelService.exportThuocTinhToExcel(
+                mauSacRepo.findAll(),
+                kichThuocRepo.findAll(),
+                danhMucRepo.findAll(),
+                thuongHieuRepo.findAll(),
+                kieuDangRepo.findAll(),
+                chatLieuRepo.findAll()
+            );
+            org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+            headers.add("Content-Disposition", "attachment; filename=thuoc_tinh_san_pham.xlsx");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(org.springframework.http.MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                    .body(new org.springframework.core.io.InputStreamResource(in));
+        } catch (java.io.IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }
