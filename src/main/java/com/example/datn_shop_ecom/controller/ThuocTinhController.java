@@ -4,6 +4,7 @@ import com.example.datn_shop_ecom.entity.*;
 import com.example.datn_shop_ecom.repository.*;
 import com.example.datn_shop_ecom.service.ExcelService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,12 +26,13 @@ public class ThuocTinhController {
 
     @GetMapping
     public String index(Model model) {
-        model.addAttribute("listMauSac",    mauSacRepo.findAll());
-        model.addAttribute("listKichThuoc", kichThuocRepo.findAll());
-        model.addAttribute("listDanhMuc",   danhMucRepo.findAll());
-        model.addAttribute("listThuongHieu",thuongHieuRepo.findAll());
-        model.addAttribute("listKieuDang",  kieuDangRepo.findAll());
-        model.addAttribute("listChatLieu",  chatLieuRepo.findAll());
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        model.addAttribute("listMauSac",    mauSacRepo.findAll(sort));
+        model.addAttribute("listKichThuoc", kichThuocRepo.findAll(sort));
+        model.addAttribute("listDanhMuc",   danhMucRepo.findAll(sort));
+        model.addAttribute("listThuongHieu",thuongHieuRepo.findAll(sort));
+        model.addAttribute("listKieuDang",  kieuDangRepo.findAll(sort));
+        model.addAttribute("listChatLieu",  chatLieuRepo.findAll(sort));
         return "admin/thuoc-tinh/index";
     }
 
